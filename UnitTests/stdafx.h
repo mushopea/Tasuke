@@ -19,3 +19,5 @@
 #include "Exceptions.h"
 #include "Constants.h"
 #include "Task.h"
+#include "TaskWindow.h"
+#include "InputWindow.h"

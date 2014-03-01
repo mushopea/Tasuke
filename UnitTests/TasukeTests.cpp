@@ -7,6 +7,7 @@ namespace UnitTests
 {		
 	TEST_CLASS(TasukeTests)
 	{
+	
 	public:
 		
 		TEST_METHOD(TestAdd)
