@@ -12,6 +12,8 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	trayIcon = new QSystemTrayIcon(this);
 	trayIcon->setContextMenu(trayIconMenu);
 	trayIcon->show();
+	
+	setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
 	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 }
