@@ -33,7 +33,13 @@ void InputWindow::closeEvent(QCloseEvent* event) {
 }
 
 void InputWindow::handleReturnPressed() {
-	Tasuke::instance().runCommand(ui.lineEdit->text().toUtf8().constData());
+	std::string command = ui.lineEdit->text().toUtf8().constData();
+	
+	if (command.empty()) {
+		return;
+	}
+
+	Tasuke::instance().runCommand(command);
 }
 
 void InputWindow::handleEditingFinished() {

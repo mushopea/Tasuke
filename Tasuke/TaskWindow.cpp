@@ -1,5 +1,6 @@
+#include "Tasuke.h"
 #include "TaskWindow.h"
-#include <qmessagebox.h>
+
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 

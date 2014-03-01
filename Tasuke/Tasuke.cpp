@@ -11,6 +11,7 @@
 Tasuke::Tasuke() {
 	storage = new Storage();
 	storage->loadFile();
+	taskWindow.show();
 }
 
 // Destructor for the Tasuke singleton.

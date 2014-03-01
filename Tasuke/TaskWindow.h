@@ -5,7 +5,6 @@
 #include <QMenu>
 #include <QCloseEvent>
 #include <QtWidgets/QMainWindow>
-#include "Tasuke.h"
 #include "ui_TaskWindow.h"
 
 class TaskWindow : public QMainWindow {
