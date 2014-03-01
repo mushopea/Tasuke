@@ -6,7 +6,7 @@
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	ui.setupUi(this);
 
-	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
 	
 	connect(ui.lineEdit, SIGNAL(returnPressed()), this, SLOT(handleReturnPressed()));
 	connect(ui.lineEdit, SIGNAL(editingFinished()), this, SLOT(handleEditingFinished()));
