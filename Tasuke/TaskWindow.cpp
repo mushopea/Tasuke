@@ -1,5 +1,5 @@
 #include "TaskWindow.h"
-
+#include <qmessagebox.h>
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 
@@ -12,7 +12,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	trayIcon->setContextMenu(trayIconMenu);
 	trayIcon->show();
 
-	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSYstemTrayIcon::ActivationReason)));
+	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 }
 
 TaskWindow::~TaskWindow() {
@@ -27,10 +27,7 @@ void TaskWindow::closeEvent(QCloseEvent *event) {
 }
 
 void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
-	switch (reason) {
-	case QSystemTrayIcon::Trigger:
-	case QSystemTrayIcon::DoubleClick:
-		//TODO: trigger input window here
-		break;
+	if (reason == QSystemTrayIcon::Trigger) {
+		Tasuke::instance().showInputWindow();	
 	}
 }

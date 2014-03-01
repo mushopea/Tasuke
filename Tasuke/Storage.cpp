@@ -12,19 +12,19 @@ Storage::Storage() {
 // the memory. If there is no such file, this function does nothing.
 void Storage::loadFile() {
 	// TODO: implement storage
-	throw ExceptionNotImplemented();
+	//throw ExceptionNotImplemented();
 }
 
 // This function deserialize the data from memory and writes it to the text
 // file. If the file cannot be written, an ExceptionNotOpen is thrown.
 void Storage::saveFile() {
 	// TODO: implement storage
-	throw ExceptionNotImplemented();
+	//throw ExceptionNotImplemented();
 }
 
 void addTask(Task& task) {
 	// TODO: implement storage
-	throw ExceptionNotImplemented();
+	//throw ExceptionNotImplemented();
 }
 
 Task& getTask(int i) {
@@ -34,5 +34,5 @@ Task& getTask(int i) {
 
 void removeTask(int i) {
 	// TODO: implement storage
-	throw ExceptionNotImplemented();
+	//throw ExceptionNotImplemented();
 }

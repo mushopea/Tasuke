@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <QMessageBox>
 #include "Constants.h"
 #include "Exceptions.h"
 #include "CommandFactory.h"
@@ -38,12 +39,20 @@ Storage& Tasuke::getStorage() {
 	return *storage;
 }
 
+void Tasuke::showInputWindow() {
+	inputWindow.showAndCenter();
+}
+
 // This function runs a command in a string
 void Tasuke::runCommand(std::string commandString) {
-	std::shared_ptr<ICommand> command = CommandFactory::interpret(commandString);
-	command->run();
-	commandUndoHistory.push_back(command);
-	commandRedoHistory.clear();
+	try {
+		std::shared_ptr<ICommand> command = CommandFactory::interpret(commandString);
+		command->run();
+		commandUndoHistory.push_back(command);
+		commandRedoHistory.clear();
+	} catch (ExceptionBadCommand exception) {
+		QMessageBox::information(&inputWindow, "Tasuke", "Unknown command");
+	}
 }
 
 void Tasuke::undoCommand() {

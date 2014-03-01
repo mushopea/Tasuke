@@ -5,6 +5,7 @@
 #include <vector>
 #include "Commands.h"
 #include "Storage.h"
+#include "InputWindow.h"
 
 // This class handles the control flow of the entire program. This class is a
 // singleton; it cannot be created anywhere else because its constructor and
@@ -16,15 +17,17 @@ private:
 	Storage* storage;
 	std::vector<std::shared_ptr<ICommand>> commandUndoHistory;
 	std::vector<std::shared_ptr<ICommand>> commandRedoHistory;
+	InputWindow inputWindow;
 
 	Tasuke();
 	Tasuke(const Tasuke& old);
 	const Tasuke& operator=(const Tasuke& old);
 	~Tasuke();
-	
 public:
 	void setStorage(Storage* _storage);
 	Storage& getStorage();
+
+	void showInputWindow();
 	
 	void runCommand(std::string commandString);
 	void undoCommand();
