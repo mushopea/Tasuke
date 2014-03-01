@@ -17,7 +17,7 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 }
 
 InputWindow::~InputWindow() {
-
+	
 }
 
 void InputWindow::showAndCenter() {
@@ -25,7 +25,10 @@ void InputWindow::showAndCenter() {
 	raise();
 	activateWindow();
 
-	move(QApplication::desktop()->screen()->rect().center() - rect().center());
+	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
+	center.setY(QApplication::desktop()->screen()->rect().height() / 4);
+
+	move(center);
 }
 
 void InputWindow::closeEvent(QCloseEvent* event) {

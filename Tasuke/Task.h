@@ -1,14 +1,14 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include <QList>
+#include <QString>
 #include <QDateTime>
-#include <vector>
-#include <string>
 
 class Task {
 private:
-	std::string description;
-	std::vector<std::string> tags;
+	QString description;
+	QList<QString> tags;
 	QDateTime begin;
 	QDateTime end;
 
@@ -27,6 +27,11 @@ public:
 
 	void setEnd(QDateTime& _end);
 	QDateTime getEnd() const;
+
+	friend QDataStream& operator<<(QDataStream& out, const Task& task);
+	friend QDataStream& operator>>(QDataStream& in, Task& task);
 };
+
+Q_DECLARE_METATYPE(Task)
 
 #endif

@@ -1,8 +1,8 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
-#include <string>
-#include <vector>
+#include <QString>
+#include <QList>
 #include "Task.h"
 
 // This class abstracts away the data management in memory and on disk.
@@ -10,7 +10,7 @@
 // Tasuke singleton.
 class Storage {
 private:
-	std::vector<Task> tasks;
+	QList<Task> tasks;
 	
 public:
 	Storage();
