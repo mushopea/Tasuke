@@ -30,6 +30,7 @@ public:
 	Storage& getStorage();
 
 	void showInputWindow();
+	void showTaskWindow();
 	
 	void runCommand(std::string commandString);
 	void undoCommand();

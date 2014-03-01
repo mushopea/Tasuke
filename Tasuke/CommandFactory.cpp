@@ -23,11 +23,14 @@ std::shared_ptr<ICommand> CommandFactory::interpret(const std::string& command) 
 		description.chop(1);
 		task.setDescription(description);
 		return std::shared_ptr<ICommand>(new AddCommand(task));
-	} else if (commandType == "exit") {
-		QApplication::quit();
+	} else if (commandString == "show") {
+		Tasuke::instance().showTaskWindow();
 		return nullptr;
-	} else if (commandType == "undo") {
+	} else if (commandString == "undo") {
 		Tasuke::instance().undoCommand();
+		return nullptr;
+	} else if (commandString == "exit") {
+		QApplication::quit();
 		return nullptr;
 	} else {
 		throw ExceptionBadCommand();

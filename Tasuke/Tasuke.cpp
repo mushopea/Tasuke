@@ -44,6 +44,12 @@ void Tasuke::showInputWindow() {
 	inputWindow.showAndCenter();
 }
 
+void Tasuke::showTaskWindow() {
+	taskWindow.show();
+	taskWindow.raise();
+	taskWindow.activateWindow();
+}
+
 // This function runs a command in a string
 void Tasuke::runCommand(std::string commandString) {
 	try {
