@@ -1,4 +1,6 @@
 <RCC>
-    <qresource prefix="TaskWindow">
+    <qresource prefix="/"/>
+    <qresource prefix="/Images">
+        <file>Tasuke.png</file>
     </qresource>
 </RCC>

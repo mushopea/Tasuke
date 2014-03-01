@@ -11,6 +11,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	trayIconMenu->addAction(quitAction);
 	trayIcon = new QSystemTrayIcon(this);
 	trayIcon->setContextMenu(trayIconMenu);
+	trayIcon->setIcon(QIcon(":/Images/Tasuke.png"));
 	trayIcon->show();
 	
 	// uncomment when ready
