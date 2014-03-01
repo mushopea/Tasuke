@@ -1,7 +1,7 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include <string>
+#include "Task.h"
 
 // This is an interface for all user commands. The intended method to intialize
 // a ICommand instance is through the CommandFactory.
@@ -13,6 +13,15 @@ public:
 	virtual void undo() = 0;
 };
 
-// TODO: define commands here
+class AddCommand : public ICommand {
+private:
+	Task task;
+public:
+	AddCommand(Task& _task);
+	~AddCommand();
+	
+	void run();
+	void undo();
+};
 
 #endif

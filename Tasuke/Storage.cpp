@@ -4,13 +4,12 @@
 #include "Constants.h"
 #include "Exceptions.h"
 #include "Storage.h"
+#include <QMessageBox>
 
 // Constructor for Storage.
 Storage::Storage() {
 	qRegisterMetaType<Task>("Task");
-	qRegisterMetaTypeStreamOperators<Task>("Task");
-
-	loadFile();	
+	qRegisterMetaTypeStreamOperators<Task>("Task");	
 }
 
 // This function loads the contents of the text file and serialize it into
@@ -30,6 +29,7 @@ void Storage::loadFile() {
 // file. If the file cannot be written, an ExceptionNotOpen is thrown.
 void Storage::saveFile() {
 	QSettings settings("Tasuke","Tasuke");
+
 	settings.beginWriteArray("tasks");
 	for (int i=0; i<tasks.length(); i++) {
 		settings.setArrayIndex(i);
@@ -40,6 +40,7 @@ void Storage::saveFile() {
 
 void Storage::addTask(Task& task) {
 	tasks.push_back(task);
+	saveFile();
 }
 
 Task& Storage::getTask(int i) {
@@ -48,4 +49,10 @@ Task& Storage::getTask(int i) {
 
 void Storage::removeTask(int i) {
 	tasks.removeAt(i);
+	saveFile();
+}
+
+void Storage::popTask() {
+	tasks.pop_back();
+	saveFile();
 }

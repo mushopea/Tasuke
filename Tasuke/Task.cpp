@@ -10,20 +10,20 @@ Task::~Task() {
 
 }
 
-void Task::setDescription(std::string& _description) {
-	description = QString(_description.c_str());
+void Task::setDescription(QString& _description) {
+	description = _description;
 }
 
-std::string Task::getDescription() const {
-	return description.toStdString();
+QString Task::getDescription() const {
+	return description;
 }
 
-void Task::addTag(std::string& tag) {
-	tags.push_back(QString(tag.c_str()));
+void Task::addTag(QString& tag) {
+	tags.push_back(tag);
 }
 
-void Task::removeTag(std::string& tag) {
-	tags.removeOne(QString(tag.c_str()));
+void Task::removeTag(QString& tag) {
+	tags.removeOne(tag);
 }
 
 void Task::setBegin(QDateTime& _begin) {

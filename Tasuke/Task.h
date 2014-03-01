@@ -16,11 +16,11 @@ public:
 	Task();
 	~Task();
 
-	void setDescription(std::string& _description);
-	std::string getDescription() const;
+	void setDescription(QString& _description);
+	QString getDescription() const;
 
-	void addTag(std::string& tag);
-	void removeTag(std::string& tag);
+	void addTag(QString& tag);
+	void removeTag(QString& tag);
 
 	void setBegin(QDateTime& _begin);
 	QDateTime getBegin() const;

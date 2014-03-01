@@ -48,6 +48,9 @@ void Tasuke::showInputWindow() {
 void Tasuke::runCommand(std::string commandString) {
 	try {
 		std::shared_ptr<ICommand> command = CommandFactory::interpret(commandString);
+		if (command == nullptr) {
+			return;
+		}
 		command->run();
 		commandUndoHistory.push_back(command);
 		commandRedoHistory.clear();

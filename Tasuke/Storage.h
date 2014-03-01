@@ -20,6 +20,7 @@ public:
 	void addTask(Task& task);
 	Task& getTask(int i);
 	void removeTask(int i);
+	void popTask();
 };
 
 #endif
