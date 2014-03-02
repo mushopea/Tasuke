@@ -21,14 +21,14 @@ InputWindow::~InputWindow() {
 }
 
 void InputWindow::showAndCenter() {
-	show();
-	raise();
-	activateWindow();
-
 	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
 	center.setY(QApplication::desktop()->screen()->rect().height() / 4);
 
 	move(center);
+
+	show();
+	raise();
+	activateWindow();
 }
 
 void InputWindow::closeEvent(QCloseEvent* event) {

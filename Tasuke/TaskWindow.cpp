@@ -27,14 +27,14 @@ TaskWindow::~TaskWindow() {
 }
 
 void TaskWindow::showAndMoveToSide() {
-	show();
-	raise();
-	isActiveWindow();
-
 	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
 	center.setX(2 * QApplication::desktop()->screen()->rect().width() / 3);
 
 	move(center);
+
+	show();
+	raise();
+	isActiveWindow();
 }
 
 void TaskWindow::showTasks(QList<Task> tasks) {
