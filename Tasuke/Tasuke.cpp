@@ -53,6 +53,10 @@ void Tasuke::hideTaskWindow() {
 	taskWindow.hide();
 }
 
+void Tasuke::showMessage(QString message) {
+	taskWindow.showMessage(message);
+}
+
 void Tasuke::updateTaskWindow(QList<Task> tasks) {
 	taskWindow.showTasks(tasks);
 }

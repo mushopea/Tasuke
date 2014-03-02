@@ -17,6 +17,7 @@ public:
 
 	void showAndMoveToSide();
 	void showTasks(QList<Task> tasks);
+	void showMessage(QString message);
 
 protected:
 	void closeEvent(QCloseEvent *event);

@@ -46,6 +46,10 @@ void TaskWindow::showTasks(QList<Task> tasks) {
 	}
 }
 
+void TaskWindow::showMessage(QString message) {
+	trayIcon->showMessage("Tasuke", message);
+}
+
 void TaskWindow::closeEvent(QCloseEvent *event) {
 	if (trayIcon->isVisible()) {
 		hide();

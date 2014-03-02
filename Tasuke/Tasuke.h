@@ -32,6 +32,7 @@ public:
 	void showInputWindow();
 	void showTaskWindow();
 	void hideTaskWindow();
+	void showMessage(QString message);
 	void updateTaskWindow(QList<Task> tasks);
 	
 	void runCommand(std::string commandString);
