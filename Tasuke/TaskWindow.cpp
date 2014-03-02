@@ -32,9 +32,9 @@ void TaskWindow::showAndMoveToSide() {
 
 	move(center);
 
-	show();
+	showNormal();
 	raise();
-	isActiveWindow();
+	activateWindow();
 }
 
 void TaskWindow::showTasks(QList<Task> tasks) {
