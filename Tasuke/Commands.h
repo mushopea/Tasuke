@@ -24,4 +24,16 @@ public:
 	void undo();
 };
 
+class RemoveCommand : public ICommand {
+private:
+	int id;
+	Task task;
+public:
+	RemoveCommand(int _id);
+	~RemoveCommand();
+	
+	void run();
+	void undo();
+};
+
 #endif

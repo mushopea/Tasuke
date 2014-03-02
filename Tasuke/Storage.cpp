@@ -44,12 +44,18 @@ void Storage::addTask(Task& task) {
 	Tasuke::instance().updateTaskWindow(tasks);
 }
 
-Task& Storage::getTask(int i) {
-	throw tasks[i];
+void Storage::addTask(Task& task, int pos) {
+	tasks.insert(pos, task);
+	saveFile();
+	Tasuke::instance().updateTaskWindow(tasks);
 }
 
-void Storage::removeTask(int i) {
-	tasks.removeAt(i);
+Task& Storage::getTask(int pos) {
+	return tasks[pos];
+}
+
+void Storage::removeTask(int pos) {
+	tasks.removeAt(pos);
 	saveFile();
 	Tasuke::instance().updateTaskWindow(tasks);
 }

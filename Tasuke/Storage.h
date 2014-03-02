@@ -18,8 +18,9 @@ public:
 	void saveFile();
 
 	void addTask(Task& task);
-	Task& getTask(int i);
-	void removeTask(int i);
+	void addTask(Task& task, int pos);
+	Task& getTask(int pos);
+	void removeTask(int pos);
 	void popTask();
 	QList<Task> getTasks();
 	int totalTasks();

@@ -23,6 +23,17 @@ std::shared_ptr<ICommand> CommandFactory::interpret(const std::string& command) 
 		description.chop(1);
 		task.setDescription(description);
 		return std::shared_ptr<ICommand>(new AddCommand(task));
+	} else if (commandType == "remove") {
+		if (tokens.size() != 2) {
+			throw ExceptionBadCommand();
+		}
+		int pos = tokens[1].toInt();
+		int maxPos = Tasuke::instance().getStorage().totalTasks();
+
+		if (pos < 1 || pos > maxPos) {
+			throw ExceptionBadCommand();
+		}
+		return std::shared_ptr<ICommand>(new RemoveCommand(pos-1));
 	} else if (commandString == "show") {
 		Tasuke::instance().showTaskWindow();
 		return nullptr;
