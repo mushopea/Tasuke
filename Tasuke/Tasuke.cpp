@@ -72,13 +72,13 @@ void Tasuke::runCommand(std::string commandString) {
 		commandUndoHistory.push_back(command);
 		commandRedoHistory.clear();
 	} catch (ExceptionBadCommand exception) {
-		QMessageBox::information(&inputWindow, "Tasuke", "Unknown command");
+		showMessage("Error parsing command");
 	}
 }
 
 void Tasuke::undoCommand() {
 	if (commandUndoHistory.size() == 0) {
-		// Nothing to undo
+		showMessage("Nothing to undo");
 		return;
 	}
 
