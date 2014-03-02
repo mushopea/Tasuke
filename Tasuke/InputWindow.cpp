@@ -51,5 +51,9 @@ void InputWindow::handleEditingFinished() {
 }
 
 void InputWindow::handleHotKeyPress(int key) {
-	showAndCenter();
+	if (isVisible() == true) {
+		hide();
+	} else {
+		showAndCenter();
+	}
 }
