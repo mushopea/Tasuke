@@ -23,7 +23,15 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 TaskWindow::~TaskWindow() {
-
+	if (trayIcon) {
+		delete trayIcon;
+	}
+	if (trayIconMenu) {
+		delete trayIconMenu;
+	}
+	if (quitAction) {
+		delete quitAction;
+	}
 }
 
 void TaskWindow::showAndMoveToSide() {
