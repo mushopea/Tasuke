@@ -4,7 +4,7 @@
 #include "Constants.h"
 #include "Exceptions.h"
 #include "Storage.h"
-#include <QMessageBox>
+#include "Tasuke.h"
 
 // Constructor for Storage.
 Storage::Storage() {
@@ -31,7 +31,7 @@ void Storage::saveFile() {
 	QSettings settings("Tasuke","Tasuke");
 
 	settings.beginWriteArray("tasks");
-	for (int i=0; i<tasks.length(); i++) {
+	for (int i=0; i<tasks.size(); i++) {
 		settings.setArrayIndex(i);
 		settings.setValue("task", QVariant::fromValue<Task>(tasks[i]));
 	}
@@ -41,6 +41,7 @@ void Storage::saveFile() {
 void Storage::addTask(Task& task) {
 	tasks.push_back(task);
 	saveFile();
+	Tasuke::instance().updateTaskWindow(tasks);
 }
 
 Task& Storage::getTask(int i) {
@@ -50,9 +51,19 @@ Task& Storage::getTask(int i) {
 void Storage::removeTask(int i) {
 	tasks.removeAt(i);
 	saveFile();
+	Tasuke::instance().updateTaskWindow(tasks);
 }
 
 void Storage::popTask() {
 	tasks.pop_back();
 	saveFile();
+	Tasuke::instance().updateTaskWindow(tasks);
+}
+
+QList<Task> Storage::getTasks() {
+	return tasks;
+}
+
+int Storage::totalTasks() {
+	return tasks.size();
 }

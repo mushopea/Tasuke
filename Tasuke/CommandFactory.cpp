@@ -16,7 +16,7 @@ std::shared_ptr<ICommand> CommandFactory::interpret(const std::string& command) 
 	if (commandType == "add") {
 		Task task;
 		QString description;
-		for (int i=1; i<tokens.length(); i++) {
+		for (int i=1; i<tokens.size(); i++) {
 			description.append(tokens[i]);
 			description.append(" ");
 		}
@@ -25,6 +25,9 @@ std::shared_ptr<ICommand> CommandFactory::interpret(const std::string& command) 
 		return std::shared_ptr<ICommand>(new AddCommand(task));
 	} else if (commandString == "show") {
 		Tasuke::instance().showTaskWindow();
+		return nullptr;
+	} else if (commandString == "hide") {
+		Tasuke::instance().hideTaskWindow();
 		return nullptr;
 	} else if (commandString == "undo") {
 		Tasuke::instance().undoCommand();

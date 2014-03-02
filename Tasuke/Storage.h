@@ -21,6 +21,8 @@ public:
 	Task& getTask(int i);
 	void removeTask(int i);
 	void popTask();
+	QList<Task> getTasks();
+	int totalTasks();
 };
 
 #endif

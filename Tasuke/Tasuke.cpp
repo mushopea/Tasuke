@@ -12,6 +12,7 @@ Tasuke::Tasuke() {
 	storage = new Storage();
 	storage->loadFile();
 	taskWindow.show();
+	updateTaskWindow(storage->getTasks());
 }
 
 // Destructor for the Tasuke singleton.
@@ -48,6 +49,14 @@ void Tasuke::showTaskWindow() {
 	taskWindow.show();
 	taskWindow.raise();
 	taskWindow.activateWindow();
+}
+
+void Tasuke::hideTaskWindow() {
+	taskWindow.hide();
+}
+
+void Tasuke::updateTaskWindow(QList<Task> tasks) {
+	taskWindow.showTasks(tasks);
 }
 
 // This function runs a command in a string

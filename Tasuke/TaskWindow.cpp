@@ -24,6 +24,16 @@ TaskWindow::~TaskWindow() {
 
 }
 
+void TaskWindow::showTasks(QList<Task> tasks) {
+	ui.tableWidget->setRowCount(0);
+
+	for (int i=0; i<tasks.size(); i++) {
+		ui.tableWidget->insertRow(i);
+		ui.tableWidget->setItem(i, 0, new QTableWidgetItem(QString("%1").arg(i+1)));
+		ui.tableWidget->setItem(i, 1, new QTableWidgetItem(tasks[i].getDescription()));
+	}
+}
+
 void TaskWindow::closeEvent(QCloseEvent *event) {
 	if (trayIcon->isVisible()) {
 		hide();

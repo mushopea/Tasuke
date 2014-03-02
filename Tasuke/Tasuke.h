@@ -31,6 +31,8 @@ public:
 
 	void showInputWindow();
 	void showTaskWindow();
+	void hideTaskWindow();
+	void updateTaskWindow(QList<Task> tasks);
 	
 	void runCommand(std::string commandString);
 	void undoCommand();
