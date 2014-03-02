@@ -28,7 +28,9 @@ private:
 public:
 	void setStorage(Storage* _storage);
 	Storage& getStorage();
+	InputWindow& getInputWindow();
 
+	void initialize();
 	void showInputWindow();
 	void showTaskWindow();
 	void hideTaskWindow();
@@ -40,6 +42,7 @@ public:
 	void redoCommand();
 
 	static Tasuke &instance();
+	
 };
 
 #endif

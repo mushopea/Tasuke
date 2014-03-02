@@ -22,15 +22,30 @@ Tasuke::~Tasuke() {
 	}
 }
 
+void Tasuke::initialize(){
+	taskWindow.contextMenuOperations();
+}
+
 // Static method that returns the sole instance of Tasuke.
 Tasuke& Tasuke::instance() {
-	static Tasuke *instance = new Tasuke();
-	return *instance;
+	static Tasuke *instance = 0;
+	
+	if(instance == 0){
+		instance = new Tasuke();
+		instance->initialize();
+		return *instance;
+	} else {
+		return *instance;
+	}
 }
 
 void Tasuke::setStorage(Storage* _storage) {
 	delete storage;
 	storage = _storage;
+}
+
+InputWindow& Tasuke::getInputWindow(){
+	return inputWindow;
 }
 
 // This function exposes the Storage instance for editing.

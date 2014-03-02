@@ -15,9 +15,13 @@ public:
 	TaskWindow(QWidget *parent = 0);
 	~TaskWindow();
 
-	void showAndMoveToSide();
+	
 	void showTasks(QList<Task> tasks);
 	void showMessage(QString message);
+	void contextMenuOperations();
+
+public slots:
+	void showAndMoveToSide();
 
 protected:
 	void closeEvent(QCloseEvent *event);
@@ -30,6 +34,12 @@ private:
 	QSystemTrayIcon *trayIcon;
 	QMenu *trayIconMenu;
 	QAction *quitAction;
+	QAction *showInputWindowAction;
+	QAction *showTaskWindowAction;
+	QAction *settingsAction;
+	QAction *helpAction;
+	QAction *aboutAction;
+
 };
 
 #endif // TASKWINDOW_H

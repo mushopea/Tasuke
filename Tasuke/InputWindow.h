@@ -13,6 +13,7 @@ public:
 	InputWindow(QWidget *parent = 0);
 	~InputWindow();
 
+public slots:
 	void showAndCenter();
 
 protected:

@@ -6,23 +6,17 @@
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 
-	//declare actions
+	//context menu actions
 	quitAction = new QAction("&Quit", this);
-	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+	showInputWindowAction = new QAction("&Show Command Box", this);
+	showTaskWindowAction = new QAction("&Show Display Window", this);
+	settingsAction = new QAction("&Settings", this);
+	helpAction = new QAction("&Help", this);
+	aboutAction = new QAction("&About Tasuke", this);
 
-	//tray actions
-	trayIconMenu = new QMenu(this);
-	trayIconMenu->addAction(quitAction);
-	trayIcon = new QSystemTrayIcon(this);
-	trayIcon->setContextMenu(trayIconMenu);
-	trayIcon->setIcon(QIcon(":/Images/Tasuke.png"));
-	trayIcon->show();
 	
 	// uncomment when ready
-	//setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-
-	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-	
+	//setWindowFlags(Qt::Window | Qt::FramelessWindowHint);	
 }
 
 TaskWindow::~TaskWindow() {
@@ -76,4 +70,26 @@ void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 	if(reason == QSystemTrayIcon::DoubleClick){
 		Tasuke::instance().showTaskWindow();
 	}
+}
+
+void TaskWindow::contextMenuOperations(){
+	
+	//tray stuff
+	trayIconMenu = new QMenu(this);
+	trayIconMenu->addAction(quitAction);
+	trayIconMenu->addAction(showTaskWindowAction);
+	trayIconMenu->addAction(showInputWindowAction);
+	trayIcon = new QSystemTrayIcon(this);
+	trayIcon->setContextMenu(trayIconMenu);
+	trayIcon->setIcon(QIcon(":/Images/Traysuke.png"));
+	trayIcon->show();
+
+	//connect context menu actions
+	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+	connect(showTaskWindowAction, SIGNAL(triggered()), this, SLOT(showAndMoveToSide()));
+	connect(showInputWindowAction, SIGNAL(triggered()), &(Tasuke::instance().getInputWindow()), SLOT(showAndCenter()));
+
+	//when tray icon is clicked..
+	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+
 }
