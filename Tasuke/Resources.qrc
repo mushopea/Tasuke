@@ -2,5 +2,6 @@
     <qresource prefix="/"/>
     <qresource prefix="/Images">
         <file>Tasuke.png</file>
+		<file>Traysuke.png</file>
     </qresource>
 </RCC>
