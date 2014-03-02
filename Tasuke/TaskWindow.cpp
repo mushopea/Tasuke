@@ -6,9 +6,11 @@
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 
+	//declare actions
 	quitAction = new QAction("&Quit", this);
 	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
+	//tray actions
 	trayIconMenu = new QMenu(this);
 	trayIconMenu->addAction(quitAction);
 	trayIcon = new QSystemTrayIcon(this);
@@ -20,6 +22,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	//setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
 	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+	
 }
 
 TaskWindow::~TaskWindow() {
@@ -68,5 +71,9 @@ void TaskWindow::closeEvent(QCloseEvent *event) {
 void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 	if (reason == QSystemTrayIcon::Trigger) {
 		Tasuke::instance().showInputWindow();	
+	}
+
+	if(reason == QSystemTrayIcon::DoubleClick){
+		Tasuke::instance().showTaskWindow();
 	}
 }
