@@ -15,6 +15,7 @@ public:
 	TaskWindow(QWidget *parent = 0);
 	~TaskWindow();
 
+	void showAndMoveToSide();
 	void showTasks(QList<Task> tasks);
 
 protected:

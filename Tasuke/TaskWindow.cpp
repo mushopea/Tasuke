@@ -1,3 +1,5 @@
+#include <QApplication>
+#include <QDesktopWidget>
 #include "Tasuke.h"
 #include "TaskWindow.h"
 
@@ -24,13 +26,23 @@ TaskWindow::~TaskWindow() {
 
 }
 
+void TaskWindow::showAndMoveToSide() {
+	show();
+	raise();
+	isActiveWindow();
+
+	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
+	center.setX(2 * QApplication::desktop()->screen()->rect().width() / 3);
+
+	move(center);
+}
+
 void TaskWindow::showTasks(QList<Task> tasks) {
 	ui.tableWidget->setRowCount(0);
 
 	for (int i=0; i<tasks.size(); i++) {
 		ui.tableWidget->insertRow(i);
-		ui.tableWidget->setItem(i, 0, new QTableWidgetItem(QString("%1").arg(i+1)));
-		ui.tableWidget->setItem(i, 1, new QTableWidgetItem(tasks[i].getDescription()));
+		ui.tableWidget->setItem(i, 0, new QTableWidgetItem(tasks[i].getDescription()));
 	}
 }
 

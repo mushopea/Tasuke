@@ -11,7 +11,7 @@
 Tasuke::Tasuke() {
 	storage = new Storage();
 	storage->loadFile();
-	taskWindow.show();
+	showTaskWindow();
 	updateTaskWindow(storage->getTasks());
 }
 
@@ -46,9 +46,7 @@ void Tasuke::showInputWindow() {
 }
 
 void Tasuke::showTaskWindow() {
-	taskWindow.show();
-	taskWindow.raise();
-	taskWindow.activateWindow();
+	taskWindow.showAndMoveToSide();
 }
 
 void Tasuke::hideTaskWindow() {

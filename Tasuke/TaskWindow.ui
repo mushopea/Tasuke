@@ -31,11 +31,6 @@
      <widget class="QTableWidget" name="tableWidget">
       <column>
        <property name="text">
-        <string>#</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>Task</string>
        </property>
       </column>
