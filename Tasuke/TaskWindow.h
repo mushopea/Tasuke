@@ -38,7 +38,7 @@ private:
 	QAction *showTaskWindowAction;
 	QAction *settingsAction;
 	QAction *helpAction;
-	QAction *aboutAction;
+	QAction *showAboutWindowAction;
 
 };
 

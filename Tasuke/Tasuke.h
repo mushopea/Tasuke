@@ -7,6 +7,8 @@
 #include "Storage.h"
 #include "InputWindow.h"
 #include "TaskWindow.h"
+#include "AboutWindow.h"
+
 
 // This class handles the control flow of the entire program. This class is a
 // singleton; it cannot be created anywhere else because its constructor and
@@ -20,6 +22,7 @@ private:
 	std::vector<std::shared_ptr<ICommand>> commandRedoHistory;
 	InputWindow inputWindow;
 	TaskWindow taskWindow;
+	AboutWindow aboutWindow;
 
 	Tasuke();
 	Tasuke(const Tasuke& old);
@@ -29,10 +32,12 @@ public:
 	void setStorage(Storage* _storage);
 	Storage& getStorage();
 	InputWindow& getInputWindow();
+	AboutWindow& getAboutWindow();
 
 	void initialize();
 	void showInputWindow();
 	void showTaskWindow();
+	void showAboutWindow();
 	void hideTaskWindow();
 	void showMessage(QString message);
 	void updateTaskWindow(QList<Task> tasks);

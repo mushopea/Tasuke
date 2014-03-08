@@ -12,7 +12,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	showTaskWindowAction = new QAction("&Show Display Window", this);
 	settingsAction = new QAction("&Settings", this);
 	helpAction = new QAction("&Help", this);
-	aboutAction = new QAction("&About Tasuke", this);
+	showAboutWindowAction = new QAction("&About Tasuke", this);
 
 	
 	// uncomment when ready
@@ -72,22 +72,29 @@ void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 	}
 }
 
+//controls the actions of the context menu of the tray icon
+//IIRC, this function is not in Tasuke.cpp because it is not a QObject...
+//...And TaskWindow is the main QObject. :P
 void TaskWindow::contextMenuOperations(){
-	
+
 	//tray stuff
 	trayIconMenu = new QMenu(this);
-	trayIconMenu->addAction(quitAction);
-	trayIconMenu->addAction(showTaskWindowAction);
-	trayIconMenu->addAction(showInputWindowAction);
 	trayIcon = new QSystemTrayIcon(this);
 	trayIcon->setContextMenu(trayIconMenu);
 	trayIcon->setIcon(QIcon(":/Images/Traysuke.png"));
 	trayIcon->show();
 
+	//add actions
+	trayIconMenu->addAction(quitAction);
+	trayIconMenu->addAction(showTaskWindowAction);
+	trayIconMenu->addAction(showInputWindowAction);
+	trayIconMenu->addAction(showAboutWindowAction);
+
 	//connect context menu actions
 	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 	connect(showTaskWindowAction, SIGNAL(triggered()), this, SLOT(showAndMoveToSide()));
 	connect(showInputWindowAction, SIGNAL(triggered()), &(Tasuke::instance().getInputWindow()), SLOT(showAndCenter()));
+	connect(showAboutWindowAction, SIGNAL(triggered()),  &(Tasuke::instance().getAboutWindow()), SLOT(showAndCenter()));
 
 	//when tray icon is clicked..
 	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
