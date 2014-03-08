@@ -1,8 +1,7 @@
-<RCC>
-    <qresource prefix="/"/>
-    <qresource prefix="/Images">
+ <RCC>    
+	<qresource prefix="/Images">
         <file>Tasuke.png</file>
-		<file>Traysuke.png</file>
+ 		<file>Traysuke.png</file>
 		<file>about.png</file>
-    </qresource>
-</RCC>
+     </qresource>
+ </RCC>

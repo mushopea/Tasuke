@@ -157,9 +157,4 @@
   <ItemGroup>
     <ResourceCompile Include="Tasuke.rc" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="Image.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
 </Project>
