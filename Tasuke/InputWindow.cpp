@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QtGui\qbitmap.h>
 #include "Tasuke.h"
 #include "InputWindow.h"
 
@@ -35,6 +36,23 @@ void InputWindow::showAndCenter() {
 
 void InputWindow::closeEvent(QCloseEvent* event) {
 	hotKeyThread->stop();
+}
+
+
+//will be updated when "themes" is implemented.
+void InputWindow::changeBorder(int themeNumber){
+	QPixmap pxr(QString::fromUtf8("InputWindowMask.png"));
+	QPixmap pxr2(QString::fromUtf8("InputWindowMask.png"));
+	pxr.fill( Qt::red );
+	pxr.setMask( pxr2.createMaskFromColor( Qt::transparent ) );
+
+
+    ui.label_2->setPixmap(pxr);
+}
+
+//will be updated when "themes" is implemented.
+void InputWindow::changeBG(int themeNumber){
+	//ui.label_2->setPixmap(pxr);
 }
 
 void InputWindow::handleReturnPressed() {

@@ -23,6 +23,8 @@ private slots:
 	void handleReturnPressed();
 	void handleEditingFinished();
 	void handleHotKeyPress(int key);
+	void changeBorder(int themeNumber);
+	void changeBG(int themeNumber);
 
 private:
 	Ui::InputWindow ui;
