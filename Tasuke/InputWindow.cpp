@@ -5,9 +5,11 @@
 
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	ui.setupUi(this);
+	setAttribute(Qt::WA_TranslucentBackground);
+    setStyleSheet("background:transparent;");
 
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
-	
+
 	connect(ui.lineEdit, SIGNAL(returnPressed()), this, SLOT(handleReturnPressed()));
 	connect(ui.lineEdit, SIGNAL(editingFinished()), this, SLOT(handleEditingFinished()));
 
@@ -17,7 +19,7 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 }
 
 InputWindow::~InputWindow() {
-	
+
 }
 
 void InputWindow::showAndCenter() {
@@ -37,7 +39,7 @@ void InputWindow::closeEvent(QCloseEvent* event) {
 
 void InputWindow::handleReturnPressed() {
 	std::string command = ui.lineEdit->text().toUtf8().constData();
-	
+
 	if (command.empty()) {
 		return;
 	}
