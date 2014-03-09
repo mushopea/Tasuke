@@ -5,9 +5,11 @@
 #include "InputWindow.h"
 
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
+
 	ui.setupUi(this);
 	setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("background:transparent;");
+
 
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
 

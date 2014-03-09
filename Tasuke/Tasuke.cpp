@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <QMessageBox>
+#include <QtGui\qfontdatabase.h>
 #include "Constants.h"
 #include "Exceptions.h"
 #include "CommandFactory.h"
@@ -22,7 +23,20 @@ Tasuke::~Tasuke() {
 	}
 }
 
+void Tasuke::loadFonts(){
+	QFontDatabase fontDatabase; 
+	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book.otf");
+	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book_Oblique.otf");
+	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light.otf");
+	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light_Oblique.otf");
+	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Bold.otf");
+	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Bold_Oblique.otf");
+	fontDatabase.addApplicationFont(":/Fonts/fonts/PrintClearly.otf");
+	fontDatabase.addApplicationFont(":/Fonts/fonts/PrintBold.otf");
+}
+
 void Tasuke::initialize(){
+	loadFonts();
 	taskWindow.contextMenuOperations();
 }
 

@@ -34,6 +34,7 @@ public:
 	InputWindow& getInputWindow();
 	AboutWindow& getAboutWindow();
 
+	void loadFonts();
 	void initialize();
 	void showInputWindow();
 	void showTaskWindow();
