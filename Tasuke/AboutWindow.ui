@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>About Tasuke [助]</string>
   </property>
   <widget class="QPushButton" name="okButton">
    <property name="geometry">

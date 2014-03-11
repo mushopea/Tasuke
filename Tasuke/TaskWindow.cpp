@@ -6,6 +6,12 @@
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 
+	//setAttribute(Qt::WA_TranslucentBackground);
+	//ui.closeButton->setStyleSheet("background-color: white; border: none;");
+	//ui.minButton->setStyleSheet("background-color: white; border: none; QPushButton:hover { color:red;}");
+
+	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+
 	//context menu actions
 	quitAction = new QAction("&Quit", this);
 	showInputWindowAction = new QAction("&Show Command Box", this);
@@ -13,10 +19,6 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	settingsAction = new QAction("&Settings", this);
 	helpAction = new QAction("&Help", this);
 	showAboutWindowAction = new QAction("&About Tasuke", this);
-
-	
-	// uncomment when ready
-	//setWindowFlags(Qt::Window | Qt::FramelessWindowHint);	
 }
 
 TaskWindow::~TaskWindow() {
@@ -33,7 +35,7 @@ TaskWindow::~TaskWindow() {
 
 void TaskWindow::showAndMoveToSide() {
 	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
-	center.setX(2 * QApplication::desktop()->screen()->rect().width() / 3);
+	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
 
 	move(center);
 

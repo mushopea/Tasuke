@@ -66,6 +66,10 @@ AboutWindow& Tasuke::getAboutWindow(){
 	return aboutWindow;
 }
 
+TaskWindow& Tasuke::getTaskWindow(){
+	return taskWindow;
+}
+
 // This function exposes the Storage instance for editing.
 Storage& Tasuke::getStorage() {
 	if (storage == nullptr) {
