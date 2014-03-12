@@ -7,10 +7,9 @@
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 
 	ui.setupUi(this);
+
 	setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("background:transparent;");
-
-
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
 
 	connect(ui.lineEdit, SIGNAL(returnPressed()), this, SLOT(handleReturnPressed()));
@@ -26,8 +25,13 @@ InputWindow::~InputWindow() {
 }
 
 void InputWindow::showAndCenter() {
+
 	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
-	center.setY(QApplication::desktop()->screen()->rect().height() / 4);
+	if(Tasuke::instance().getTaskWindow().hasFocus() || Tasuke::instance().getTaskWindow().isMinimized() == false){ //if taskWindow is open
+		center.setY( (Tasuke::instance().getTaskWindow().y()) + Tasuke::instance().getTaskWindow().height() ); //set commandbox below taskWindow
+	} else {
+		center.setY(QApplication::desktop()->screen()->rect().height() / 4);
+	}
 
 	move(center);
 
@@ -45,7 +49,7 @@ void InputWindow::closeEvent(QCloseEvent* event) {
 void InputWindow::changeBorder(int themeNumber){
 	QPixmap pxr(QString::fromUtf8("InputWindowMask.png"));
 	QPixmap pxr2(QString::fromUtf8("InputWindowMask.png"));
-	pxr.fill( Qt::red );
+	pxr.fill(Qt::red);
 	pxr.setMask( pxr2.createMaskFromColor( Qt::transparent ) );
 
 

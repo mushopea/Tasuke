@@ -20,8 +20,8 @@ private:
 	Storage* storage;
 	std::vector<std::shared_ptr<ICommand>> commandUndoHistory;
 	std::vector<std::shared_ptr<ICommand>> commandRedoHistory;
-	InputWindow inputWindow;
 	TaskWindow taskWindow;
+	InputWindow inputWindow;
 	AboutWindow aboutWindow;
 
 	Tasuke();
@@ -33,10 +33,11 @@ public:
 	Storage& getStorage();
 	InputWindow& getInputWindow();
 	AboutWindow& getAboutWindow();
+	TaskWindow& getTaskWindow();
 
 	void loadFonts();
 	void initialize();
-	void showInputWindow();
+	void showInputWindow(); 
 	void showTaskWindow();
 	void showAboutWindow();
 	void hideTaskWindow();
