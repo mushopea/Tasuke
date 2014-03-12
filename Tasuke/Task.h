@@ -11,6 +11,7 @@ private:
 	QList<QString> tags;
 	QDateTime begin;
 	QDateTime end;
+	bool done;
 
 public:
 	Task();
@@ -21,12 +22,17 @@ public:
 
 	void addTag(QString& tag);
 	void removeTag(QString& tag);
+	QList<QString> getTagList();
 
 	void setBegin(QDateTime& _begin);
 	QDateTime getBegin() const;
 
 	void setEnd(QDateTime& _end);
 	QDateTime getEnd() const;
+
+	void setDone(bool _done);
+	void markDone();
+	bool isDone() const;
 
 	friend QDataStream& operator<<(QDataStream& out, const Task& task);
 	friend QDataStream& operator>>(QDataStream& in, Task& task);

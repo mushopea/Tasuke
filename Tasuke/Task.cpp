@@ -3,7 +3,7 @@
 #include "Task.h"
 
 Task::Task() {
-
+	done = false;
 }
 
 Task::~Task() {
@@ -26,6 +26,10 @@ void Task::removeTag(QString& tag) {
 	tags.removeOne(tag);
 }
 
+QList<QString> Task::getTagList() {
+	return tags;
+}
+
 void Task::setBegin(QDateTime& _begin) {
 	begin = _begin;
 }
@@ -40,6 +44,18 @@ void Task::setEnd(QDateTime& _end) {
 
 QDateTime Task::getEnd() const {
 	return end;
+}
+
+void Task::setDone(bool _done) {
+	done = _done;
+}
+
+void Task::markDone() {
+	done = true;
+}
+
+bool Task::isDone() const {
+	return done;
 }
 
 QDataStream& operator<<(QDataStream& out, const Task& task) {

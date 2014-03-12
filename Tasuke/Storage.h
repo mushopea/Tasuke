@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QList>
+#include <QJsonObject>
 #include "Task.h"
 
 // This class abstracts away the data management in memory and on disk.
@@ -11,6 +12,8 @@
 class Storage {
 private:
 	QList<Task> tasks;
+	QJsonObject fromTaskToJson(Task& task);
+	Task fromJsonToTask(QJsonObject& jsonLine);
 	
 public:
 	Storage();
