@@ -26,7 +26,7 @@ void Task::removeTag(QString& tag) {
 	tags.removeOne(tag);
 }
 
-QList<QString> Task::getTagList() {
+QList<QString> Task::getTags() {
 	return tags;
 }
 

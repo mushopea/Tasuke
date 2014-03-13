@@ -22,7 +22,7 @@ public:
 
 	void addTag(QString& tag);
 	void removeTag(QString& tag);
-	QList<QString> getTagList();
+	QList<QString> getTags();
 
 	void setBegin(QDateTime& _begin);
 	QDateTime getBegin() const;

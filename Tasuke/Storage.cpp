@@ -67,9 +67,9 @@ QJsonObject Storage::fromTaskToJson(Task& task) {
 		qjs.insert("End", end);
 	}
 
-	if (!task.getTagList().isEmpty()) {
+	if (!task.getTags().isEmpty()) {
 		QJsonArray array;
-		for (QString& tag : task.getTagList()) {
+		for (QString& tag : task.getTags()) {
 			QJsonValue jsTag(tag);
 			array.append(jsTag);
 		}
