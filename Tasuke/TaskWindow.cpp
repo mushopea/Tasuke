@@ -75,6 +75,7 @@ void TaskWindow::showAndMoveToSide() {
 }
 
 void TaskWindow::showTasks(QList<Task> tasks) {
+	ui.taskList->clear();
 	
 	for (int i = 0; i < tasks.size(); i++){
 
