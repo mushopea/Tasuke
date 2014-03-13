@@ -95,6 +95,15 @@
     <ClCompile Include="AboutWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TaskEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TaskEntry.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TaskEntry.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="TaskWindow.h">
@@ -119,6 +128,12 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="AboutWindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="TaskEntry.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="TaskEntry.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -151,6 +166,9 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_AboutWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_TaskEntry.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

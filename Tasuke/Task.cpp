@@ -26,6 +26,10 @@ void Task::removeTag(QString& tag) {
 	tags.removeOne(tag);
 }
 
+QList<QString> Task::getTags(){
+	return tags;
+}
+
 void Task::setBegin(QDateTime& _begin) {
 	begin = _begin;
 }

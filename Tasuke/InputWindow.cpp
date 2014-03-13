@@ -26,14 +26,15 @@ InputWindow::~InputWindow() {
 
 void InputWindow::showAndCenter() {
 
-	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
-	if(Tasuke::instance().getTaskWindow().hasFocus() || Tasuke::instance().getTaskWindow().isMinimized() == false){ //if taskWindow is open
-		center.setY( (Tasuke::instance().getTaskWindow().y()) + Tasuke::instance().getTaskWindow().height() ); //set commandbox below taskWindow
+	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
+	if(Tasuke::instance().getTaskWindow().isActiveWindow()){ //if taskWindow is open
+		pos.setY(Tasuke::instance().getTaskWindow().y() + Tasuke::instance().getTaskWindow().height() + 3); //set commandbox below taskWindow
+		pos.setX(Tasuke::instance().getTaskWindow().x());
 	} else {
-		center.setY(QApplication::desktop()->screen()->rect().height() / 4);
+		pos.setY(QApplication::desktop()->screen()->rect().height() / 4);
 	}
 
-	move(center);
+	move(pos);
 
 	show();
 	raise();

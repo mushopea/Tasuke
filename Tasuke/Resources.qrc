@@ -5,6 +5,12 @@
 		<file>about.png</file>
 		<file>roundedmask.png</file>
 		<file>InputWindowMask.png</file>
+		<file>TaskWindowBorderGrey.png</file>
+		<file>TaskWindowMaskWhite.png</file>
+		<file>closeButton.png</file>
+		<file>minButton.png</file>
+		<file>closeButtonHover.png</file>
+		<file>minButtonHover.png</file>
     </qresource>
 	
 	<qresource prefix="/Fonts">

@@ -6,26 +6,82 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>340</height>
+    <width>840</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Tasuke </string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {background-color: white;}
-QPushButton {background-color: white;  border: none; color: grey; }
-QPushButton:hover { color: black;}</string>
+   <string notr="true">QWidget {background-color: transparent;}
+QPushButton {background-color: transparent;  border: none; }
+
+  QPushButton#minButton {
+background-image: url(:/Images/minButton.png);
+}
+
+    QPushButton#minButton:hover {
+	background-image: url(:/Images/minButtonHover.png);
+    }
+     
+    QPushButton#minButton:pressed {
+	background-image: url(:/Images/minButtonHover.png);
+    }
+  
+
+	QPushButton#closeButton{
+background-image: url(:/Images/closeButton.png);
+}
+
+    QPushButton#closeButton:hover {
+	background-image: url(:/Images/closeButtonHover.png);
+    }
+     
+    QPushButton#closeButton:pressed {
+	background-image: url(:/Images/closeButtonHover.png);
+    }
+
+ QScrollBar:vertical {
+     border: none;
+     background: transparent;
+	width: 7px;
+ }
+
+QScrollBar::handle:vertical {
+     background: #ABABAB;
+	border: none;
+	width: 7px;
+ }
+
+ QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+      border: none;
+      background: none;
+	width: 0px;
+     height: 0px;
+
+  }
+
+    QScrollBar::add-line:vertical {
+     width: 0px;  
+     height: 0px;
+    }
+     
+    QScrollBar::sub-line:vertical {
+        width: 0px;  
+        height: 0px;
+    }
+
+</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
+  <widget class="QWidget" name="taskWin">
    <widget class="QPushButton" name="closeButton">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>10</y>
-      <width>31</width>
-      <height>23</height>
+      <x>795</x>
+      <y>20</y>
+      <width>22</width>
+      <height>22</height>
      </rect>
     </property>
     <property name="font">
@@ -39,17 +95,29 @@ QPushButton:hover { color: black;}</string>
     <property name="contextMenuPolicy">
      <enum>Qt::DefaultContextMenu</enum>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <property name="text">
-     <string>x</string>
+     <string/>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
     </property>
    </widget>
    <widget class="QPushButton" name="minButton">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>13</y>
-      <width>31</width>
-      <height>23</height>
+      <x>765</x>
+      <y>20</y>
+      <width>22</width>
+      <height>22</height>
      </rect>
     </property>
     <property name="palette">
@@ -66,10 +134,10 @@ QPushButton:hover { color: black;}</string>
        </colorrole>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
+         <color alpha="0">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
@@ -93,19 +161,19 @@ QPushButton:hover { color: black;}</string>
        </colorrole>
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
+         <color alpha="0">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
         <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
+         <color alpha="0">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
@@ -122,10 +190,10 @@ QPushButton:hover { color: black;}</string>
        </colorrole>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
+         <color alpha="0">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
@@ -149,19 +217,19 @@ QPushButton:hover { color: black;}</string>
        </colorrole>
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
+         <color alpha="0">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
         <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
+         <color alpha="0">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
@@ -178,10 +246,10 @@ QPushButton:hover { color: black;}</string>
        </colorrole>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
+         <color alpha="0">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
@@ -205,19 +273,19 @@ QPushButton:hover { color: black;}</string>
        </colorrole>
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
+         <color alpha="0">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
         <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
+         <color alpha="0">
+          <red>0</red>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
@@ -227,30 +295,185 @@ QPushButton:hover { color: black;}</string>
     <property name="font">
      <font>
       <family>Quicksand Book</family>
-      <pointsize>22</pointsize>
+      <pointsize>16</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <property name="text">
-     <string>-</string>
+     <string/>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget">
+   <widget class="QScrollArea" name="scrollbox">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>41</y>
-      <width>781</width>
-      <height>291</height>
+      <x>20</x>
+      <y>94</y>
+      <width>803</width>
+      <height>322</height>
      </rect>
     </property>
-    <column>
-     <property name="text">
-      <string>Task</string>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>803</width>
+       <height>322</height>
+      </rect>
      </property>
-    </column>
+     <property name="styleSheet">
+      <string notr="true">background: transparent;</string>
+     </property>
+     <widget class="QListWidget" name="taskList">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>797</width>
+        <height>330</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::NoSelection</enum>
+      </property>
+     </widget>
+    </widget>
    </widget>
+   <widget class="QLabel" name="taskScope">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>20</y>
+      <width>780</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Quicksand Book</family>
+      <pointsize>24</pointsize>
+      <weight>9</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 75 24pt &quot;Quicksand Book&quot;;
+text-align: center;
+background: transparent;</string>
+    </property>
+    <property name="text">
+     <string>                          Viewing all tasks</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="columnLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>60</y>
+      <width>780</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Quicksand Book</family>
+      <pointsize>17</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: transparent;
+color: grey;</string>
+    </property>
+    <property name="text">
+     <string>Task                                                   Start         End               Tag</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="border">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>840</width>
+      <height>440</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>TaskWindowBorderGrey.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="bg">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>840</width>
+      <height>440</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: transparent;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>TaskWindowMaskWhite.png</pixmap>
+    </property>
+   </widget>
+   <zorder>border</zorder>
+   <zorder>bg</zorder>
+   <zorder>taskScope</zorder>
+   <zorder>closeButton</zorder>
+   <zorder>minButton</zorder>
+   <zorder>scrollbox</zorder>
+   <zorder>columnLabel</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
