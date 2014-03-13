@@ -2,22 +2,23 @@
 #include <QDesktopWidget>
 #include "Tasuke.h"
 #include "TaskWindow.h"
+#include "TaskEntry.h"
+#include "qlistwidget.h"
+//#include <qdatetime.h>
+//#include <QList>
 
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 
-	//setAttribute(Qt::WA_TranslucentBackground);
-	//ui.closeButton->setStyleSheet("background-color: white; border: none;");
-	//ui.minButton->setStyleSheet("background-color: white; border: none; QPushButton:hover { color:red;}");
-
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
-
+	setAttribute(Qt::WA_TranslucentBackground);
+   
 	//context menu actions
 	quitAction = new QAction("&Quit", this);
 	showInputWindowAction = new QAction("&Show Command Box", this);
 	showTaskWindowAction = new QAction("&Show Display Window", this);
-	settingsAction = new QAction("&Settings", this);
-	helpAction = new QAction("&Help", this);
+	showSettingsWindowAction = new QAction("&Settings", this);
+	showHelpWindowAction = new QAction("&Help", this);
 	showAboutWindowAction = new QAction("&About Tasuke", this);
 }
 
@@ -31,6 +32,35 @@ TaskWindow::~TaskWindow() {
 	if (quitAction) {
 		delete quitAction;
 	}
+	if (showInputWindowAction) {
+		delete showInputWindowAction;
+	}
+	if (showTaskWindowAction){
+		delete showTaskWindowAction;
+	}
+	if (showSettingsWindowAction){
+		delete showSettingsWindowAction;
+	}
+	if (showHelpWindowAction){
+		delete showHelpWindowAction;
+	}
+	if (showAboutWindowAction){
+		delete showAboutWindowAction;
+	}
+
+}
+
+void TaskWindow::mousePressEvent(QMouseEvent *event){
+    mpos = event->pos();
+}
+
+void TaskWindow::mouseMoveEvent(QMouseEvent *event){
+    if (event->buttons() && Qt::LeftButton) {
+        QPoint diff = event->pos() - mpos;
+        QPoint newpos = this->pos() + diff;
+
+        this->move(newpos);
+    }
 }
 
 void TaskWindow::showAndMoveToSide() {
@@ -45,12 +75,19 @@ void TaskWindow::showAndMoveToSide() {
 }
 
 void TaskWindow::showTasks(QList<Task> tasks) {
-	ui.tableWidget->setRowCount(0);
+	
+	for (int i = 0; i < tasks.size(); i++){
 
-	for (int i=0; i<tasks.size(); i++) {
-		ui.tableWidget->insertRow(i);
-		ui.tableWidget->setItem(i, 0, new QTableWidgetItem(tasks[i].getDescription()));
+		Task t = tasks[i];
+
+		TaskEntry * entry = new TaskEntry(i+1, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
+
+		QListWidgetItem *listItem = new QListWidgetItem();
+		listItem->setSizeHint(QSize(780,65));
+		ui.taskList->addItem(listItem);
+		ui.taskList->setItemWidget(listItem, entry);	
 	}
+
 }
 
 void TaskWindow::showMessage(QString message) {
@@ -65,18 +102,14 @@ void TaskWindow::closeEvent(QCloseEvent *event) {
 }
 
 void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
-	if (reason == QSystemTrayIcon::Trigger) {
-		Tasuke::instance().showInputWindow();	
-	}
-
-	if(reason == QSystemTrayIcon::DoubleClick){
+	//Following shawn's advice to show both.
+	if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
 		Tasuke::instance().showTaskWindow();
+		Tasuke::instance().showInputWindow();	
 	}
 }
 
 //controls the actions of the context menu of the tray icon
-//IIRC, this function is not in Tasuke.cpp because it is not a QObject...
-//...And TaskWindow is the main QObject. :P
 void TaskWindow::contextMenuOperations(){
 
 	//tray stuff

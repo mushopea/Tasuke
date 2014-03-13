@@ -5,6 +5,8 @@
 #include <QMenu>
 #include <QCloseEvent>
 #include <QtWidgets/QMainWindow>
+#include <QMouseEvent> 
+#include <QPoint>
 #include "Task.h"
 #include "ui_TaskWindow.h"
 
@@ -25,6 +27,8 @@ public slots:
 
 protected:
 	void closeEvent(QCloseEvent *event);
+	void mousePressEvent(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
 
 private slots:
 	void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -33,11 +37,12 @@ private:
 	Ui::TaskWindowClass ui;
 	QSystemTrayIcon *trayIcon;
 	QMenu *trayIconMenu;
+	QPoint mpos;
 	QAction *quitAction;
 	QAction *showInputWindowAction;
 	QAction *showTaskWindowAction;
-	QAction *settingsAction;
-	QAction *helpAction;
+	QAction *showSettingsWindowAction;
+	QAction *showHelpWindowAction;
 	QAction *showAboutWindowAction;
 
 };
