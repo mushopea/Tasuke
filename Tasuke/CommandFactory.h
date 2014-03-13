@@ -11,7 +11,7 @@
 // this factory must be cleaned up using delete.
 class CommandFactory {
 private:
-	
+	static QDateTime parseDate(QString dateString);
 public:
 	static std::shared_ptr<ICommand> interpret(const std::string& command);
 };
