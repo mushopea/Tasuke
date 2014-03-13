@@ -1,176 +1,54 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;cxx;c;def</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h</Extensions>
-    </Filter>
-    <Filter Include="Form Files">
-      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
-      <Extensions>ui</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
-      <Extensions>qrc;*</Extensions>
-      <ParseFiles>false</ParseFiles>
-    </Filter>
-    <Filter Include="Generated Files">
-      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
-      <Extensions>moc;h;cpp</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
-    <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{33734efa-905e-400e-ab19-8aabc552bd2f}</UniqueIdentifier>
-      <Extensions>cpp;moc</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
-    <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{9efb663c-30c7-4c44-958d-3e9c112ead7e}</UniqueIdentifier>
-      <Extensions>cpp;moc</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
+    <ClCompile Include="AboutWindow.cpp" />
+    <ClCompile Include="CommandFactory.cpp" />
+    <ClCompile Include="Commands.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_AboutWindow.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_HotKeyThread.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_InputWindow.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_TaskEntry.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_AboutWindow.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_HotKeyThread.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_InputWindow.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_TaskEntry.cpp" />
+    <ClCompile Include="HotKeyThread.cpp" />
+    <ClCompile Include="InputWindow.cpp" />
+    <ClCompile Include="Task.cpp" />
+    <ClCompile Include="Exceptions.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_TaskWindow.cpp" />
+    <ClCompile Include="GeneratedFiles\qrc_Resources.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_TaskWindow.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TaskEntry.cpp" />
+    <ClCompile Include="TaskWindow.cpp" />
+    <ClCompile Include="Tasuke.cpp" />
+    <ClCompile Include="Storage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_TaskWindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_TaskWindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_Resources.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommandFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Commands.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Exceptions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tasuke.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Storage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Task.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InputWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_InputWindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_InputWindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="HotKeyThread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_HotKeyThread.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_HotKeyThread.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_AboutWindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_AboutWindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="AboutWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskEntry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_TaskEntry.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_TaskEntry.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
+    <ClInclude Include="CommandFactory.h" />
+    <ClInclude Include="Commands.h" />
+    <ClInclude Include="Constants.h" />
+    <ClInclude Include="GeneratedFiles\ui_AboutWindow.h" />
+    <ClInclude Include="GeneratedFiles\ui_InputWindow.h" />
+    <ClInclude Include="GeneratedFiles\ui_TaskEntry.h" />
+    <ClInclude Include="Task.h" />
+    <ClInclude Include="Exceptions.h" />
+    <ClInclude Include="GeneratedFiles\ui_TaskWindow.h" />
+    <ClInclude Include="Tasuke.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="TaskWindow.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Resources.qrc">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="InputWindow.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="InputWindow.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="HotKeyThread.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="AboutWindow.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="TaskWindow.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="AboutWindow.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="TaskEntry.ui">
-      <Filter>Form Files</Filter>
-    <CustomBuild Include="Storage.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    </CustomBuild>
-    <CustomBuild Include="TaskEntry.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_TaskWindow.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Commands.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Exceptions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tasuke.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Task.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_InputWindow.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_AboutWindow.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_TaskEntry.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
+    <CustomBuild Include="TaskWindow.h" />
+    <CustomBuild Include="TaskWindow.ui" />
+    <CustomBuild Include="AboutWindow.h" />
+    <CustomBuild Include="InputWindow.h" />
+    <CustomBuild Include="HotKeyThread.h" />
+    <CustomBuild Include="TaskEntry.h" />
+    <CustomBuild Include="Storage.h" />
+    <CustomBuild Include="Resources.qrc" />
+    <CustomBuild Include="InputWindow.ui" />
+    <CustomBuild Include="AboutWindow.ui" />
+    <CustomBuild Include="TaskEntry.ui" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tasuke.rc" />
