@@ -58,6 +58,17 @@ bool Task::isDone() const {
 	return done;
 }
 
+bool Task::isOverdue() {
+	if (end.isNull() || !end.isValid()) {
+		return false;
+	}
+	if (end < QDateTime::currentDateTime()) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 QDataStream& operator<<(QDataStream& out, const Task& task) {
 	out << task.description;
 	out << task.tags.size();

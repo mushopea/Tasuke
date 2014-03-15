@@ -34,6 +34,8 @@ public:
 	void markDone();
 	bool isDone() const;
 
+	bool isOverdue();
+
 	friend QDataStream& operator<<(QDataStream& out, const Task& task);
 	friend QDataStream& operator>>(QDataStream& in, Task& task);
 };
