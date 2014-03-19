@@ -10,9 +10,19 @@ namespace UnitTests
 	
 	public:
 		
-		TEST_METHOD(TestAdd)
+		TEST_METHOD(TestInterpretBadCommand)
 		{
-			// TODO: Your test code here
+			auto func = [this] {
+				Interpreter::interpret("bad command");
+			};
+
+			Assert::ExpectException<ExceptionBadCommand>(func);
+		}
+
+		TEST_METHOD(TestInterpretAddCommand)
+		{
+			ICommand* command = Interpreter::interpret("add task");
+			dynamic_cast<AddCommand*>(command);
 		}
 
 	};
