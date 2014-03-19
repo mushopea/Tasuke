@@ -10,7 +10,7 @@
 #include "Tasuke.h"
 
 // Constructor for the Tasuke singleton.
-Tasuke::Tasuke() {
+Tasuke::Tasuke(QObject* parent) : QObject(parent) {
 	LOG(INFO) << "Tasuke object created";
 
 	storage = new Storage();
@@ -24,6 +24,11 @@ Tasuke::Tasuke() {
 Tasuke::~Tasuke() {
 	LOG(INFO) << "Tasuke object destroyed";
 	
+	if (hotKeyThread != nullptr) {
+		hotKeyThread->stop();
+		delete hotKeyThread;
+	}
+
 	if (storage != nullptr) {
 		delete storage;
 	}
@@ -46,6 +51,10 @@ void Tasuke::loadFonts(){
 void Tasuke::initialize(){
 	updateTaskWindow(storage->getTasks());
 	taskWindow.contextMenuOperations();
+
+	hotKeyThread = new HotKeyThread(this);
+	connect(hotKeyThread, SIGNAL(hotKeyPress(int)), this, SLOT(handleHotKeyPress(int)), Qt::QueuedConnection);
+	hotKeyThread->start();
 }
 
 // Static method that returns the sole instance of Tasuke.
@@ -60,6 +69,17 @@ Tasuke& Tasuke::instance() {
 		return *instance;
 	}
 }
+
+void Tasuke::handleHotKeyPress(int key) {
+	LOG(INFO) << "Hot key pressed with keycode " << key;
+
+	if (inputWindow.isVisible() == true) {
+		inputWindow.hide();
+	} else {
+		inputWindow.showAndCenter();
+	}
+}
+
 
 void Tasuke::setStorage(Storage* _storage) {
 	LOG(INFO) << "Storage changed";

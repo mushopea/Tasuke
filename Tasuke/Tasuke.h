@@ -15,19 +15,9 @@
 // destructor is private. The only way to retrieve an instance of this
 // singleton is the instance() method which guarantees there is only one sole
 // instance of this class.
-class Tasuke {
-private:
-	Storage* storage;
-	std::vector<std::shared_ptr<ICommand>> commandUndoHistory;
-	std::vector<std::shared_ptr<ICommand>> commandRedoHistory;
-	TaskWindow taskWindow;
-	InputWindow inputWindow;
-	AboutWindow aboutWindow;
+class Tasuke : public QObject {
+	Q_OBJECT
 
-	Tasuke();
-	Tasuke(const Tasuke& old);
-	const Tasuke& operator=(const Tasuke& old);
-	~Tasuke();
 public:
 	void setStorage(Storage* _storage);
 	Storage& getStorage();
@@ -49,7 +39,23 @@ public:
 	void redoCommand();
 
 	static Tasuke &instance();
+
+private slots:
+	void handleHotKeyPress(int key);
 	
+private:
+	Storage* storage;
+	std::vector<std::shared_ptr<ICommand>> commandUndoHistory;
+	std::vector<std::shared_ptr<ICommand>> commandRedoHistory;
+	TaskWindow taskWindow;
+	InputWindow inputWindow;
+	AboutWindow aboutWindow;
+	HotKeyThread *hotKeyThread;
+
+	Tasuke(QObject* parent = 0);
+	Tasuke(const Tasuke& old);
+	const Tasuke& operator=(const Tasuke& old);
+	~Tasuke();
 };
 
 #endif
