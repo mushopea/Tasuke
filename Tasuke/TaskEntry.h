@@ -19,7 +19,7 @@ public slots:
 protected:
 
 private slots:
-	
+
 
 private:
 	Ui::TaskEntry ui;
@@ -38,9 +38,10 @@ private:
 	QFontMetrics fm;
 
 	//functions
+	QString fitDescription(QString description, int currWidth);
+	QString fitTags(QString tag, int currWidth);
 	void setDescription(QString description);
 	void setDateTimes(QDateTime start, QDateTime end);
-	QString createTagString(QList<QString> tags);
 	void setTags(QList<QString> tags);
 	void makeWidget();
 };

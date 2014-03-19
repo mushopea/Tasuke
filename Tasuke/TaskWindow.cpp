@@ -20,11 +20,6 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	showSettingsWindowAction = new QAction("&Settings", this);
 	showHelpWindowAction = new QAction("&Help", this);
 	showAboutWindowAction = new QAction("&About Tasuke", this);
-
-	//hotkey
-	hotKeyThread = new HotKeyThread(this);
-	connect(hotKeyThread, SIGNAL(hotKeyPress(int)), this, SLOT(handleHotKeyPress(int)), Qt::QueuedConnection);
-	hotKeyThread->start();
 }
 
 TaskWindow::~TaskWindow() {
@@ -55,6 +50,29 @@ TaskWindow::~TaskWindow() {
 
 }
 
+void TaskWindow::mousePressEvent(QMouseEvent *event){
+    mpos = event->pos();
+}
+
+void TaskWindow::mouseMoveEvent(QMouseEvent *event){
+    if (event->buttons() && Qt::LeftButton) {
+        QPoint diff = event->pos() - mpos;
+        QPoint newpos = this->pos() + diff;
+
+        this->move(newpos);
+    }
+}
+
+void TaskWindow::showAndMoveToSide() {
+	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
+	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
+
+	move(center);
+
+	showNormal();
+	raise();
+	activateWindow();
+}
 
 void TaskWindow::showTasks(QList<Task> tasks) {
 	ui.taskList->clear();
@@ -77,8 +95,20 @@ void TaskWindow::showMessage(QString message) {
 	trayIcon->showMessage("Tasuke", message);
 }
 
+void TaskWindow::closeEvent(QCloseEvent *event) {
+	if (trayIcon->isVisible()) {
+		hide();
+		event->ignore();
+	}
+}
 
-
+void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
+	//Following shawn's advice to show both.
+	if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
+		Tasuke::instance().showTaskWindow();
+		Tasuke::instance().showInputWindow();	
+	}
+}
 
 //controls the actions of the context menu of the tray icon
 void TaskWindow::contextMenuOperations(){
@@ -105,77 +135,4 @@ void TaskWindow::contextMenuOperations(){
 	//when tray icon is clicked..
 	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
-}
-
-void TaskWindow::showAndMoveToSide() {
-	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
-	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
-
-	move(center);
-
-	showNormal();
-	raise();
-	activateWindow();
-}
-
-
-void TaskWindow::closeEvent(QCloseEvent *event) {
-	if (trayIcon->isVisible()) {
-		hide();
-		event->ignore();
-	}
-}
-
-void TaskWindow::mousePressEvent(QMouseEvent *event){
-    mpos = event->pos();
-}
-
-void TaskWindow::mouseMoveEvent(QMouseEvent *event){
-    if (event->buttons() && Qt::LeftButton) {
-        QPoint diff = event->pos() - mpos;
-        QPoint newpos = this->pos() + diff;
-
-        this->move(newpos);
-    }
-}
-
-void TaskWindow::keyDownEvent(QKeyEvent *event){
-
-	event->accept();
-
-	if ((event->modifiers() == Qt::CTRL) && (event->key() == Qt::UpArrow)) {
-		ui.scrollbox->scroll(0, -300);
-	}
-		
-	if ((event->modifiers() == Qt::CTRL) && (event->key() == Qt::DownArrow)) {
-		ui.scrollbox->scroll(0, 300);
-	}
-
-	if (event->key() == Qt::UpArrow) {
-		ui.scrollbox->scroll(0,-60);
-	}
-		
-	if (event->key() == Qt::DownArrow) {
-		ui.scrollbox->scroll(0, 60);
-	}
-	
-	ui.scrollbox->repaint();
-}	
-
-
-
-void TaskWindow::handleHotKeyPress(int key) {
-	if (isVisible() == true) {
-		hide();
-	} else {
-		showAndMoveToSide();
-	}
-}
-
-void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
-	//Following shawn's advice to show both.
-	if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
-		Tasuke::instance().showTaskWindow();
-		Tasuke::instance().showInputWindow();	
-	}
 }

@@ -62,9 +62,6 @@
    <property name="text">
     <string/>
    </property>
-   <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-   </property>
   </widget>
   <widget class="QLabel" name="description">
    <property name="geometry">
@@ -81,12 +78,6 @@
      <pointsize>20</pointsize>
     </font>
    </property>
-   <property name="cursor">
-    <cursorShape>ArrowCursor</cursorShape>
-   </property>
-   <property name="focusPolicy">
-    <enum>Qt::NoFocus</enum>
-   </property>
    <property name="toolTip">
     <string notr="true"/>
    </property>
@@ -98,9 +89,6 @@
    </property>
    <property name="wordWrap">
     <bool>true</bool>
-   </property>
-   <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
    </property>
   </widget>
   <widget class="QLabel" name="startDate">
@@ -126,9 +114,6 @@
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
-   <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-   </property>
   </widget>
   <widget class="QLabel" name="endDate">
    <property name="geometry">
@@ -151,9 +136,6 @@
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
-   <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-   </property>
   </widget>
   <widget class="QLabel" name="tag">
    <property name="geometry">
@@ -175,9 +157,6 @@
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
-   </property>
-   <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
    </property>
   </widget>
   <widget class="QLabel" name="startTime">
@@ -206,9 +185,6 @@
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
-   <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-   </property>
   </widget>
   <widget class="QLabel" name="endTime">
    <property name="geometry">
@@ -230,9 +206,6 @@
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
-   </property>
-   <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
    </property>
   </widget>
  </widget>

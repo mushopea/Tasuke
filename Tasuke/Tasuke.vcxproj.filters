@@ -104,15 +104,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_TaskEntry.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_InputHighlighter.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_InputHighlighter.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="InputHighlighter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="TaskWindow.h">
@@ -145,17 +136,14 @@
     <CustomBuild Include="TaskEntry.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="SHAWindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="TaskEntry.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="TutorialWindow.ui">
       <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="SettingsWindow.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="InputHighlighter.h">
-      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -186,13 +174,13 @@
     <ClInclude Include="GeneratedFiles\ui_AboutWindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_SHAWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_TaskEntry.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_TutorialWindow.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_SettingsWindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

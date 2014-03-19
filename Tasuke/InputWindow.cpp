@@ -1,51 +1,28 @@
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QKeyEvent>
-#include <QFocusEvent>
 #include <QtGui\qbitmap.h>
 #include "Tasuke.h"
 #include "InputWindow.h"
 
-
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
+
 	ui.setupUi(this);
-	highlighter = new InputHighlighter(ui.lineEdit->document());
 
 	setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("background:transparent;");
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
 
-	ui.lineEdit->installEventFilter(this);
+	connect(ui.lineEdit, SIGNAL(returnPressed()), this, SLOT(handleReturnPressed()));
+	connect(ui.lineEdit, SIGNAL(editingFinished()), this, SLOT(handleEditingFinished()));
 
 	hotKeyThread = new HotKeyThread(this);
 	connect(hotKeyThread, SIGNAL(hotKeyPress(int)), this, SLOT(handleHotKeyPress(int)), Qt::QueuedConnection);
 	hotKeyThread->start();
-
-
 }
 
 InputWindow::~InputWindow() {
 
 }
-
-
-bool InputWindow::eventFilter(QObject* object, QEvent* event) {
-    if(event->type() == QEvent::KeyPress) {
-		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
-		if(eventKey->key() == Qt::Key_Return)  {
-			handleReturnPressed();
-			handleEditingFinished();
-			return true;
-		}
-    }
-
-	if(event->type() == QEvent::FocusOut) {
-	   handleEditingFinished();	
-    }
-
-    return QObject::eventFilter(object, event);
-}
-
 
 void InputWindow::showAndCenter() {
 
@@ -86,7 +63,7 @@ void InputWindow::changeBG(int themeNumber){
 }
 
 void InputWindow::handleReturnPressed() {
-	std::string command = ui.lineEdit->toPlainText().toUtf8().constData();
+	std::string command = ui.lineEdit->text().toUtf8().constData();
 
 	if (command.empty()) {
 		return;
