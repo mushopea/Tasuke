@@ -29,12 +29,37 @@ InputWindow::~InputWindow() {
 
 bool InputWindow::eventFilter(QObject* object, QEvent* event) {
     if(event->type() == QEvent::KeyPress) {
+		//enter key
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
 		if(eventKey->key() == Qt::Key_Return)  {
 			handleReturnPressed();
 			handleEditingFinished();
 			return true;
 		}
+
+		//scroll keys
+		if(eventKey->modifiers() & Qt::CTRL) {
+			if(eventKey->key() == Qt::Key_Down)  {
+				Tasuke::instance().getTaskWindow().pageDown();
+				return true;
+			}
+
+			if (eventKey->key() == Qt::Key_Up) {
+				Tasuke::instance().getTaskWindow().pageUp();
+				return true;
+			}
+		}
+
+		if(eventKey->key() == Qt::Key_Down)  {
+			Tasuke::instance().getTaskWindow().scrollDown();
+			return true;
+		}
+
+		if (eventKey->key() == Qt::Key_Up) {
+			Tasuke::instance().getTaskWindow().scrollUp();
+			return true;
+		}
+
     }
 
 	if(event->type() == QEvent::FocusOut) {
