@@ -23,8 +23,6 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	hotKeyThread = new HotKeyThread(this);
 	connect(hotKeyThread, SIGNAL(hotKeyPress(int)), this, SLOT(handleHotKeyPress(int)), Qt::QueuedConnection);
 	hotKeyThread->start();
-
-
 }
 
 TaskWindow::~TaskWindow() {
@@ -32,12 +30,9 @@ TaskWindow::~TaskWindow() {
 }
 
 //this function highlights the selected entry
-//it creates a new taskentry with a distinct background
-//and replaces the old task entry
+//it creates a new taskentry with a distinct background and replaces the old task entry
 //by inserting new list item and then deleting the old one.
 //it will also dehighlight the previously selected with a similar method
-//Cons: had to set entry ui as public for this :(
-//Cons II: have to go all the way back to creating task entry and resetting background
 void TaskWindow::highlightCurrentlySelected(){
 
 	QPixmap pxr(QString::fromUtf8("roundedEntryMaskSelect.png"));
@@ -56,16 +51,18 @@ void TaskWindow::highlightCurrentlySelected(){
 	ui.taskList->takeItem(currentlySelected+1);
 
 	//dehilight previously selected
-	Task t2 = currentTasks[previouslySelected];
-	TaskEntry * entry2 = new TaskEntry(previouslySelected+1, t2.getDescription(), t2.getTags(), t2.getBegin(), t2.getEnd(), this);
-	entry2->ui.bg->setPixmap(pxr2);
+	if (previouslySelected<currentTasks.size()) {
+		Task t2 = currentTasks[previouslySelected];
+		TaskEntry * entry2 = new TaskEntry(previouslySelected+1, t2.getDescription(), t2.getTags(), t2.getBegin(), t2.getEnd(), this);
+		entry2->ui.bg->setPixmap(pxr2);
 
-	QListWidgetItem *listItem2 = new QListWidgetItem();
-	listItem2->setSizeHint(QSize(780,65));
-	ui.taskList->insertItem(previouslySelected, listItem2);
-	ui.taskList->setItemWidget(listItem2, entry2);
+		QListWidgetItem *listItem2 = new QListWidgetItem();
+		listItem2->setSizeHint(QSize(780,65));
+		ui.taskList->insertItem(previouslySelected, listItem2);
+		ui.taskList->setItemWidget(listItem2, entry2);
 
-	ui.taskList->takeItem(previouslySelected+1);
+		ui.taskList->takeItem(previouslySelected+1);
+	}
 }
 
 void TaskWindow::showTasks(QList<Task> tasks) {
@@ -180,8 +177,9 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
     if(event->type() == QEvent::KeyPress) {
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
 
+		//scroll
 		if(eventKey->modifiers() & Qt::CTRL) {
-			if(eventKey->key() == Qt::Key_Down)  {
+			if(eventKey->key() == Qt::Key_Down) {
 				pageDown();
 				return true;
 			}
@@ -192,7 +190,7 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 			}
 		}
 
-		if(eventKey->key() == Qt::Key_Down)  {
+		if(eventKey->key() == Qt::Key_Down) {
 			scrollDown();
 			return true;
 		}
@@ -200,6 +198,15 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 		if (eventKey->key() == Qt::Key_Up) {
 			scrollUp();
 			return true;
+		}
+
+		//undo and redo shortcuts
+		if (eventKey->matches(QKeySequence::Undo)) {
+			Tasuke::instance().runCommand(QString("undo"));
+		}
+
+		if(eventKey->matches(QKeySequence::Redo)) {
+			Tasuke::instance().runCommand(QString("redo"));
 		}
 
     }

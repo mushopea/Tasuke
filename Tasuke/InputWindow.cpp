@@ -31,7 +31,7 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
     if(event->type() == QEvent::KeyPress) {
 		//enter key
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
-		if(eventKey->key() == Qt::Key_Return)  {
+		if(eventKey->key() == Qt::Key_Return) {
 			handleReturnPressed();
 			handleEditingFinished();
 			return true;
@@ -39,7 +39,7 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 
 		//scroll keys
 		if(eventKey->modifiers() & Qt::CTRL) {
-			if(eventKey->key() == Qt::Key_Down)  {
+			if(eventKey->key() == Qt::Key_Down) {
 				Tasuke::instance().getTaskWindow().pageDown();
 				return true;
 			}
@@ -50,7 +50,7 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 			}
 		}
 
-		if(eventKey->key() == Qt::Key_Down)  {
+		if(eventKey->key() == Qt::Key_Down) {
 			Tasuke::instance().getTaskWindow().scrollDown();
 			return true;
 		}
@@ -58,6 +58,15 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 		if (eventKey->key() == Qt::Key_Up) {
 			Tasuke::instance().getTaskWindow().scrollUp();
 			return true;
+		}
+
+		//undo keys
+		if (eventKey->matches(QKeySequence::Undo)) {
+			Tasuke::instance().runCommand(QString("undo"));
+		}
+
+		if(eventKey->matches(QKeySequence::Redo)) {
+			Tasuke::instance().runCommand(QString("redo"));
 		}
 
     }
