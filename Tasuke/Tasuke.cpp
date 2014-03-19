@@ -5,7 +5,7 @@
 #include <QtGui\qfontdatabase.h>
 #include "Constants.h"
 #include "Exceptions.h"
-#include "CommandFactory.h"
+#include "Interpreter.h"
 #include "Commands.h"
 #include "Tasuke.h"
 
@@ -15,7 +15,9 @@ Tasuke::Tasuke() {
 
 	storage = new Storage();
 	storage->loadFile();
-	initialize();
+
+	loadFonts();
+	showTaskWindow();
 }
 
 // Destructor for the Tasuke singleton.
@@ -42,9 +44,8 @@ void Tasuke::loadFonts(){
 }
 
 void Tasuke::initialize(){
-	loadFonts();
-	showTaskWindow();
 	updateTaskWindow(storage->getTasks());
+	taskWindow.contextMenuOperations();
 }
 
 // Static method that returns the sole instance of Tasuke.
@@ -53,6 +54,7 @@ Tasuke& Tasuke::instance() {
 	
 	if(instance == 0){
 		instance = new Tasuke();
+		instance->initialize();
 		return *instance;
 	} else {
 		return *instance;
@@ -117,7 +119,7 @@ void Tasuke::updateTaskWindow(QList<Task> tasks) {
 // This function runs a command in a string
 void Tasuke::runCommand(std::string commandString) {
 	try {
-		std::shared_ptr<ICommand> command = CommandFactory::interpret(commandString);
+		std::shared_ptr<ICommand> command = Interpreter::interpret(commandString);
 		if (command == nullptr) {
 			return;
 		}

@@ -1,5 +1,5 @@
-#ifndef COMMANDFACTORY_H
-#define COMMANDFACTORY_H
+#ifndef INTERPRETER_H
+#define INTERPRETER_H
 
 #include <memory>
 #include <string>
@@ -9,7 +9,7 @@
 // This class is a factory class. It creates an instance of an ICommand from
 // the string input by the user at the prompt. All ICommands produced from
 // this factory must be cleaned up using delete.
-class CommandFactory {
+class Interpreter {
 private:
 	static QDateTime parseDate(QString dateString);
 public:

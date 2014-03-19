@@ -23,8 +23,6 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	showSettingsWindowAction = new QAction("&Settings", this);
 	showHelpWindowAction = new QAction("&Help", this);
 	showAboutWindowAction = new QAction("&About Tasuke", this);
-
-	contextMenuOperations();
 }
 
 TaskWindow::~TaskWindow() {
