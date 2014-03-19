@@ -11,7 +11,7 @@
 // Tasuke singleton.
 class Storage {
 private:
-	QFile file;
+	//QFile file;
 	QList<Task> tasks;
 
 	QJsonObject fromTaskToJson(Task& task);

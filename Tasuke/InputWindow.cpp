@@ -7,9 +7,9 @@
 #include "Tasuke.h"
 #include "InputWindow.h"
 
+InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "InputWindow instance created";
 
-InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	ui.setupUi(this);
 	highlighter = new InputHighlighter(ui.lineEdit->document());
 
@@ -80,7 +80,7 @@ void InputWindow::changeBG(int themeNumber){
 }
 
 void InputWindow::handleReturnPressed() {
-	QString command = ui.lineEdit->text();
+	QString command = ui.lineEdit->toPlainText();
 
 	if (command.isEmpty()) {
 		return;

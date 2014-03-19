@@ -44,10 +44,6 @@ void TaskWindow::showTasks(QList<Task> tasks) {
 
 }
 
-	hide();
-	event->ignore();
-}
-
 void TaskWindow::showAndMoveToSide() {
 	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
 	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
@@ -61,10 +57,8 @@ void TaskWindow::showAndMoveToSide() {
 
 
 void TaskWindow::closeEvent(QCloseEvent *event) {
-	if (trayIcon->isVisible()) {
-		hide();
-		event->ignore();
-	}
+	hide();
+	event->ignore();
 }
 
 void TaskWindow::mousePressEvent(QMouseEvent *event){
@@ -110,13 +104,5 @@ void TaskWindow::handleHotKeyPress(int key) {
 		hide();
 	} else {
 		showAndMoveToSide();
-	}
-}
-
-void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
-	//Following shawn's advice to show both.
-	if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
-		Tasuke::instance().showTaskWindow();
-		Tasuke::instance().showInputWindow();	
 	}
 }
