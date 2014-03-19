@@ -35,20 +35,23 @@ TaskWindow::~TaskWindow() {
 //it will also dehighlight the previously selected with a similar method
 void TaskWindow::highlightCurrentlySelected(){
 
-	QPixmap pxr(QString::fromUtf8("roundedEntryMaskSelect.png"));
-	QPixmap pxr2(QString::fromUtf8("roundedEntryMask.png"));
+	QPixmap pxr(QString::fromUtf8("roundedEntryMaskSelect.png")); //highlighted bg image
+	QPixmap pxr2(QString::fromUtf8("roundedEntryMask.png")); //normal bg image
 
-	Task t = currentTasks[currentlySelected];
-	TaskEntry * entry = new TaskEntry(currentlySelected+1, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
-	entry->ui.bg->setPixmap(pxr); 
+	//highlight currently selected
+	if((currentlySelected>0) && (currentlySelected<currentTasks.size())) {
+		
+		Task t = currentTasks[currentlySelected];
+		TaskEntry * entry = new TaskEntry(currentlySelected+1, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
+		entry->ui.bg->setPixmap(pxr); 
 
+		QListWidgetItem *listItem = new QListWidgetItem();
+		listItem->setSizeHint(QSize(780,65));
+		ui.taskList->insertItem(currentlySelected, listItem);
+		ui.taskList->setItemWidget(listItem, entry);
 
-	QListWidgetItem *listItem = new QListWidgetItem();
-	listItem->setSizeHint(QSize(780,65));
-	ui.taskList->insertItem(currentlySelected, listItem);
-	ui.taskList->setItemWidget(listItem, entry);
-
-	ui.taskList->takeItem(currentlySelected+1);
+		ui.taskList->takeItem(currentlySelected+1);
+	}
 
 	//dehilight previously selected
 	if (previouslySelected<currentTasks.size()) {

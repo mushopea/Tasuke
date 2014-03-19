@@ -65,8 +65,15 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 			Tasuke::instance().runCommand(QString("undo"));
 		}
 
-		if(eventKey->matches(QKeySequence::Redo)) {
+		if (eventKey->matches(QKeySequence::Redo)) {
 			Tasuke::instance().runCommand(QString("redo"));
+		}
+
+		//paste shortcut
+		if (eventKey->matches(QKeySequence::Paste)) {
+			if(ui.lineEdit->toPlainText().trimmed().isEmpty()) {
+				ui.lineEdit->insertPlainText(QString("add "));
+			}
 		}
 
     }
