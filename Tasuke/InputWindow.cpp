@@ -26,7 +26,7 @@ void InputWindow::showAndCenter() {
 	LOG(INFO) << "Displaying input window";
 
 	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
-	if(Tasuke::instance().getTaskWindow().isActiveWindow()){ //if taskWindow is open
+	if(Tasuke::instance().getTaskWindow().isVisible()){ //if taskWindow is open
 		pos.setY(Tasuke::instance().getTaskWindow().y() + Tasuke::instance().getTaskWindow().height() + 3); //set commandbox below taskWindow
 		pos.setX(Tasuke::instance().getTaskWindow().x());
 	} else {
@@ -39,11 +39,6 @@ void InputWindow::showAndCenter() {
 	raise();
 	activateWindow();
 }
-
-void InputWindow::closeEvent(QCloseEvent* event) {
-	
-}
-
 
 //will be updated when "themes" is implemented.
 void InputWindow::changeBorder(int themeNumber){

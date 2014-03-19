@@ -15,44 +15,10 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 	setAttribute(Qt::WA_TranslucentBackground);
-   
-	//context menu actions
-	quitAction = new QAction("&Quit", this);
-	showInputWindowAction = new QAction("&Show Command Box", this);
-	showTaskWindowAction = new QAction("&Show Display Window", this);
-	showSettingsWindowAction = new QAction("&Settings", this);
-	showHelpWindowAction = new QAction("&Help", this);
-	showAboutWindowAction = new QAction("&About Tasuke", this);
 }
 
 TaskWindow::~TaskWindow() {
 	LOG(INFO) << "TaskWindow instance destroyed";
-
-	if (trayIcon) {
-		delete trayIcon;
-	}
-	if (trayIconMenu) {
-		delete trayIconMenu;
-	}
-	if (quitAction) {
-		delete quitAction;
-	}
-	if (showInputWindowAction) {
-		delete showInputWindowAction;
-	}
-	if (showTaskWindowAction){
-		delete showTaskWindowAction;
-	}
-	if (showSettingsWindowAction){
-		delete showSettingsWindowAction;
-	}
-	if (showHelpWindowAction){
-		delete showHelpWindowAction;
-	}
-	if (showAboutWindowAction){
-		delete showAboutWindowAction;
-	}
-
 }
 
 void TaskWindow::mousePressEvent(QMouseEvent *event){
@@ -96,49 +62,7 @@ void TaskWindow::showTasks(QList<Task> tasks) {
 
 }
 
-void TaskWindow::showMessage(QString message) {
-	trayIcon->showMessage("Tasuke", message);
-}
-
 void TaskWindow::closeEvent(QCloseEvent *event) {
-	if (trayIcon->isVisible()) {
-		hide();
-		event->ignore();
-	}
-}
-
-void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
-	//Following shawn's advice to show both.
-	if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
-		Tasuke::instance().showTaskWindow();
-		Tasuke::instance().showInputWindow();	
-	}
-}
-
-//controls the actions of the context menu of the tray icon
-void TaskWindow::contextMenuOperations(){
-	LOG(INFO) << "Install system tray";
-
-	//tray stuff
-	trayIconMenu = new QMenu(this);
-	trayIcon = new QSystemTrayIcon(this);
-	trayIcon->setContextMenu(trayIconMenu);
-	trayIcon->setIcon(QIcon(":/Images/Traysuke.png"));
-	trayIcon->show();
-
-	//add actions
-	trayIconMenu->addAction(quitAction);
-	trayIconMenu->addAction(showTaskWindowAction);
-	trayIconMenu->addAction(showInputWindowAction);
-	trayIconMenu->addAction(showAboutWindowAction);
-
-	//connect context menu actions
-	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-	connect(showTaskWindowAction, SIGNAL(triggered()), this, SLOT(showAndMoveToSide()));
-	connect(showInputWindowAction, SIGNAL(triggered()), &(Tasuke::instance().getInputWindow()), SLOT(showAndCenter()));
-	connect(showAboutWindowAction, SIGNAL(triggered()),  &(Tasuke::instance().getAboutWindow()), SLOT(showAndCenter()));
-
-	//when tray icon is clicked..
-	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-
+	hide();
+	event->ignore();
 }

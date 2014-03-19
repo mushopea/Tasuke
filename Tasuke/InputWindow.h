@@ -16,9 +16,6 @@ public:
 public slots:
 	void showAndCenter();
 
-protected:
-	void closeEvent(QCloseEvent* event);
-
 private slots:
 	void handleReturnPressed();
 	void handleEditingFinished();
