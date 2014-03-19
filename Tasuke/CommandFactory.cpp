@@ -1,3 +1,4 @@
+#include <glog/logging.h>
 #include <QApplication>
 #include <QStringList>
 #include "Tasuke.h"
@@ -9,6 +10,8 @@
 // This static helper function returns an instance of a ICommand that represents
 // the user's command. The caller must clean up using delete.
 std::shared_ptr<ICommand> CommandFactory::interpret(const std::string& command) {
+	LOG(INFO) << "Interpretting " << command;
+
 	QString commandString(command.c_str());
 	QStringList tokens = commandString.trimmed().split(" ");
 	QString commandType = tokens[0];

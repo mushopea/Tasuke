@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <glog/logging.h>
 #include <QMessageBox>
 #include <QtGui\qfontdatabase.h>
 #include "Constants.h"
@@ -10,20 +11,25 @@
 
 // Constructor for the Tasuke singleton.
 Tasuke::Tasuke() {
+	LOG(INFO) << "Tasuke object created";
+
 	storage = new Storage();
 	storage->loadFile();
-	showTaskWindow();
-	updateTaskWindow(storage->getTasks());
+	initialize();
 }
 
 // Destructor for the Tasuke singleton.
 Tasuke::~Tasuke() {
+	LOG(INFO) << "Tasuke object destroyed";
+	
 	if (storage != nullptr) {
 		delete storage;
 	}
 }
 
 void Tasuke::loadFonts(){
+	LOG(INFO) << "Loading fonts";
+
 	QFontDatabase fontDatabase; 
 	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book.otf");
 	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book_Oblique.otf");
@@ -37,7 +43,8 @@ void Tasuke::loadFonts(){
 
 void Tasuke::initialize(){
 	loadFonts();
-	taskWindow.contextMenuOperations();
+	showTaskWindow();
+	updateTaskWindow(storage->getTasks());
 }
 
 // Static method that returns the sole instance of Tasuke.
@@ -46,7 +53,6 @@ Tasuke& Tasuke::instance() {
 	
 	if(instance == 0){
 		instance = new Tasuke();
-		instance->initialize();
 		return *instance;
 	} else {
 		return *instance;
@@ -54,6 +60,8 @@ Tasuke& Tasuke::instance() {
 }
 
 void Tasuke::setStorage(Storage* _storage) {
+	LOG(INFO) << "Storage changed";
+
 	delete storage;
 	storage = _storage;
 }
@@ -95,10 +103,14 @@ void Tasuke::hideTaskWindow() {
 }
 
 void Tasuke::showMessage(QString message) {
+	LOG(INFO) << "Showing message: " << message.toStdString();
+
 	taskWindow.showMessage(message);
 }
 
 void Tasuke::updateTaskWindow(QList<Task> tasks) {
+	LOG(INFO) << "Updating task window with " << QString::number(tasks.size()).toStdString() << " tasks";
+
 	taskWindow.showTasks(tasks);
 }
 
@@ -110,9 +122,13 @@ void Tasuke::runCommand(std::string commandString) {
 			return;
 		}
 		command->run();
+
+		LOG(INFO) << "Pushing command to history stack";
 		commandUndoHistory.push_back(command);
 		commandRedoHistory.clear();
 	} catch (ExceptionBadCommand exception) {
+		LOG(INFO) << "Error parsing command";
+		
 		showMessage("Error parsing command");
 	}
 }
@@ -123,6 +139,7 @@ void Tasuke::undoCommand() {
 		return;
 	}
 
+	LOG(INFO) << "Undoing command";
 	std::shared_ptr<ICommand> command = commandUndoHistory.back();
 	commandUndoHistory.pop_back();
 	command->undo();
@@ -135,6 +152,7 @@ void Tasuke::redoCommand() {
 		return;
 	}
 
+	LOG(INFO) << "Redoing command";
 	std::shared_ptr<ICommand> command = commandRedoHistory.back();
 	commandRedoHistory.pop_back();
 	command->run();

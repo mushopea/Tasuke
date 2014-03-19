@@ -1,3 +1,4 @@
+#include <glog/logging.h>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QtGui\qbitmap.h>
@@ -5,6 +6,7 @@
 #include "InputWindow.h"
 
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
+	LOG(INFO) << "InputWindow instance created";
 
 	ui.setupUi(this);
 
@@ -21,10 +23,11 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 }
 
 InputWindow::~InputWindow() {
-
+	LOG(INFO) << "InputWindow instance destroyed";
 }
 
 void InputWindow::showAndCenter() {
+	LOG(INFO) << "Displaying input window";
 
 	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
 	if(Tasuke::instance().getTaskWindow().isActiveWindow()){ //if taskWindow is open
@@ -78,6 +81,8 @@ void InputWindow::handleEditingFinished() {
 }
 
 void InputWindow::handleHotKeyPress(int key) {
+	LOG(INFO) << "Hot key pressed with keycode " << key;
+
 	if (isVisible() == true) {
 		hide();
 	} else {

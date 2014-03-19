@@ -135,6 +135,14 @@
     </ClCompile>
     <ClCompile Include="TasukeTests.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\glog-0.3.3\vsprojects\libglog\libglog.vcxproj">
+      <Project>{34bd04bd-bc1d-4bfc-aafc-ed02d9e960f1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Tasuke\Tasuke.vcxproj">
+      <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

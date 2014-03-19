@@ -1,3 +1,4 @@
+#include <glog/logging.h>
 #include <QApplication>
 #include <QDesktopWidget>
 #include "Tasuke.h"
@@ -8,6 +9,8 @@
 //#include <QList>
 
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
+	LOG(INFO) << "TaskWindow instance created";
+
 	ui.setupUi(this);
 
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
@@ -20,9 +23,13 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	showSettingsWindowAction = new QAction("&Settings", this);
 	showHelpWindowAction = new QAction("&Help", this);
 	showAboutWindowAction = new QAction("&About Tasuke", this);
+
+	contextMenuOperations();
 }
 
 TaskWindow::~TaskWindow() {
+	LOG(INFO) << "TaskWindow instance destroyed";
+
 	if (trayIcon) {
 		delete trayIcon;
 	}
@@ -112,6 +119,7 @@ void TaskWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 
 //controls the actions of the context menu of the tray icon
 void TaskWindow::contextMenuOperations(){
+	LOG(INFO) << "Install system tray";
 
 	//tray stuff
 	trayIconMenu = new QMenu(this);
