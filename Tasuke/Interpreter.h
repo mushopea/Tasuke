@@ -11,9 +11,9 @@
 // this factory must be cleaned up using delete.
 class Interpreter {
 private:
-	static QDateTime parseDate(QString dateString);
+	static QDateTime parseDate(QString& dateString);
 public:
-	static std::shared_ptr<ICommand> interpret(const std::string& command);
+	static std::shared_ptr<ICommand> interpret(QString& command);
 };
 
 #endif

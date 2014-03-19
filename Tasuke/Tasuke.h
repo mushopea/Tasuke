@@ -38,7 +38,7 @@ public slots:
 	void showMessage(QString message);
 	void updateTaskWindow(QList<Task> tasks);
 
-	void runCommand(std::string commandString);
+	void runCommand(QString& commandString);
 	void undoCommand();
 	void redoCommand();
 

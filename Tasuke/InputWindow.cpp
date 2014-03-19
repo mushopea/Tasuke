@@ -57,9 +57,9 @@ void InputWindow::changeBG(int themeNumber){
 }
 
 void InputWindow::handleReturnPressed() {
-	std::string command = ui.lineEdit->text().toUtf8().constData();
+	QString command = ui.lineEdit->text();
 
-	if (command.empty()) {
+	if (command.isEmpty()) {
 		return;
 	}
 
