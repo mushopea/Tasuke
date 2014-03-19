@@ -15,7 +15,7 @@
 #include "Tasuke.h"
 #include "Storage.h"
 #include "Commands.h"
-#include "CommandFactory.h"
+#include "Interpreter.h"
 #include "Exceptions.h"
 #include "Constants.h"
 #include "Task.h"

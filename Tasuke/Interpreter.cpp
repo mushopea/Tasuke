@@ -9,10 +9,9 @@
 
 // This static helper function returns an instance of a ICommand that represents
 // the user's command. The caller must clean up using delete.
-std::shared_ptr<ICommand> Interpreter::interpret(const std::string& command) {
-	LOG(INFO) << "Interpretting " << command;
+ICommand* Interpreter::interpret(QString commandString) {
+	LOG(INFO) << "Interpretting " << commandString.toStdString();
 
-	QString commandString(command.c_str());
 	QStringList tokens = commandString.trimmed().split(" ");
 	QString commandType = tokens[0];
 
@@ -69,7 +68,7 @@ std::shared_ptr<ICommand> Interpreter::interpret(const std::string& command) {
 		}
 
 		task.setDescription(description);
-		return std::shared_ptr<ICommand>(new AddCommand(task));
+		return new AddCommand(task);
 	} else if (commandType == "remove") {
 		if (tokens.size() != 2) {
 			throw ExceptionBadCommand();
@@ -80,7 +79,7 @@ std::shared_ptr<ICommand> Interpreter::interpret(const std::string& command) {
 		if (pos < 1 || pos > maxPos) {
 			throw ExceptionBadCommand();
 		}
-		return std::shared_ptr<ICommand>(new RemoveCommand(pos-1));
+		return new RemoveCommand(pos-1);
 	} else if (commandType == "edit") {
 		if (tokens.size() < 2) {
 			throw ExceptionBadCommand();
@@ -101,7 +100,7 @@ std::shared_ptr<ICommand> Interpreter::interpret(const std::string& command) {
 		}
 		description.chop(1);
 		task.setDescription(description);
-		return std::shared_ptr<ICommand>(new EditCommand(pos-1, task));
+		return new EditCommand(pos-1, task);
 	} else if (commandString == "show") {
 		Tasuke::instance().showTaskWindow();
 		return nullptr;

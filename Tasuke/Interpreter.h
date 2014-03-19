@@ -13,7 +13,7 @@ class Interpreter {
 private:
 	static QDateTime parseDate(QString dateString);
 public:
-	static std::shared_ptr<ICommand> interpret(const std::string& command);
+	static ICommand* interpret(QString command);
 };
 
 #endif

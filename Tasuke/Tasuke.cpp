@@ -179,9 +179,9 @@ void Tasuke::updateTaskWindow(QList<Task> tasks) {
 }
 
 // This function runs a command in a string
-void Tasuke::runCommand(std::string commandString) {
+void Tasuke::runCommand(QString commandString) {
 	try {
-		std::shared_ptr<ICommand> command = Interpreter::interpret(commandString);
+		std::shared_ptr<ICommand> command = std::shared_ptr<ICommand>(Interpreter::interpret(commandString));
 		if (command == nullptr) {
 			return;
 		}

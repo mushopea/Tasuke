@@ -10,7 +10,7 @@
 
 // Constructor for Storage.
 Storage::Storage() {
-	LOG(INFO) << "Storage instance created";
+	LOG(INFO) << "Storage instance created...";
 
 	qRegisterMetaType<Task>("Task");
 	qRegisterMetaTypeStreamOperators<Task>("Task");	
@@ -19,7 +19,7 @@ Storage::Storage() {
 // This function loads the contents of the text file and serialize it into
 // the memory. If there is no such file, this function does nothing.
 void Storage::loadFile() {
-	LOG(INFO) << "Loading file";
+	LOG(INFO) << "Loading file...";
 
 	QSettings settings("Tasuke","Tasuke");
 	int size = settings.beginReadArray("tasks");
@@ -29,6 +29,8 @@ void Storage::loadFile() {
 		tasks.push_back(task);
 	}
 	settings.endArray();
+
+	LOG(INFO) << "File loaded.";
 }
 
 // This function deserialize the data from memory and writes it to the text
