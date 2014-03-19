@@ -78,6 +78,9 @@ QScrollBar::handle:vertical {
 </string>
   </property>
   <widget class="QWidget" name="taskWin">
+   <property name="focusPolicy">
+    <enum>Qt::StrongFocus</enum>
+   </property>
    <widget class="QPushButton" name="closeButton">
     <property name="geometry">
      <rect>

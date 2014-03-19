@@ -19,8 +19,13 @@ public:
 	TaskWindow(QWidget *parent = 0);
 	~TaskWindow();
 
-	
+	void highlightCurrentlySelected();
 	void showTasks(QList<Task> tasks);
+	void scrollUp();
+	void scrollDown();
+	void pageUp();
+	void pageDown();
+
 	
 public slots:
 	void showAndMoveToSide();
@@ -29,13 +34,17 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	void mousePressEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
-	void keyDownEvent(QKeyEvent *event);
+	bool eventFilter(QObject* object, QEvent* event);
 
 	void handleHotKeyPress(int key);
+
 private:
 	Ui::TaskWindowClass ui;	
 	HotKeyThread *hotKeyThread;
 	QPoint mpos;
+	QList<Task> currentTasks;
+	int currentlySelected;
+	int previouslySelected;
 
 };
 
