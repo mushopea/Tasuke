@@ -21,9 +21,7 @@ public:
 
 	
 	void showTasks(QList<Task> tasks);
-	void showMessage(QString message);
-	void contextMenuOperations();
-
+	
 public slots:
 	void showAndMoveToSide();
 
@@ -33,22 +31,11 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event);
 	void keyDownEvent(QKeyEvent *event);
 
-private slots:
 	void handleHotKeyPress(int key);
-	void iconActivated(QSystemTrayIcon::ActivationReason reason);
-
 private:
 	Ui::TaskWindowClass ui;	
 	HotKeyThread *hotKeyThread;
-	QSystemTrayIcon *trayIcon;
-	QMenu *trayIconMenu;
 	QPoint mpos;
-	QAction *quitAction;
-	QAction *showInputWindowAction;
-	QAction *showTaskWindowAction;
-	QAction *showSettingsWindowAction;
-	QAction *showHelpWindowAction;
-	QAction *showAboutWindowAction;
 
 };
 

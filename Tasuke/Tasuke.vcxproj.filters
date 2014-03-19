@@ -50,9 +50,6 @@
     <ClCompile Include="GeneratedFiles\qrc_Resources.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="CommandFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Commands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -104,14 +101,14 @@
     <ClCompile Include="GeneratedFiles\Release\moc_TaskEntry.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_InputHighlighter.cpp">
+    <ClCompile Include="Interpreter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Tasuke.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_InputHighlighter.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_Tasuke.cpp">
       <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="InputHighlighter.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -145,25 +142,22 @@
     <CustomBuild Include="TaskEntry.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="SHAWindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
     <CustomBuild Include="TaskEntry.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="TutorialWindow.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="SettingsWindow.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="InputHighlighter.h">
+    <CustomBuild Include="Tasuke.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_TaskWindow.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandFactory.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Commands.h">
       <Filter>Header Files</Filter>
@@ -172,9 +166,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Exceptions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tasuke.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Task.h">
@@ -186,14 +177,17 @@
     <ClInclude Include="GeneratedFiles\ui_AboutWindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_SHAWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_TaskEntry.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_TutorialWindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_SettingsWindow.h">
-      <Filter>Generated Files</Filter>
+    <ClInclude Include="Interpreter.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

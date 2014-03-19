@@ -1,14 +1,17 @@
+#include <glog/logging.h>
 #include <QApplication>
 #include <QStringList>
 #include "Tasuke.h"
 #include "Commands.h"
 #include "Constants.h"
 #include "Exceptions.h"
-#include "CommandFactory.h"
+#include "Interpreter.h"
 
 // This static helper function returns an instance of a ICommand that represents
 // the user's command. The caller must clean up using delete.
-std::shared_ptr<ICommand> CommandFactory::interpret(const std::string& command) {
+std::shared_ptr<ICommand> Interpreter::interpret(const std::string& command) {
+	LOG(INFO) << "Interpretting " << command;
+
 	QString commandString(command.c_str());
 	QStringList tokens = commandString.trimmed().split(" ");
 	QString commandType = tokens[0];
@@ -122,7 +125,7 @@ std::shared_ptr<ICommand> CommandFactory::interpret(const std::string& command) 
 	}
 }
 
-QDateTime CommandFactory::parseDate(QString dateString) {
+QDateTime Interpreter::parseDate(QString dateString) {
 	dateString = dateString.trimmed();
 	QDateTime retVal;
 	QStringList fullDateFormats;

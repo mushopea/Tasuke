@@ -16,20 +16,15 @@ public:
 public slots:
 	void showAndCenter();
 
-protected:
 	bool eventFilter(QObject *object, QEvent *event);
-	void closeEvent(QCloseEvent* event);
-
 private slots:
 	void handleReturnPressed();
 	void handleEditingFinished();
-	void handleHotKeyPress(int key);
 	void changeBorder(int themeNumber);
 	void changeBG(int themeNumber);
 
 private:
 	Ui::InputWindow ui;
-	HotKeyThread *hotKeyThread;
     InputHighlighter *highlighter;
 };
 

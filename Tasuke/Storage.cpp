@@ -1,6 +1,7 @@
+#include <glog/logging.h>
 #include <QSettings>
 #include <QVariant>
-#include <qjsonarray.h>
+#include <QJsonArray>
 #include <iostream>
 #include "Constants.h"
 #include "Exceptions.h"
@@ -9,6 +10,8 @@
 
 // Constructor for Storage.
 Storage::Storage() {
+	LOG(INFO) << "Storage instance created";
+
 	qRegisterMetaType<Task>("Task");
 	qRegisterMetaTypeStreamOperators<Task>("Task");	
 }
@@ -16,6 +19,8 @@ Storage::Storage() {
 // This function loads the contents of the text file and serialize it into
 // the memory. If there is no such file, this function does nothing.
 void Storage::loadFile() {
+	LOG(INFO) << "Loading file";
+
 	QSettings settings("Tasuke","Tasuke");
 	int size = settings.beginReadArray("tasks");
 	for (int i=0; i<size; i++) {
@@ -29,8 +34,9 @@ void Storage::loadFile() {
 // This function deserialize the data from memory and writes it to the text
 // file. If the file cannot be written, an ExceptionNotOpen is thrown.
 void Storage::saveFile() {
-	QSettings settings("Tasuke","Tasuke");
+	LOG(INFO) << "Saving file";
 
+	QSettings settings("Tasuke","Tasuke");
 	settings.beginWriteArray("tasks");
 	for (int i=0; i<tasks.size(); i++) {
 		settings.setArrayIndex(i);
@@ -128,12 +134,17 @@ Task Storage::fromJsonToTask(QJsonObject& json) {
 }
 
 void Storage::addTask(Task& task) {
+	LOG(INFO) << "Adding task " << task.getDescription().toStdString();
+
 	tasks.push_back(task);
 	saveFile();
 	Tasuke::instance().updateTaskWindow(tasks);
 }
 
 void Storage::addTask(Task& task, int pos) {
+	LOG(INFO) << "Adding task " << task.getDescription().toStdString()
+		<< " at position " << pos;
+
 	tasks.insert(pos, task);
 	saveFile();
 	Tasuke::instance().updateTaskWindow(tasks);
@@ -144,12 +155,16 @@ Task& Storage::getTask(int pos) {
 }
 
 void Storage::removeTask(int pos) {
+	LOG(INFO) << "Removing task at position " << pos;
+
 	tasks.removeAt(pos);
 	saveFile();
 	Tasuke::instance().updateTaskWindow(tasks);
 }
 
 void Storage::popTask() {
+	LOG(INFO) << "Popping task from back";
+
 	tasks.pop_back();
 	saveFile();
 	Tasuke::instance().updateTaskWindow(tasks);

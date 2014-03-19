@@ -15,19 +15,9 @@
 // destructor is private. The only way to retrieve an instance of this
 // singleton is the instance() method which guarantees there is only one sole
 // instance of this class.
-class Tasuke {
-private:
-	Storage* storage;
-	std::vector<std::shared_ptr<ICommand>> commandUndoHistory;
-	std::vector<std::shared_ptr<ICommand>> commandRedoHistory;
-	TaskWindow taskWindow;
-	InputWindow inputWindow;
-	AboutWindow aboutWindow;
+class Tasuke : public QWidget {
+	Q_OBJECT
 
-	Tasuke();
-	Tasuke(const Tasuke& old);
-	const Tasuke& operator=(const Tasuke& old);
-	~Tasuke();
 public:
 	void setStorage(Storage* _storage);
 	Storage& getStorage();
@@ -37,19 +27,41 @@ public:
 
 	void loadFonts();
 	void initialize();
+	
+	static Tasuke &instance();
+
+public slots:
 	void showInputWindow(); 
 	void showTaskWindow();
 	void showAboutWindow();
 	void hideTaskWindow();
 	void showMessage(QString message);
 	void updateTaskWindow(QList<Task> tasks);
-	
+
 	void runCommand(std::string commandString);
 	void undoCommand();
 	void redoCommand();
 
-	static Tasuke &instance();
+private slots:
+	void handleHotKeyPress(int key);
+	void handleIconActivated(QSystemTrayIcon::ActivationReason reason);
 	
+private:
+	Storage* storage;
+	std::vector<std::shared_ptr<ICommand>> commandUndoHistory;
+	std::vector<std::shared_ptr<ICommand>> commandRedoHistory;
+	TaskWindow taskWindow;
+	InputWindow inputWindow;
+	AboutWindow aboutWindow;
+	HotKeyThread *hotKeyThread;
+	QSystemTrayIcon* trayIcon;
+
+	Tasuke(QWidget* parent = 0);
+	Tasuke(const Tasuke& old);
+	const Tasuke& operator=(const Tasuke& old);
+	~Tasuke();
+
+	void contextMenuOperations();
 };
 
 #endif
