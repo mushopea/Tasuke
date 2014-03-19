@@ -94,8 +94,8 @@ void Tasuke::contextMenuOperations(){
 
 	//context menu actions
 	QAction* quitAction = new QAction("&Quit", this);
-	QAction* showInputWindowAction = new QAction("&Show Command Box", this);
-	QAction* showTaskWindowAction = new QAction("&Show Display Window", this);
+	QAction* showInputWindowAction = new QAction("Show &Command Box", this);
+	QAction* showTaskWindowAction = new QAction("Show &Display Window", this);
 	QAction* showSettingsWindowAction = new QAction("&Settings", this);
 	QAction* showHelpWindowAction = new QAction("&Help", this);
 	QAction* showAboutWindowAction = new QAction("&About Tasuke", this);
