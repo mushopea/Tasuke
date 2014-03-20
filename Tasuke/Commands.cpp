@@ -1,6 +1,25 @@
+#include <cassert>
 #include "Tasuke.h"
 #include "Constants.h"
 #include "Commands.h"
+
+ICommand::ICommand() {
+	hasRun = false;
+}
+
+ICommand::~ICommand() {
+
+}
+
+void ICommand::run() {
+	assert(hasRun == false);
+	hasRun = true;
+}
+
+void ICommand::undo() {
+	assert(hasRun == true);
+	hasRun = false;
+}
 
 AddCommand::AddCommand(Task& _task) {
 	task = _task;
