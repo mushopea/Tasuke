@@ -329,7 +329,7 @@ QScrollBar::handle:vertical {
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::WheelFocus</enum>
+     <enum>Qt::NoFocus</enum>
     </property>
     <property name="frameShape">
      <enum>QFrame::NoFrame</enum>
@@ -353,7 +353,7 @@ QScrollBar::handle:vertical {
       </rect>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::WheelFocus</enum>
+      <enum>Qt::NoFocus</enum>
      </property>
      <property name="styleSheet">
       <string notr="true">background: transparent;</string>
@@ -366,6 +366,9 @@ QScrollBar::handle:vertical {
         <width>797</width>
         <height>330</height>
        </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
