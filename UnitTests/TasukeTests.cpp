@@ -25,13 +25,5 @@ namespace UnitTests
 			dynamic_cast<AddCommand*>(command);
 		}
 
-
-		Task task();
-
-		// Storage Tests
-		TEST_METHOD(TestTransformTaskToJson)
-		{
-
-
 	};
 }
