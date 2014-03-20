@@ -2,11 +2,47 @@
 #include <QSettings>
 #include <QVariant>
 #include <QJsonArray>
+#include <QStandardPaths>
 #include <iostream>
 #include "Constants.h"
 #include "Exceptions.h"
 #include "Storage.h"
 #include "Tasuke.h"
+
+IStorage::IStorage() {
+	this->path = QStandardPaths::displayName(QStandardPaths::DataLocation) + "/tasuke.ini";
+}
+
+IStorage::~IStorage() {
+
+}
+
+void IStorage::addTask(Task& task) {
+	LOG(INFO) << "Adding task " << task.getDescription().toStdString();
+
+	tasks.push_back(task);
+	saveFile();
+	Tasuke::instance().updateTaskWindow(tasks);
+}
+
+void IStorage::addTask(Task& task, int pos) {
+	LOG(INFO) << "Adding task " << task.getDescription().toStdString()
+		<< " at position " << pos;
+
+	tasks.insert(pos, task);
+	saveFile();
+	Tasuke::instance().updateTaskWindow(tasks);
+}
+
+Task& IStorage::getTask(int pos) {
+	return tasks[pos];
+}
+
+void IStorage::loadFile() {
+}
+
+void IStorage::saveFile() {
+}
 
 // Constructor for Storage.
 Storage::Storage() {
@@ -21,7 +57,7 @@ Storage::Storage() {
 void Storage::loadFile() {
 	LOG(INFO) << "Loading file...";
 
-	QSettings settings("Tasuke","Tasuke");
+	QSettings settings(path, QSettings::IniFormat);
 	int size = settings.beginReadArray("tasks");
 	for (int i=0; i<size; i++) {
 		settings.setArrayIndex(i);
@@ -38,122 +74,13 @@ void Storage::loadFile() {
 void Storage::saveFile() {
 	LOG(INFO) << "Saving file";
 
-	QSettings settings("Tasuke","Tasuke");
+	QSettings settings(path, QSettings::IniFormat);
 	settings.beginWriteArray("tasks");
 	for (int i=0; i<tasks.size(); i++) {
 		settings.setArrayIndex(i);
 		settings.setValue("task", QVariant::fromValue<Task>(tasks[i]));
 	}
 	settings.endArray();
-}
-
-// This function takes a Task object and transforms it into a QJsonObject.
-// This is a convenience function meant to abstract away the process of
-// unwrapping a Task object and wrapping the data into a QJsonObject.
-// This method is mainly called by saveFile in order to take a list of
-// tasks and turn it into a human-readable Json document.
-//
-// @author:a0096863
-QJsonObject Storage::fromTaskToJson(Task& task) {
-	QJsonObject qjs;
-	const QString DATE_TIME_STRING = "dd MM yyyy HH mm ss";
-
-	if (!task.getDescription().isNull()) {
-		QJsonValue description(task.getDescription());
-		qjs.insert("Description", description);
-	}
-
-	if (!task.getBegin().isNull()) {
-		QString beginTime = task.getBegin().toString(DATE_TIME_STRING);
-		QJsonValue begin(beginTime);
-		qjs.insert("Begin", begin);
-	}
-
-	if (!task.getEnd().isNull()) {
-		QString endTime = task.getEnd().toString(DATE_TIME_STRING);
-		QJsonValue end(endTime);
-		qjs.insert("End", end);
-	}
-
-	if (!task.getTags().isEmpty()) {
-		QJsonArray array;
-		for (QString& tag : task.getTags()) {
-			QJsonValue jsTag(tag);
-			array.append(jsTag);
-		}
-		QJsonValue tagList(array);
-		qjs.insert("Tags", tagList);
-	}
-
-	QJsonValue done(task.isDone());
-	qjs.insert("Done", done);
-
-	return qjs;
-}
-
-// This function takes a JsonObject and attempts to convert it into a task
-// object. It is a convenience function meant to abstract away the task of
-// unwrapping a Json object and wrapping the data elements into a Task
-// object, which is then returned to the calling function.
-//
-// @author:a0096863
-Task Storage::fromJsonToTask(QJsonObject& json) {
-	Task task;
-	const QString DATE_TIME_STRING = "dd MM yyyy HH mm ss";
-	
-	QJsonValue description = json.value("Description");
-	if (!description.isUndefined()) {
-		task.setDescription(description.toString());
-	}
-
-	QJsonValue beginTime = json.value("Begin");
-	if (!beginTime.isUndefined()) {
-		QString beginString = beginTime.toString();
-		QDateTime begin	= QDateTime::fromString(beginString, DATE_TIME_STRING);
-		task.setBegin(begin);
-	}
-
-	QJsonValue endTime = json.value("End");
-	if (!endTime.isUndefined()) {
-		QString endString = endTime.toString();
-		QDateTime end = QDateTime::fromString(endString, DATE_TIME_STRING);
-		task.setEnd(end);
-	}
-
-	QJsonValue tags = json.value("Tags");
-	if (!tags.isUndefined()) {
-		QJsonArray tagList = tags.toArray();
-		for (QJsonValue tag : tagList) {
-			QString t = tag.toString();
-			task.addTag(t);
-		}
-	}
-
-	bool done = json.value("Done").toBool();
-	task.setDone(done);
-
-	return task;
-}
-
-void Storage::addTask(Task& task) {
-	LOG(INFO) << "Adding task " << task.getDescription().toStdString();
-
-	tasks.push_back(task);
-	saveFile();
-	Tasuke::instance().updateTaskWindow(tasks);
-}
-
-void Storage::addTask(Task& task, int pos) {
-	LOG(INFO) << "Adding task " << task.getDescription().toStdString()
-		<< " at position " << pos;
-
-	tasks.insert(pos, task);
-	saveFile();
-	Tasuke::instance().updateTaskWindow(tasks);
-}
-
-Task& Storage::getTask(int pos) {
-	return tasks[pos];
 }
 
 void Storage::removeTask(int pos) {
