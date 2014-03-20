@@ -10,7 +10,7 @@
 #include "Tasuke.h"
 
 IStorage::IStorage() {
-	this->path = QStandardPaths::displayName(QStandardPaths::DataLocation) + "/tasuke.ini";
+	this->path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/tasuke.ini";
 }
 
 IStorage::~IStorage() {
@@ -39,6 +39,7 @@ Task& IStorage::getTask(int pos) {
 }
 
 void IStorage::loadFile() {
+
 }
 
 void IStorage::saveFile() {
