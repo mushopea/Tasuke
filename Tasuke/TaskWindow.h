@@ -20,7 +20,7 @@ class TaskWindow : public QMainWindow {
 
 public:
 	TaskWindow(QWidget *parent = 0);
-	~TaskWindow();
+	virtual ~TaskWindow();
 
 	void highlightCurrentlySelected();
 	void showTasks(QList<Task> tasks);
@@ -40,6 +40,8 @@ protected:
 	bool eventFilter(QObject* object, QEvent* event);
 
 	void handleHotKeyPress(int key);
+
+	void clearTasks();
 
 private:
 	static const int TASKS_PER_PAGE = 5;

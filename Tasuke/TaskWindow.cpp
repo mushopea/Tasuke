@@ -25,6 +25,8 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 
 TaskWindow::~TaskWindow() {
 	LOG(INFO) << "TaskWindow instance destroyed";
+	clearTasks();
+	delete hotKeyThread;
 }
 
 //this function highlights the selected entry
@@ -48,7 +50,9 @@ void TaskWindow::highlightCurrentlySelected(){
 		ui.taskList->insertItem(currentlySelected, listItem);
 		ui.taskList->setItemWidget(listItem, entry);
 
-		ui.taskList->takeItem(currentlySelected+1);
+		listItem = ui.taskList->takeItem(currentlySelected+1);
+		delete listItem->listWidget();
+		delete listItem;
 	}
 
 	//dehilight previously selected
@@ -62,13 +66,15 @@ void TaskWindow::highlightCurrentlySelected(){
 		ui.taskList->insertItem(previouslySelected, listItem2);
 		ui.taskList->setItemWidget(listItem2, entry2);
 
-		ui.taskList->takeItem(previouslySelected+1);
+		listItem2 = ui.taskList->takeItem(previouslySelected+1);
+		delete listItem2->listWidget();
+		delete listItem2;
 	}
 }
 
 void TaskWindow::showTasks(QList<Task> tasks) {
 	currentTasks = tasks;
-	ui.taskList->clear();
+	clearTasks();
 	
 	for (int i = 0; i < tasks.size(); i++){
 
@@ -88,6 +94,14 @@ void TaskWindow::showTasks(QList<Task> tasks) {
 	highlightCurrentlySelected();
 	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
 
+}
+
+void TaskWindow::clearTasks() {
+	while (ui.taskList->count() != 0) {
+		QListWidgetItem *listItem = ui.taskList->takeItem(0);
+		delete listItem->listWidget();
+		delete listItem;
+	}
 }
 
 

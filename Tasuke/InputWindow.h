@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QFocusEvent>
 #include <QBitmap>
+#include <QPropertyAnimation>
 #include "HotKeyThread.h"
 #include "ui_InputWindow.h"
 #include "InputHighlighter.h"
