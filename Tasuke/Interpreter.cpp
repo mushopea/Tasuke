@@ -1,4 +1,3 @@
-#include <cassert>
 #include <glog/logging.h>
 #include <QApplication>
 #include <QStringList>
@@ -8,85 +7,15 @@
 #include "Exceptions.h"
 #include "Interpreter.h"
 
-QString Interpreter::removeBefore(QString text, QString before) {
-	QString retVal = text;
-	int pos = retVal.indexOf(before);
-
-	if (pos > 0) {
-		retVal.remove(0, pos);
-	}
-
-	return retVal;
-}
-
-QString Interpreter::getType(QString commandString) {
-	QStringList delimiters;
-	QStringList typeKeywords;
-
-	delimiters << "@";
-	delimiters << "#";
-	delimiters << "-";
-
-	typeKeywords << "add";
-	typeKeywords << "edit";
-	typeKeywords << "remove";
-	typeKeywords << "show";
-	typeKeywords << "undo";
-	typeKeywords << "redo";
-	typeKeywords << "clear";
-	typeKeywords << "exit";
-
-	QString temp = commandString.trimmed();
-	
-	for (int i=0; i<delimiters.size(); i++) {
-		temp = temp.split(delimiters[i])[0];
-	}
-	QStringList tokens = temp.split(' ');
-	for (int i=0; i<tokens.size(); i++) {
-		for (int j=0; j<typeKeywords.size(); j++) {
-			if (tokens[i] == typeKeywords[j]) {
-				return typeKeywords[j];
-			}
-		}
-	}
-
-	return "";
-}
-
 // This static helper function returns an instance of a ICommand that represents
 // the user's command. The caller must clean up using delete.
 ICommand* Interpreter::interpret(QString commandString) {
 	LOG(INFO) << "Interpretting " << commandString.toStdString();
 
-	QString commandType = getType(commandString);
+	QStringList tokens = commandString.trimmed().split(" ");
+	QString commandType = tokens[0];
 
 	if (commandType == "add") {
-		return createAddCommand(commandString);
-	} else if (commandType == "remove") {
-		return createRemoveCommand(commandString);
-	} else if (commandType == "edit") {
-		return createEditCommand(commandString);
-	}
-
-	if (commandType == "") {
-		throw ExceptionBadCommand();
-	}
-	
-	if (commandType == "show") {
-		doShow();
-	} else if (commandType == "undo") {
-		doUndo();
-	} else if (commandType == "redo") {
-		doRedo();
-	} else if (commandType == "clear") {
-		doClear();
-	} else if (commandType == "exit") {
-		doExit();
-	}
-
-	return nullptr;
-
-	/*if (commandType == "add") {
 		Task task;
 		QString description;
 		for (int i=1; i<tokens.size(); i++) {
@@ -192,41 +121,7 @@ ICommand* Interpreter::interpret(QString commandString) {
 		return nullptr;
 	} else {
 		throw ExceptionBadCommand();
-	}*/
-}
-
-AddCommand* Interpreter::createAddCommand(QString commandString) {
-	commandString = removeBefore(commandString, "add");
-}
-
-RemoveCommand* Interpreter::createRemoveCommand(QString commandString) {
-	commandString = removeBefore(commandString, "remove");
-}
-
-EditCommand* Interpreter::createEditCommand(QString commandString) {
-	commandString = removeBefore(commandString, "edit");
-}
-
-void Interpreter::doShow() {
-	Tasuke::instance().showTaskWindow();
-}
-void Interpreter::doAbout() {
-	Tasuke::instance().showAboutWindow();
-}
-void Interpreter::doHide() {
-	Tasuke::instance().hideTaskWindow();
-}
-void Interpreter::doClear() {
-	assert(false); // not implemented
-}
-void Interpreter::doUndo() {
-	Tasuke::instance().undoCommand();
-}
-void Interpreter::doRedo() {
-	Tasuke::instance().redoCommand();
-}
-void Interpreter::doExit() {
-	QApplication::quit();
+	}
 }
 
 QDateTime Interpreter::parseDate(QString dateString) {
