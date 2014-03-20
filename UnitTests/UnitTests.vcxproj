@@ -44,14 +44,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Tasuke\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)Tasuke\;$(IncludePath)</IncludePath>
     <ExecutablePath>$(QTDIR)\bin;$(ExecutablePath)</ExecutablePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <LibraryPath>$(SolutionDir)Tasuke\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Tasuke\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)Tasuke\;$(IncludePath)</IncludePath>
     <ExecutablePath>$(QTDIR)\bin;$(ExecutablePath)</ExecutablePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <LibraryPath>$(SolutionDir)Tasuke\$(Configuration)\;$(LibraryPath)</LibraryPath>

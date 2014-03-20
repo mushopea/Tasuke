@@ -11,6 +11,9 @@
 #include "CppUnitTest.h"
 
 // TODO: reference additional headers your program requires here
+#include <thread>
+#include <QApplication>
+#include <glog/logging.h>
 #include "CppUnitTest.h"
 #include "Tasuke.h"
 #include "Storage.h"

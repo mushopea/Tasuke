@@ -2,7 +2,7 @@
 #include <iostream>
 #include <glog/logging.h>
 #include <QMessageBox>
-#include <QtGui\qfontdatabase.h>
+#include <QtGui\QFontDatabase>
 #include "Constants.h"
 #include "Exceptions.h"
 #include "Interpreter.h"

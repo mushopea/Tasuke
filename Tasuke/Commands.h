@@ -4,13 +4,16 @@
 #include "Task.h"
 
 // This is an interface for all user commands. The intended method to intialize
-// a ICommand instance is through the CommandFactory.
+// a ICommand instance is through the Interpreter.
 class ICommand {
+private:
+	bool hasRun;
 public:
-	virtual ~ICommand() {};
+	ICommand();
+	virtual ~ICommand();
 	
-	virtual void run() = 0;
-	virtual void undo() = 0;
+	virtual void run();
+	virtual void undo();
 };
 
 class AddCommand : public ICommand {
