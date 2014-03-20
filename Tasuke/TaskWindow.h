@@ -42,6 +42,8 @@ protected:
 
 	void handleHotKeyPress(int key);
 
+	void clearTasks();
+
 
 private:
 	static const int TASKS_PER_PAGE = 5;
