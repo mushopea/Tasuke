@@ -43,6 +43,9 @@
    <property name="scaledContents">
     <bool>true</bool>
    </property>
+   <property name="textInteractionFlags">
+    <set>Qt::NoTextInteraction</set>
+   </property>
   </widget>
   <widget class="QLabel" name="ID">
    <property name="geometry">
@@ -63,7 +66,7 @@
     <string/>
    </property>
    <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+    <set>Qt::NoTextInteraction</set>
    </property>
   </widget>
   <widget class="QLabel" name="description">
@@ -100,7 +103,7 @@
     <bool>true</bool>
    </property>
    <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+    <set>Qt::NoTextInteraction</set>
    </property>
   </widget>
   <widget class="QLabel" name="startDate">
@@ -127,7 +130,7 @@
     <set>Qt::AlignCenter</set>
    </property>
    <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+    <set>Qt::NoTextInteraction</set>
    </property>
   </widget>
   <widget class="QLabel" name="endDate">
@@ -152,7 +155,7 @@
     <set>Qt::AlignCenter</set>
    </property>
    <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+    <set>Qt::NoTextInteraction</set>
    </property>
   </widget>
   <widget class="QLabel" name="tag">
@@ -207,7 +210,7 @@
     <set>Qt::AlignCenter</set>
    </property>
    <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+    <set>Qt::NoTextInteraction</set>
    </property>
   </widget>
   <widget class="QLabel" name="endTime">
@@ -232,7 +235,7 @@
     <set>Qt::AlignCenter</set>
    </property>
    <property name="textInteractionFlags">
-    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+    <set>Qt::NoTextInteraction</set>
    </property>
   </widget>
  </widget>

@@ -4,6 +4,8 @@
 #include "Tasuke.h"
 #include "InputWindow.h"
 
+#include <QGraphicsOpacityEffect>
+
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "InputWindow instance created";
 
@@ -96,9 +98,20 @@ void InputWindow::showAndCenter() {
 
 	move(pos);
 
-	show();
-	raise();
+	//show();
+	//raise();
+
+	QGraphicsOpacityEffect* fade_effect = new QGraphicsOpacityEffect(this);
+	this->setGraphicsEffect(fade_effect);
+	QPropertyAnimation *animation = new QPropertyAnimation(fade_effect, "opacity");
+	animation->setEasingCurve(QEasingCurve::OutCubic);
+	animation->setDuration(700);
+	animation->setStartValue(0.0);      
+	animation->setEndValue(1.0);
+	animation->start();
+    this->setVisible(true);
 	activateWindow();
+
 }
 
 //will be updated when "themes" is implemented.
