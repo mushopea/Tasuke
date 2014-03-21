@@ -30,11 +30,11 @@ TaskWindow::~TaskWindow() {
 //this function highlights the selected entry
 //it creates a new taskentry with a distinct background and replaces the old task entry
 //by inserting new list item and then deleting the old one.
-//it will also dehighlight the previously selected with a similar method
-void TaskWindow::highlightCurrentlySelected(){
+//it will also dehighlight the previously selected with a similar method IF prevsize!=0, that is, previous state is not empty.
+void TaskWindow::highlightCurrentlySelected(int prevSize){
 
-	QPixmap pxr(QString::fromUtf8("roundedEntryMaskSelect.png")); //highlighted bg image
-	QPixmap pxr2(QString::fromUtf8("roundedEntryMask.png")); //normal bg image
+	QPixmap pxr("roundedEntryMaskSelect.png"); //highlighted bg image
+	QPixmap pxr2("roundedEntryMask.png"); //normal bg image
 
 	//highlight currently selected
 	if((currentlySelected>=0) && (currentlySelected<currentTasks.size())) {
@@ -48,11 +48,11 @@ void TaskWindow::highlightCurrentlySelected(){
 		ui.taskList->insertItem(currentlySelected, listItem);
 		ui.taskList->setItemWidget(listItem, entry);
 
-		ui.taskList->takeItem(currentlySelected+1);
+		listItem = ui.taskList->takeItem(currentlySelected+1);
 	}
 
 	//dehilight previously selected
-	if (previouslySelected<currentTasks.size()) {
+	if ((previouslySelected>=0) && (previouslySelected<currentTasks.size()) && (prevSize!=0)) { //dehighlight if previous state is not empty
 		Task t2 = currentTasks[previouslySelected];
 		TaskEntry * entry2 = new TaskEntry(previouslySelected+1, t2.getDescription(), t2.getTags(), t2.getBegin(), t2.getEnd(), this);
 		entry2->ui.bg->setPixmap(pxr2);
@@ -62,11 +62,27 @@ void TaskWindow::highlightCurrentlySelected(){
 		ui.taskList->insertItem(previouslySelected, listItem2);
 		ui.taskList->setItemWidget(listItem2, entry2);
 
-		ui.taskList->takeItem(previouslySelected+1);
+		listItem2 = ui.taskList->takeItem(previouslySelected+1);
 	}
 }
 
+void TaskWindow::focusOnNewTask(){
+	//set indexes of selected tasks
+	previouslySelected = currentlySelected;
+	currentlySelected = currentTasks.size()-1;
+
+	//highlight newly selected task, dehighlight ex task
+	if (previouslySelected != currentlySelected) {
+		highlightCurrentlySelected(previousSize);
+	}
+	
+	//scroll to it!
+	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
+
+}
+
 void TaskWindow::showTasks(QList<Task> tasks) {
+	previousSize = currentTasks.size();
 	currentTasks = tasks;
 	ui.taskList->clear();
 	
@@ -82,12 +98,7 @@ void TaskWindow::showTasks(QList<Task> tasks) {
 		ui.taskList->setItemWidget(listItem, entry);	
 	}
 
-	//focus on latest task
-	previouslySelected = currentlySelected;
-	currentlySelected = tasks.size()-1;
-	highlightCurrentlySelected();
-	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-
+	focusOnNewTask();
 }
 
 
@@ -96,7 +107,7 @@ void TaskWindow::scrollUp(){
 		previouslySelected = currentlySelected;
 		currentlySelected--;
 		ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-		highlightCurrentlySelected();
+		highlightCurrentlySelected(currentTasks.size());
 	}
 }
 
@@ -105,7 +116,7 @@ void TaskWindow::scrollDown(){
 		previouslySelected = currentlySelected;
 		currentlySelected++;
 		ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-		highlightCurrentlySelected();
+		highlightCurrentlySelected(currentTasks.size());
 	}
 }
 
@@ -123,7 +134,7 @@ void TaskWindow::pageUp(){
 	}
 
 	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-	highlightCurrentlySelected();
+	highlightCurrentlySelected(currentTasks.size());
 
 }
 
@@ -141,7 +152,7 @@ void TaskWindow::pageDown(){
 	}
 
 	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-	highlightCurrentlySelected();
+	highlightCurrentlySelected(currentTasks.size());
 }
 
 void TaskWindow::showAndMoveToSide() {
