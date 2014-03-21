@@ -123,7 +123,7 @@ void Tasuke::contextMenuOperations(){
 	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(handleIconActivated(QSystemTrayIcon::ActivationReason)));
 }
 
-void Tasuke::setStorage(Storage* _storage) {
+void Tasuke::setStorage(IStorage* _storage) {
 	LOG(INFO) << "Storage changed";
 
 	delete storage;
@@ -143,7 +143,7 @@ TaskWindow& Tasuke::getTaskWindow(){
 }
 
 // This function exposes the Storage instance for editing.
-Storage& Tasuke::getStorage() {
+IStorage& Tasuke::getStorage() {
 	if (storage == nullptr) {
 		throw ExceptionNullPtr();
 	}

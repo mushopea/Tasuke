@@ -10,7 +10,7 @@
 #include "Tasuke.h"
 
 IStorage::IStorage() {
-	this->path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/tasuke.ini";
+	
 }
 
 IStorage::~IStorage() {
@@ -38,16 +38,35 @@ Task& IStorage::getTask(int pos) {
 	return tasks[pos];
 }
 
-void IStorage::loadFile() {
+void IStorage::removeTask(int pos) {
+	LOG(INFO) << "Removing task at position " << pos;
 
+	tasks.removeAt(pos);
+	saveFile();
+	Tasuke::instance().updateTaskWindow(tasks);
 }
 
-void IStorage::saveFile() {
+void IStorage::popTask() {
+	LOG(INFO) << "Popping task from back";
+
+	tasks.pop_back();
+	saveFile();
+	Tasuke::instance().updateTaskWindow(tasks);
+}
+
+QList<Task> IStorage::getTasks() {
+	return tasks;
+}
+
+int IStorage::totalTasks() {
+	return tasks.size();
 }
 
 // Constructor for Storage.
 Storage::Storage() {
 	LOG(INFO) << "Storage instance created...";
+
+	path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/tasuke.ini";
 
 	qRegisterMetaType<Task>("Task");
 	qRegisterMetaTypeStreamOperators<Task>("Task");	
@@ -82,28 +101,4 @@ void Storage::saveFile() {
 		settings.setValue("task", QVariant::fromValue<Task>(tasks[i]));
 	}
 	settings.endArray();
-}
-
-void Storage::removeTask(int pos) {
-	LOG(INFO) << "Removing task at position " << pos;
-
-	tasks.removeAt(pos);
-	saveFile();
-	Tasuke::instance().updateTaskWindow(tasks);
-}
-
-void Storage::popTask() {
-	LOG(INFO) << "Popping task from back";
-
-	tasks.pop_back();
-	saveFile();
-	Tasuke::instance().updateTaskWindow(tasks);
-}
-
-QList<Task> Storage::getTasks() {
-	return tasks;
-}
-
-int Storage::totalTasks() {
-	return tasks.size();
 }

@@ -19,8 +19,8 @@ class Tasuke : public QWidget {
 	Q_OBJECT
 
 public:
-	void setStorage(Storage* _storage);
-	Storage& getStorage();
+	void setStorage(IStorage* _storage);
+	IStorage& getStorage();
 	InputWindow& getInputWindow();
 	AboutWindow& getAboutWindow();
 	TaskWindow& getTaskWindow();
@@ -47,7 +47,7 @@ private slots:
 	void handleIconActivated(QSystemTrayIcon::ActivationReason reason);
 	
 private:
-	Storage* storage;
+	IStorage* storage;
 	std::vector<std::shared_ptr<ICommand>> commandUndoHistory;
 	std::vector<std::shared_ptr<ICommand>> commandRedoHistory;
 	TaskWindow taskWindow;
