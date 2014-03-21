@@ -7,6 +7,7 @@ AboutWindow::AboutWindow(QDialog* parent) : QDialog(parent) {
 	ui.setupUi(this);
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
 	
+	ui.label_2->setText("V0.2");
 }
 
 AboutWindow::~AboutWindow() {

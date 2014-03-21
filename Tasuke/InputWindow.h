@@ -6,6 +6,7 @@
 #include <QFocusEvent>
 #include <QBitmap>
 #include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
 #include "HotKeyThread.h"
 #include "ui_InputWindow.h"
 #include "InputHighlighter.h"
@@ -30,6 +31,8 @@ private slots:
 private:
 	Ui::InputWindow ui;
     InputHighlighter *highlighter;
+	QGraphicsOpacityEffect *fadeEffect;
+	QPropertyAnimation *animation;
 };
 
 #endif // INPUTWINDOW_H

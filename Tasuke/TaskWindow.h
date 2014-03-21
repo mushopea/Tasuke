@@ -40,8 +40,6 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event);
 	bool eventFilter(QObject* object, QEvent* event);
 
-	void handleHotKeyPress(int key);
-
 
 private:
 	static const int TASKS_PER_PAGE = 5;
