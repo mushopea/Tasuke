@@ -126,7 +126,6 @@ void Tasuke::contextMenuOperations(){
 void Tasuke::setStorage(IStorage* _storage) {
 	LOG(INFO) << "Storage changed";
 
-	delete storage;
 	storage = _storage;
 }
 
