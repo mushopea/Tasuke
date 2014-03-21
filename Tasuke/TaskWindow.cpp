@@ -16,11 +16,6 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 	setAttribute(Qt::WA_TranslucentBackground);
-
-	//hotkey
-	hotKeyThread = new HotKeyThread(this);
-	connect(hotKeyThread, SIGNAL(hotKeyPress(int)), this, SLOT(handleHotKeyPress(int)), Qt::QueuedConnection);
-	hotKeyThread->start();
 }
 
 TaskWindow::~TaskWindow() {
@@ -164,6 +159,7 @@ void TaskWindow::showAndMoveToSide() {
 	showNormal();
 	raise();
 	activateWindow();
+	setFocus();
 }
 
 void TaskWindow::closeEvent(QCloseEvent *event) {
@@ -224,13 +220,4 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
     }
 
     return QObject::eventFilter(object, event);
-}
-
-
-void TaskWindow::handleHotKeyPress(int key) {
-	if (isVisible() == true) {
-		hide();
-	} else {
-		showAndMoveToSide();
-	}
 }

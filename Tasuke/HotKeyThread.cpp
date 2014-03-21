@@ -22,8 +22,9 @@ void HotKeyThread::stop() {
 void HotKeyThread::run() {
 	pid = ::GetCurrentThreadId();
 	ATOM id = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM));
+	ATOM id2 = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+1));
 	::RegisterHotKey(NULL, id, MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
-	RegisterHotKey(NULL, id, MOD_ALT | MOD_NOREPEAT, VK_SPACE);
+	::RegisterHotKey(NULL, id2, MOD_ALT | MOD_NOREPEAT, VK_SPACE);
 
 	MSG msg = {0};
 	while (::GetMessage(&msg, NULL, 0, 0)) {

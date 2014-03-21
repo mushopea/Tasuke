@@ -73,11 +73,24 @@ Tasuke& Tasuke::instance() {
 void Tasuke::handleHotKeyPress(int key) {
 	LOG(INFO) << "Hot key pressed with keycode " << key;
 
-	if (inputWindow.isVisible() == true) {
-		inputWindow.hide();
-	} else {
-		inputWindow.showAndCenter();
+	int kkey = key >> 16;
+	int mod = key & 0xFFFF;
+
+	if (mod == MOD_CONTROL && kkey == VK_SPACE) {
+		if (inputWindow.isVisible() == true) {
+			inputWindow.hide();
+		} else {
+			inputWindow.showAndCenter();
+		}
 	}
+	else if (mod == MOD_ALT && kkey == VK_SPACE) {
+		if (taskWindow.isVisible() == true) {
+			taskWindow.hide();
+		} else {
+			taskWindow.showAndMoveToSide();
+		}
+	}
+
 }
 
 void Tasuke::handleIconActivated(QSystemTrayIcon::ActivationReason reason) {

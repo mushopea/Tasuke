@@ -4,7 +4,6 @@
 #include "Tasuke.h"
 #include "InputWindow.h"
 
-#include <QGraphicsOpacityEffect>
 
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "InputWindow instance created";
@@ -18,6 +17,14 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 
 	ui.lineEdit->installEventFilter(this);
 
+	//animation
+	fadeEffect = new QGraphicsOpacityEffect(this); 
+	this->setGraphicsEffect(fadeEffect);
+	animation = new QPropertyAnimation(fadeEffect, "opacity"); 
+	animation->setEasingCurve(QEasingCurve::OutCubic); 
+	animation->setDuration(700); 
+	animation->setStartValue(0.0); 
+	animation->setEndValue(0.95); 
 
 }
 
@@ -89,7 +96,7 @@ void InputWindow::showAndCenter() {
 	LOG(INFO) << "Displaying input window";
 
 	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
-	if(Tasuke::instance().getTaskWindow().isVisible()){ //if taskWindow is open
+	if(Tasuke::instance().getTaskWindow().isActiveWindow()){ //if taskWindow is open
 		pos.setY(Tasuke::instance().getTaskWindow().y() + Tasuke::instance().getTaskWindow().height() + 3); //set commandbox below taskWindow
 		pos.setX(Tasuke::instance().getTaskWindow().x());
 	} else {
@@ -98,20 +105,12 @@ void InputWindow::showAndCenter() {
 
 	move(pos);
 
-	//show();
-	//raise();
-
-	QGraphicsOpacityEffect* fade_effect = new QGraphicsOpacityEffect(this);
-	this->setGraphicsEffect(fade_effect);
-	QPropertyAnimation *animation = new QPropertyAnimation(fade_effect, "opacity");
-	animation->setEasingCurve(QEasingCurve::OutCubic);
-	animation->setDuration(700);
-	animation->setStartValue(0.0);      
-	animation->setEndValue(1.0);
-	animation->start();
-    this->setVisible(true);
+	setWindowOpacity(0);
+	show(); 
+	raise(); 
 	activateWindow();
-
+	setWindowOpacity(95);
+	animation->start();
 }
 
 //will be updated when "themes" is implemented.
