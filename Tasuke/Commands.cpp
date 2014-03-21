@@ -65,7 +65,7 @@ EditCommand::~EditCommand() {
 }
 
 void EditCommand::run() {
-	old = Tasuke::instance().getStorage().getTask(id);;
+	old = Tasuke::instance().getStorage().getTask(id);
 	Tasuke::instance().getStorage().removeTask(id);
 	Tasuke::instance().getStorage().addTask(task, id);
 	Tasuke::instance().showMessage(QString("Edited \"%1\"").arg(task.getDescription()));
@@ -74,4 +74,25 @@ void EditCommand::undo() {
 	Tasuke::instance().getStorage().removeTask(id);
 	Tasuke::instance().getStorage().addTask(old, id);
 	Tasuke::instance().showMessage(QString("Undone edit \"%1\"").arg(task.getDescription()));
+}
+
+ClearCommand::ClearCommand() {
+
+}
+ClearCommand::~ClearCommand() {
+
+}
+
+void ClearCommand::run() {
+	old = QList<Task>(Tasuke::instance().getStorage().getTasks());
+	for (int i=0; i<old.size(); i++) {
+		Tasuke::instance().getStorage().removeTask(0);
+	}
+	Tasuke::instance().showMessage(QString("Cleared all tasks"));
+}
+void ClearCommand::undo() {
+	for (int i=0; i<old.size(); i++) {
+		Tasuke::instance().getStorage().addTask(old[i]);
+	}
+	Tasuke::instance().showMessage(QString("Undone clear all tasks"));
 }

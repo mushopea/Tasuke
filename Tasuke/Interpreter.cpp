@@ -125,7 +125,7 @@ ICommand* Interpreter::interpret(QString commandString) {
 	} else if (commandType == "redo") {
 		doRedo();
 	} else if (commandType == "clear") {
-		doClear();
+		return createClearCommand(commandString);
 	} else if (commandType == "exit") {
 		doExit();
 	}
@@ -213,6 +213,10 @@ EditCommand* Interpreter::createEditCommand(QString commandString) {
 	return new EditCommand(id-1, task);
 }
 
+ClearCommand* Interpreter::createClearCommand(QString commandString) {
+	return new ClearCommand();
+}
+
 void Interpreter::doShow() {
 	Tasuke::instance().showTaskWindow();
 }
@@ -221,9 +225,6 @@ void Interpreter::doAbout() {
 }
 void Interpreter::doHide() {
 	Tasuke::instance().hideTaskWindow();
-}
-void Interpreter::doClear() {
-	assert(false); // not implemented
 }
 void Interpreter::doUndo() {
 	Tasuke::instance().undoCommand();

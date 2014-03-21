@@ -26,10 +26,10 @@ private:
 	static AddCommand* createAddCommand(QString commandString);
 	static RemoveCommand* createRemoveCommand(QString commandString);
 	static EditCommand* createEditCommand(QString commandString);
+	static ClearCommand* createClearCommand(QString commandString);
 	static void doShow();
 	static void doAbout();
 	static void doHide();
-	static void doClear();
 	static void doUndo();
 	static void doRedo();
 	static void doExit();

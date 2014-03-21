@@ -52,4 +52,15 @@ public:
 	void undo();
 };
 
+class ClearCommand : public ICommand {
+private:
+	QList<Task> old;
+public:
+	ClearCommand();
+	~ClearCommand();
+	
+	void run();
+	void undo();
+};
+
 #endif
