@@ -21,7 +21,6 @@ public slots:
 	void stop();
 	
 private:
-	volatile bool stopped;
 	DWORD pid;
 };
 
