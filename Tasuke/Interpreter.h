@@ -32,6 +32,7 @@ private:
 	static void doHide();
 	static void doUndo();
 	static void doRedo();
+	static void doHelp();
 	static void doExit();
 
 public:

@@ -5,8 +5,7 @@
 #include "ui_AboutWindow.h"
 
 
-class AboutWindow : public QDialog
-{
+class AboutWindow : public QDialog {
 	Q_OBJECT
 
 public:
@@ -15,11 +14,6 @@ public:
 
 public slots:
 	void showAndCenter();
-
-protected:
-	//void closeEvent(QCloseEvent* event);
-
-private slots:
 
 
 private:

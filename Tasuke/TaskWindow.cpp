@@ -3,7 +3,6 @@
 #include <QDesktopWidget>
 #include "Tasuke.h"
 #include "TaskWindow.h"
-#include "TaskEntry.h"
 
 
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
@@ -13,7 +12,9 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 
 	this->installEventFilter(this);
+	initTut();
 
+	
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 	setAttribute(Qt::WA_TranslucentBackground);
 }
@@ -22,10 +23,7 @@ TaskWindow::~TaskWindow() {
 	LOG(INFO) << "TaskWindow instance destroyed";
 }
 
-//this function highlights the selected entry
-//it creates a new taskentry with a distinct background and replaces the old task entry
-//by inserting new list item and then deleting the old one.
-//it will also dehighlight the previously selected with a similar method IF prevsize!=0, that is, previous state is not empty.
+
 void TaskWindow::highlightCurrentlySelected(int prevSize){
 
 	QPixmap pxr("roundedEntryMaskSelect.png"); //highlighted bg image
@@ -96,6 +94,10 @@ void TaskWindow::showTasks(QList<Task> tasks) {
 	focusOnNewTask();
 }
 
+void TaskWindow::initTut(){
+	tut = new TutorialWidget(this);
+	ui.stackedWidget->addWidget(tut);
+}
 
 void TaskWindow::scrollUp(){
 	if (currentlySelected>0) {
@@ -150,6 +152,12 @@ void TaskWindow::pageDown(){
 	highlightCurrentlySelected(currentTasks.size());
 }
 
+
+//returns 0 if task list is shown, 1 if tutorial is shown
+int TaskWindow::getScreen() {
+	return ui.stackedWidget->currentIndex();
+}
+
 void TaskWindow::showAndMoveToSide() {
 	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
 	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
@@ -161,6 +169,15 @@ void TaskWindow::showAndMoveToSide() {
 	activateWindow();
 	setFocus();
 }
+
+void TaskWindow::showListWidget() {
+	ui.stackedWidget->setCurrentIndex(0);
+}
+
+void TaskWindow::showTutorialWidget() {
+	ui.stackedWidget->setCurrentIndex(1);
+}
+
 
 void TaskWindow::closeEvent(QCloseEvent *event) {
 	hide();
@@ -185,27 +202,30 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
     if(event->type() == QEvent::KeyPress) {
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
 
-		//scroll
-		if(eventKey->modifiers() & Qt::CTRL) {
+		//scroll task list
+		if(ui.stackedWidget->currentIndex() == 0) { //is on task list
+
+			if(eventKey->modifiers() & Qt::CTRL) {
+				if(eventKey->key() == Qt::Key_Down) {
+					pageDown();
+					return true;
+				}
+
+				if (eventKey->key() == Qt::Key_Up) {
+					pageUp();
+					return true;
+				}
+			}
+
 			if(eventKey->key() == Qt::Key_Down) {
-				pageDown();
+				scrollDown();
 				return true;
 			}
 
 			if (eventKey->key() == Qt::Key_Up) {
-				pageUp();
+				scrollUp();
 				return true;
 			}
-		}
-
-		if(eventKey->key() == Qt::Key_Down) {
-			scrollDown();
-			return true;
-		}
-
-		if (eventKey->key() == Qt::Key_Up) {
-			scrollUp();
-			return true;
 		}
 
 		//undo and redo shortcuts

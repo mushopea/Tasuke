@@ -319,131 +319,6 @@ QScrollBar::handle:vertical {
      </size>
     </property>
    </widget>
-   <widget class="QScrollArea" name="scrollbox">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>94</y>
-      <width>803</width>
-      <height>322</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="horizontalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOff</enum>
-    </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>803</width>
-       <height>322</height>
-      </rect>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background: transparent;</string>
-     </property>
-     <widget class="QListWidget" name="taskList">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>797</width>
-        <height>330</height>
-       </rect>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-      <property name="selectionMode">
-       <enum>QAbstractItemView::NoSelection</enum>
-      </property>
-     </widget>
-    </widget>
-   </widget>
-   <widget class="QLabel" name="taskScope">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>20</y>
-      <width>780</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Quicksand Book</family>
-      <pointsize>24</pointsize>
-      <weight>9</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 75 24pt &quot;Quicksand Book&quot;;
-text-align: center;
-background: transparent;</string>
-    </property>
-    <property name="text">
-     <string>                          Viewing all tasks</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="columnLabel">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>60</y>
-      <width>780</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Quicksand Book</family>
-      <pointsize>17</pointsize>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background: transparent;
-color: grey;</string>
-    </property>
-    <property name="text">
-     <string>Task                                                   Start         End               Tag</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="border">
     <property name="geometry">
      <rect>
@@ -482,13 +357,113 @@ color: grey;</string>
      <pixmap>TaskWindowMaskWhite.png</pixmap>
     </property>
    </widget>
+   <widget class="QStackedWidget" name="stackedWidget">
+    <property name="geometry">
+     <rect>
+      <x>21</x>
+      <y>15</y>
+      <width>797</width>
+      <height>411</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: transparent;</string>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="pageTask">
+     <widget class="QListWidget" name="taskList">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>77</y>
+        <width>797</width>
+        <height>330</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::NoSelection</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="columnLabel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>43</y>
+        <width>780</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Quicksand Book</family>
+        <pointsize>17</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background: transparent;
+color: grey;</string>
+      </property>
+      <property name="text">
+       <string>Task                                                   Start         End               Tag</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="taskScope">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>4</y>
+        <width>780</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Quicksand Book</family>
+        <pointsize>24</pointsize>
+        <weight>9</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 75 24pt &quot;Quicksand Book&quot;;
+text-align: center;
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string>                          Viewing all tasks</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
    <zorder>border</zorder>
    <zorder>bg</zorder>
-   <zorder>taskScope</zorder>
-   <zorder>closeButton</zorder>
+   <zorder>stackedWidget</zorder>
    <zorder>minButton</zorder>
-   <zorder>scrollbox</zorder>
-   <zorder>columnLabel</zorder>
+   <zorder>closeButton</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

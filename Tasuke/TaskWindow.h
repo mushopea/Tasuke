@@ -13,7 +13,8 @@
 #include "Task.h"
 #include "ui_TaskWindow.h"
 #include "HotKeyThread.h"
-
+#include "TaskEntry.h"
+#include "TutorialWidget.h"
 
 class TaskWindow : public QMainWindow {
 	Q_OBJECT
@@ -25,13 +26,17 @@ public:
 	void highlightCurrentlySelected(int prevsize);
 	void focusOnNewTask();
 	void showTasks(QList<Task> tasks);
+	void initTut();
 	void scrollUp();
 	void scrollDown();
 	void pageUp();
 	void pageDown();
+	int getScreen();
 
 	
 public slots:
+	void showListWidget();
+	void showTutorialWidget();
 	void showAndMoveToSide();
 
 protected:
@@ -47,6 +52,7 @@ private:
 	static const int TASK_ENTRY_HEIGHT = 65;
 
 	Ui::TaskWindowClass ui;	
+	TutorialWidget *tut;
 	HotKeyThread *hotKeyThread;
 	QPoint mpos;
 	QList<Task> currentTasks;

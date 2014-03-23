@@ -43,45 +43,46 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 			return true;
 		}
 
-		//scroll keys
-		if(eventKey->modifiers() & Qt::CTRL) {
+		if(Tasuke::instance().getTaskWindow().getScreen() == 0){
+			//scroll keys for tasks
+			if(eventKey->modifiers() & Qt::CTRL) {
+				if(eventKey->key() == Qt::Key_Down) {
+					Tasuke::instance().getTaskWindow().pageDown();
+					return true;
+				}
+
+				if (eventKey->key() == Qt::Key_Up) {
+					Tasuke::instance().getTaskWindow().pageUp();
+					return true;
+				}
+			}
+
 			if(eventKey->key() == Qt::Key_Down) {
-				Tasuke::instance().getTaskWindow().pageDown();
+				Tasuke::instance().getTaskWindow().scrollDown();
 				return true;
 			}
 
 			if (eventKey->key() == Qt::Key_Up) {
-				Tasuke::instance().getTaskWindow().pageUp();
+				Tasuke::instance().getTaskWindow().scrollUp();
 				return true;
 			}
-		}
 
-		if(eventKey->key() == Qt::Key_Down) {
-			Tasuke::instance().getTaskWindow().scrollDown();
-			return true;
-		}
+			//undo keys
+			if (eventKey->matches(QKeySequence::Undo)) {
+				Tasuke::instance().runCommand(QString("undo"));
+			}
 
-		if (eventKey->key() == Qt::Key_Up) {
-			Tasuke::instance().getTaskWindow().scrollUp();
-			return true;
-		}
+			if (eventKey->matches(QKeySequence::Redo)) {
+				Tasuke::instance().runCommand(QString("redo"));
+			}
 
-		//undo keys
-		if (eventKey->matches(QKeySequence::Undo)) {
-			Tasuke::instance().runCommand(QString("undo"));
-		}
-
-		if (eventKey->matches(QKeySequence::Redo)) {
-			Tasuke::instance().runCommand(QString("redo"));
-		}
-
-		//paste shortcut
-		if (eventKey->matches(QKeySequence::Paste)) {
-			if(ui.lineEdit->toPlainText().trimmed().isEmpty()) {
-				ui.lineEdit->insertPlainText(QString("add "));
+			//paste shortcut
+			if (eventKey->matches(QKeySequence::Paste)) {
+				if(ui.lineEdit->toPlainText().trimmed().isEmpty()) {
+					ui.lineEdit->insertPlainText(QString("add "));
+				}
 			}
 		}
-
     }
 
 	if(event->type() == QEvent::FocusOut) {

@@ -19,9 +19,9 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>50</y>
-     <width>797</width>
+     <width>771</width>
      <height>351</height>
     </rect>
    </property>
@@ -173,8 +173,8 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>-40</x>
-     <y>10</y>
+     <x>10</x>
+     <y>14</y>
      <width>171</width>
      <height>23</height>
     </rect>
@@ -186,7 +186,7 @@
     </font>
    </property>
    <property name="text">
-    <string>&lt; Back</string>
+    <string>&lt; Back to Tasuke!</string>
    </property>
   </widget>
   <widget class="QLabel" name="title">
