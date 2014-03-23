@@ -109,8 +109,8 @@ void Tasuke::contextMenuOperations(){
 	QAction* quitAction = new QAction("&Quit", this);
 	QAction* showInputWindowAction = new QAction("Show &Command Box", this);
 	QAction* showTaskWindowAction = new QAction("Show &Display Window", this);
-	QAction* showSettingsWindowAction = new QAction("&Settings", this);
-	QAction* showHelpWindowAction = new QAction("&Help", this);
+	//QAction* showSettingsWindowAction = new QAction("&Settings", this);
+	//QAction* showHelpWindowAction = new QAction("&Help", this);
 	QAction* showAboutWindowAction = new QAction("&About Tasuke", this);
 
 	//tray stuff
@@ -202,7 +202,7 @@ void Tasuke::runCommand(QString commandString) {
 		LOG(INFO) << "Pushing command to history stack";
 		commandUndoHistory.push_back(command);
 		commandRedoHistory.clear();
-	} catch (ExceptionBadCommand exception) {
+	} catch (ExceptionBadCommand& exception) {
 		LOG(INFO) << "Error parsing command";
 		
 		showMessage("Error parsing command");
