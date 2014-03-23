@@ -21,8 +21,8 @@ void ICommand::undo() {
 	hasRun = false;
 }
 
-AddCommand::AddCommand(Task& _task) {
-	task = _task;
+AddCommand::AddCommand(Task& _task) : task(_task) {
+
 }
 
 AddCommand::~AddCommand() {
@@ -56,9 +56,8 @@ void RemoveCommand::undo() {
 	Tasuke::instance().showMessage(QString("Undone remove \"%1\"").arg(task.getDescription()));
 }
 
-EditCommand::EditCommand(int _id, Task& _task) {
-	id = _id;
-	task = _task;
+EditCommand::EditCommand(int _id, Task& _task) : id(_id), task(_task) {
+	
 }
 EditCommand::~EditCommand() {
 
