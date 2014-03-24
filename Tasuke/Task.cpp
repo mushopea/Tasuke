@@ -81,6 +81,7 @@ QDataStream& operator<<(QDataStream& out, const Task& task) {
 	}
 	out << task.begin;
 	out << task.end;
+	out << task.done;
 
 	return out;
 }
@@ -96,6 +97,7 @@ QDataStream& operator>>(QDataStream& in, Task& task) {
 	}
 	in >> task.begin;
 	in >> task.end;
+	in >> task.done;
 
 	return in;
 }
