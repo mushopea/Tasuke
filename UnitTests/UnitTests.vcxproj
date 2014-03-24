@@ -44,14 +44,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)Tasuke\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)hunspell-1.3.2\src\win_api;$(SolutionDir)hunspell-1.3.2\src\hunspell;$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)Tasuke\;$(IncludePath)</IncludePath>
     <ExecutablePath>$(QTDIR)\bin;$(ExecutablePath)</ExecutablePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <LibraryPath>$(SolutionDir)Tasuke\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)Tasuke\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)hunspell-1.3.2\src\win_api;$(SolutionDir)hunspell-1.3.2\src\hunspell;$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)Tasuke\;$(IncludePath)</IncludePath>
     <ExecutablePath>$(QTDIR)\bin;$(ExecutablePath)</ExecutablePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <LibraryPath>$(SolutionDir)Tasuke\$(Configuration)\;$(LibraryPath)</LibraryPath>
@@ -141,6 +141,14 @@
   <ItemGroup>
     <ProjectReference Include="..\glog-0.3.3\vsprojects\libglog\libglog.vcxproj">
       <Project>{34bd04bd-bc1d-4bfc-aafc-ed02d9e960f1}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="..\hunspell-1.3.2\src\win_api\libhunspell.vcxproj">
+      <Project>{53609bb3-d874-465c-af7b-df626db0d89b}</Project>
       <Private>false</Private>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>

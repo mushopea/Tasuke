@@ -1,6 +1,7 @@
 #ifndef TASUKE_H
 #define TASUKE_H
 
+#include <hunspelldll.h>
 #include <QSharedPointer>
 #include "Commands.h"
 #include "Storage.h"
@@ -33,6 +34,7 @@ public:
 	void showTutorial();
 	void showMessage(QString message);
 	void updateTaskWindow(QList<Task> tasks);
+	bool spellCheck(QString word);
 
 	void runCommand(QString commandString);
 	void undoCommand();
@@ -49,11 +51,12 @@ private:
 	IStorage* storage;
 	QList<QSharedPointer<ICommand>> commandUndoHistory;
 	QList<QSharedPointer<ICommand>> commandRedoHistory;
-	TaskWindow *taskWindow;
-	InputWindow *inputWindow;
-	AboutWindow *aboutWindow;
-	SystemTrayWidget *systemTrayWidget;
-	HotKeyManager *hotKeyManager;
+	TaskWindow* taskWindow;
+	InputWindow* inputWindow;
+	AboutWindow* aboutWindow;
+	SystemTrayWidget* systemTrayWidget;
+	HotKeyManager* hotKeyManager;
+	Hunspell* spellObj;
 
 	Tasuke();
 	Tasuke(const Tasuke& old);

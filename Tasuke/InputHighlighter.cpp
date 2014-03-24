@@ -1,10 +1,12 @@
+#include "Tasuke.h"
 #include "InputHighlighter.h"
 
 InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent){
 
 	setRegex();
 	setupColorsFormatsRules(QColor(51, 204, 255), Qt::darkCyan, QColor(164, 219, 0));
-
+	spellCheckFormat.setUnderlineColor(QColor(Qt::red));
+	spellCheckFormat.setUnderlineStyle(QTextCharFormat::WaveUnderline);
 }
 
 
@@ -61,4 +63,22 @@ void InputHighlighter::highlightBlock(const QString &text) {
             index = expression.indexIn(text, index + length);
         }
     }
+
+	QStringList words = text.simplified().split(" ", QString::SkipEmptyParts);
+	foreach(QString word, words) {
+		if (word.size() > 1) {
+			bool correct = Tasuke::instance().spellCheck(word);
+			if (!correct) {
+				int numOccurence = text.count(QRegExp("\\b"+word+"\\b"));
+				int index = -1;
+				// underline all occurences of misspelled word
+				for (int i=0; i<numOccurence; i++) {
+					index = text.indexOf(QRegExp("\\b"+word+"\\b"), index+1);
+					if (index >= 0) {
+						setFormat(index, word.length(), spellCheckFormat);
+					}
+				}
+			}
+		}
+	}
 }

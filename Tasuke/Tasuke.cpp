@@ -15,9 +15,11 @@ bool Tasuke::guiMode = true;
 Tasuke::Tasuke() {
 	LOG(INFO) << "Tasuke object created";
 
+	spellObj = (Hunspell*)hunspell_initialize("en_GB.aff", "en_GB.dic"); 
+	
 	storage = new Storage();
 	storage->loadFile();
-	
+
 	taskWindow = nullptr;
 	inputWindow = nullptr;
 	aboutWindow = nullptr;
@@ -56,6 +58,8 @@ Tasuke::~Tasuke() {
 	if (storage != nullptr) {
 		delete storage;
 	}
+
+	hunspell_uninitialize(spellObj);
 }
 
 void Tasuke::loadFonts(){
@@ -209,6 +213,16 @@ void Tasuke::updateTaskWindow(QList<Task> tasks) {
 	LOG(INFO) << "Updating task window with " << QString::number(tasks.size()).toStdString() << " tasks";
 
 	taskWindow->showTasks(tasks);
+}
+
+bool Tasuke::spellCheck(QString word) {
+	if (word.size() == 0) {
+		return true;
+	} else if (!word[0].isLetter()) {
+		return true;
+	}
+
+	return hunspell_spell(spellObj, word.toUtf8().data());
 }
 
 // This function runs a command in a string

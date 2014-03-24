@@ -229,4 +229,12 @@
   <ItemGroup>
     <ResourceCompile Include="Tasuke.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\en_GB.aff">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\en_GB.dic">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
