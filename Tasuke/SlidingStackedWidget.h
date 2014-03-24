@@ -1,10 +1,10 @@
-//This class is not written by any member of the team.
-//Code credits to: http://developer.nokia.com/community/wiki/ Code_Example_for_SlidingStackedWidget_class_in_Qt
+// This class is not written by any member of the team.
+// Code credits to: http://developer.nokia.com/community/wiki/ Code_Example_for_SlidingStackedWidget_class_in_Qt
 
 #ifndef SLIDINGSTACKEDWIDGET_H
 #define SLIDINGSTACKEDWIDGET_H
  
-//#include <QtGui>
+// #include <QtGui>
 #include <QStackedWidget>
 #include <QWidget>
 #include <QDebug>
@@ -25,7 +25,7 @@ class SlidingStackedWidget : public QStackedWidget
         Q_OBJECT
  
 public:
-        //! This enumeration is used to define the animation direction
+        // ! This enumeration is used to define the animation direction
         enum t_direction {
                 LEFT2RIGHT,
                 RIGHT2LEFT,
@@ -34,34 +34,34 @@ public:
                 AUTOMATIC
         };
  
-        //! The Constructor and Destructor
+        // ! The Constructor and Destructor
         SlidingStackedWidget(QWidget *parent);
         ~SlidingStackedWidget(void);
  
  
 public slots:
-        //! Some basic settings API
+        // ! Some basic settings API
         void setSpeed(int speed);   //animation duration in milliseconds
         void setAnimation(enum QEasingCurve::Type animationtype); //check out the QEasingCurve documentation for different styles
         void setVerticalMode(bool vertical=true);
         void setWrap(bool wrap);    //wrapping is related to slideInNext/Prev;it defines the behaviour when reaching last/first page
  
-        //! The Animation / Page Change API
+        // ! The Animation / Page Change API
         void slideInNext();
         void slideInPrev();
         void slideInIdx(int idx, enum t_direction direction=AUTOMATIC);
  
  
 signals:
-        //! this is used for internal purposes in the class engine
+        // ! this is used for internal purposes in the class engine
         void animationFinished(void);
  
 protected slots:
-        //! this is used for internal purposes in the class engine
+        // ! this is used for internal purposes in the class engine
         void animationDoneSlot(void);
  
 protected:
-        //! this is used for internal purposes in the class engine
+        // ! this is used for internal purposes in the class engine
         void slideInWgt(QWidget * widget, enum t_direction direction=AUTOMATIC);
  
         QWidget *m_mainwindow;

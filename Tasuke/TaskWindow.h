@@ -26,24 +26,30 @@ public:
 	TaskWindow(QWidget *parent = 0);
 	virtual ~TaskWindow();
 
-	//handles focussing and highlighting of task entries
+	// Handles task entry creation and addition to list
+	bool isInRange(int index);
+	TaskEntry* createEntry(Task t, int index);
+	void addListItem(TaskEntry* entry, int row, int pixmapID);
+	void addListItem(TaskEntry* entry);
+
+	// Handles focusing and highlighting of task entries
 	void highlightCurrentlySelected(int prevsize);
 	void highlightAndAnimateCurrentlySelected(int prevsize);
 	void focusOnNewTask(bool haveAnimation);
 	void showTasks(QList<Task> tasks);
 
-	//tutorialwidget initialization
+	// TutorialWidget initialization
 	void initTut();
 
-	//handles scrolling
+	// Handles scrolling
 	void scrollUp();
 	void scrollDown();
 	void pageUp();
 	void pageDown();
 
-	//stacked widget functions
-	int getScreen(); //helps decide which key press events to execute
-	void changeTutorialWidgetTabs(); //handles key press "tab"
+	// Stacked widget functions
+	int getScreen(); // Helps decide which key press events to execute
+	void changeTutorialWidgetTabs(); // Handles key press "tab"
 
 	
 public slots:
@@ -68,7 +74,7 @@ private:
 	HotKeyThread *hotKeyThread;
 	QPoint mpos;
 	QList<Task> currentTasks;
-	int currentlySelected; //represents of the # of the selected entry in the UI. min is 1. max is size of the task list
+	int currentlySelected; // Represents of the # of the selected entry in the UI. Min is 1. Max is size of the task list
 	int previouslySelected;
 	int previousSize;
 

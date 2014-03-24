@@ -16,12 +16,12 @@ TutorialWidget::~TutorialWidget() {
 	LOG(INFO) << "TutorialWidget instance destroyed";
 }
 
-//goes back to the task list
+// Goes back to the task list
 void TutorialWidget::backToTasuke() {
 	Tasuke::instance().getTaskWindow().showListWidget();
 }
 
-//switches tabs to the next tab
+// Switches tabs to the next tab
 void TutorialWidget::changeTabs(){
 
 	int nextTab;

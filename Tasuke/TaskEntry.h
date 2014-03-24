@@ -14,6 +14,7 @@ public:
 	TaskEntry(int id, QString description, QList<QString> tags, QDateTime start, QDateTime end, QWidget *parent = 0);
 	~TaskEntry();
 	void strikeOut();
+	void highlightOngoing();
 	void highlightOverdue();
 	Ui::TaskEntry ui;
 
@@ -28,18 +29,18 @@ private:
 	static const int MAX_WIDTH_FOR_DESCRIPTION = 336;
 	static const int MAX_WIDTH_FOR_TAGS = 160;
 
-	//fields
+	// fields
 	int id;
 	QString description;
 	QList<QString> tags;
 	QDateTime start;
 	QDateTime end;
 
-	//font metrics
+	// font metrics
 	QFont font;
 	QFontMetrics fm;
 
-	//functions
+	// functions
 	void setDescription(QString description);
 	void setDateTimes(QDateTime start, QDateTime end);
 	QString createTagString(QList<QString> tags);

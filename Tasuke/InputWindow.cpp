@@ -13,7 +13,7 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 
 	ui.lineEdit->installEventFilter(this);
 
-	//animation
+	// animation
 	fadeEffect = new QGraphicsOpacityEffect(this); 
 	this->setGraphicsEffect(fadeEffect);
 	animation = new QPropertyAnimation(fadeEffect, "opacity"); 
@@ -30,7 +30,7 @@ InputWindow::~InputWindow() {
 
 bool InputWindow::eventFilter(QObject* object, QEvent* event) {
     if(event->type() == QEvent::KeyPress) {
-		//enter key
+		// enter key
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
 		if(eventKey->key() == Qt::Key_Return) {
 			handleReturnPressed();
@@ -39,7 +39,7 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 		}
 
 		if (Tasuke::instance().getTaskWindow().getScreen() == 0){
-			//scroll keys for tasks
+			// Scroll keys for tasks
 			if (eventKey->modifiers() & Qt::CTRL) {
 				if (eventKey->key() == Qt::Key_Down) {
 					Tasuke::instance().getTaskWindow().pageDown();
@@ -62,7 +62,7 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 				return true;
 			}
 
-			//undo keys
+			// undo keys
 			if (eventKey->matches(QKeySequence::Undo)) {
 				Tasuke::instance().runCommand(QString("undo"));
 			}
@@ -71,7 +71,7 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 				Tasuke::instance().runCommand(QString("redo"));
 			}
 
-			//paste shortcut
+			// paste shortcut
 			if (eventKey->matches(QKeySequence::Paste)) {
 				if(ui.lineEdit->toPlainText().trimmed().isEmpty()) {
 					ui.lineEdit->insertPlainText(QString("add "));
@@ -79,7 +79,7 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 			}
 		}
 
-		if (Tasuke::instance().getTaskWindow().getScreen() == 1) { //on tutorial window
+		if (Tasuke::instance().getTaskWindow().getScreen() == 1) { // On tutorial window
 			if (eventKey->key() == Qt::Key_Tab){
 				Tasuke::instance().getTaskWindow().changeTutorialWidgetTabs();
 				return true;
@@ -99,7 +99,7 @@ void InputWindow::showAndCenter() {
 	LOG(INFO) << "Displaying input window";
 
 	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
-	if(Tasuke::instance().getTaskWindow().isActiveWindow()){ //if taskWindow is open
+	if(Tasuke::instance().getTaskWindow().isActiveWindow()){ // If taskWindow is open
 		pos.setY(Tasuke::instance().getTaskWindow().y() + Tasuke::instance().getTaskWindow().height() + 3); //set commandbox below taskWindow
 		pos.setX(Tasuke::instance().getTaskWindow().x());
 	} else {
@@ -116,7 +116,7 @@ void InputWindow::showAndCenter() {
 	animation->start();
 }
 
-//will be updated when "themes" is implemented.
+// Will be updated when "themes" is implemented.
 void InputWindow::changeBorder(int themeNumber){
 	QPixmap pxr(QString::fromUtf8("InputWindowMask.png"));
 	QPixmap pxr2(QString::fromUtf8("InputWindowMask.png"));
@@ -127,7 +127,7 @@ void InputWindow::changeBorder(int themeNumber){
     ui.label_2->setPixmap(pxr);
 }
 
-//will be updated when "themes" is implemented.
+// Will be updated when "themes" is implemented.
 void InputWindow::changeBG(int themeNumber){
 	//ui.label_2->setPixmap(pxr);
 }

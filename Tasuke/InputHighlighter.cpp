@@ -9,11 +9,11 @@ InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(p
 }
 
 void InputHighlighter::setRegex(){
-	//Regex notes:
-	//^ means it will only be highlighted if the word is used at the start of the string
-	//? means 0 or more
-	//+ means at least one
-	//\b means start/end boundary
+	// Regex notes:
+	// ^ means it will only be highlighted if the word is used at the start of the string
+	// ? means 0 or more
+	// + means at least one
+	// \b means start/end boundary
 	
 	commandRegex = QRegExp("(^\\b(((much)|(such)|(wow such)|(wow much)|(so)|(many)) )?((\\b(add)|(create)|(a)|(remove)|(delete)|(clear)|(rm)|(edit)|(update)|(modify)|(change)|(e)|(show)|(display)|(list)|(find)|(search)|(ls)|(undo)|(redo)|(r)|(u)|(done)|(notdone)|(d)|(nd))\\b)+)");
 	keywordRegex = QRegExp("(^\\b(((much)|(such)|(wow such)|(wow much)|(so)|(many)) )?((\\b(exit)|(quit)|(q)|(options)|(settings)|(help)|(tutorial)|(guide)|(instructions)|(about))\\b)+)");

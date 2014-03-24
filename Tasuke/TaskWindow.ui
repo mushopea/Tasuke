@@ -377,7 +377,7 @@ QScrollBar::handle:vertical {
       <property name="geometry">
        <rect>
         <x>11</x>
-        <y>77</y>
+        <y>80</y>
         <width>797</width>
         <height>330</height>
        </rect>
@@ -405,7 +405,7 @@ QScrollBar::handle:vertical {
       <property name="geometry">
        <rect>
         <x>21</x>
-        <y>43</y>
+        <y>46</y>
         <width>780</width>
         <height>31</height>
        </rect>
@@ -427,34 +427,40 @@ QScrollBar::handle:vertical {
 color: grey;</string>
       </property>
       <property name="text">
-       <string>Task                                                   Start         End               Tag</string>
+       <string>      Task                                             Start         End               Tag</string>
       </property>
      </widget>
      <widget class="QLabel" name="taskScope">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>0</x>
         <y>4</y>
-        <width>780</width>
+        <width>821</width>
         <height>41</height>
        </rect>
       </property>
       <property name="font">
        <font>
         <family>Quicksand Book</family>
-        <pointsize>24</pointsize>
+        <pointsize>23</pointsize>
         <weight>9</weight>
         <italic>false</italic>
         <bold>false</bold>
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 75 24pt &quot;Quicksand Book&quot;;
+       <string notr="true">font: 75 23pt &quot;Quicksand Book&quot;;
 text-align: center;
 background: transparent;</string>
       </property>
       <property name="text">
-       <string>                          Viewing all tasks</string>
+       <string>Viewing all tasks</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::NoTextInteraction</set>
       </property>
      </widget>
     </widget>

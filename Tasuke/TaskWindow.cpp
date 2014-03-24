@@ -9,7 +9,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	this->installEventFilter(this);
 	
 	currentlySelected = 0;
-	initTut(); //initialize tutorial window
+	initTut(); // Initialize tutorial window
 
 
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
@@ -20,93 +20,86 @@ TaskWindow::~TaskWindow() {
 	LOG(INFO) << "TaskWindow instance destroyed";
 }
 
+// Checks if a given index is in range of the task list.
+bool TaskWindow::isInRange(int index) {
+	return (index >= 0) && (index < currentTasks.size());
+}
 
-void TaskWindow::highlightCurrentlySelected(int prevSize){
-
-	QPixmap pxr("roundedEntryMaskSelect.png"); //highlighted bg image
-	QPixmap pxr2("roundedEntryMask.png"); //normal bg image
-
-	//dehilight previously selected
-	if ((previouslySelected>=0) && (previouslySelected<currentTasks.size()) && (prevSize!=0)) { //dehighlight if previous state is not empty
-		Task t2 = currentTasks[previouslySelected];
-		TaskEntry * entry2 = new TaskEntry(previouslySelected+1, t2.getDescription(), t2.getTags(), t2.getBegin(), t2.getEnd(), this);
-		
-		if (t2.isDone()) {
-			entry2->strikeOut();
-		}
-		
-		entry2->ui.bg->setPixmap(pxr2);
-
-		QListWidgetItem *listItem2 = new QListWidgetItem();
-		listItem2->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
-		ui.taskList->insertItem(previouslySelected, listItem2);
-		ui.taskList->setItemWidget(listItem2, entry2);
-
-		listItem2 = ui.taskList->takeItem(previouslySelected+1);
+// Creates and returns a new task entry.
+TaskEntry* TaskWindow::createEntry(Task t, int index) {
+	TaskEntry* entry = new TaskEntry(index, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
+	
+	if (t.isDone()) {
+		entry->strikeOut();
 	}
 
-	//highlight currently selected
-	if((currentlySelected>=0) && (currentlySelected<currentTasks.size())) {
+	if (t.isOverdue()) {
+		entry->highlightOverdue();
+	}
+
+	return entry;
+}
+
+// Add a QListWidgetItem in a specified row with a specified background.
+void TaskWindow::addListItem(TaskEntry* entry, int row, int pixmapID) {
+	QPixmap pxr("roundedEntryMaskSelect.png"); // Highlighted bg image
+	QPixmap pxr2("roundedEntryMask.png"); // Normal bg image
+
+	if (pixmapID == 1) {
+		entry->ui.bg->setPixmap(pxr);
+	} 
+
+	if (pixmapID == 2) {
+		entry->ui.bg->setPixmap(pxr2);
+	}
+
+	QListWidgetItem *listItem = new QListWidgetItem();
+	listItem->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
+	ui.taskList->insertItem(row, listItem);
+	ui.taskList->setItemWidget(listItem, entry);
+}
+
+// Adds a new QListWidgetItem
+void TaskWindow::addListItem(TaskEntry* entry) {
+	QListWidgetItem *listItem = new QListWidgetItem();
+	listItem->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
+	ui.taskList->addItem(listItem);
+	ui.taskList->setItemWidget(listItem, entry);
+}
+
+void TaskWindow::highlightCurrentlySelected(int prevSize) {
+
+	if ((isInRange(previouslySelected)) && (prevSize!=0)) { // Dehighlight if previous state is not empty
+		Task t2 = currentTasks[previouslySelected];
+		TaskEntry * entry2 = createEntry(t2, previouslySelected+1);
+		addListItem(entry2, previouslySelected, 2);
+		ui.taskList->takeItem(previouslySelected+1);
+	}
+
+	// Highlight currently selected
+	if(isInRange(currentlySelected)) {
 		Task t = currentTasks[currentlySelected];
-		TaskEntry * entry = new TaskEntry(currentlySelected+1, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
-		
-		if (t.isDone()) {
-			entry->strikeOut();
-		}
-		
-		entry->ui.bg->setPixmap(pxr); 
-
-		QListWidgetItem *listItem = new QListWidgetItem();
-		listItem->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
-		ui.taskList->insertItem(currentlySelected, listItem);
-		ui.taskList->setItemWidget(listItem, entry);
-
-		listItem = ui.taskList->takeItem(currentlySelected+1);
+		TaskEntry * entry = createEntry(t, currentlySelected+1);
+		addListItem(entry, currentlySelected, 1);
+		ui.taskList->takeItem(currentlySelected+1);
 	}
 }
 
-void TaskWindow::highlightAndAnimateCurrentlySelected(int prevSize){
+void TaskWindow::highlightAndAnimateCurrentlySelected(int prevSize) {
 
-	QPixmap pxr("roundedEntryMaskSelect.png"); //highlighted bg image
-	QPixmap pxr2("roundedEntryMask.png"); //normal bg image
-
-	//dehilight previously selected
-	if ((previouslySelected>=0) && (previouslySelected<currentTasks.size()) && (prevSize!=0)) { //dehighlight if previous state is not empty
+	if ((isInRange(previouslySelected)) && (prevSize!=0)) { // Dehighlight if previous state is not empty
 		Task t2 = currentTasks[previouslySelected];
-		TaskEntry * entry2 = new TaskEntry(previouslySelected+1, t2.getDescription(), t2.getTags(), t2.getBegin(), t2.getEnd(), this);
-		
-		if (t2.isDone()) {
-			entry2->strikeOut();
-		}
-		
-		entry2->ui.bg->setPixmap(pxr2);
-
-		QListWidgetItem *listItem2 = new QListWidgetItem();
-		listItem2->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
-		ui.taskList->insertItem(previouslySelected, listItem2);
-		ui.taskList->setItemWidget(listItem2, entry2);
-
-		listItem2 = ui.taskList->takeItem(previouslySelected+1);
+		TaskEntry * entry2 = createEntry(t2, previouslySelected+1);
+		addListItem(entry2, previouslySelected, 2);
+		ui.taskList->takeItem(previouslySelected+1);
 	}
 
-	//highlight currently selected
-	if((currentlySelected>=0) && (currentlySelected<currentTasks.size())) {
+	// Highlight currently selected
+	if(isInRange(currentlySelected)) {
 		Task t = currentTasks[currentlySelected];
-		TaskEntry * entry = new TaskEntry(currentlySelected+1, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
-		
-		if (t.isDone()) {
-			entry->strikeOut();
-		}
+		TaskEntry * entry = createEntry(t, currentlySelected+1);
+		addListItem(entry, currentlySelected, 1);
 
-		entry->ui.bg->setPixmap(pxr); 
-
-		QListWidgetItem *listItem = new QListWidgetItem();
-		listItem->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
-		ui.taskList->insertItem(currentlySelected, listItem);
-		ui.taskList->setItemWidget(listItem, entry);
-
-		//FIGURING OUT ANIMATION
-		//FIGURING OUT ANIMATION
 		//FIGURING OUT ANIMATION
 
 		/*QGraphicsOpacityEffect * fadeEffect = new QGraphicsOpacityEffect(ui.taskList->itemWidget(listItem)); 
@@ -116,64 +109,53 @@ void TaskWindow::highlightAndAnimateCurrentlySelected(int prevSize){
 		animation->setDuration(1000); 
 		animation->setStartValue(0.0); 
 		animation->setEndValue(1.0); 
-
 		animation->start();*/
 
-		listItem = ui.taskList->takeItem(currentlySelected+1);
+		ui.taskList->takeItem(currentlySelected+1);
 	}
 }
 
 
-void TaskWindow::focusOnNewTask(bool haveAnimation){
-	//set indexes of selected tasks
+void TaskWindow::focusOnNewTask(bool haveAnimation) {
+	// Set indexes of selected tasks
 	previouslySelected = currentlySelected;
-	currentlySelected = currentTasks.size()-1; //change this when fazli give updated task
+	currentlySelected = currentTasks.size()-1; // Change this when fazli give updated task
 
-	//highlight newly selected task, dehighlight ex task
-	if (haveAnimation) { //for add, edit, redo
+	// Highlight newly selected task, dehighlight ex task
+	if (haveAnimation) { // For add, edit, redo
 		highlightAndAnimateCurrentlySelected(previousSize);
-	} else { //delete, undo
+	} else { // Delete, undo
 		highlightCurrentlySelected(previousSize);
 	}
 
-	//scroll to it!
+	// Scroll to it!
 	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-
 }
 
 void TaskWindow::showTasks(QList<Task> tasks) {
-	previousSize = currentTasks.size(); //size of previous list
-	currentTasks = tasks; //update current tasks
+	previousSize = currentTasks.size(); // Size of previous list
+	currentTasks = tasks; // Update current tasks
 	ui.taskList->clear();
 
 	for (int i = 0; i < tasks.size(); i++){
-
 		Task t = tasks[i];
-		TaskEntry * entry = new TaskEntry(i+1, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
-		
-		if (t.isDone()) {
-			entry->strikeOut();
-		}
-
-		QListWidgetItem *listItem = new QListWidgetItem();
-		listItem->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
-		ui.taskList->addItem(listItem);
-		ui.taskList->setItemWidget(listItem, entry);	
+		TaskEntry * entry = createEntry(t, i+1);
+		addListItem(entry);
 	}
 
-	if (previousSize < currentTasks.size()) { //if an entry was deleted
-		focusOnNewTask(false);
+	if (previousSize < currentTasks.size()) { // If an entry was deleted
+		focusOnNewTask(false); // Highlight updated task
 	} else {
-		focusOnNewTask(true);
+		focusOnNewTask(true); // Highlight and animate updated task
 	}
 }
 
-void TaskWindow::initTut(){
+void TaskWindow::initTut() {
 	tut = new TutorialWidget(this);
 	ui.stackedWidget->addWidget(tut);
 }
 
-void TaskWindow::scrollUp(){
+void TaskWindow::scrollUp() {
 	if (currentlySelected>0) {
 		previouslySelected = currentlySelected;
 		currentlySelected--;
@@ -182,7 +164,7 @@ void TaskWindow::scrollUp(){
 	}
 }
 
-void TaskWindow::scrollDown(){
+void TaskWindow::scrollDown() {
 	if(currentlySelected < ui.taskList->count()-1){
 		previouslySelected = currentlySelected;
 		currentlySelected++;
@@ -191,7 +173,7 @@ void TaskWindow::scrollDown(){
 	}
 }
 
-void TaskWindow::pageUp(){
+void TaskWindow::pageUp() {
 	if (currentlySelected < 1){
 		return;
 	}
@@ -209,7 +191,7 @@ void TaskWindow::pageUp(){
 
 }
 
-void TaskWindow::pageDown(){
+void TaskWindow::pageDown() {
 	if (currentlySelected == ui.taskList->count()-1) {
 		return;
 	}
@@ -227,7 +209,7 @@ void TaskWindow::pageDown(){
 }
 
 
-//returns 0 if task list is shown, 1 if tutorial is shown
+// Returns 0 if task list is shown, 1 if tutorial is shown
 int TaskWindow::getScreen() {
 	return ui.stackedWidget->currentIndex();
 }
@@ -262,11 +244,11 @@ void TaskWindow::closeEvent(QCloseEvent *event) {
 	event->ignore();
 }
 
-void TaskWindow::mousePressEvent(QMouseEvent *event){
+void TaskWindow::mousePressEvent(QMouseEvent *event) {
 	mpos = event->pos();
 }
 
-void TaskWindow::mouseMoveEvent(QMouseEvent *event){
+void TaskWindow::mouseMoveEvent(QMouseEvent *event) {
 	if (event->buttons() && Qt::LeftButton) {
 		QPoint diff = event->pos() - mpos;
 		QPoint newpos = this->pos() + diff;
@@ -280,8 +262,8 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 	if (event->type() == QEvent::KeyPress) {	
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
 
-		//scroll task list
-		if (ui.stackedWidget->currentIndex() == 0) { //is on task list
+		// Scroll task list
+		if (ui.stackedWidget->currentIndex() == 0) { // Is on task list
 
 			if (eventKey->modifiers() & Qt::CTRL) {
 				if (eventKey->key() == Qt::Key_Down) {
@@ -305,7 +287,7 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 				return true;
 			}
 
-			//undo and redo shortcuts
+			// Undo and redo shortcuts
 			if (eventKey->matches(QKeySequence::Undo)) {
 				Tasuke::instance().runCommand(QString("undo"));
 				return true;
@@ -317,7 +299,7 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 			}
 		}
 
-		if (ui.stackedWidget->currentIndex() == 1) { //is on tutorial
+		if (ui.stackedWidget->currentIndex() == 1) { // Is on tutorial
 			if (eventKey->key() == Qt::Key_Tab){
 				changeTutorialWidgetTabs();
 				return true;
