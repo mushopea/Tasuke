@@ -1,9 +1,5 @@
-#include <glog/logging.h>
-#include <QApplication>
-#include <QDesktopWidget>
 #include "Tasuke.h"
 #include "InputWindow.h"
-
 
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "InputWindow instance created";
@@ -31,7 +27,6 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 InputWindow::~InputWindow() {
 	LOG(INFO) << "InputWindow instance destroyed";
 }
-
 
 bool InputWindow::eventFilter(QObject* object, QEvent* event) {
     if(event->type() == QEvent::KeyPress) {

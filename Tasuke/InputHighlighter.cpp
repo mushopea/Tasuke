@@ -1,12 +1,9 @@
 #include "InputHighlighter.h"
 
 InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent){
-
 	setRegex();
 	setupColorsFormatsRules(QColor(51, 204, 255), Qt::darkCyan, QColor(164, 219, 0));
-
 }
-
 
 void InputHighlighter::setRegex(){
 	//Regex notes:
@@ -24,8 +21,6 @@ void InputHighlighter::setFormats(QColor commandC, QColor keywordC, QColor conne
 	commandFormat.setForeground(commandC);
 	keywordFormat.setForeground(keywordC);
 	connectorFormat.setForeground(connectorC);
-
-    //commandFormat.setFont(QFont("Quicksand Bold", 26));
 }
 
 void InputHighlighter::setRules(){

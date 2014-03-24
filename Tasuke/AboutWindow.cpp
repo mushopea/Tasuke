@@ -1,5 +1,3 @@
-#include <QApplication>
-#include <QDesktopWidget>
 #include "Tasuke.h"
 #include "AboutWindow.h"
 

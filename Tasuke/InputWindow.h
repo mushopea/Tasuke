@@ -2,6 +2,9 @@
 #define INPUTWINDOW_H
 
 #include <QWidget>
+#include <glog/logging.h>
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QFocusEvent>
 #include <QBitmap>

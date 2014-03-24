@@ -2,6 +2,8 @@
 #define ABOUTWINDOW_H
 
 #include <QWidget>
+#include <QApplication>
+#include <QDesktopWidget>
 #include "ui_AboutWindow.h"
 
 

@@ -20,9 +20,9 @@
    <property name="geometry">
     <rect>
      <x>5</x>
-     <y>43</y>
+     <y>47</y>
      <width>808</width>
-     <height>361</height>
+     <height>355</height>
     </rect>
    </property>
    <property name="palette">
@@ -151,7 +151,7 @@ QTabBar::tab:selected{
     <enum>QTabWidget::Triangular</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="usesScrollButtons">
     <bool>true</bool>
@@ -315,7 +315,7 @@ QTabBar::tab:selected{
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>0</y>
+     <y>5</y>
      <width>131</width>
      <height>41</height>
     </rect>

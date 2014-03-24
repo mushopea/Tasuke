@@ -357,7 +357,7 @@ QScrollBar::handle:vertical {
      <pixmap>TaskWindowMaskWhite.png</pixmap>
     </property>
    </widget>
-   <widget class="QStackedWidget" name="stackedWidget">
+   <widget class="SlidingStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -467,6 +467,14 @@ background: transparent;</string>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>SlidingStackedWidget</class>
+   <extends>QStackedWidget</extends>
+   <header>SlidingStackedWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="Resources.qrc"/>
  </resources>

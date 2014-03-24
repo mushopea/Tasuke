@@ -1,18 +1,15 @@
-#include <glog/logging.h>
-#include <QApplication>
-#include <QDesktopWidget>
 #include "Tasuke.h"
 #include "TaskWindow.h"
 
 
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	LOG(INFO) << "TaskWindow instance created";
-
-	currentlySelected = 0;
+	
 	ui.setupUi(this);
-
 	this->installEventFilter(this);
-	initTut();
+	
+	currentlySelected = 0;
+	initTut(); //initialize tutorial window
 
 
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
@@ -229,11 +226,11 @@ void TaskWindow::showAndMoveToSide() {
 }
 
 void TaskWindow::showListWidget() {
-	ui.stackedWidget->setCurrentIndex(0);
+	ui.stackedWidget->slideInIdx(0);
 }
 
 void TaskWindow::showTutorialWidget() {
-	ui.stackedWidget->setCurrentIndex(1);
+	ui.stackedWidget->slideInIdx(1);
 }
 
 

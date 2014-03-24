@@ -1,7 +1,10 @@
 #ifndef TUTORIALWIDGET_H
 #define TUTORIALWIDGET_H
 
+#include <glog/logging.h>
 #include <QWidget>
+#include <QApplication>
+#include <QDesktopWidget>
 #include "ui_TutorialWidget.h"
 
 

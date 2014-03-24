@@ -1,6 +1,9 @@
 #ifndef TASKWINDOW_H
 #define TASKWINDOW_H
 
+#include <glog/logging.h>
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QCloseEvent>
@@ -23,17 +26,24 @@ public:
 	TaskWindow(QWidget *parent = 0);
 	virtual ~TaskWindow();
 
+	//handles focussing and highlighting of task entries
 	void highlightCurrentlySelected(int prevsize);
 	void highlightAndAnimateCurrentlySelected(int prevsize);
 	void focusOnNewTask(bool haveAnimation);
 	void showTasks(QList<Task> tasks);
+
+	//tutorialwidget initialization
 	void initTut();
+
+	//handles scrolling
 	void scrollUp();
 	void scrollDown();
 	void pageUp();
 	void pageDown();
-	int getScreen();
-	void changeTutorialWidgetTabs();
+
+	//stacked widget functions
+	int getScreen(); //helps decide which key press events to execute
+	void changeTutorialWidgetTabs(); //handles key press "tab"
 
 	
 public slots:
