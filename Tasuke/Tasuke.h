@@ -40,9 +40,11 @@ public:
 	void loadFonts();
 	void initialize();
 	
+	static void setGuiMode(bool mode);
 	static Tasuke &instance();
 
 private:
+	static bool guiMode;
 	IStorage* storage;
 	QList<QSharedPointer<ICommand>> commandUndoHistory;
 	QList<QSharedPointer<ICommand>> commandRedoHistory;

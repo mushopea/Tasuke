@@ -9,6 +9,8 @@
 #include "Commands.h"
 #include "Tasuke.h"
 
+bool Tasuke::guiMode = true;
+
 // Constructor for the Tasuke singleton.
 Tasuke::Tasuke() {
 	LOG(INFO) << "Tasuke object created";
@@ -16,7 +18,9 @@ Tasuke::Tasuke() {
 	storage = new Storage();
 	storage->loadFile();
 	
-	initialize();
+	if (guiMode) {
+		initialize();
+	}
 }
 
 // Destructor for the Tasuke singleton.
@@ -75,10 +79,14 @@ void Tasuke::initialize(){
 	showTaskWindow();
 }
 
+void Tasuke::setGuiMode(bool mode) {
+	guiMode = mode;
+}
+
 // Static method that returns the sole instance of Tasuke.
 Tasuke& Tasuke::instance() {
 	static Tasuke *instance = 0;
-	
+
 	if(instance == 0){
 		instance = new Tasuke();
 		return *instance;
@@ -94,55 +102,62 @@ void Tasuke::setStorage(IStorage* _storage) {
 }
 
 InputWindow& Tasuke::getInputWindow(){
-	if (inputWindow == nullptr) {
-		throw ExceptionNullPtr();
-	}
 	return *inputWindow;
 }
 
 AboutWindow& Tasuke::getAboutWindow(){
-	if (aboutWindow == nullptr) {
-		throw ExceptionNullPtr();
-	}
 	return *aboutWindow;
 }
 
 TaskWindow& Tasuke::getTaskWindow(){
-	if (taskWindow == nullptr) {
-		throw ExceptionNullPtr();
-	}
 	return *taskWindow;
 }
 
 // This function exposes the Storage instance for editing.
 IStorage& Tasuke::getStorage() {
-	if (storage == nullptr) {
-		throw ExceptionNullPtr();
-	}
 	return *storage;
 }
 
 void Tasuke::showInputWindow() {
+	if (!guiMode) {
+		return;
+	}
 	inputWindow->showAndCenter();
 }
 
 void Tasuke::showTaskWindow() {
+	if (!guiMode) {
+		return;
+	}
 	taskWindow->showAndMoveToSide();
 }
 
 void Tasuke::showAboutWindow(){
+	if (!guiMode) {
+		return;
+	}
 	aboutWindow->showAndCenter();
 }
 
 void Tasuke::hideInputWindow() {
+	if (!guiMode) {
+		return;
+	}
 	inputWindow->hide();
 }
 
 void Tasuke::hideTaskWindow() {
+	if (!guiMode) {
+		return;
+	}
 	taskWindow->hide();
 }
 
 void Tasuke::toggleInputWindow() {
+	if (!guiMode) {
+		return;
+	}
+
 	if (inputWindow->isVisible()) {
 		hideInputWindow();
 	} else {
@@ -151,6 +166,10 @@ void Tasuke::toggleInputWindow() {
 }
 
 void Tasuke::toggleTaskWindow() {
+	if (!guiMode) {
+		return;
+	}
+
 	if (taskWindow->isVisible()) {
 		hideTaskWindow();
 	} else {
@@ -161,10 +180,18 @@ void Tasuke::toggleTaskWindow() {
 void Tasuke::showMessage(QString message) {
 	LOG(INFO) << "Showing message: " << message.toStdString();
 
+	if (!guiMode) {
+		return;
+	}
+
 	systemTrayWidget->showMessage(message);
 }
 
 void Tasuke::updateTaskWindow(QList<Task> tasks) {
+	if (!guiMode) {
+		return;
+	}
+
 	LOG(INFO) << "Updating task window with " << QString::number(tasks.size()).toStdString() << " tasks";
 
 	taskWindow->showTasks(tasks);
