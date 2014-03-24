@@ -122,15 +122,12 @@
     <ClCompile Include="TutorialWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SlidingStackedWidget.cpp">
     <ClCompile Include="SystemTrayWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_SlidingStackedWidget.cpp">
     <ClCompile Include="GeneratedFiles\Debug\moc_SystemTrayWidget.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_SlidingStackedWidget.cpp">
     <ClCompile Include="GeneratedFiles\Release\moc_SystemTrayWidget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
@@ -142,6 +139,15 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_HotKeyManager.cpp">
       <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SlidingStackedWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SlidingStackedWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="SlidingStackedWidget.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,13 +196,16 @@
     <CustomBuild Include="TutorialWidget.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="SlidingStackedWidget.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="SystemTrayWidget.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="HotKeyManager.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SettingsWindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SlidingStackedWidget.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -231,16 +240,11 @@
     <ClInclude Include="GeneratedFiles\ui_TutorialWidget.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_SettingsWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tasuke.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\en_GB.aff">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Resources\en_GB.dic">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>
