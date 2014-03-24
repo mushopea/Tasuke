@@ -51,20 +51,6 @@ void TaskWindow::highlightCurrentlySelected(int prevSize){
 		ui.taskList->insertItem(currentlySelected, listItem);
 		ui.taskList->setItemWidget(listItem, entry);
 
-		//FIGURING OUT ANIMATION
-		//FIGURING OUT ANIMATION
-		//FIGURING OUT ANIMATION
-
-		/*QGraphicsOpacityEffect * fadeEffect = new QGraphicsOpacityEffect(ui.taskList->itemWidget(listItem)); 
-		this->setGraphicsEffect(fadeEffect);
-		QPropertyAnimation * animation = new QPropertyAnimation(fadeEffect, "opacity"); 
-		animation->setEasingCurve(QEasingCurve::OutCubic); 
-		animation->setDuration(1000); 
-		animation->setStartValue(0.0); 
-		animation->setEndValue(1.0); 
-
-		animation->start();*/
-
 		listItem = ui.taskList->takeItem(currentlySelected+1);
 	}
 }
@@ -99,6 +85,20 @@ void TaskWindow::highlightAndAnimateCurrentlySelected(int prevSize){
 		ui.taskList->insertItem(currentlySelected, listItem);
 		ui.taskList->setItemWidget(listItem, entry);
 
+		//FIGURING OUT ANIMATION
+		//FIGURING OUT ANIMATION
+		//FIGURING OUT ANIMATION
+
+		/*QGraphicsOpacityEffect * fadeEffect = new QGraphicsOpacityEffect(ui.taskList->itemWidget(listItem)); 
+		this->setGraphicsEffect(fadeEffect);
+		QPropertyAnimation * animation = new QPropertyAnimation(fadeEffect, "opacity"); 
+		animation->setEasingCurve(QEasingCurve::OutCubic); 
+		animation->setDuration(1000); 
+		animation->setStartValue(0.0); 
+		animation->setEndValue(1.0); 
+
+		animation->start();*/
+
 		listItem = ui.taskList->takeItem(currentlySelected+1);
 	}
 }
@@ -129,8 +129,11 @@ void TaskWindow::showTasks(QList<Task> tasks) {
 	for (int i = 0; i < tasks.size(); i++){
 
 		Task t = tasks[i];
-
 		TaskEntry * entry = new TaskEntry(i+1, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
+		
+		if (t.isDone()) {
+			entry->strikeOut();
+		}
 
 		QListWidgetItem *listItem = new QListWidgetItem();
 		listItem->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));

@@ -16,6 +16,14 @@
     <height>16777215</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <family>Print Clearly</family>
+    <pointsize>20</pointsize>
+    <weight>50</weight>
+    <bold>false</bold>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>taskEntry</string>
   </property>
