@@ -30,6 +30,7 @@ public:
 	void hideTaskWindow();
 	void toggleInputWindow();
 	void toggleTaskWindow();
+	void showTutorial();
 	void showMessage(QString message);
 	void updateTaskWindow(QList<Task> tasks);
 

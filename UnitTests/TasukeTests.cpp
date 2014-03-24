@@ -261,6 +261,15 @@ namespace UnitTest {
 			Tasuke::instance().runCommand("undone 4");
 		}
 
-		
+		TEST_METHOD(InterpretNullReturn) {
+			ICommand* command = Interpreter::interpret("show");
+			Assert::IsTrue(command == nullptr);
+			command = Interpreter::interpret("hide");
+			Assert::IsTrue(command == nullptr);
+			command = Interpreter::interpret("about");
+			Assert::IsTrue(command == nullptr);
+			command = Interpreter::interpret("help");
+			Assert::IsTrue(command == nullptr);
+		}
 	};
 }

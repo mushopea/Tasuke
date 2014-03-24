@@ -1,6 +1,7 @@
 #include <cassert>
 #include <glog/logging.h>
 #include <QApplication>
+#include <QString>
 #include <QStringList>
 #include "Tasuke.h"
 #include "Commands.h"
@@ -77,6 +78,7 @@ QString Interpreter::getType(QString commandString) {
 	typeKeywords << "edit";
 	typeKeywords << "remove";
 	typeKeywords << "show";
+	typeKeywords << "hide";
 	typeKeywords << "done";
 	typeKeywords << "undone";
 	typeKeywords << "undo";
@@ -128,6 +130,8 @@ ICommand* Interpreter::interpret(QString commandString) {
 	
 	if (commandType == "show") {
 		doShow();
+	} else if (commandType == "hide") {
+		doHide();
 	} else if (commandType == "undo") {
 		doUndo();
 	} else if (commandType == "redo") {
@@ -272,7 +276,7 @@ void Interpreter::doRedo() {
 	Tasuke::instance().redoCommand();
 }
 void Interpreter::doHelp() {
-	Tasuke::instance().getTaskWindow().showTutorialWidget();
+	Tasuke::instance().showTutorial();
 }
 void Interpreter::doExit() {
 	QApplication::quit();

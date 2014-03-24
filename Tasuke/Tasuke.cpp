@@ -18,6 +18,12 @@ Tasuke::Tasuke() {
 	storage = new Storage();
 	storage->loadFile();
 	
+	taskWindow = nullptr;
+	inputWindow = nullptr;
+	aboutWindow = nullptr;
+	systemTrayWidget = nullptr;
+	hotKeyManager = nullptr;
+
 	if (guiMode) {
 		initialize();
 	}
@@ -177,6 +183,14 @@ void Tasuke::toggleTaskWindow() {
 	}
 }
 
+void Tasuke::showTutorial() {
+	if (!guiMode) {
+		return;
+	}
+
+	taskWindow->showTutorialWidget();
+}
+
 void Tasuke::showMessage(QString message) {
 	LOG(INFO) << "Showing message: " << message.toStdString();
 
@@ -231,7 +245,7 @@ void Tasuke::undoCommand() {
 
 void Tasuke::redoCommand() {
 	if (commandRedoHistory.size() == 0) {
-		// Nothing to redo
+		showMessage("Nothing to redo");
 		return;
 	}
 
