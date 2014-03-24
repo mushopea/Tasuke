@@ -6,6 +6,7 @@
 #define WM_END_THREAD (WM_USER+2)
 
 HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
+	qRegisterMetaType<KeyCombination>("KeyCombination");
 	pid = 0;
 }
 
@@ -29,12 +30,22 @@ void HotKeyThread::run() {
 	MSG msg = {0};
 	while (::GetMessage(&msg, NULL, 0, 0)) {
 		if (msg.message == WM_HOTKEY) {
-			emit hotKeyPress(msg.lParam);
+			int keyCode = msg.lParam;
+			int key = keyCode >> 16;
+			int mod = keyCode & 0xFFFF;
+
+			if (mod == MOD_CONTROL && key == VK_SPACE) {
+				emit hotKeyPress(KeyCombination::CTRL_SPACE);
+			} else if (mod == MOD_ALT && key == VK_SPACE) {
+				emit hotKeyPress(KeyCombination::ALT_SPACE);
+			}
 		} else if (msg.message == WM_END_THREAD) {
 			break;
 		}
 	}
 
 	::UnregisterHotKey(NULL, id);
+	::UnregisterHotKey(NULL, id2);
 	::GlobalDeleteAtom(id);
+	::GlobalDeleteAtom(id2);
 }

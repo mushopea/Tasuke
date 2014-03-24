@@ -36,17 +36,12 @@ namespace UnitTest {
 		char *argv[] = { "Tasuke.exe" };
 		FLAGS_logtostderr = true;
 		google::InitGoogleLogging(argv[0]);
-		app = new QApplication(argc, argv);
-		std::thread ([=]() {
-			app->exec();
-		}).detach();
+		Tasuke::setGuiMode(false);
 		Tasuke::instance();
 		storage = nullptr;
 	}
 
 	TEST_MODULE_CLEANUP(ModuleCleanup) {
-		app->quit();
-		delete app;
 		if (storage == nullptr) {
 			delete storage;
 		}
@@ -66,16 +61,16 @@ namespace UnitTest {
 			storage = nullptr;
 		}
 		
-		TEST_METHOD(TestInterpretBadCommand) {
-			auto func = [this] {
+		TEST_METHOD(BadInput) {
+			Assert::ExpectException<ExceptionBadCommand>([] {
 				ICommand* command = Interpreter::interpret("bad command blah blah");
 				command->run();
-			};
-
-			Assert::ExpectException<ExceptionBadCommand>(func);
+			});
+			Tasuke::instance().runCommand("bad command blah blah");
+			Assert::AreEqual(storage->totalTasks(), 0);
 		}
 
-		TEST_METHOD(TestInterpretAddCommand) {
+		TEST_METHOD(AddingTasks) {
 			Tasuke::instance().runCommand("add do homework");
 			Assert::AreEqual(storage->totalTasks(), 1);
 
@@ -86,7 +81,7 @@ namespace UnitTest {
 			Assert::AreEqual(task.getTags().size(), 0);
 		}
 
-		TEST_METHOD(TestInterpretRemoveCommand) {
+		TEST_METHOD(RemovingTasks) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
 			Tasuke::instance().runCommand("add watch anime");
@@ -94,7 +89,7 @@ namespace UnitTest {
 			Assert::AreEqual(storage->totalTasks(), 2);
 		}
 
-		TEST_METHOD(TestInterpretEditCommand) {
+		TEST_METHOD(EditingTasks) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
 			Tasuke::instance().runCommand("add watch anime");
@@ -113,7 +108,7 @@ namespace UnitTest {
 			Assert::AreEqual(task.getTags()[0], QString("shopping"));
 		}
 
-		TEST_METHOD(TestInterpretUndoCommand) {
+		TEST_METHOD(UndoingTasks) {
 			for (int i=0; i<MAX_TASKS; i++) {
 				Tasuke::instance().runCommand(QString("add task %1").arg(i));
 			}
@@ -125,7 +120,7 @@ namespace UnitTest {
 			Assert::AreEqual(storage->totalTasks(), 0);
 		}
 
-		TEST_METHOD(TestInterpretRedoCommand) {
+		TEST_METHOD(RedoingTasks) {
 			for (int i=0; i<MAX_TASKS; i++) {
 				Tasuke::instance().runCommand(QString("add task %1").arg(i));
 			}
@@ -140,6 +135,141 @@ namespace UnitTest {
 				Tasuke::instance().runCommand("redo");
 			}
 			Assert::AreEqual(storage->totalTasks(), MAX_TASKS);
+		}
+
+		TEST_METHOD(InterpretAdd) {
+			ICommand* command = Interpreter::interpret("add something @ 1pm - 3pm #tag");
+			Assert::IsTrue(typeid(*command) == typeid(AddCommand));
+			delete command;
+		}
+
+		TEST_METHOD(InterpretRemove) {
+			Tasuke::instance().runCommand("add do homework");
+			ICommand* command = Interpreter::interpret("remove 1");
+			Assert::IsTrue(typeid(*command) == typeid(RemoveCommand));
+			delete command;
+		}
+
+		TEST_METHOD(InterpretRemoveLowerBound) {
+			Tasuke::instance().runCommand("add do homework");
+			Tasuke::instance().runCommand("add buy eggs");
+			Tasuke::instance().runCommand("add watch anime");
+			Assert::ExpectException<ExceptionBadCommand>([] {
+				ICommand* command = Interpreter::interpret("remove 0");
+				command->run();
+			});
+			Tasuke::instance().runCommand("remove 0");
+			Assert::AreEqual(storage->totalTasks(), 3);
+		}
+
+		TEST_METHOD(InterpretRemovedUpperBound) {
+			Tasuke::instance().runCommand("add do homework");
+			Tasuke::instance().runCommand("add buy eggs");
+			Tasuke::instance().runCommand("add watch anime");
+			Assert::ExpectException<ExceptionBadCommand>([] {
+				ICommand* command = Interpreter::interpret("remove 4");
+				command->run();
+			});
+			Tasuke::instance().runCommand("remove 4");
+			Assert::AreEqual(storage->totalTasks(), 3);
+		}
+
+		TEST_METHOD(InterpretEdit) {
+			Tasuke::instance().runCommand("add do homework");
+			ICommand* command = Interpreter::interpret("edit 1 homework @ 2pm - 5pm #engineering");
+			Assert::IsTrue(typeid(*command) == typeid(EditCommand));
+			delete command;
+		}
+
+		TEST_METHOD(InterpretEditLowerBound) {
+			Tasuke::instance().runCommand("add do homework");
+			Tasuke::instance().runCommand("add buy eggs");
+			Tasuke::instance().runCommand("add watch anime");
+			Assert::ExpectException<ExceptionBadCommand>([] {
+				ICommand* command = Interpreter::interpret("edit 0 fly kite");
+				command->run();
+			});
+			Tasuke::instance().runCommand("edit 0 fly kite");
+		}
+
+		TEST_METHOD(InterpretEditUpperBound) {
+			Tasuke::instance().runCommand("add do homework");
+			Tasuke::instance().runCommand("add buy eggs");
+			Tasuke::instance().runCommand("add watch anime");
+			Assert::ExpectException<ExceptionBadCommand>([] {
+				ICommand* command = Interpreter::interpret("edit 4 fly kite");
+				command->run();
+			});
+			Tasuke::instance().runCommand("edit 4 fly kite");
+		}
+
+		TEST_METHOD(InterpretDone) {
+			Tasuke::instance().runCommand("add do homework");
+			ICommand* command = Interpreter::interpret("done 1");
+			Assert::IsTrue(typeid(*command) == typeid(DoneCommand));
+			delete command;
+		}
+
+		TEST_METHOD(InterpretDoneLowerBound) {
+			Tasuke::instance().runCommand("add do homework");
+			Tasuke::instance().runCommand("add buy eggs");
+			Tasuke::instance().runCommand("add watch anime");
+			Assert::ExpectException<ExceptionBadCommand>([] {
+				ICommand* command = Interpreter::interpret("done 0");
+				command->run();
+			});
+			Tasuke::instance().runCommand("done 0");
+		}
+
+		TEST_METHOD(InterpretDoneUpperBound) {
+			Tasuke::instance().runCommand("add do homework");
+			Tasuke::instance().runCommand("add buy eggs");
+			Tasuke::instance().runCommand("add watch anime");
+			Assert::ExpectException<ExceptionBadCommand>([] {
+				ICommand* command = Interpreter::interpret("done 4");
+				command->run();
+			});
+			Tasuke::instance().runCommand("done 4");
+		}
+
+		TEST_METHOD(InterpretUndone) {
+			Tasuke::instance().runCommand("add do homework");
+			ICommand* command = Interpreter::interpret("undone 1");
+			Assert::IsTrue(typeid(*command) == typeid(DoneCommand));
+			delete command;
+		}
+
+		TEST_METHOD(InterpretUndoneLowerBound) {
+			Tasuke::instance().runCommand("add do homework");
+			Tasuke::instance().runCommand("add buy eggs");
+			Tasuke::instance().runCommand("add watch anime");
+			Assert::ExpectException<ExceptionBadCommand>([] {
+				ICommand* command = Interpreter::interpret("undone 0");
+				command->run();
+			});
+			Tasuke::instance().runCommand("undone 0");
+		}
+
+		TEST_METHOD(InterpretUndoneUpperBound) {
+			Tasuke::instance().runCommand("add do homework");
+			Tasuke::instance().runCommand("add buy eggs");
+			Tasuke::instance().runCommand("add watch anime");
+			Assert::ExpectException<ExceptionBadCommand>([] {
+				ICommand* command = Interpreter::interpret("undone 4");
+				command->run();
+			});
+			Tasuke::instance().runCommand("undone 4");
+		}
+
+		TEST_METHOD(InterpretNullReturn) {
+			ICommand* command = Interpreter::interpret("show");
+			Assert::IsTrue(command == nullptr);
+			command = Interpreter::interpret("hide");
+			Assert::IsTrue(command == nullptr);
+			command = Interpreter::interpret("about");
+			Assert::IsTrue(command == nullptr);
+			command = Interpreter::interpret("help");
+			Assert::IsTrue(command == nullptr);
 		}
 	};
 }

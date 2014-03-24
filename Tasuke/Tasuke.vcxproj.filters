@@ -104,12 +104,6 @@
     <ClCompile Include="Interpreter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_Tasuke.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_Tasuke.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="InputHighlighter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -129,12 +123,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SlidingStackedWidget.cpp">
+    <ClCompile Include="SystemTrayWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_SlidingStackedWidget.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_SystemTrayWidget.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_SlidingStackedWidget.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_SystemTrayWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="HotKeyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_HotKeyManager.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_HotKeyManager.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
@@ -187,6 +193,12 @@
     <CustomBuild Include="SlidingStackedWidget.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="SystemTrayWidget.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="HotKeyManager.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_TaskWindow.h">
@@ -222,5 +234,13 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tasuke.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\en_GB.aff">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\en_GB.dic">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

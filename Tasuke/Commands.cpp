@@ -21,8 +21,8 @@ void ICommand::undo() {
 	hasRun = false;
 }
 
-AddCommand::AddCommand(Task& _task) {
-	task = _task;
+AddCommand::AddCommand(Task& _task) : task(_task) {
+
 }
 
 AddCommand::~AddCommand() {
@@ -56,9 +56,8 @@ void RemoveCommand::undo() {
 	Tasuke::instance().showMessage(QString("Undone remove \"%1\"").arg(task.getDescription()));
 }
 
-EditCommand::EditCommand(int _id, Task& _task) {
-	id = _id;
-	task = _task;
+EditCommand::EditCommand(int _id, Task& _task) : id(_id), task(_task) {
+	
 }
 EditCommand::~EditCommand() {
 
@@ -95,4 +94,28 @@ void ClearCommand::undo() {
 		Tasuke::instance().getStorage().addTask(old[i]);
 	}
 	Tasuke::instance().showMessage(QString("Undone clear all tasks"));
+}
+
+DoneCommand::DoneCommand(int _id, bool _done) : id(_id), done(_done) {
+
+}
+DoneCommand::~DoneCommand() {
+
+}
+	
+void DoneCommand::run() {
+	Task task = Tasuke::instance().getStorage().getTask(id);
+	Tasuke::instance().getStorage().removeTask(id);
+	task.setDone(done);
+	Tasuke::instance().getStorage().addTask(task, id);
+	QString doneUndone = done ? "done" : "undone";
+	Tasuke::instance().showMessage(QString("Marked \"%1\" as %2").arg(task.getDescription(), doneUndone));
+}
+void DoneCommand::undo() {
+	Task task = Tasuke::instance().getStorage().getTask(id);
+	Tasuke::instance().getStorage().removeTask(id);
+	task.setDone(!done);
+	Tasuke::instance().getStorage().addTask(task, id);
+	QString doneUndone = done ? "done" : "undone";
+	Tasuke::instance().showMessage(QString("Undone mark \"%1\" as %2").arg(task.getDescription(), doneUndone));
 }

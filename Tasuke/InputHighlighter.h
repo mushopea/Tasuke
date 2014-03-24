@@ -23,6 +23,7 @@ class InputHighlighter : public QSyntaxHighlighter {
 	 QTextCharFormat commandFormat;
      QTextCharFormat keywordFormat;
      QTextCharFormat connectorFormat;
+	 QTextCharFormat spellCheckFormat;
 
 	 struct HighlightingRule {
          QRegExp pattern;

@@ -63,4 +63,16 @@ public:
 	void undo();
 };
 
+class DoneCommand : public ICommand {
+private:
+	int id;
+	bool done;
+public:
+	DoneCommand(int _id, bool _done = true);
+	~DoneCommand();
+	
+	void run();
+	void undo();
+};
+
 #endif
