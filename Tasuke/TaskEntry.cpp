@@ -14,7 +14,7 @@ TaskEntry::TaskEntry(int id, QString description, QList<QString> tags, QDateTime
 	makeWidget();
 
 	setAttribute(Qt::WA_TranslucentBackground);
-    setStyleSheet("background:transparent;");
+	setStyleSheet("background:transparent;");
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
 
 }
@@ -23,7 +23,44 @@ TaskEntry::~TaskEntry() {
 
 }
 
+//strikes out the entry as done
+void TaskEntry::strikeOut() {	     
+	QFont font;
+	font.setFamily(QStringLiteral("Print Clearly"));
+	font.setPointSize(20);
+	font.setStrikeOut(true);
+	ui.description->setFont(font);
 
+	QFont font1;
+	font1.setFamily(QStringLiteral("Print Clearly"));
+	font1.setPointSize(20);
+	font1.setStrikeOut(true);
+	ui.tag->setFont(font1);
+
+	QFont font2;
+	font2.setFamily(QStringLiteral("Print Clearly"));
+	font2.setPointSize(12);
+	font2.setStrikeOut(true);
+	ui.startDate->setFont(font2);
+
+	QFont font3;
+	font3.setFamily(QStringLiteral("Print Clearly"));
+	font3.setPointSize(12);
+	font3.setStrikeOut(true);
+	ui.endDate->setFont(font3);
+
+	QFont font4;
+	font4.setFamily(QStringLiteral("Print Clearly"));
+	font4.setPointSize(12);
+	font4.setStrikeOut(true);
+	ui.startTime->setFont(font4);
+
+	QFont font5;
+	font5.setFamily(QStringLiteral("Print Clearly"));
+	font5.setPointSize(12);
+	font5.setStrikeOut(true);
+	ui.endTime->setFont(font5);
+}
 
 void TaskEntry::setDescription(QString des){
 
@@ -70,14 +107,14 @@ QString TaskEntry::createTagString(QList<QString> tags){
 }
 
 void TaskEntry::setTags(QList<QString> tags){
-		QString strTags = createTagString(tags);
+	QString strTags = createTagString(tags);
 
-		if (fm.width(strTags) < TaskEntry::MAX_WIDTH_FOR_TAGS){ //the tag string fits into the column nicely.
-			ui.tag->setText(strTags);
-		} else { //the tag string is too long.
-			ui.tag->setToolTip(strTags);
-			ui.tag->setText(fm.elidedText(strTags, Qt::ElideRight, MAX_WIDTH_FOR_TAGS));
-		}
+	if (fm.width(strTags) < TaskEntry::MAX_WIDTH_FOR_TAGS){ //the tag string fits into the column nicely.
+		ui.tag->setText(strTags);
+	} else { //the tag string is too long.
+		ui.tag->setToolTip(strTags);
+		ui.tag->setText(fm.elidedText(strTags, Qt::ElideRight, MAX_WIDTH_FOR_TAGS));
+	}
 }
 
 //this function sets the respective fields in the TaskEntry widget

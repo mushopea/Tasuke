@@ -147,6 +147,7 @@
     </ClCompile>
     <ClCompile Include="HotKeyThread.cpp" />
     <ClCompile Include="InputWindow.cpp" />
+    <ClCompile Include="SettingsWindow.cpp" />
     <ClCompile Include="SlidingStackedWidget.cpp" />
     <ClCompile Include="SystemTrayWidget.cpp" />
     <ClCompile Include="Task.cpp" />
