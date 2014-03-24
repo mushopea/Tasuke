@@ -77,12 +77,15 @@ QString Interpreter::getType(QString commandString) {
 	typeKeywords << "edit";
 	typeKeywords << "remove";
 	typeKeywords << "show";
+	typeKeywords << "done";
+	typeKeywords << "undone";
 	typeKeywords << "undo";
 	typeKeywords << "redo";
 	typeKeywords << "clear";
-	typeKeywords << "exit";
 	typeKeywords << "help";
-
+	typeKeywords << "about";
+	typeKeywords << "exit";
+	
 	QString temp = commandString.trimmed();
 	
 	for (int i=0; i<delimiters.size(); i++) {
@@ -113,6 +116,10 @@ ICommand* Interpreter::interpret(QString commandString) {
 		return createRemoveCommand(commandString);
 	} else if (commandType == "edit") {
 		return createEditCommand(commandString);
+	} else if (commandType == "done") {
+		return createDoneCommand(commandString);
+	} else if (commandType == "undone") {
+		return createUndoneCommand(commandString);
 	}
 
 	if (commandType == "") {
@@ -129,6 +136,8 @@ ICommand* Interpreter::interpret(QString commandString) {
 		return createClearCommand(commandString);
 	} else if (commandType == "help") {
 		doHelp();
+	} else if (commandType == "about") {
+		doAbout();
 	} else if (commandType == "exit") {
 		doExit();
 	}
@@ -218,6 +227,33 @@ EditCommand* Interpreter::createEditCommand(QString commandString) {
 
 ClearCommand* Interpreter::createClearCommand(QString commandString) {
 	return new ClearCommand();
+}
+
+DoneCommand* Interpreter::createDoneCommand(QString commandString) {
+	commandString = removeBefore(commandString, "done");
+	commandString = commandString.trimmed();
+
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
+
+	QString idString = commandString.split(' ')[0];
+	int id = parseId(idString);
+
+	return new DoneCommand(id-1);
+}
+DoneCommand* Interpreter::createUndoneCommand(QString commandString) {
+	commandString = removeBefore(commandString, "undone");
+	commandString = commandString.trimmed();
+
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
+
+	QString idString = commandString.split(' ')[0];
+	int id = parseId(idString);
+
+	return new DoneCommand(id-1, false);
 }
 
 void Interpreter::doShow() {

@@ -27,6 +27,9 @@ private:
 	static RemoveCommand* createRemoveCommand(QString commandString);
 	static EditCommand* createEditCommand(QString commandString);
 	static ClearCommand* createClearCommand(QString commandString);
+	static DoneCommand* createDoneCommand(QString commandString);
+	static DoneCommand* createUndoneCommand(QString commandString);
+
 	static void doShow();
 	static void doAbout();
 	static void doHide();

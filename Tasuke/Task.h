@@ -32,6 +32,7 @@ public:
 
 	void setDone(bool _done);
 	void markDone();
+	void markUndone();
 	bool isDone() const;
 
 	bool isOverdue();
