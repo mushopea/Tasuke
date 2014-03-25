@@ -296,22 +296,22 @@ namespace UnitTest {
 		}
 
 		// The incorrect spelling partition
-		TEST_METHOD(HunspellIncorrectSpelling) {
+		TEST_METHOD(SpellIncorrectSpelling) {
 			Assert::IsFalse(Tasuke::instance().spellCheck("unneccessary")); // A commonly mispelled word
 			Assert::IsFalse(Tasuke::instance().spellCheck("asdfghjkl")); // A completely mispelled word
 		}
 		
-		TEST_METHOD(HunspellCapitalisedProperWords) {
+		TEST_METHOD(SpellCapitalisedProperWords) {
 			Assert::IsTrue(Tasuke::instance().spellCheck("John")); // A proper name
 			Assert::IsFalse(Tasuke::instance().spellCheck("Asdfghjkl")); // A garbage capitalised word
 		}
 
-		TEST_METHOD(HunspellNumberInitialWords) {
+		TEST_METHOD(SpellNumberInitialWords) {
 			Assert::IsTrue(Tasuke::instance().spellCheck("9pm")); // Time
 		}
 
 		// To ensure command words are all considered correct.
-		TEST_METHOD(HunspellTasukeCommandWords) {
+		TEST_METHOD(SpellTasukeCommandWords) {
 
 			//non words
 			Assert::IsTrue(Tasuke::instance().spellCheck("ls"));
