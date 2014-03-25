@@ -151,7 +151,7 @@ QTabBar::tab:selected{
     <enum>QTabWidget::Triangular</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="usesScrollButtons">
     <bool>true</bool>
@@ -159,90 +159,9 @@ QTabBar::tab:selected{
    <property name="documentMode">
     <bool>false</bool>
    </property>
-   <widget class="QWidget" name="home">
+   <widget class="QWidget" name="usage">
     <attribute name="title">
-     <string>Home</string>
-    </attribute>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>210</x>
-       <y>80</y>
-       <width>431</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Quicksand Book</family>
-       <pointsize>22</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Hi! My name is Nyansuke.</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>110</y>
-       <width>431</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Quicksand Book</family>
-       <pointsize>22</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Do you need help?</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>210</x>
-       <y>190</y>
-       <width>431</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Quicksand Book</family>
-       <pointsize>22</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Click the tabs for details!</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_4">
-     <property name="geometry">
-      <rect>
-       <x>170</x>
-       <y>220</y>
-       <width>431</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Quicksand Book</family>
-       <pointsize>22</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Or press &lt;tab&gt; to switch tabs.</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="nav">
-    <attribute name="title">
-     <string>Using Tasuke</string>
+     <string>Navigation</string>
     </attribute>
     <widget class="QLabel" name="label_5">
      <property name="geometry">
@@ -285,6 +204,33 @@ QTabBar::tab:selected{
      </property>
      <property name="text">
       <string>another slide show here</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="features">
+    <attribute name="title">
+     <string>Features</string>
+    </attribute>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>60</y>
+       <width>431</width>
+       <height>211</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Quicksand Book</family>
+       <pointsize>22</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>We can possibly boast our features here, such as spellcheck, auto prepend add, etc.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

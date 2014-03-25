@@ -7,7 +7,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 	this->installEventFilter(this);
 
-	currentlySelected = 0;
+	currentlySelected = 1;
 	initTutorial(); // Initialize tutorial window
 	initAnimation();
 
@@ -38,6 +38,10 @@ TaskEntry* TaskWindow::createEntry(Task t, int index) {
 
 	if (t.isOverdue()) {
 		entry->highlightOverdue();
+	}
+
+	if (t.isOngoing()) {
+		entry->highlightOngoing();
 	}
 
 	return entry;
