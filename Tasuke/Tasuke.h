@@ -1,7 +1,7 @@
 #ifndef TASUKE_H
 #define TASUKE_H
 
-#include <hunspelldll.h>
+#include <hunspell.hxx>
 #include <QSharedPointer>
 #include "Commands.h"
 #include "Storage.h"
