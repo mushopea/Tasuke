@@ -1,16 +1,15 @@
 #include "Tasuke.h"
 #include "TaskWindow.h"
 
-
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	LOG(INFO) << "TaskWindow instance created";
-	
+
 	ui.setupUi(this);
 	this->installEventFilter(this);
-	
-	currentlySelected = 0;
-	initTut(); // Initialize tutorial window
 
+	currentlySelected = 0;
+	initTutorial(); // Initialize tutorial window
+	initAnimation();
 
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 	setAttribute(Qt::WA_TranslucentBackground);
@@ -20,6 +19,10 @@ TaskWindow::~TaskWindow() {
 	LOG(INFO) << "TaskWindow instance destroyed";
 }
 
+//========================================
+// TASK ENTRY FUNCTIONS
+//=========================================
+
 // Checks if a given index is in range of the task list.
 bool TaskWindow::isInRange(int index) {
 	return (index >= 0) && (index < currentTasks.size());
@@ -28,7 +31,7 @@ bool TaskWindow::isInRange(int index) {
 // Creates and returns a new task entry.
 TaskEntry* TaskWindow::createEntry(Task t, int index) {
 	TaskEntry* entry = new TaskEntry(index, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
-	
+
 	if (t.isDone()) {
 		entry->strikeOut();
 	}
@@ -41,7 +44,7 @@ TaskEntry* TaskWindow::createEntry(Task t, int index) {
 }
 
 // Add a QListWidgetItem in a specified row with a specified background.
-void TaskWindow::addListItem(TaskEntry* entry, int row, int pixmapID) {
+void TaskWindow::addListItemToRow(TaskEntry* entry, int row, int pixmapID) {
 	QPixmap pxr("roundedEntryMaskSelect.png"); // Highlighted bg image
 	QPixmap pxr2("roundedEntryMask.png"); // Normal bg image
 
@@ -67,71 +70,50 @@ void TaskWindow::addListItem(TaskEntry* entry) {
 	ui.taskList->setItemWidget(listItem, entry);
 }
 
-void TaskWindow::highlightCurrentlySelected(int prevSize) {
+//========================================
+// TASK DISPLAY AND SELECTION
+//=========================================
 
-	if ((isInRange(previouslySelected)) && (prevSize!=0)) { // Dehighlight if previous state is not empty
-		Task t2 = currentTasks[previouslySelected];
-		TaskEntry * entry2 = createEntry(t2, previouslySelected+1);
-		addListItem(entry2, previouslySelected, 2);
-		ui.taskList->takeItem(previouslySelected+1);
-	}
-
-	// Highlight currently selected
-	if(isInRange(currentlySelected)) {
-		Task t = currentTasks[currentlySelected];
-		TaskEntry * entry = createEntry(t, currentlySelected+1);
-		addListItem(entry, currentlySelected, 1);
-		ui.taskList->takeItem(currentlySelected+1);
-	}
-}
-
-void TaskWindow::highlightAndAnimateCurrentlySelected(int prevSize) {
-
-	if ((isInRange(previouslySelected)) && (prevSize!=0)) { // Dehighlight if previous state is not empty
-		Task t2 = currentTasks[previouslySelected];
-		TaskEntry * entry2 = createEntry(t2, previouslySelected+1);
-		addListItem(entry2, previouslySelected, 2);
-		ui.taskList->takeItem(previouslySelected+1);
-	}
-
-	// Highlight currently selected
-	if(isInRange(currentlySelected)) {
-		Task t = currentTasks[currentlySelected];
-		TaskEntry * entry = createEntry(t, currentlySelected+1);
-		addListItem(entry, currentlySelected, 1);
-
-		//FIGURING OUT ANIMATION
-
-		/*QGraphicsOpacityEffect * fadeEffect = new QGraphicsOpacityEffect(ui.taskList->itemWidget(listItem)); 
-		this->setGraphicsEffect(fadeEffect);
-		QPropertyAnimation * animation = new QPropertyAnimation(fadeEffect, "opacity"); 
-		animation->setEasingCurve(QEasingCurve::OutCubic); 
-		animation->setDuration(1000); 
-		animation->setStartValue(0.0); 
-		animation->setEndValue(1.0); 
-		animation->start();*/
-
-		ui.taskList->takeItem(currentlySelected+1);
-	}
-}
-
-
-void TaskWindow::focusOnNewTask(bool haveAnimation) {
-	// Set indexes of selected tasks
+// This function updates the latest selected task.
+void TaskWindow::updateCurrentlySelectedTo(int row) {
 	previouslySelected = currentlySelected;
-	currentlySelected = currentTasks.size()-1; // Change this when fazli give updated task
-
-	// Highlight newly selected task, dehighlight ex task
-	if (haveAnimation) { // For add, edit, redo
-		highlightAndAnimateCurrentlySelected(previousSize);
-	} else { // Delete, undo
-		highlightCurrentlySelected(previousSize);
-	}
-
-	// Scroll to it!
-	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
+	currentlySelected = row;
 }
 
+// This function will scroll to, and highlight, the currently selected task.
+void TaskWindow::jumpToCurrentlySelectedTask() {
+	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
+	highlightCurrentlySelectedTask(currentTasks.size());
+}
+
+// This function is for Tasuke to get TaskWindow to highlight a particular task.
+void TaskWindow::highlightTask(int row) {
+	if (isInRange(row)) {
+		updateCurrentlySelectedTo(row);
+		jumpToCurrentlySelectedTask();
+	}
+}
+
+// This function highlights the selected row and dehighlights the previously highlighted.
+void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
+	// Dehighlight if previous state is not empty
+	if ((isInRange(previouslySelected)) && (prevSize!=0)) { 
+		Task t2 = currentTasks[previouslySelected];
+		TaskEntry * entry2 = createEntry(t2, previouslySelected+1);
+		addListItemToRow(entry2, previouslySelected, 2);
+		ui.taskList->takeItem(previouslySelected+1);
+	}
+
+	// Highlight currently selected
+	if(isInRange(currentlySelected)) {
+		Task t = currentTasks[currentlySelected];
+		TaskEntry * entry = createEntry(t, currentlySelected+1);
+		addListItemToRow(entry, currentlySelected, 1);
+		ui.taskList->takeItem(currentlySelected+1);
+	}
+}
+
+// This function is responsible for showing all the tasks entries.
 void TaskWindow::showTasks(QList<Task> tasks) {
 	previousSize = currentTasks.size(); // Size of previous list
 	currentTasks = tasks; // Update current tasks
@@ -142,34 +124,23 @@ void TaskWindow::showTasks(QList<Task> tasks) {
 		TaskEntry * entry = createEntry(t, i+1);
 		addListItem(entry);
 	}
-
-	if (previousSize < currentTasks.size()) { // If an entry was deleted
-		focusOnNewTask(false); // Highlight updated task
-	} else {
-		focusOnNewTask(true); // Highlight and animate updated task
-	}
 }
 
-void TaskWindow::initTut() {
-	tut = new TutorialWidget(this);
-	ui.stackedWidget->addWidget(tut);
-}
+//========================================
+// SCROLLING
+//=========================================
 
 void TaskWindow::scrollUp() {
 	if (currentlySelected>0) {
-		previouslySelected = currentlySelected;
-		currentlySelected--;
-		ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-		highlightCurrentlySelected(currentTasks.size());
+		updateCurrentlySelectedTo(currentlySelected-1);
+		jumpToCurrentlySelectedTask();
 	}
 }
 
 void TaskWindow::scrollDown() {
 	if(currentlySelected < ui.taskList->count()-1){
-		previouslySelected = currentlySelected;
-		currentlySelected++;
-		ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-		highlightCurrentlySelected(currentTasks.size());
+		updateCurrentlySelectedTo(currentlySelected+1);
+		jumpToCurrentlySelectedTask();
 	}
 }
 
@@ -179,16 +150,12 @@ void TaskWindow::pageUp() {
 	}
 
 	if (currentlySelected > TASKS_PER_PAGE-1) {
-		previouslySelected = currentlySelected;
-		currentlySelected -= TASKS_PER_PAGE;
+		updateCurrentlySelectedTo(currentlySelected-TASKS_PER_PAGE);
 	} else {
-		previouslySelected = currentlySelected;
-		currentlySelected = 0;
+		updateCurrentlySelectedTo(0);
 	}
 
-	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-	highlightCurrentlySelected(currentTasks.size());
-
+	jumpToCurrentlySelectedTask();
 }
 
 void TaskWindow::pageDown() {
@@ -197,17 +164,33 @@ void TaskWindow::pageDown() {
 	}
 
 	if (currentlySelected < ui.taskList->count() - TASKS_PER_PAGE - 1){
-		previouslySelected = currentlySelected;
-		currentlySelected += TASKS_PER_PAGE;
+		updateCurrentlySelectedTo(currentlySelected+TASKS_PER_PAGE);
 	} else {
-		previouslySelected = currentlySelected;
-		currentlySelected = ui.taskList->count()-1;
+		updateCurrentlySelectedTo(ui.taskList->count()-1);
 	}
 
-	ui.taskList->scrollToItem(ui.taskList->item(currentlySelected));
-	highlightCurrentlySelected(currentTasks.size());
+	jumpToCurrentlySelectedTask();
 }
 
+//========================================
+// WINDOW SHOWING
+//=========================================
+
+void TaskWindow::showAndMoveToSide() {
+	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
+	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
+
+	move(center);
+	setWindowOpacity(0);
+	showNormal();
+	raise();
+	setWindowOpacity(100);
+	animation->start();
+}
+
+//========================================
+// STACKED WIDGET FUNCTIONS
+//=========================================
 
 // Returns 0 if task list is shown, 1 if tutorial is shown
 int TaskWindow::getScreen() {
@@ -215,19 +198,7 @@ int TaskWindow::getScreen() {
 }
 
 void TaskWindow::changeTutorialWidgetTabs(){
-	tut->changeTabs();
-}
-
-void TaskWindow::showAndMoveToSide() {
-	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
-	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
-
-	move(center);
-
-	showNormal();
-	raise();
-	activateWindow();
-	setFocus();
+	tutorial->changeTabs();
 }
 
 void TaskWindow::showListWidget() {
@@ -237,6 +208,10 @@ void TaskWindow::showListWidget() {
 void TaskWindow::showTutorialWidget() {
 	ui.stackedWidget->slideInIdx(1);
 }
+
+//========================================
+// EVENTS
+//=========================================
 
 
 void TaskWindow::closeEvent(QCloseEvent *event) {
@@ -256,7 +231,6 @@ void TaskWindow::mouseMoveEvent(QMouseEvent *event) {
 		this->move(newpos);
 	}
 }
-
 
 bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 	if (event->type() == QEvent::KeyPress) {	
@@ -308,4 +282,24 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 	}
 
 	return QObject::eventFilter(object, event);
+}
+
+//========================================
+// INITIALIZATION
+//=========================================
+
+void TaskWindow::initTutorial() {
+	tutorial = new TutorialWidget(this);
+	ui.stackedWidget->addWidget(tutorial);
+}
+
+void TaskWindow::initAnimation() {
+	fadeEffect = new QGraphicsOpacityEffect(this); 
+	this->setGraphicsEffect(fadeEffect);
+	animation = new QPropertyAnimation(fadeEffect, "opacity"); 
+	animation->setEasingCurve(QEasingCurve::Linear); 
+	animation->setDuration(400); 
+	animation->setStartValue(0.0); 
+	animation->setEndValue(1.0); 
+	//QObject::connect(animation, SIGNAL(valueChanged(QVariant)), this, SLOT(repaint()));
 }

@@ -16,7 +16,6 @@ TaskEntry::TaskEntry(int id, QString description, QList<QString> tags, QDateTime
 	setAttribute(Qt::WA_TranslucentBackground);
 	setStyleSheet("background:transparent;");
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
-
 }
 
 TaskEntry::~TaskEntry() {
@@ -69,6 +68,8 @@ void TaskEntry::highlightOngoing() {
 void TaskEntry::highlightOverdue() {
 	setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
 }
+
+ 
 
 void TaskEntry::setDescription(QString des) {
 
@@ -139,5 +140,3 @@ void TaskEntry::makeWidget() {
 		setTags(this->tags);
 	}
 }
-
-

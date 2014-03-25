@@ -6,22 +6,12 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 
 	ui.setupUi(this);
 	highlighter = new InputHighlighter(ui.lineEdit->document());
+	ui.lineEdit->installEventFilter(this);
+	initAnimation();
 
 	setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("background:transparent;");
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
-
-	ui.lineEdit->installEventFilter(this);
-
-	// animation
-	fadeEffect = new QGraphicsOpacityEffect(this); 
-	this->setGraphicsEffect(fadeEffect);
-	animation = new QPropertyAnimation(fadeEffect, "opacity"); 
-	animation->setEasingCurve(QEasingCurve::OutCubic); 
-	animation->setDuration(700); 
-	animation->setStartValue(0.0); 
-	animation->setEndValue(0.95); 
-
 }
 
 InputWindow::~InputWindow() {
@@ -116,6 +106,31 @@ void InputWindow::showAndCenter() {
 	animation->start();
 }
 
+void InputWindow::handleReturnPressed() {
+	QString command = ui.lineEdit->toPlainText();
+
+	if (command.isEmpty()) {
+		return;
+	}
+
+	Tasuke::instance().runCommand(command);
+}
+
+void InputWindow::handleEditingFinished() {
+	hide();
+	ui.lineEdit->clear();
+}
+
+void InputWindow::initAnimation() {
+	fadeEffect = new QGraphicsOpacityEffect(this); 
+	this->setGraphicsEffect(fadeEffect);
+	animation = new QPropertyAnimation(fadeEffect, "opacity"); 
+	animation->setEasingCurve(QEasingCurve::OutCubic); 
+	animation->setDuration(700); 
+	animation->setStartValue(0.0); 
+	animation->setEndValue(0.95); 
+}
+
 // Will be updated when "themes" is implemented.
 void InputWindow::changeBorder(int themeNumber){
 	QPixmap pxr(QString::fromUtf8("InputWindowMask.png"));
@@ -130,19 +145,4 @@ void InputWindow::changeBorder(int themeNumber){
 // Will be updated when "themes" is implemented.
 void InputWindow::changeBG(int themeNumber){
 	//ui.label_2->setPixmap(pxr);
-}
-
-void InputWindow::handleReturnPressed() {
-	QString command = ui.lineEdit->toPlainText();
-
-	if (command.isEmpty()) {
-		return;
-	}
-
-	Tasuke::instance().runCommand(command);
-}
-
-void InputWindow::handleEditingFinished() {
-	hide();
-	ui.lineEdit->clear();
 }
