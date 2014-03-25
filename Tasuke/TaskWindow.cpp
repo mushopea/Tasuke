@@ -42,8 +42,8 @@ TaskEntry* TaskWindow::createEntry(Task t, int index) {
 
 // Add a QListWidgetItem in a specified row with a specified background.
 void TaskWindow::addListItem(TaskEntry* entry, int row, int pixmapID) {
-	QPixmap pxr("roundedEntryMaskSelect.png"); // Highlighted bg image
-	QPixmap pxr2("roundedEntryMask.png"); // Normal bg image
+	QPixmap pxr(":/Images/roundedEntryMaskSelect.png"); // Highlighted bg image
+    QPixmap pxr2(":/Images/roundedEntryMask.png"); // Normal bg image
 
 	if (pixmapID == 1) {
 		entry->ui.bg->setPixmap(pxr);

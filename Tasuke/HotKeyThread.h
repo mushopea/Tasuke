@@ -35,6 +35,8 @@ private:
 
 #else
 
+#include <Carbon/Carbon.h>
+
 class HotKeyThread : public QThread {
 	Q_OBJECT
 
@@ -50,6 +52,8 @@ public slots:
 	void stop();
 	
 private:
+    EventHandlerUPP hotKeyFunction;
+    static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler, EventRef theEvent, void *userData);
 };
 
 #endif

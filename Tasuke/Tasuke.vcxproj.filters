@@ -13,11 +13,6 @@
       <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
       <Extensions>ui</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
-      <Extensions>qrc;*</Extensions>
-      <ParseFiles>false</ParseFiles>
-    </Filter>
     <Filter Include="Generated Files">
       <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
       <Extensions>moc;h;cpp</Extensions>
@@ -32,6 +27,11 @@
       <UniqueIdentifier>{9efb663c-30c7-4c44-958d-3e9c112ead7e}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Header Files\Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -158,7 +158,7 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="Resources.qrc">
-      <Filter>Resource Files</Filter>
+      <Filter>Header Files\Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="InputWindow.h">
       <Filter>Header Files</Filter>

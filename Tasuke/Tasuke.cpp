@@ -15,8 +15,13 @@ bool Tasuke::guiMode = true;
 Tasuke::Tasuke() {
 	LOG(INFO) << "Tasuke object created";
 
+#ifndef Q_OS_MAC
 	spellObj = new Hunspell("en_GB.aff", "en_GB.dic");
-	
+#else
+    QString path = QCoreApplication::applicationDirPath();
+    spellObj = new Hunspell((path + "/../Resources/en_GB.aff").toUtf8().constData(), (path + "/../Resources/en_GB.dic").toUtf8().constData());
+#endif
+
 	storage = new Storage();
 	storage->loadFile();
 
@@ -38,7 +43,7 @@ Tasuke::~Tasuke() {
 	if (hotKeyManager != nullptr) {
 		delete hotKeyManager;
 	}
-	
+
 	if (systemTrayWidget != nullptr) {
 		delete systemTrayWidget;
 	}
@@ -67,10 +72,10 @@ Tasuke::~Tasuke() {
 void Tasuke::loadFonts(){
 	LOG(INFO) << "Loading fonts";
 
-	QFontDatabase fontDatabase; 
-	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book.otf");
-	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book_Oblique.otf");
-	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light.otf");
+	QFontDatabase fontDatabase;
+    fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book.otf");
+    fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book_Oblique.otf");
+    fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light.otf");
 	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light_Oblique.otf");
 	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Bold.otf");
 	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Bold_Oblique.otf");
@@ -80,13 +85,13 @@ void Tasuke::loadFonts(){
 
 void Tasuke::initialize(){
 	loadFonts();
-	
+
 	taskWindow = new TaskWindow();
 	inputWindow = new InputWindow();
 	aboutWindow = new AboutWindow();
 	systemTrayWidget = new SystemTrayWidget();
 	hotKeyManager = new HotKeyManager();
-	
+
 	updateTaskWindow(storage->getTasks());
 	showTaskWindow();
 }
@@ -123,6 +128,10 @@ AboutWindow& Tasuke::getAboutWindow(){
 
 TaskWindow& Tasuke::getTaskWindow(){
 	return *taskWindow;
+}
+
+HotKeyManager& Tasuke::getHotKeyManager() {
+    return *hotKeyManager;
 }
 
 // This function exposes the Storage instance for editing.
@@ -241,7 +250,7 @@ void Tasuke::runCommand(QString commandString) {
 		commandRedoHistory.clear();
 	} catch (ExceptionBadCommand& exception) {
 		LOG(INFO) << "Error parsing command";
-		
+
 		showMessage("Error parsing command");
 	}
 }

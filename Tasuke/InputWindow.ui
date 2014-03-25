@@ -154,7 +154,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>roundedmask.png</pixmap>
+    <pixmap resource="Resources.qrc">:/Images/roundedmask.png</pixmap>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -294,7 +294,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>InputWindowMask.png</pixmap>
+    <pixmap resource="Resources.qrc">:/Images/InputWindowMask.png</pixmap>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -361,6 +361,8 @@
   <zorder>lineEdit</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="Resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

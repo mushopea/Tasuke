@@ -11,7 +11,7 @@ public:
 	HotKeyManager(QObject *parent = 0);
 	~HotKeyManager();
 
-private slots:
+public slots:
 	void handleHotKeyPress(KeyCombination key);
 
 private:

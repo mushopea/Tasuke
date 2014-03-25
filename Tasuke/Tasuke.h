@@ -23,8 +23,9 @@ public:
 	InputWindow& getInputWindow();
 	AboutWindow& getAboutWindow();
 	TaskWindow& getTaskWindow();
+    HotKeyManager& getHotKeyManager();
 
-	void showInputWindow(); 
+	void showInputWindow();
 	void showTaskWindow();
 	void showAboutWindow();
 	void hideInputWindow();
@@ -42,7 +43,7 @@ public:
 
 	void loadFonts();
 	void initialize();
-	
+
 	static void setGuiMode(bool mode);
 	static Tasuke &instance();
 

@@ -53,11 +53,16 @@ void HotKeyThread::run() {
 	::GlobalDeleteAtom(id2);
 }
 
-#else
+#endif
+
+#ifdef Q_OS_MAC
+
+#include "MacWindowActivator.h"
+#include "Tasuke.h"
 
 HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
 	qRegisterMetaType<KeyCombination>("KeyCombination");
-	//TODO: implement other OS version
+
 }
 
 HotKeyThread::~HotKeyThread() {
@@ -65,11 +70,35 @@ HotKeyThread::~HotKeyThread() {
 }
 
 void HotKeyThread::stop() {
-	//TODO: implement other OS version
+
 }
 
 void HotKeyThread::run() {
-	//TODO: implement other OS version
+    //handler
+    hotKeyFunction = NewEventHandlerUPP(hotKeyHandler);
+    EventTypeSpec eventType;
+    eventType.eventClass = kEventClassKeyboard;
+    eventType.eventKind = kEventHotKeyReleased;
+    InstallApplicationEventHandler(hotKeyFunction,1,&eventType,this,NULL);
+    //hotkey
+    UInt32 keyCode = kVK_Space;
+    EventHotKeyRef theRef = NULL;
+    EventHotKeyID keyID;
+    keyID.signature = 123; //arbitrary string
+    keyID.id = 1;
+    RegisterEventHotKey(keyCode, controlKey, keyID,GetApplicationEventTarget(), 0, &theRef);
 }
 
+OSStatus HotKeyThread::hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void *userData) {
+    WindowActivator::activate();
+    Tasuke::instance().getHotKeyManager().handleHotKeyPress(KeyCombination::CTRL_SPACE);
+    return noErr;
+}
+
+#endif
+
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+#error your os is not supported
+#endif
 #endif

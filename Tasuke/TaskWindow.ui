@@ -332,7 +332,7 @@ QScrollBar::handle:vertical {
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>TaskWindowBorderGrey.png</pixmap>
+     <pixmap resource="Resources.qrc">:/Images/TaskWindowBorderGrey.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>false</bool>
@@ -354,7 +354,7 @@ QScrollBar::handle:vertical {
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>TaskWindowMaskWhite.png</pixmap>
+     <pixmap resource="Resources.qrc">:/Images/TaskWindowMaskWhite.png</pixmap>
     </property>
    </widget>
    <widget class="SlidingStackedWidget" name="stackedWidget">

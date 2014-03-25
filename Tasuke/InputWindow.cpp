@@ -99,7 +99,7 @@ void InputWindow::showAndCenter() {
 	LOG(INFO) << "Displaying input window";
 
 	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
-	if(Tasuke::instance().getTaskWindow().isActiveWindow()){ // If taskWindow is open
+	if(Tasuke::instance().getTaskWindow().isVisible()){ // If taskWindow is open
 		pos.setY(Tasuke::instance().getTaskWindow().y() + Tasuke::instance().getTaskWindow().height() + 3); //set commandbox below taskWindow
 		pos.setX(Tasuke::instance().getTaskWindow().x());
 	} else {
