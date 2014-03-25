@@ -75,6 +75,9 @@ bool Task::isOverdue() {
 }
 
 bool Task::isOngoing() {
+	if (begin.isNull() || !begin.isValid()) {
+		return false;
+	}
 	if (begin < QDateTime::currentDateTime()) {
 		return true;
 	} else {
