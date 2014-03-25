@@ -1,6 +1,9 @@
 #include <QSysInfo>
-#include <process.h>
 #include "HotKeyThread.h"
+
+#ifdef Q_OS_WIN
+
+#include <process.h>
 
 #define MAGIC_NUM 1128
 #define WM_END_THREAD (WM_USER+2)
@@ -49,3 +52,24 @@ void HotKeyThread::run() {
 	::GlobalDeleteAtom(id);
 	::GlobalDeleteAtom(id2);
 }
+
+#else
+
+HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
+	qRegisterMetaType<KeyCombination>("KeyCombination");
+	//TODO: implement other OS version
+}
+
+HotKeyThread::~HotKeyThread() {
+
+}
+
+void HotKeyThread::stop() {
+	//TODO: implement other OS version
+}
+
+void HotKeyThread::run() {
+	//TODO: implement other OS version
+}
+
+#endif

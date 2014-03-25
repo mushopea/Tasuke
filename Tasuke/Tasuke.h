@@ -1,7 +1,7 @@
 #ifndef TASUKE_H
 #define TASUKE_H
 
-#include <hunspelldll.h>
+#include <hunspell/hunspell.hxx>
 #include <QSharedPointer>
 #include "Commands.h"
 #include "Storage.h"
@@ -49,8 +49,8 @@ public:
 private:
 	static bool guiMode;
 	IStorage* storage;
-	QList<QSharedPointer<ICommand>> commandUndoHistory;
-	QList<QSharedPointer<ICommand>> commandRedoHistory;
+	QList<QSharedPointer<ICommand> > commandUndoHistory;
+	QList<QSharedPointer<ICommand> > commandRedoHistory;
 	TaskWindow* taskWindow;
 	InputWindow* inputWindow;
 	AboutWindow* aboutWindow;
