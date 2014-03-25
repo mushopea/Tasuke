@@ -38,12 +38,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtCore;$(QTDIR)\include;$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)hunspell-1.3.2\src\hunspell;$(SolutionDir)hunspell-1.3.2\src\win_api;$(IncludePath)</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtCore;$(QTDIR)\include;$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)hunspell-1.3.2\src;$(IncludePath)</IncludePath>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtCore;$(QTDIR)\include;$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)hunspell-1.3.2\src\hunspell;$(SolutionDir)hunspell-1.3.2\src\win_api;$(IncludePath)</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtCore;$(QTDIR)\include;$(SolutionDir)glog-0.3.3\src\windows;$(SolutionDir)hunspell-1.3.2\src;$(IncludePath)</IncludePath>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
