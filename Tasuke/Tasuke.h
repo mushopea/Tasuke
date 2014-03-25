@@ -49,8 +49,8 @@ public:
 private:
 	static bool guiMode;
 	IStorage* storage;
-	QList<QSharedPointer<ICommand>> commandUndoHistory;
-	QList<QSharedPointer<ICommand>> commandRedoHistory;
+	QList<QSharedPointer<ICommand> > commandUndoHistory;
+	QList<QSharedPointer<ICommand> > commandRedoHistory;
 	TaskWindow* taskWindow;
 	InputWindow* inputWindow;
 	AboutWindow* aboutWindow;
