@@ -40,6 +40,8 @@ TaskEntry* TaskWindow::createEntry(Task t, int index) {
 		entry->highlightOverdue();
 	}
 
+	
+
 	return entry;
 }
 
