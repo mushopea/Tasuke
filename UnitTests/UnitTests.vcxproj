@@ -136,6 +136,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="StorageStub.cpp" />
+    <ClCompile Include="StorageTests.cpp" />
     <ClCompile Include="TasukeTests.cpp" />
   </ItemGroup>
   <ItemGroup>
