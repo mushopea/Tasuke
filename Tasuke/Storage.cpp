@@ -73,7 +73,7 @@ int IStorage::totalTasks() {
 Storage::Storage() {
 	LOG(INFO) << "Storage instance created...";
 
-	path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/tasuke.ini";
+	//path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/tasuke.ini";
 
 	qRegisterMetaType<Task>("Task");
 	qRegisterMetaTypeStreamOperators<Task>("Task");	
@@ -84,7 +84,8 @@ Storage::Storage() {
 void Storage::loadFile() {
 	LOG(INFO) << "Loading file...";
 
-	QSettings settings(path, QSettings::IniFormat);
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+
 	int size = settings.beginReadArray("Tasks");
 	for (int i=0; i<size; i++) {
 		settings.setArrayIndex(i);
@@ -100,6 +101,7 @@ void Storage::loadFile() {
 			task.setEnd(QDateTime::fromTime_t(settings.value("EndTimeUnix").toInt()));
 		}
 		
+		//QString done
 
 		int tagCount = settings.beginReadArray("Tags");
 		for (int j=0; j<tagCount; j++) {
@@ -121,7 +123,9 @@ void Storage::loadFile() {
 void Storage::saveFile() {
 	LOG(INFO) << "Saving file...";
 
-	QSettings settings(path, QSettings::IniFormat);
+	//QSettings settings(path, QSettings::IniFormat);
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+
 	settings.beginWriteArray("Tasks");
 	for (int i=0; i<tasks.size(); i++) {
 		settings.setArrayIndex(i);
