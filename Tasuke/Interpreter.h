@@ -16,6 +16,7 @@ private:
 		QDateTime end;
 	} TIME_PERIOD;
 	
+	static QString substitute(QString text);
 	static QHash<QString, QString> decompose(QString text);
 	static QString removeBefore(QString text, QString before);
 	static QString getType(QString commandString);

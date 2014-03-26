@@ -1,5 +1,6 @@
 #include <QDataStream>
 #include <string>
+#include "Exceptions.h"
 #include "Task.h"
 
 Task::Task() {
@@ -19,6 +20,10 @@ QString Task::getDescription() const {
 }
 
 void Task::addTag(QString tag) {
+	if (tags.size() >= MAXIMUM_TAGS) {
+		throw ExceptionTooManyTags();
+	}
+
 	tags.push_back(tag);
 }
 
@@ -99,6 +104,31 @@ bool Task::isOngoing() {
 		return false;
 	}
 }
+
+bool Task::operator!=(const Task& other) const {
+	return true;
+}
+
+bool Task::operator==(const Task& other) const {
+	return true;
+}
+
+bool Task::operator<(const Task& other) const {
+	return true;
+}
+
+bool Task::operator<=(const Task& other) const {
+	return true;
+}
+
+bool Task::operator>(const Task& other) const {
+	return true;
+}
+
+bool Task::operator>=(const Task& other) const {
+	return true;
+}
+
 
 QDataStream& operator<<(QDataStream& out, const Task& task) {
 	out << task.description;

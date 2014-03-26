@@ -9,6 +9,21 @@
 #include "Exceptions.h"
 #include "Interpreter.h"
 
+QString Interpreter::substitute(QString text) {
+	QString subbedText = text;
+	subbedText = subbedText.replace(" by ", " @ ");
+	subbedText = subbedText.replace(" at ", " @ ");
+	subbedText = subbedText.replace(" from ", " @ ");
+	subbedText = subbedText.replace(" to ", " - ");
+
+	subbedText = subbedText.replace(" \\by ", " by ");
+	subbedText = subbedText.replace(" \\at ", " at ");
+	subbedText = subbedText.replace(" \\from ", " from ");
+	subbedText = subbedText.replace(" \\to ", " to ");
+
+	return subbedText;
+}
+
 QHash<QString, QString> Interpreter::decompose(QString text) {
 	QStringList tokens = text.split(" ");
 	QString current = "";
@@ -110,6 +125,8 @@ QString Interpreter::getType(QString commandString) {
 // the user's command. The caller must clean up using delete.
 ICommand* Interpreter::interpret(QString commandString) {
 	LOG(INFO) << "Interpretting " << commandString.toStdString();
+
+	commandString = substitute(commandString);
 
 	QString commandType = getType(commandString);
 
@@ -325,6 +342,21 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriod) {
 
 QDateTime Interpreter::parseDate(QString dateString) {
 	dateString = dateString.trimmed();
+
+	if (dateString == "today") {
+		return QDateTime(QDate::currentDate(), QTime(23,59));
+	} else if (dateString == "2day") {
+		return QDateTime(QDate::currentDate(),  QTime(23,59));
+	} else if (dateString == "now") {
+		return QDateTime::currentDateTime();
+	} else if (dateString == "tomorrow") {
+		return QDateTime(QDate::currentDate(), QTime(23,59)).addDays(1);
+	} else if (dateString == "tmr") {
+		return QDateTime(QDate::currentDate(),  QTime(23,59)).addDays(1);
+	} else if (dateString == "day after tomorrow") {
+		return QDateTime(QDate::currentDate(),  QTime(23,59)).addDays(2);
+	}
+
 	QDateTime retVal;
 	QStringList fullDateFormats;
 	QStringList dateOnlyFormats;
