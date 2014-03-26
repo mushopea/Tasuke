@@ -101,7 +101,7 @@ void Storage::loadFile() {
 			task.setEnd(QDateTime::fromTime_t(settings.value("EndTimeUnix").toInt()));
 		}
 		
-		//QString done
+		task.setDone(settings.value("Done").toBool());
 
 		int tagCount = settings.beginReadArray("Tags");
 		for (int j=0; j<tagCount; j++) {
