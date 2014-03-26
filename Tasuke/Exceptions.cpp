@@ -4,6 +4,7 @@
 const char* EXCEPTION_NULL_PTR = "attempt to dereference null pointer";
 const char* EXCEPTION_BAD_COMMAND = "bad command given";
 const char* EXCEPTION_NOT_IMPLEMENTED = "not implemented";
+const char* EXCEPTION_TOO_MANY_TAGS = "exceeded tag limit";
 
 // This method returns a user readable error for the ExceptionNullPtr
 // exception
@@ -22,4 +23,9 @@ const char* ExceptionBadCommand::what() const throw()
 const char* ExceptionNotImplemented::what() const throw()
 {
 	return EXCEPTION_NOT_IMPLEMENTED;
+}
+
+const char* ExceptionTooManyTags::what() const throw()
+{
+	return EXCEPTION_TOO_MANY_TAGS;
 }

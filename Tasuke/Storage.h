@@ -33,11 +33,17 @@ public:
 class Storage : public IStorage {
 private:
 	void sortByEndDate();
+	void sortByBeginDate();
+	void sortByDescription();
+	void sortByDone();
 
 public:
 	Storage();
 	void loadFile();
 	void saveFile();
+
+	void clearAllDone();
+	void clearAllTasks();
 };
 
 #endif

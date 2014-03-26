@@ -5,6 +5,8 @@
 #include <QString>
 #include <QDateTime>
 
+#define MAXIMUM_TAGS 10
+
 class Task {
 private:
 	QString description;
@@ -38,6 +40,7 @@ public:
 	bool isOverdue();
 	bool isOngoing();
 
+	
 	bool operator!=(const Task& other) const;
 	bool operator==(const Task& other) const;
 	bool operator<(const Task& other) const;

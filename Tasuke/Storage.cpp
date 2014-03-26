@@ -123,9 +123,13 @@ void Storage::loadFile() {
 void Storage::saveFile() {
 	LOG(INFO) << "Saving file...";
 
+	sortByDescription();
+	sortByEndDate();
+	sortByDone();
+
 	//QSettings settings(path, QSettings::IniFormat);
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-
+	settings.clear();
 	settings.beginWriteArray("Tasks");
 	for (int i=0; i<tasks.size(); i++) {
 		settings.setArrayIndex(i);
@@ -161,4 +165,37 @@ void Storage::saveFile() {
 }
 
 void Storage::sortByEndDate() {
+	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
+		return t1.getEnd() < t2.getEnd();
+	});
+}
+
+void Storage::sortByBeginDate() {
+	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
+		return t1.getBegin() < t2.getBegin();
+	});
+}
+
+void Storage::sortByDescription() {
+	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
+		return t1.getDescription().toLower() < t2.getDescription().toLower();
+	});
+}
+
+void Storage::sortByDone() {
+	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
+		return t1.isDone() < t2.isDone();
+	});
+}
+
+void Storage::clearAllDone() {
+	foreach (const Task& task, tasks) {
+		if (task.isDone()) {
+			tasks.removeOne(task);
+		}
+	}
+}
+
+void Storage::clearAllTasks() {
+	tasks.clear();
 }
