@@ -100,6 +100,31 @@ bool Task::isOngoing() {
 	}
 }
 
+bool Task::operator!=(const Task& other) const {
+	
+}
+
+bool Task::operator==(const Task& other) const {
+
+}
+
+bool Task::operator<(const Task& other) const {
+
+}
+
+bool Task::operator<=(const Task& other) const {
+
+}
+
+bool Task::operator>(const Task& other) const {
+
+}
+
+bool Task::operator>=(const Task& other) const {
+
+}
+
+
 QDataStream& operator<<(QDataStream& out, const Task& task) {
 	out << task.description;
 	out << task.tags.size();
