@@ -11,15 +11,15 @@
 
 QString Interpreter::substitute(QString text) {
 	QString subbedText = text;
-	subbedText = subbedText.replace("by", "@");
-	subbedText = subbedText.replace("at", "@");
-	subbedText = subbedText.replace("from", "@");
-	subbedText = subbedText.replace("to", "-");
+	subbedText = subbedText.replace(" by ", " @ ");
+	subbedText = subbedText.replace(" at ", " @ ");
+	subbedText = subbedText.replace(" from ", " @ ");
+	subbedText = subbedText.replace(" to ", " - ");
 
-	subbedText = subbedText.replace("\by", "by");
-	subbedText = subbedText.replace("\at", "at");
-	subbedText = subbedText.replace("\from", "from");
-	subbedText = subbedText.replace("\to", "to");
+	subbedText = subbedText.replace(" \\by ", " by ");
+	subbedText = subbedText.replace(" \\at ", " at ");
+	subbedText = subbedText.replace(" \\from ", " from ");
+	subbedText = subbedText.replace(" \\to ", " to ");
 
 	return subbedText;
 }
@@ -338,15 +338,17 @@ QDateTime Interpreter::parseDate(QString dateString) {
 	dateString = dateString.trimmed();
 
 	if (dateString == "today") {
-		return QDateTime(QDate::currentDate());
+		return QDateTime(QDate::currentDate(), QTime(23,59));
 	} else if (dateString == "2day") {
-		return QDateTime(QDate::currentDate());
+		return QDateTime(QDate::currentDate(),  QTime(23,59));
 	} else if (dateString == "now") {
 		return QDateTime::currentDateTime();
 	} else if (dateString == "tomorrow") {
-		return QDateTime(QDate::currentDate()).addDays(1);
+		return QDateTime(QDate::currentDate(), QTime(23,59)).addDays(1);
 	} else if (dateString == "tmr") {
-		return QDateTime(QDate::currentDate()).addDays(1);
+		return QDateTime(QDate::currentDate(),  QTime(23,59)).addDays(1);
+	} else if (dateString == "day after tomorrow") {
+		return QDateTime(QDate::currentDate(),  QTime(23,59)).addDays(2);
 	}
 
 	QDateTime retVal;
