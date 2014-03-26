@@ -21,4 +21,9 @@ class ExceptionNotImplemented : public std::exception
 	virtual const char *what() const throw();
 };
 
+class ExceptionTooManyTags : public std::exception
+{
+	virtual const char *what() const throw();
+};
+
 #endif
