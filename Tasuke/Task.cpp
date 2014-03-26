@@ -101,27 +101,27 @@ bool Task::isOngoing() {
 }
 
 bool Task::operator!=(const Task& other) const {
-	
+	return true;
 }
 
 bool Task::operator==(const Task& other) const {
-
+	return true;
 }
 
 bool Task::operator<(const Task& other) const {
-
+	return true;
 }
 
 bool Task::operator<=(const Task& other) const {
-
+	return true;
 }
 
 bool Task::operator>(const Task& other) const {
-
+	return true;
 }
 
 bool Task::operator>=(const Task& other) const {
-
+	return true;
 }
 
 

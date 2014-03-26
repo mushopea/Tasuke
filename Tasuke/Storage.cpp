@@ -159,3 +159,6 @@ void Storage::saveFile() {
 
 	LOG(INFO) << "File saved.";
 }
+
+void Storage::sortByEndDate() {
+}

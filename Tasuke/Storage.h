@@ -31,8 +31,9 @@ public:
 // Usually only 1 instance of this class is required and it is managed by the
 // Tasuke singleton.
 class Storage : public IStorage {
-	QString path;
-	
+private:
+	void sortByEndDate();
+
 public:
 	Storage();
 	void loadFile();
