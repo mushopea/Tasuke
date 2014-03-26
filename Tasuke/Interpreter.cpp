@@ -9,6 +9,21 @@
 #include "Exceptions.h"
 #include "Interpreter.h"
 
+QString Interpreter::substitute(QString text) {
+	QString subbedText = text;
+	subbedText = subbedText.replace("by", "@");
+	subbedText = subbedText.replace("at", "@");
+	subbedText = subbedText.replace("from", "@");
+	subbedText = subbedText.replace("to", "-");
+
+	subbedText = subbedText.replace("\by", "by");
+	subbedText = subbedText.replace("\at", "at");
+	subbedText = subbedText.replace("\from", "from");
+	subbedText = subbedText.replace("\to", "to");
+
+	return subbedText;
+}
+
 QHash<QString, QString> Interpreter::decompose(QString text) {
 	QStringList tokens = text.split(" ");
 	QString current = "";
@@ -109,6 +124,8 @@ QString Interpreter::getType(QString commandString) {
 // the user's command. The caller must clean up using delete.
 ICommand* Interpreter::interpret(QString commandString) {
 	LOG(INFO) << "Interpretting " << commandString.toStdString();
+
+	commandString = substitute(commandString);
 
 	QString commandType = getType(commandString);
 
