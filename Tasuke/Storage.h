@@ -10,6 +10,7 @@
 class IStorage {
 protected:
 	QList<Task> tasks;
+	QMutex mutex;
 public:
 	IStorage();
 	virtual ~IStorage();

@@ -271,5 +271,57 @@ namespace UnitTest {
 			command = Interpreter::interpret("help");
 			Assert::IsTrue(command == nullptr);
 		}
+
+		// Musho spelling tests
+		// The correct spelling partition
+		TEST_METHOD(HunspellCorrectSpelling) {
+			
+			// rarity
+			Assert::IsTrue(Tasuke::instance().spellCheck("the")); // A very common word
+			Assert::IsTrue(Tasuke::instance().spellCheck("island")); // An uncommon word
+			Assert::IsTrue(Tasuke::instance().spellCheck("ophthalmology")); // A rare word
+
+			// word length
+			Assert::IsTrue(Tasuke::instance().spellCheck("a")); // Single letter word
+			Assert::IsTrue(Tasuke::instance().spellCheck("awe")); // Short word
+			Assert::IsTrue(Tasuke::instance().spellCheck("abstract")); // Medium length word
+			Assert::IsTrue(Tasuke::instance().spellCheck("anthropomorphic")); // Long word
+
+			// punctuation
+			Assert::IsFalse(Tasuke::instance().spellCheck("youre")); // A phrase that needs punctuation
+			Assert::IsTrue(Tasuke::instance().spellCheck("you're")); // A phrase that needs punctuation
+
+			// popular words
+			Assert::IsTrue(Tasuke::instance().spellCheck("fuck")); // A popular swear word
+		}
+
+		// The incorrect spelling partition
+		TEST_METHOD(SpellIncorrectSpelling) {
+			Assert::IsFalse(Tasuke::instance().spellCheck("unneccessary")); // A commonly mispelled word
+			Assert::IsFalse(Tasuke::instance().spellCheck("asdfghjkl")); // A completely mispelled word
+		}
+		
+		TEST_METHOD(SpellCapitalisedProperWords) {
+			Assert::IsTrue(Tasuke::instance().spellCheck("John")); // A proper name
+			Assert::IsFalse(Tasuke::instance().spellCheck("Asdfghjkl")); // A garbage capitalised word
+		}
+
+		TEST_METHOD(SpellNumberInitialWords) {
+			Assert::IsTrue(Tasuke::instance().spellCheck("9pm")); // Time
+		}
+
+		// To ensure command words are all considered correct.
+		TEST_METHOD(SpellTasukeCommandWords) {
+
+			//non words
+			Assert::IsTrue(Tasuke::instance().spellCheck("ls"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("nd"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("rm"));
+
+			//words
+			Assert::IsTrue(Tasuke::instance().spellCheck("settings"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("add"));
+		}
+
 	};
 }

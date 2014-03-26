@@ -18,6 +18,7 @@ IStorage::~IStorage() {
 }
 
 void IStorage::addTask(Task& task) {
+	QMutexLocker lock(&mutex);
 	LOG(INFO) << "Adding task " << task.getDescription().toStdString();
 
 	tasks.push_back(task);
@@ -26,6 +27,7 @@ void IStorage::addTask(Task& task) {
 }
 
 void IStorage::addTask(Task& task, int pos) {
+	QMutexLocker lock(&mutex);
 	LOG(INFO) << "Adding task " << task.getDescription().toStdString()
 		<< " at position " << pos;
 
@@ -35,10 +37,12 @@ void IStorage::addTask(Task& task, int pos) {
 }
 
 Task& IStorage::getTask(int pos) {
+	QMutexLocker lock(&mutex);
 	return tasks[pos];
 }
 
 void IStorage::removeTask(int pos) {
+	QMutexLocker lock(&mutex);
 	LOG(INFO) << "Removing task at position " << pos;
 
 	tasks.removeAt(pos);
@@ -47,6 +51,7 @@ void IStorage::removeTask(int pos) {
 }
 
 void IStorage::popTask() {
+	QMutexLocker lock(&mutex);
 	LOG(INFO) << "Popping task from back";
 
 	tasks.pop_back();
@@ -55,10 +60,12 @@ void IStorage::popTask() {
 }
 
 QList<Task> IStorage::getTasks() {
+	QMutexLocker lock(&mutex);
 	return tasks;
 }
 
 int IStorage::totalTasks() {
+	QMutexLocker lock(&mutex);
 	return tasks.size();
 }
 

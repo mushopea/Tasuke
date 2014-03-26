@@ -62,11 +62,38 @@ bool Task::isDone() const {
 	return done;
 }
 
+// Returns FALSE if there is no end date/time for this task,
+// or it is not valid.
+// Returns FALSE if end date/time for this task is later
+// than current date/time.
+// Returns TRUE if end date/time for this task is earlier
+// than current date/time.
 bool Task::isOverdue() {
 	if (end.isNull() || !end.isValid()) {
 		return false;
 	}
 	if (end < QDateTime::currentDateTime()) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+// Returns FALSE if there is no begin date/time for this task,
+// or it is not valid.
+// Returns FALSE if start date/time for this task is later
+// than current date/time.
+// Returns FALSE if task is already overdue.
+// Returns TRUE if start date/time for this task is earlier
+// than current date.time.
+bool Task::isOngoing() {
+	if (begin.isNull() || !begin.isValid()) {
+		return false;
+	}
+	if (isOverdue()) {
+		return false;
+	}
+	if (begin < QDateTime::currentDateTime()) {
 		return true;
 	} else {
 		return false;

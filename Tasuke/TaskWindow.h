@@ -13,6 +13,8 @@
 #include <QBitmap>
 #include <QKeySequence>
 #include <QPoint>
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
 #include "Task.h"
 #include "ui_TaskWindow.h"
 #include "HotKeyThread.h"
@@ -26,20 +28,12 @@ public:
 	TaskWindow(QWidget *parent = 0);
 	virtual ~TaskWindow();
 
-	// Handles task entry creation and addition to list
-	bool isInRange(int index);
-	TaskEntry* createEntry(Task t, int index);
-	void addListItem(TaskEntry* entry, int row, int pixmapID);
-	void addListItem(TaskEntry* entry);
-
-	// Handles focusing and highlighting of task entries
-	void highlightCurrentlySelected(int prevsize);
-	void highlightAndAnimateCurrentlySelected(int prevsize);
-	void focusOnNewTask(bool haveAnimation);
+	// Handles task list display
+	void jumpToCurrentlySelectedTask();
+	void updateCurrentlySelectedTo(int row);
+	void highlightTask(int row);
+	void highlightCurrentlySelectedTask(int prevsize);
 	void showTasks(QList<Task> tasks);
-
-	// TutorialWidget initialization
-	void initTut();
 
 	// Handles scrolling
 	void scrollUp();
@@ -50,11 +44,11 @@ public:
 	// Stacked widget functions
 	int getScreen(); // Helps decide which key press events to execute
 	void changeTutorialWidgetTabs(); // Handles key press "tab"
+	void showListWidget();
+	void showTutorialWidget();
 
 	
 public slots:
-	void showListWidget();
-	void showTutorialWidget();
 	void showAndMoveToSide();
 
 protected:
@@ -65,18 +59,38 @@ protected:
 
 
 private:
+
+	//========================================
+	// ATTRIBUTES
+	//=========================================
 	static const int TASKS_PER_PAGE = 5;
 	static const int TASK_ENTRY_WIDTH = 780;
 	static const int TASK_ENTRY_HEIGHT = 65;
 
 	Ui::TaskWindowClass ui;	
-	TutorialWidget *tut;
+	TutorialWidget *tutorial;
 	HotKeyThread *hotKeyThread;
 	QPoint mpos;
 	QList<Task> currentTasks;
-	int currentlySelected; // Represents of the # of the selected entry in the UI. Min is 1. Max is size of the task list
+	QGraphicsOpacityEffect *fadeEffect;
+	QPropertyAnimation *animation; 
+
+	// For selection of tasks
+	int currentlySelected; // Represents of the # of the selected entry in the UI. (Range: 1 < # < taskListSize)
 	int previouslySelected;
 	int previousSize;
+
+	//========================================
+	// FUNCTIONS
+	//=========================================
+	void initTutorial();
+	void initAnimation();
+	
+	// Handles task entry creation and addition to list
+	bool isInRange(int index);
+	TaskEntry* createEntry(Task t, int index);
+	void addListItemToRow(TaskEntry* entry, int row, int pixmapID);
+	void addListItem(TaskEntry* entry);
 
 };
 

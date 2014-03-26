@@ -24,10 +24,13 @@ public:
 public slots:
 	void showAndCenter();
 
+protected:
 	bool eventFilter(QObject *object, QEvent *event);
+
 private slots:
 	void handleReturnPressed();
 	void handleEditingFinished();
+	void initAnimation();
 	void changeBorder(int themeNumber);
 	void changeBG(int themeNumber);
 

@@ -31,6 +31,8 @@ macx {
     QMAKE_LFLAGS += -framework carbon -framework cocoa
     HUNSPELL.files += ./en_GB.aff
     HUNSPELL.files += ./en_GB.dic
+    HUNSPELL.files += ./en_US.aff
+    HUNSPELL.files += ./en_US.dic
     HUNSPELL.path = Contents/Resources
     QMAKE_BUNDLE_DATA += HUNSPELL
 }

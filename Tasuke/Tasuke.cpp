@@ -14,14 +14,9 @@ bool Tasuke::guiMode = true;
 // Constructor for the Tasuke singleton.
 Tasuke::Tasuke() {
 	LOG(INFO) << "Tasuke object created";
-
-#ifndef Q_OS_MAC
-	spellObj = new Hunspell("en_GB.aff", "en_GB.dic");
-#else
-    QString path = QCoreApplication::applicationDirPath();
-    spellObj = new Hunspell((path + "/../Resources/en_GB.aff").toUtf8().constData(), (path + "/../Resources/en_GB.dic").toUtf8().constData());
-#endif
-
+	
+	loadDictionary();
+	
 	storage = new Storage();
 	storage->loadFile();
 
@@ -43,7 +38,7 @@ Tasuke::~Tasuke() {
 	if (hotKeyManager != nullptr) {
 		delete hotKeyManager;
 	}
-
+	
 	if (systemTrayWidget != nullptr) {
 		delete systemTrayWidget;
 	}
@@ -69,13 +64,28 @@ Tasuke::~Tasuke() {
 	}
 }
 
+void Tasuke::loadDictionary() {
+#ifndef Q_OS_MAC
+	spellObj = new Hunspell("en_GB.aff", "en_GB.dic");
+	spellObj->add_dic("en_US.dic");
+#else
+	QString path = QCoreApplication::applicationDirPath();
+	spellObj = new Hunspell((path + "/../Resources/en_GB.aff").toUtf8().constData(), (path + "/../Resources/en_GB.dic").toUtf8().constData());
+	spellObj->add_dic((path + "/../Resources/en_US.dic").toUtf8().constData());
+#endif
+
+	spellObj->add("rm");
+	spellObj->add("ls");
+	spellObj->add("nd");
+}
+
 void Tasuke::loadFonts(){
 	LOG(INFO) << "Loading fonts";
 
-	QFontDatabase fontDatabase;
-    fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book.otf");
-    fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book_Oblique.otf");
-    fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light.otf");
+	QFontDatabase fontDatabase; 
+	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book.otf");
+	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book_Oblique.otf");
+	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light.otf");
 	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light_Oblique.otf");
 	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Bold.otf");
 	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Bold_Oblique.otf");
@@ -85,13 +95,13 @@ void Tasuke::loadFonts(){
 
 void Tasuke::initialize(){
 	loadFonts();
-
+	
 	taskWindow = new TaskWindow();
 	inputWindow = new InputWindow();
 	aboutWindow = new AboutWindow();
 	systemTrayWidget = new SystemTrayWidget();
 	hotKeyManager = new HotKeyManager();
-
+	
 	updateTaskWindow(storage->getTasks());
 	showTaskWindow();
 }
@@ -133,6 +143,7 @@ TaskWindow& Tasuke::getTaskWindow(){
 HotKeyManager& Tasuke::getHotKeyManager() {
     return *hotKeyManager;
 }
+
 
 // This function exposes the Storage instance for editing.
 IStorage& Tasuke::getStorage() {
@@ -233,7 +244,11 @@ bool Tasuke::spellCheck(QString word) {
 		return true;
 	}
 
-	return spellObj->spell(word.toUtf8().data());
+	if (spellObj->spell(word.toUtf8().data())) {
+		return true;
+	}
+
+	return false;
 }
 
 // This function runs a command in a string
@@ -250,7 +265,7 @@ void Tasuke::runCommand(QString commandString) {
 		commandRedoHistory.clear();
 	} catch (ExceptionBadCommand& exception) {
 		LOG(INFO) << "Error parsing command";
-
+		
 		showMessage("Error parsing command");
 	}
 }

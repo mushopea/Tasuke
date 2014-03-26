@@ -36,6 +36,7 @@ public:
 	bool isDone() const;
 
 	bool isOverdue();
+	bool isOngoing();
 
 	friend QDataStream& operator<<(QDataStream& out, const Task& task);
 	friend QDataStream& operator>>(QDataStream& in, Task& task);
