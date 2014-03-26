@@ -336,6 +336,19 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriod) {
 
 QDateTime Interpreter::parseDate(QString dateString) {
 	dateString = dateString.trimmed();
+
+	if (dateString == "today") {
+		return QDateTime(QDate::currentDate());
+	} else if (dateString == "2day") {
+		return QDateTime(QDate::currentDate());
+	} else if (dateString == "now") {
+		return QDateTime::currentDateTime();
+	} else if (dateString == "tomorrow") {
+		return QDateTime(QDate::currentDate()).addDays(1);
+	} else if (dateString == "tmr") {
+		return QDateTime(QDate::currentDate()).addDays(1);
+	}
+
 	QDateTime retVal;
 	QStringList fullDateFormats;
 	QStringList dateOnlyFormats;
