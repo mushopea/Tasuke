@@ -40,6 +40,7 @@ public:
 	void undoCommand();
 	void redoCommand();
 
+	void loadDictionary();
 	void loadFonts();
 	void initialize();
 	

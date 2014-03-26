@@ -14,8 +14,8 @@ bool Tasuke::guiMode = true;
 // Constructor for the Tasuke singleton.
 Tasuke::Tasuke() {
 	LOG(INFO) << "Tasuke object created";
-
-	spellObj = new Hunspell("en_GB.aff", "en_GB.dic");
+	
+	loadDictionary();
 	
 	storage = new Storage();
 	storage->loadFile();
@@ -62,6 +62,15 @@ Tasuke::~Tasuke() {
 	if (spellObj != nullptr) {
 		delete spellObj;
 	}
+}
+
+void Tasuke::loadDictionary() {
+	spellObj = new Hunspell("en_GB.aff", "en_GB.dic");
+	spellObj->add_dic("en_US.dic");
+
+	spellObj->add("rm");
+	spellObj->add("ls");
+	spellObj->add("nd");
 }
 
 void Tasuke::loadFonts(){
@@ -224,7 +233,11 @@ bool Tasuke::spellCheck(QString word) {
 		return true;
 	}
 
-	return spellObj->spell(word.toUtf8().data());
+	if (spellObj->spell(word.toUtf8().data())) {
+		return true;
+	}
+
+	return false;
 }
 
 // This function runs a command in a string
