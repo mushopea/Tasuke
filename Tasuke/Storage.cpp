@@ -85,10 +85,30 @@ void Storage::loadFile() {
 	LOG(INFO) << "Loading file...";
 
 	QSettings settings(path, QSettings::IniFormat);
-	int size = settings.beginReadArray("tasks");
+	int size = settings.beginReadArray("Tasks");
 	for (int i=0; i<size; i++) {
 		settings.setArrayIndex(i);
-		Task task = settings.value("task").value<Task>();
+		Task task;
+
+		task.setDescription(settings.value("Description").toString());
+		uint beginTime = settings.value("BeginTimeUnix", 0).toUInt();
+		if (beginTime != 0) {
+			task.setBegin(QDateTime::fromTime_t(settings.value("BeginTimeUnix").toInt()));
+		}
+		uint endTime = settings.value("EndTimeUnix", 0).toUInt();
+		if (endTime != 0) {
+			task.setEnd(QDateTime::fromTime_t(settings.value("EndTimeUnix").toInt()));
+		}
+		
+
+		int tagCount = settings.beginReadArray("Tags");
+		for (int j=0; j<tagCount; j++) {
+			settings.setArrayIndex(j);
+			QString tag = settings.value("Tag").toString();
+			task.addTag(tag);
+		}
+		settings.endArray();
+
 		tasks.push_back(task);
 	}
 	settings.endArray();
@@ -99,13 +119,39 @@ void Storage::loadFile() {
 // This function deserialize the data from memory and writes it to the text
 // file. If the file cannot be written, an ExceptionNotOpen is thrown.
 void Storage::saveFile() {
-	LOG(INFO) << "Saving file";
+	LOG(INFO) << "Saving file...";
 
 	QSettings settings(path, QSettings::IniFormat);
-	settings.beginWriteArray("tasks");
+	settings.beginWriteArray("Tasks");
 	for (int i=0; i<tasks.size(); i++) {
 		settings.setArrayIndex(i);
-		settings.setValue("task", QVariant::fromValue<Task>(tasks[i]));
+		settings.setValue("Description", tasks[i].getDescription());
+		settings.setValue("BeginTime", tasks[i].getBegin().toString());
+		settings.setValue("EndTime", tasks[i].getEnd().toString());
+
+		if (tasks[i].getBegin().isNull() || !tasks[i].getBegin().isValid()) {
+			settings.setValue("BeginTimeUnix", "");
+		} else {
+			settings.setValue("BeginTimeUnix", tasks[i].getBegin().toTime_t());
+		}
+
+		if (tasks[i].getEnd().isNull() || !tasks[i].getEnd().isValid()) {
+			settings.setValue("EndTimeUnix", "");
+		} else {
+			settings.setValue("EndTimeUnix", tasks[i].getEnd().toTime_t());
+		}
+
+		settings.setValue("Done", tasks[i].isDone());
+
+		settings.beginWriteArray("Tags");
+		QList<QString> tags = tasks[i].getTags();
+		for (int j=0; j<tags.size(); j++) {
+			settings.setArrayIndex(j);
+			settings.setValue("Tag", tags[j]);
+		}
+		settings.endArray();
 	}
 	settings.endArray();
+
+	LOG(INFO) << "File saved.";
 }
