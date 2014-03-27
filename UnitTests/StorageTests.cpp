@@ -37,6 +37,8 @@ namespace StorageTests {
 			storage = nullptr;
 		}
 		
+		/********** Tests for TASK class **********/
+
 		// Should throw an exception because exceed maximum tag count.
 		TEST_METHOD(TaskExceedMaximumTagCount) {
 			Assert::ExpectException<ExceptionTooManyTags>([] {
@@ -83,6 +85,7 @@ namespace StorageTests {
 			Assert::IsTrue(task.isOngoing());
 		}
 
+		// Task should be ongoing and not overdue (task starts 2010 Jan, ends 2100 Dec).
 		TEST_METHOD(TaskIsOngoingBecauseNotOverdue) {
 			Task task;
 			task.setBegin(QDateTime(QDate(2010, 1, 1), QTime(1, 1, 1)));
@@ -91,6 +94,7 @@ namespace StorageTests {
 			Assert::IsFalse(task.isOverdue());
 		}
 
+		// Task should not be ongoing, and is overdue (task starts 2010 Jan, ends 2010 Jan).
 		TEST_METHOD(TaskIsNotOngoingBecauseOverdue) {
 			Task task;
 			task.setBegin(QDateTime(QDate(2010, 1, 1), QTime(1, 1, 1)));
@@ -99,5 +103,12 @@ namespace StorageTests {
 			Assert::IsTrue(task.isOverdue());
 		}
 
+		/********** Tests for STORAGE class **********/
+		/*
+		TEST_METHOD(StorageSearchByDescription) {
+			Task task1, task2, task3, task4;
+			task1.setDescription("
+		}
+		*/
 	};
 }
