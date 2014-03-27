@@ -206,7 +206,7 @@ int TaskWindow::getScreen() {
 }
 
 void TaskWindow::changeTutorialWidgetTabs(){
-	tutorial->changeTabs();
+	tutorial.changeTabs();
 }
 
 void TaskWindow::showListWidget() {
@@ -297,8 +297,8 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 //=========================================
 
 void TaskWindow::initTutorial() {
-	tutorial = new TutorialWidget(this);
-	ui.stackedWidget->addWidget(tutorial);
+	ui.stackedWidget->addWidget(&tutorial);
+	tutorial.goToFirstPage();
 }
 
 void TaskWindow::initAnimation() {

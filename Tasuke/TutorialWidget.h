@@ -16,6 +16,7 @@ public:
 	~TutorialWidget();
 
 public slots:
+	void goToFirstPage();
 	void backToTasuke();
 	void changeTabs();
 

@@ -16,6 +16,9 @@ TutorialWidget::~TutorialWidget() {
 	LOG(INFO) << "TutorialWidget instance destroyed";
 }
 
+void TutorialWidget::goToFirstPage() {
+	ui.tabWidget->setCurrentIndex(0);
+}
 // Goes back to the task list
 void TutorialWidget::backToTasuke() {
 	Tasuke::instance().getTaskWindow().showListWidget();

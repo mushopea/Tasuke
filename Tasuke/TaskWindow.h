@@ -68,7 +68,7 @@ private:
 	static const int TASK_ENTRY_HEIGHT = 65;
 
 	Ui::TaskWindowClass ui;	
-	TutorialWidget *tutorial;
+	TutorialWidget tutorial;
 	HotKeyThread *hotKeyThread;
 	QPoint mpos;
 	QList<Task> currentTasks;
