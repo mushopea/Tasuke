@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>440</height>
+    <height>447</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -21,28 +21,28 @@
 QPushButton {background-color: transparent;  border: none; }
 
   QPushButton#minButton {
-background-image: url(:/Images/minButton.png);
+background-image: url(:/Images/images/theme1/minButton.png);
 }
 
     QPushButton#minButton:hover {
-	background-image: url(:/Images/minButtonHover.png);
+	background-image: url(:/Images/images/theme1/minButtonHover.png);
     }
      
     QPushButton#minButton:pressed {
-	background-image: url(:/Images/minButtonHover.png);
+	background-image: url(:/Images/images/theme1/minButtonHover.png);
     }
   
 
 	QPushButton#closeButton{
-background-image: url(:/Images/closeButton.png);
+background-image: url(:/Images/images/theme1/closeButton.png);
 }
 
     QPushButton#closeButton:hover {
-	background-image: url(:/Images/closeButtonHover.png);
+	background-image: url(:/Images/images/theme1/closeButtonHover.png);
     }
      
     QPushButton#closeButton:pressed {
-	background-image: url(:/Images/closeButtonHover.png);
+	background-image: url(:/Images/images/theme1/closeButtonHover.png);
     }
 
  QScrollBar:vertical {
@@ -84,7 +84,7 @@ QScrollBar::handle:vertical {
    <widget class="QPushButton" name="closeButton">
     <property name="geometry">
      <rect>
-      <x>795</x>
+      <x>800</x>
       <y>20</y>
       <width>22</width>
       <height>22</height>
@@ -120,7 +120,7 @@ QScrollBar::handle:vertical {
    <widget class="QPushButton" name="minButton">
     <property name="geometry">
      <rect>
-      <x>765</x>
+      <x>770</x>
       <y>20</y>
       <width>22</width>
       <height>22</height>
@@ -325,14 +325,14 @@ QScrollBar::handle:vertical {
       <x>0</x>
       <y>0</y>
       <width>840</width>
-      <height>440</height>
+      <height>447</height>
      </rect>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="Resources.qrc">:/Images/TaskWindowBorderGrey.png</pixmap>
+     <pixmap resource="Resources.qrc">:/Images/images/theme1/taskWindowBorder.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>false</bool>
@@ -341,10 +341,10 @@ QScrollBar::handle:vertical {
    <widget class="QLabel" name="bg">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>840</width>
-      <height>440</height>
+      <x>10</x>
+      <y>10</y>
+      <width>820</width>
+      <height>427</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -354,7 +354,7 @@ QScrollBar::handle:vertical {
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="Resources.qrc">:/Images/TaskWindowMaskWhite.png</pixmap>
+     <pixmap resource="Resources.qrc">:/Images/images/theme1/taskWindowBg.png</pixmap>
     </property>
    </widget>
    <widget class="SlidingStackedWidget" name="stackedWidget">
@@ -379,10 +379,10 @@ QScrollBar::handle:vertical {
       </property>
       <property name="geometry">
        <rect>
-        <x>11</x>
-        <y>80</y>
+        <x>12</x>
+        <y>86</y>
         <width>797</width>
-        <height>330</height>
+        <height>327</height>
        </rect>
       </property>
       <property name="focusPolicy">
@@ -404,60 +404,33 @@ QScrollBar::handle:vertical {
        <enum>QAbstractItemView::NoSelection</enum>
       </property>
      </widget>
-     <widget class="QLabel" name="columnLabel">
-      <property name="geometry">
-       <rect>
-        <x>21</x>
-        <y>46</y>
-        <width>780</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Quicksand Book</family>
-        <pointsize>17</pointsize>
-        <weight>50</weight>
-        <italic>false</italic>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background: transparent;
-color: grey;</string>
-      </property>
-      <property name="text">
-       <string>      Task                                             Start         End               Tag</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="taskScope">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>4</y>
-        <width>821</width>
+        <x>-10</x>
+        <y>3</y>
+        <width>841</width>
         <height>41</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <family>Quicksand Book</family>
-        <pointsize>23</pointsize>
-        <weight>9</weight>
+        <family>Quicksand Bold</family>
+        <pointsize>24</pointsize>
+        <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
+        <stylestrategy>PreferAntialias</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 75 23pt &quot;Quicksand Book&quot;;
-text-align: center;
+       <string notr="true">text-align: center;
+color: rgb(74, 74, 74);
 background: transparent;</string>
       </property>
       <property name="text">
-       <string>Viewing all tasks</string>
+       <string>Viewing tasks</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -465,6 +438,276 @@ background: transparent;</string>
       <property name="textInteractionFlags">
        <set>Qt::NoTextInteraction</set>
       </property>
+     </widget>
+     <widget class="QWidget" name="emptyTaskMessage" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>120</y>
+        <width>821</width>
+        <height>241</height>
+       </rect>
+      </property>
+      <widget class="QLabel" name="emptyTasksMessage1">
+       <property name="geometry">
+        <rect>
+         <x>-10</x>
+         <y>160</y>
+         <width>841</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>16</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+         <stylestrategy>PreferAntialias</stylestrategy>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">text-align: center;
+color: rgb(74, 74, 74);
+background: transparent;</string>
+       </property>
+       <property name="text">
+        <string>You don't have any undone tasks at the moment.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::NoTextInteraction</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="emptyTaskMessage2">
+       <property name="geometry">
+        <rect>
+         <x>-10</x>
+         <y>190</y>
+         <width>841</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>16</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+         <stylestrategy>PreferAntialias</stylestrategy>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">text-align: center;
+color: rgb(74, 74, 74);
+background: transparent;</string>
+       </property>
+       <property name="text">
+        <string>Get busy. Add one!</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::NoTextInteraction</set>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="emptyAddTaskButton">
+       <property name="geometry">
+        <rect>
+         <x>399</x>
+         <y>199</y>
+         <width>121</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>16</pointsize>
+         <italic>false</italic>
+         <underline>true</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string>Add one</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="oopsImage">
+       <property name="geometry">
+        <rect>
+         <x>3</x>
+         <y>10</y>
+         <width>815</width>
+         <height>154</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="Resources.qrc">:/Images/images/oops.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="columnLabels" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>47</y>
+        <width>851</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <widget class="QLabel" name="startLabel">
+       <property name="geometry">
+        <rect>
+         <x>400</x>
+         <y>0</y>
+         <width>114</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>17</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent;
+color: grey;</string>
+       </property>
+       <property name="text">
+        <string>Start</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="taskLabel">
+       <property name="geometry">
+        <rect>
+         <x>63</x>
+         <y>0</y>
+         <width>91</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>17</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent;
+color: grey;</string>
+       </property>
+       <property name="text">
+        <string>Task</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="endLabel">
+       <property name="geometry">
+        <rect>
+         <x>514</x>
+         <y>0</y>
+         <width>114</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>17</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent;
+color: grey;</string>
+       </property>
+       <property name="text">
+        <string>End</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="tagLabel">
+       <property name="geometry">
+        <rect>
+         <x>629</x>
+         <y>0</y>
+         <width>160</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>17</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: transparent;
+color: grey;</string>
+       </property>
+       <property name="text">
+        <string>Tag</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <zorder>tagLabel</zorder>
+      <zorder>taskLabel</zorder>
+      <zorder>endLabel</zorder>
+      <zorder>startLabel</zorder>
+      <zorder>tagLabel</zorder>
+      <zorder>taskLabel</zorder>
+      <zorder>endLabel</zorder>
+      <zorder>startLabel</zorder>
+      <zorder>startLabel</zorder>
+      <zorder>taskLabel</zorder>
+      <zorder>endLabel</zorder>
+      <zorder>tagLabel</zorder>
      </widget>
     </widget>
    </widget>

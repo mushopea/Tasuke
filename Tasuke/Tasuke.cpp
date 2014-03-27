@@ -224,6 +224,10 @@ void Tasuke::showTutorial() {
 		return;
 	}
 
+	if (!taskWindow->isVisible()) {
+		showTaskWindow();
+	}
+
 	taskWindow->showTutorialWidget();
 }
 

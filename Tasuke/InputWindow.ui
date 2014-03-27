@@ -141,7 +141,7 @@
   <property name="windowTitle">
    <string>InputWindow</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="border">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -154,13 +154,13 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="Resources.qrc">:/Images/roundedmask.png</pixmap>
+    <pixmap resource="Resources.qrc">:/Images/images/theme1/inputWindowBorder.png</pixmap>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="bg">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -294,7 +294,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="Resources.qrc">:/Images/InputWindowMask.png</pixmap>
+    <pixmap resource="Resources.qrc">:/Images/images/theme1/inputWindowBg.png</pixmap>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -356,9 +356,6 @@
     <string>Type command here</string>
    </property>
   </widget>
-  <zorder>label_2</zorder>
-  <zorder>label</zorder>
-  <zorder>lineEdit</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

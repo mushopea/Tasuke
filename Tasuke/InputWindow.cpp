@@ -106,6 +106,12 @@ void InputWindow::showAndCenter() {
 	animation->start();
 }
 
+void InputWindow::showAndAdd() {
+	showAndCenter();
+	ui.lineEdit->insertPlainText(QString("add "));
+}
+
+
 void InputWindow::handleReturnPressed() {
 	QString command = ui.lineEdit->toPlainText();
 
@@ -133,13 +139,13 @@ void InputWindow::initAnimation() {
 
 // Will be updated when "themes" is implemented.
 void InputWindow::changeBorder(int themeNumber){
-	QPixmap pxr(QString::fromUtf8("InputWindowMask.png"));
-	QPixmap pxr2(QString::fromUtf8("InputWindowMask.png"));
+	QPixmap pxr(":/Images/images/theme1/inputWindowBorder.png");
+	QPixmap pxr2(":/Images/images/theme1/inputWindowBorder.png");
 	pxr.fill(Qt::red);
-	pxr.setMask( pxr2.createMaskFromColor( Qt::transparent ) );
+	pxr.setMask(pxr2.createMaskFromColor(Qt::transparent));
 
 
-    ui.label_2->setPixmap(pxr);
+    ui.border->setPixmap(pxr);
 }
 
 // Will be updated when "themes" is implemented.

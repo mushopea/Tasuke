@@ -22,7 +22,8 @@ public:
 	~InputWindow();
 
 public slots:
-	void showAndCenter();
+	void showAndCenter();	
+	void showAndAdd();
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);

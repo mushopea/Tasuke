@@ -703,7 +703,7 @@ height: 20px;
    </property>
    <property name="font">
     <font>
-     <family>Quicksand Book</family>
+     <family>Quicksand Bold</family>
      <pointsize>23</pointsize>
      <weight>9</weight>
      <italic>false</italic>
@@ -711,7 +711,7 @@ height: 20px;
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 75 23pt &quot;Quicksand Book&quot;;
+    <string notr="true">
 text-align: center;
 background: transparent;</string>
    </property>

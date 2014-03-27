@@ -271,7 +271,7 @@ QTabBar::tab:selected{
    </property>
    <property name="font">
     <font>
-     <family>Quicksand Book</family>
+     <family>Quicksand Bold</family>
      <pointsize>23</pointsize>
      <weight>9</weight>
      <italic>false</italic>
@@ -279,7 +279,7 @@ QTabBar::tab:selected{
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 75 23pt &quot;Quicksand Book&quot;;
+    <string notr="true">font: 75 23pt &quot;Quicksand Bold&quot;;
 text-align: center;
 background: transparent;</string>
    </property>
