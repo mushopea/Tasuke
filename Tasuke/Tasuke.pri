@@ -6,6 +6,7 @@ HEADERS += ./Interpreter.h \
     ./TaskWindow.h \
     ./TutorialWidget.h \
     ./AboutWindow.h \
+    ./SettingsWindow.h \
     ./InputHighlighter.h \
     ./HotKeyManager.h \
     ./InputWindow.h \
