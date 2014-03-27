@@ -2,13 +2,28 @@ include(Tasuke.pri)
 
 TEMPLATE = app
 TARGET = Tasuke
-DESTDIR = ../bin
 QT += core widgets gui
 CONFIG += qt
 
-INCLUDEPATH += ./GeneratedFiles \
-    . \
-    ./GeneratedFiles/Debug
+DEPENDPATH += .
+UI_DIR += ./GeneratedFiles
+RCC_DIR += ./GeneratedFiles
+
+CONFIG(release, debug|release) {
+    DESTDIR = ../bin/release
+    INCLUDEPATH += ./GeneratedFiles \
+        . \
+        ./GeneratedFiles/release
+    MOC_DIR += ./GeneratedFiles/release
+    OBJECTS_DIR += release
+} else {
+    DESTDIR = ../bin/debug
+    INCLUDEPATH += ./GeneratedFiles \
+        . \
+        ./GeneratedFiles/debug
+    MOC_DIR += ./GeneratedFiles/debug
+    OBJECTS_DIR += debug
+}
 
 unix {
     LIBS += -L/usr/local/lib -L/usr/lib -lglog
@@ -16,12 +31,6 @@ unix {
     INCLUDEPATH += /usr/local/include \
         /usr/include
 }
-
-DEPENDPATH += .
-MOC_DIR += ./GeneratedFiles/debug
-OBJECTS_DIR += debug
-UI_DIR += ./GeneratedFiles
-RCC_DIR += ./GeneratedFiles
 
 macx {
     QMAKE_CXXFLAGS = -mmacosx-version-min=10.7 -std=c++11 -stdlib=libc++
