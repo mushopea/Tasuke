@@ -62,10 +62,12 @@ void TaskEntry::strikeOut() {
 }
 
 void TaskEntry::highlightOngoing() {
+	ui.ongoingLabel->show();	
 	setStyleSheet("background:transparent; color: rgb(44, 99, 0);");
 }
 
 void TaskEntry::highlightOverdue() {
+	ui.overdueLabel->show();	
 	setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
 }
 
@@ -139,4 +141,7 @@ void TaskEntry::makeWidget() {
 	if (!tags.isEmpty()) {
 		setTags(this->tags);
 	}
+
+	ui.overdueLabel->hide();
+	ui.ongoingLabel->hide();
 }
