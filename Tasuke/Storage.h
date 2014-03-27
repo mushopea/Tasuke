@@ -23,7 +23,7 @@ public:
 	QList<Task> getTasks();
 	int totalTasks();
 
-	QList<Task> searchByDesc(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 	QList<Task> searchByTag(QString tag);
 
 	virtual void loadFile() = 0;

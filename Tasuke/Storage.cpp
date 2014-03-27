@@ -72,7 +72,7 @@ int IStorage::totalTasks() {
 // Searches all descriptions of all tasks in memory for specified keyword(s).
 // Returns a list of all tasks that contain the keyword in its description.
 // Searches by any part of the description. Case insensitive is the default.
-QList<Task> IStorage::searchByDesc(QString keyword, Qt::CaseSensitivity caseSensitivity) {
+QList<Task> IStorage::searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity) {
 	QMutexLocker lock(&mutex);
 	LOG(INFO) << "Searching by description keyword: " << keyword.toStdString();
 	QList<Task> results;

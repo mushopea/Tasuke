@@ -111,12 +111,12 @@ namespace StorageTests {
 		/********** Tests for STORAGE class **********/
 		
 		TEST_METHOD(StorageSearchByDescription) {
-			Assert::AreEqual(storage->searchByDesc("description").size(), 4);
-			Assert::AreEqual(storage->searchByDesc("DESCRIPTION").size(), 4);
-			Assert::AreEqual(storage->searchByDesc("description", Qt::CaseSensitive).size(), 2);
-			Assert::AreEqual(storage->searchByDesc("DeScRiPtIoN", Qt::CaseSensitive).size(), 1);
-			Assert::AreEqual(storage->searchByDesc("DeScRiPtIoN").size(), 4);
-			Assert::AreEqual(storage->searchByDesc("nonexistent description").size(), 0);
+			Assert::AreEqual(storage->searchByDescription("description").size(), 4);
+			Assert::AreEqual(storage->searchByDescription("DESCRIPTION").size(), 4);
+			Assert::AreEqual(storage->searchByDescription("description", Qt::CaseSensitive).size(), 2);
+			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN").size(), 4);
+			Assert::AreEqual(storage->searchByDescription("nonexistent description").size(), 0);
 		}
 		
 		TEST_METHOD(StorageSearchByTag) {
