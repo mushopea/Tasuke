@@ -53,7 +53,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="Resources.qrc">:/Images/about.png</pixmap>
+    <pixmap resource="Resources.qrc">:/Images/images/about.png</pixmap>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">

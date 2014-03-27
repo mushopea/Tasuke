@@ -11,6 +11,8 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	initTutorial(); // Initialize tutorial window
 	initAnimation();
 
+	connect(ui.emptyAddTaskButton, SIGNAL(pressed()), this, SLOT(handleEmptyAddTaskButton()));
+
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 	setAttribute(Qt::WA_TranslucentBackground);
 }
@@ -48,8 +50,8 @@ TaskEntry* TaskWindow::createEntry(Task t, int index) {
 
 // Add a QListWidgetItem in a specified row with a specified background.
 void TaskWindow::addListItemToRow(TaskEntry* entry, int row, int pixmapID) {
-	QPixmap pxr(":/Images/roundedEntryMaskSelect.png"); // Highlighted bg image
-	QPixmap pxr2(":/Images/roundedEntryMask.png"); // Normal bg image
+	QPixmap pxr(":/Images/images/theme1/entryBgSelect.png"); // Highlighted bg image
+	QPixmap pxr2(":/Images/images/theme1/entryBg.png"); // Normal bg image
 
 	if (pixmapID == 1) {
 		entry->ui.bg->setPixmap(pxr);
@@ -91,10 +93,10 @@ void TaskWindow::jumpToCurrentlySelectedTask() {
 
 // This function is for Tasuke to get TaskWindow to highlight a particular task.
 void TaskWindow::highlightTask(int row) {
-	if (isInRange(row)) {
-		updateCurrentlySelectedTo(row);
-		jumpToCurrentlySelectedTask();
-	}
+	assert(isInRange(row)); 
+	updateCurrentlySelectedTo(row);
+	jumpToCurrentlySelectedTask();
+	
 }
 
 // This function highlights the selected row and dehighlights the previously highlighted.
@@ -124,7 +126,7 @@ void TaskWindow::showTasks(QList<Task> tasks, QString title) {
 
 	// Will change title on top
 	if (!title.isEmpty()) {
-		ui.taskScope->setText("Viewing " + title);
+		ui.taskScope->setText("Viewing " + title + " tasks");
 	}
 
 	for (int i = 0; i < tasks.size(); i++){
@@ -132,6 +134,8 @@ void TaskWindow::showTasks(QList<Task> tasks, QString title) {
 		TaskEntry * entry = createEntry(t, i+1);
 		addListItem(entry);
 	}
+
+	decideContent();
 }
 
 //========================================
@@ -181,10 +185,12 @@ void TaskWindow::pageDown() {
 }
 
 //========================================
-// WINDOW SHOWING
+// SLOTS
 //=========================================
 
 void TaskWindow::showAndMoveToSide() {
+	showListWidget(); // Shows the task list
+
 	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
 	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
 
@@ -195,6 +201,11 @@ void TaskWindow::showAndMoveToSide() {
 	setWindowOpacity(100);
 	animation->start();
 }
+
+void TaskWindow::handleEmptyAddTaskButton(){
+	Tasuke::instance().getInputWindow().showAndAdd();
+}
+
 
 //========================================
 // STACKED WIDGET FUNCTIONS
@@ -310,4 +321,14 @@ void TaskWindow::initAnimation() {
 	animation->setStartValue(0.0); 
 	animation->setEndValue(1.0); 
 	//QObject::connect(animation, SIGNAL(valueChanged(QVariant)), this, SLOT(repaint()));
+}
+
+void TaskWindow::decideContent() {
+	if (ui.taskList->count() == 0) {
+		ui.emptyTaskMessage->show();
+		ui.columnLabels->hide();
+	} else {
+		ui.emptyTaskMessage->hide();
+		ui.columnLabels->show();
+	}
 }

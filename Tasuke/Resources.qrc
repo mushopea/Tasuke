@@ -1,18 +1,19 @@
 <RCC>
     <qresource prefix="/Images">
-        <file>Tasuke.png</file>
-        <file>Traysuke.png</file>
-        <file>about.png</file>
-        <file>roundedmask.png</file>
-        <file>InputWindowMask.png</file>
-        <file>TaskWindowBorderGrey.png</file>
-        <file>TaskWindowMaskWhite.png</file>
-        <file>closeButton.png</file>
-        <file>minButton.png</file>
-        <file>closeButtonHover.png</file>
-        <file>minButtonHover.png</file>
-        <file>roundedEntryMask.png</file>
-        <file>roundedEntryMaskSelect.png</file>
+        <file>images/Tasuke.png</file>
+        <file>images/Traysuke.png</file>
+        <file>images/about.png</file>
+		<file>images/oops.png</file>
+        <file>images/theme1/inputWindowBg.png</file>
+        <file>images/theme1/inputWindowBorder.png</file>
+        <file>images/theme1/taskWindowBorder.png</file>
+        <file>images/theme1/taskWindowBg.png</file>
+        <file>images/theme1/closeButton.png</file>
+        <file>images/theme1/minButton.png</file>
+        <file>images/theme1/closeButtonHover.png</file>
+        <file>images/theme1/minButtonHover.png</file>
+        <file>images/theme1/entryBg.png</file>
+        <file>images/theme1/entryBgSelect.png</file>
     </qresource>
     <qresource prefix="/Fonts">
         <file>fonts/PrintClearly.otf</file>

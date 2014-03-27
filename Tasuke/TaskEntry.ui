@@ -46,7 +46,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="Resources.qrc">:/Images/roundedEntryMask.png</pixmap>
+    <pixmap resource="Resources.qrc">:/Images/images/theme1/entryBg.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>

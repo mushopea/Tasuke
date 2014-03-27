@@ -15,6 +15,7 @@
 #include <QPoint>
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
+#include <assert.h>
 #include "Task.h"
 #include "ui_TaskWindow.h"
 #include "HotKeyThread.h"
@@ -50,6 +51,7 @@ public:
 	
 public slots:
 	void showAndMoveToSide();
+	void handleEmptyAddTaskButton();
 
 protected:
 	void closeEvent(QCloseEvent *event);
@@ -85,6 +87,7 @@ private:
 	//=========================================
 	void initTutorial();
 	void initAnimation();
+	void decideContent();
 	
 	// Handles task entry creation and addition to list
 	bool isInRange(int index);

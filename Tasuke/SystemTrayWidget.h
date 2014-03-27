@@ -16,6 +16,8 @@ public:
 private slots:
 	void handleShowTaskWindow();
 	void handleShowInputWindow();
+	void handleShowTutorialWidget();
+	void handleShowSettingsWindow();
 	void handleShowAboutWindow();
 	void handleIconActivated(QSystemTrayIcon::ActivationReason reason);
 	void handleAboutToQuit();
