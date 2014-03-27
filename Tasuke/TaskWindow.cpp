@@ -22,12 +22,19 @@ TaskWindow::~TaskWindow() {
 }
 
 //========================================
-// TASK ENTRY FUNCTIONS
+// TASK DISPLAY FUNCTIONS
 //=========================================
 
 // Checks if a given index is in range of the task list.
 bool TaskWindow::isInRange(int index) {
 	return (index >= 0) && (index < currentTasks.size());
+}
+
+// Changes title text on top
+void TaskWindow::changeTitle(QString title) {
+	if (!title.isEmpty()) {
+		ui.taskScope->setText("Viewing " + title + " tasks");
+	}
 }
 
 // Creates and returns a new task entry.
@@ -73,6 +80,18 @@ void TaskWindow::addListItem(TaskEntry* entry) {
 	listItem->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
 	ui.taskList->addItem(listItem);
 	ui.taskList->setItemWidget(listItem, entry);
+}
+
+void TaskWindow::displayTask(Task t, int index, int showDone) {
+	if (showDone == 0) {
+		TaskEntry * entry = createEntry(t, index);
+		addListItem(entry);
+	} else {
+		if (!t.isDone()) {
+			TaskEntry * entry = createEntry(t, index);
+			addListItem(entry);
+		}
+	}
 }
 
 //========================================
@@ -122,20 +141,14 @@ void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
 void TaskWindow::showTasks(QList<Task> tasks, QString title) {
 	previousSize = currentTasks.size(); // Size of previous list
 	currentTasks = tasks; // Update current tasks
-	ui.taskList->clear();
-
-	// Will change title on top
-	if (!title.isEmpty()) {
-		ui.taskScope->setText("Viewing " + title + " tasks");
-	}
-
+	
+	ui.taskList->clear(); // Clear previous list
+	changeTitle(title);
 	for (int i = 0; i < tasks.size(); i++){
-		Task t = tasks[i];
-		TaskEntry * entry = createEntry(t, i+1);
-		addListItem(entry);
+		displayTask(tasks[i], i+1, title.compare("done"));
 	}
 
-	decideContent();
+	decideContent(); // Show column label or 'no tasks' message.
 }
 
 //========================================
@@ -313,14 +326,21 @@ void TaskWindow::initTutorial() {
 }
 
 void TaskWindow::initAnimation() {
-	fadeEffect = new QGraphicsOpacityEffect(this); 
-	this->setGraphicsEffect(fadeEffect);
-	animation = new QPropertyAnimation(fadeEffect, "opacity"); 
+	fadeEffectThis = new QGraphicsOpacityEffect(this); 
+	this->setGraphicsEffect(fadeEffectThis);
+	animation = new QPropertyAnimation(fadeEffectThis, "opacity"); 
 	animation->setEasingCurve(QEasingCurve::Linear); 
 	animation->setDuration(400); 
 	animation->setStartValue(0.0); 
 	animation->setEndValue(1.0); 
-	//QObject::connect(animation, SIGNAL(valueChanged(QVariant)), this, SLOT(repaint()));
+
+	fadeEffectMessage = new QGraphicsOpacityEffect(ui.emptyTaskMessage); 
+	this->setGraphicsEffect(fadeEffectMessage);
+	animation = new QPropertyAnimation(fadeEffectMessage, "opacity"); 
+	animation->setEasingCurve(QEasingCurve::Linear); 
+	animation->setDuration(400); 
+	animation->setStartValue(0.0); 
+	animation->setEndValue(1.0); 
 }
 
 void TaskWindow::decideContent() {

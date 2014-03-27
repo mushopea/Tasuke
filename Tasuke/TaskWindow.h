@@ -74,7 +74,8 @@ private:
 	HotKeyThread *hotKeyThread;
 	QPoint mpos;
 	QList<Task> currentTasks;
-	QGraphicsOpacityEffect *fadeEffect;
+	QGraphicsOpacityEffect *fadeEffectThis;
+	QGraphicsOpacityEffect *fadeEffectMessage;
 	QPropertyAnimation *animation; 
 
 	// For selection of tasks
@@ -91,10 +92,11 @@ private:
 	
 	// Handles task entry creation and addition to list
 	bool isInRange(int index);
+	void changeTitle(QString title);
 	TaskEntry* createEntry(Task t, int index);
 	void addListItemToRow(TaskEntry* entry, int row, int pixmapID);
 	void addListItem(TaskEntry* entry);
-
+	void displayTask(Task t, int index, int showDone);
 };
 
 #endif // TASKWINDOW_H
