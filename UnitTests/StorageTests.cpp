@@ -3,30 +3,6 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-const int MAX_TASKS = 20;
-
-namespace Microsoft { 
-    namespace VisualStudio { 
-        namespace CppUnitTestFramework {
-			template<> static std::wstring ToString<QString>(const QString& string) {
-				RETURN_WIDE_STRING(string.toStdString().data());
-			}
-
-			template<> static std::wstring ToString<QDate>(const QDate& date) {
-				RETURN_WIDE_STRING(date.toString().toStdString().data());
-			}
-
-			template<> static std::wstring ToString<QTime>(const QTime& date) {
-				RETURN_WIDE_STRING(date.toString().toStdString().data());
-			}
-
-			template<> static std::wstring ToString<QDateTime>(const QDateTime& date) {
-				RETURN_WIDE_STRING(date.toString().toStdString().data());
-			}
-		}
-	}
-}
-
 namespace StorageTests {
 	QApplication *app;
 	StorageStub *storage;
