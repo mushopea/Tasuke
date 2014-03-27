@@ -4,7 +4,7 @@
 
 StorageStub::StorageStub()
 {
-	LOG(INFO) << "StorageStub createad destroyed";
+	LOG(INFO) << "StorageStub created destroyed";
 }
 
 StorageStub::~StorageStub()

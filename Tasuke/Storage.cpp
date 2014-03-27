@@ -69,6 +69,50 @@ int IStorage::totalTasks() {
 	return tasks.size();
 }
 
+// Searches all descriptions of all tasks in memory for specified keyword(s).
+// Returns a list of all tasks that contain the keyword in its description.
+// Searches by any part of the description. Case insensitive is the default.
+QList<Task> IStorage::searchByDesc(QString keyword, Qt::CaseSensitivity caseSensitivity) {
+	QMutexLocker lock(&mutex);
+	LOG(INFO) << "Searching by description keyword: " << keyword.toStdString();
+	QList<Task> results;
+
+	int taskCount = tasks.size();
+
+	for (int i=0; i<taskCount; i++) {
+		QStringRef description(&tasks[i].getDescription());
+		if (description.contains(keyword, caseSensitivity)) {
+			results.push_back(tasks[i]);
+		}
+	}
+
+	return results;
+}
+
+// Searches all tags in all tasks in memory for specified tag.
+// Returns a list of all tasks that contain that tag.
+// Searches by whole tag only. Case sensitive.
+QList<Task> IStorage::searchByTag(QString tag) {
+	QMutexLocker lock(&mutex);
+	LOG(INFO) << "Searching by tag: " << tag.toStdString();
+	QList<Task> results;
+
+	int taskCount = tasks.size();
+
+	for (int i=0; i<taskCount; i++) {
+		QList<QString> tags = tasks[i].getTags();
+		int tagCount = tags.size();
+
+		for (int j=0; j<tagCount; j++) {
+			if (tags[j] == tag) {
+				results.push_back(tasks[i]);
+			}
+		}
+	}
+
+	return results;
+}
+
 // Constructor for Storage.
 Storage::Storage() {
 	LOG(INFO) << "Storage instance created...";
@@ -204,49 +248,4 @@ void Storage::clearAllDone() {
 void Storage::clearAllTasks() {
 	LOG(INFO) << "Clearing all tasks with great justice.";
 	tasks.clear();
-}
-
-
-// Searches all descriptions of all tasks in memory for specified keyword(s).
-// Returns a list of all tasks that contain the keyword in its description.
-// Searches by whole keyword only. Case sensitivity optional.
-QList<Task*> Storage::searchByDesc(QString keyword, Qt::CaseSensitivity caseSensitivity) {
-	LOG(INFO) << "Searching by description keyword: " << keyword.toStdString();
-	QList<Task*> results;
-
-	int taskCount = tasks.size();
-
-	for (int i=0; i<taskCount; i++) {
-		Task* task = &tasks[i];
-		QStringRef description(&task[i].getDescription());
-		if (description.contains(keyword, caseSensitivity)) {
-			results.push_back(task);
-		}
-	}
-
-	return results;
-}
-
-// Searches all tags in all tasks in memory for specified tag.
-// Returns a list of all tasks that contain that tag.
-// Searches by whole tag only. Case sensitive.
-QList<Task*> Storage::searchByTag(QString tag) {
-	LOG(INFO) << "Searching by tag: " << tag.toStdString();
-	QList<Task*> results;
-
-	int taskCount = tasks.size();
-
-	for (int i=0; i<taskCount; i++) {
-		Task* task = &tasks[i];
-		QList<QString> tags = task[i].getTags();
-		int tagCount = tags.size();
-
-		for (int j=0; j<tagCount; j++) {
-			if (tags[j] == tag) {
-				results.push_back(task);
-			}
-		}
-	}
-
-	return results;
 }

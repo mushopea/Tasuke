@@ -30,6 +30,11 @@ namespace StorageTests {
 		TEST_METHOD_INITIALIZE(init) {
 			storage = new StorageStub();
 			Tasuke::instance().setStorage(storage);
+
+			Tasuke::instance().runCommand("add DESCRIPTION IN UPPERCASE #tag1 #tag2 #TAGCASE");
+			Tasuke::instance().runCommand("add description in lowercase #tag2 #tag3 #tagcase");
+			Tasuke::instance().runCommand("add DeScRiPtIoN iN iReGuLaR cAsE #tag3 #tag1");
+			Tasuke::instance().runCommand("add existing description #tag2 #tag1");
 		}
 
 		TEST_METHOD_CLEANUP(deinit) {
@@ -104,11 +109,21 @@ namespace StorageTests {
 		}
 
 		/********** Tests for STORAGE class **********/
-		/*
+		
 		TEST_METHOD(StorageSearchByDescription) {
-			Task task1, task2, task3, task4;
-			task1.setDescription("
+			Assert::AreEqual(storage->searchByDesc("description").size(), 4);
+			Assert::AreEqual(storage->searchByDesc("DESCRIPTION").size(), 4);
+			Assert::AreEqual(storage->searchByDesc("description", Qt::CaseSensitive).size(), 2);
+			Assert::AreEqual(storage->searchByDesc("DeScRiPtIoN", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByDesc("DeScRiPtIoN").size(), 4);
+			Assert::AreEqual(storage->searchByDesc("nonexistent description").size(), 0);
 		}
-		*/
+		
+		TEST_METHOD(StorageSearchByTag) {
+			Assert::AreEqual(storage->searchByTag("tag1").size(), 3);
+			Assert::AreEqual(storage->searchByTag("tagcase").size(), 1);
+			Assert::AreEqual(storage->searchByTag("TAGCASE").size(), 1);
+			Assert::AreEqual(storage->searchByTag("tag3").size(), 2);
+		}
 	};
 }

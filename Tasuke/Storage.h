@@ -23,6 +23,9 @@ public:
 	QList<Task> getTasks();
 	int totalTasks();
 
+	QList<Task> searchByDesc(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+	QList<Task> searchByTag(QString tag);
+
 	virtual void loadFile() = 0;
 	virtual void saveFile() = 0;
 };
@@ -44,9 +47,6 @@ public:
 
 	void clearAllDone();
 	void clearAllTasks();
-
-	QList<Task*> searchByDesc(QString keyword, Qt::CaseSensitivity caseSensitivity);
-	QList<Task*> searchByTag(QString tag);
 };
 
 #endif
