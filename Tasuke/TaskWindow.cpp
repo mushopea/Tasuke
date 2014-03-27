@@ -333,14 +333,6 @@ void TaskWindow::initAnimation() {
 	animation->setDuration(400); 
 	animation->setStartValue(0.0); 
 	animation->setEndValue(1.0); 
-
-	fadeEffectMessage = new QGraphicsOpacityEffect(ui.emptyTaskMessage); 
-	this->setGraphicsEffect(fadeEffectMessage);
-	animation = new QPropertyAnimation(fadeEffectMessage, "opacity"); 
-	animation->setEasingCurve(QEasingCurve::Linear); 
-	animation->setDuration(400); 
-	animation->setStartValue(0.0); 
-	animation->setEndValue(1.0); 
 }
 
 void TaskWindow::decideContent() {

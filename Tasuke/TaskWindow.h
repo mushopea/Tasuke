@@ -75,8 +75,7 @@ private:
 	QPoint mpos;
 	QList<Task> currentTasks;
 	QGraphicsOpacityEffect *fadeEffectThis;
-	QGraphicsOpacityEffect *fadeEffectMessage;
-	QPropertyAnimation *animation; 
+	QPropertyAnimation *animation;
 
 	// For selection of tasks
 	int currentlySelected; // Represents of the # of the selected entry in the UI. (Range: 1 < # < taskListSize)
