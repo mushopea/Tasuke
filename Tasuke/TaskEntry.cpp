@@ -1,14 +1,11 @@
 #include "Tasuke.h"
 #include "TaskEntry.h"
 
-TaskEntry::TaskEntry(int id, QString description, QList<QString> tags, QDateTime start, QDateTime end, QWidget* parent) : QWidget(parent), font("Print Clearly", 20), fm(font)  {
+TaskEntry::TaskEntry(int id, Task t, QWidget* parent) : QWidget(parent), font("Print Clearly", 20), fm(font)  {
 
 	// Initialize field elements
 	this->id = id;
-	this->description = description;
-	this->tags = tags;
-	this->start = start;
-	this->end = end;
+	this->task = t;
 
 	ui.setupUi(this);
 	makeWidget();
@@ -71,8 +68,6 @@ void TaskEntry::highlightOverdue() {
 	setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
 }
 
- 
-
 void TaskEntry::setDescription(QString des) {
 
 	// First, we have to make sure the text fits.
@@ -131,15 +126,15 @@ void TaskEntry::setTags(QList<QString> tags) {
 // This function sets the respective fields in the TaskEntry widget
 void TaskEntry::makeWidget() {
 	QString num;
-	num.setNum(id);
+	num.setNum(this->id);
 	ui.ID->setText(num);
 
-	setDescription(this->description);
+	setDescription(task.getDescription());
 
-	setDateTimes(this->start, this->end);
+	setDateTimes(task.getBegin(), task.getEnd());
 
-	if (!tags.isEmpty()) {
-		setTags(this->tags);
+	if (!task.getTags().isEmpty()) {
+		setTags(task.getTags());
 	}
 
 	ui.overdueLabel->hide();

@@ -2,16 +2,17 @@
 #define TASKENTRY_H
 
 #include <QWidget>
-#include <qdatetime.h>
 #include "ui_TaskEntry.h"
 #include <QFontMetrics>
+#include <QDateTime>
+#include "Task.h"
 
 class TaskEntry : public QWidget
 {
 	Q_OBJECT
 
 public:
-	TaskEntry(int id, QString description, QList<QString> tags, QDateTime start, QDateTime end, QWidget *parent = 0);
+	TaskEntry(int id, Task t, QWidget *parent = 0);
 	~TaskEntry();
 	void strikeOut();
 	void highlightOngoing();
@@ -31,10 +32,7 @@ private:
 
 	// fields
 	int id;
-	QString description;
-	QList<QString> tags;
-	QDateTime start;
-	QDateTime end;
+	Task task;
 
 	// font metrics
 	QFont font;

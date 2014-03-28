@@ -39,18 +39,14 @@ void TaskWindow::changeTitle(QString title) {
 
 // Creates and returns a new task entry.
 TaskEntry* TaskWindow::createEntry(Task t, int index) {
-	TaskEntry* entry = new TaskEntry(index, t.getDescription(), t.getTags(), t.getBegin(), t.getEnd(), this);
+	TaskEntry* entry = new TaskEntry(index, t, this);
 
-	if (t.isDone()) {
-		entry->strikeOut();
-	} else {
-		if (t.isOverdue()) {
-			entry->highlightOverdue();
-		}
+	if (t.isOverdue()) {
+		entry->highlightOverdue();
+	}
 
-		if (t.isOngoing()) {
-			entry->highlightOngoing();
-		}
+	if (t.isOngoing()) {
+		entry->highlightOngoing();
 	}
 	return entry;
 }
