@@ -52,6 +52,7 @@ public:
 public slots:
 	void showAndMoveToSide();
 	void handleEmptyAddTaskButton();
+	void handleBackButton();
 
 protected:
 	void closeEvent(QCloseEvent *event);
@@ -88,6 +89,8 @@ private:
 	void initTutorial();
 	void initAnimation();
 	void decideContent();
+	void showBackButtonIfSearching(QString title);
+
 	
 	// Handles task entry creation and addition to list
 	bool isInRange(int index);

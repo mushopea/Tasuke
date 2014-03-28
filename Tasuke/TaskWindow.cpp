@@ -5,6 +5,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	LOG(INFO) << "TaskWindow instance created";
 
 	ui.setupUi(this);
+	ui.backButton->hide();
 	this->installEventFilter(this);
 
 	currentlySelected = 1;
@@ -12,6 +13,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	initAnimation();
 
 	connect(ui.emptyAddTaskButton, SIGNAL(pressed()), this, SLOT(handleEmptyAddTaskButton()));
+	connect(ui.backButton, SIGNAL(released()), this, SLOT(handleBackButton()));
 
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 	setAttribute(Qt::WA_TranslucentBackground);
@@ -78,11 +80,12 @@ void TaskWindow::addListItem(TaskEntry* entry) {
 	ui.taskList->setItemWidget(listItem, entry);
 }
 
+// Displays a task entry on the list.
 void TaskWindow::displayTask(Task t, int index, int showDone) {
-	if (showDone == 0) {
+	if (showDone == 0) { // Showing done tasks
 		TaskEntry * entry = createEntry(t, index);
 		addListItem(entry);
-	} else {
+	} else { // Showing undone tasks
 		if (!t.isDone()) {
 			TaskEntry * entry = createEntry(t, index);
 			addListItem(entry);
@@ -140,11 +143,12 @@ void TaskWindow::showTasks(QList<Task> tasks, QString title) {
 	
 	ui.taskList->clear(); // Clear previous list
 	changeTitle(title);
-	for (int i = 0; i < tasks.size(); i++){
+	for (int i = 0; i < tasks.size(); i++) {
 		displayTask(tasks[i], i+1, title.compare("done"));
 	}
 
 	decideContent(); // Show column label or 'no tasks' message.
+	showBackButtonIfSearching(title);
 }
 
 //========================================
@@ -159,7 +163,7 @@ void TaskWindow::scrollUp() {
 }
 
 void TaskWindow::scrollDown() {
-	if(currentlySelected < ui.taskList->count()-1){
+	if(currentlySelected < ui.taskList->count()-1) {
 		updateCurrentlySelectedTo(currentlySelected+1);
 		jumpToCurrentlySelectedTask();
 	}
@@ -184,7 +188,7 @@ void TaskWindow::pageDown() {
 		return;
 	}
 
-	if (currentlySelected < ui.taskList->count() - TASKS_PER_PAGE - 1){
+	if (currentlySelected < ui.taskList->count() - TASKS_PER_PAGE - 1) {
 		updateCurrentlySelectedTo(currentlySelected+TASKS_PER_PAGE);
 	} else {
 		updateCurrentlySelectedTo(ui.taskList->count()-1);
@@ -211,10 +215,15 @@ void TaskWindow::showAndMoveToSide() {
 	animation->start();
 }
 
-void TaskWindow::handleEmptyAddTaskButton(){
+// Shows message when task list is empty.
+void TaskWindow::handleEmptyAddTaskButton() {
 	Tasuke::instance().getInputWindow().showAndAdd();
 }
 
+// Goes back to default view
+void TaskWindow::handleBackButton() {
+	showTasks(Tasuke::instance().getStorage().getTasks());
+}
 
 //========================================
 // STACKED WIDGET FUNCTIONS
@@ -338,5 +347,14 @@ void TaskWindow::decideContent() {
 	} else {
 		ui.emptyTaskMessage->hide();
 		ui.columnLabels->show();
+	}
+}
+
+// Displays the back button during search to allow user to go back to default view in a click.
+void TaskWindow::showBackButtonIfSearching(QString title) {
+	if (!title.isEmpty()) {
+		ui.backButton->show();
+	} else {
+		ui.backButton->hide();
 	}
 }

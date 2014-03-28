@@ -14,7 +14,11 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background: transparent;</string>
+   <string notr="true">background: transparent;
+
+QPushButton .hover { }
+color: rgb(88, 88, 88);
+</string>
   </property>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
@@ -151,7 +155,7 @@ QTabBar::tab:selected{
     <enum>QTabWidget::Triangular</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="usesScrollButtons">
     <bool>true</bool>
@@ -238,8 +242,8 @@ QTabBar::tab:selected{
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>5</y>
+     <x>0</x>
+     <y>3</y>
      <width>171</width>
      <height>23</height>
     </rect>
@@ -247,7 +251,7 @@ QTabBar::tab:selected{
    <property name="font">
     <font>
      <family>Quicksand Bold</family>
-     <pointsize>14</pointsize>
+     <pointsize>13</pointsize>
     </font>
    </property>
    <property name="cursor">
@@ -256,8 +260,20 @@ QTabBar::tab:selected{
    <property name="focusPolicy">
     <enum>Qt::ClickFocus</enum>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(151, 151, 151);
+
+hover {
+color: rgb(74, 74, 74);
+    }
+     
+pressed {
+color: rgb(74, 74, 74);
+    }
+  </string>
+   </property>
    <property name="text">
-    <string>&lt; Back to Tasuke!</string>
+    <string>◀ Back to Tasuke</string>
    </property>
   </widget>
   <widget class="QLabel" name="title">

@@ -20,17 +20,31 @@
    <string notr="true">QWidget {background-color: transparent;}
 QPushButton {background-color: transparent;  border: none; }
 
+QPushButton#backButton {
+color: rgb(151, 151, 151);
+}
+
+
+    QPushButton#backButton:hover {
+color: rgb(74, 74, 74);
+    }
+     
+    QPushButton#backButton:pressed {
+color: rgb(74, 74, 74);
+    }
+  
+
   QPushButton#minButton {
 background-image: url(:/Images/images/theme1/minButton.png);
 }
 
-    QPushButton#minButton:hover {
+ QPushButton#minButton:hover {
 	background-image: url(:/Images/images/theme1/minButtonHover.png);
-    }
+  }
      
-    QPushButton#minButton:pressed {
+  QPushButton#minButton:pressed {
 	background-image: url(:/Images/images/theme1/minButtonHover.png);
-    }
+  }
   
 
 	QPushButton#closeButton{
@@ -407,9 +421,9 @@ QScrollBar::handle:vertical {
      <widget class="QLabel" name="taskScope">
       <property name="geometry">
        <rect>
-        <x>-10</x>
+        <x>0</x>
         <y>3</y>
-        <width>841</width>
+        <width>821</width>
         <height>41</height>
        </rect>
       </property>
@@ -426,6 +440,7 @@ QScrollBar::handle:vertical {
       </property>
       <property name="styleSheet">
        <string notr="true">text-align: center;
+color:;
 color: rgb(74, 74, 74);
 background: transparent;</string>
       </property>
@@ -443,7 +458,7 @@ background: transparent;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>120</y>
+        <y>100</y>
         <width>821</width>
         <height>241</height>
        </rect>
@@ -696,18 +711,34 @@ color: grey;</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <zorder>tagLabel</zorder>
-      <zorder>taskLabel</zorder>
-      <zorder>endLabel</zorder>
-      <zorder>startLabel</zorder>
-      <zorder>tagLabel</zorder>
-      <zorder>taskLabel</zorder>
-      <zorder>endLabel</zorder>
-      <zorder>startLabel</zorder>
-      <zorder>startLabel</zorder>
-      <zorder>taskLabel</zorder>
-      <zorder>endLabel</zorder>
-      <zorder>tagLabel</zorder>
+     </widget>
+     <widget class="QPushButton" name="backButton">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>-5</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Quicksand Bold</family>
+        <pointsize>13</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="toolTip">
+       <string>Go back to default view</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>◀ Back</string>
+      </property>
      </widget>
     </widget>
    </widget>
