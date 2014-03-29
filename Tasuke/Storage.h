@@ -31,6 +31,8 @@ public:
 	void sortByDescription();
 	void sortByDone();
 
+	void renumber();
+
 	void clearAllDone();
 	void clearAllTasks();
 
@@ -46,6 +48,7 @@ private:
 
 public:
 	Storage();
+	Storage(QString path);
 	void loadFile();
 	void saveFile();
 };

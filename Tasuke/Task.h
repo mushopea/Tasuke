@@ -12,6 +12,7 @@ private:
 	QDateTime begin;
 	QDateTime end;
 	bool done;
+	int id;
 
 public:
 	Task();
@@ -34,6 +35,9 @@ public:
 	void markDone();
 	void markUndone();
 	bool isDone() const;
+
+	void setId(int identifier);
+	int getId();
 
 	bool isOverdue();
 	bool isOngoing();

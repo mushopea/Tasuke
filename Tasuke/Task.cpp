@@ -68,6 +68,15 @@ bool Task::isDone() const {
 	return done;
 }
 
+void Task::setId(int identifier) {
+	id = identifier;
+}
+
+int Task::getId() {
+	return id;
+}
+
+
 // Returns FALSE if there is no end date/time for this task,
 // or it is not valid.
 // Returns FALSE if end date/time for this task is later

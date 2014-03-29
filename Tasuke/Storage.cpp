@@ -141,6 +141,20 @@ void IStorage::sortByDone() {
 	});
 }
 
+// Renumbers the ID of all tasks in memory naively.
+void IStorage::renumber() {
+
+	sortByDescription();
+	sortByEndDate();
+	sortByDone();
+	//sortByOngoing();
+	sortByEndDate();
+
+	for (int i=0; i<tasks.size(); i++) {
+		tasks[i].setId(i+1);
+	}
+}
+
 void IStorage::clearAllDone() {
 	LOG(INFO) << "Clearing all tasks marked as done.";
 	foreach (const Task& task, tasks) {
@@ -160,6 +174,13 @@ Storage::Storage() {
 	LOG(INFO) << "Storage instance created...";
 
 	//path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/tasuke.ini";
+
+	qRegisterMetaType<Task>("Task");
+	qRegisterMetaTypeStreamOperators<Task>("Task");	
+}
+
+Storage::Storage(QString path) {
+	LOG(INFO) << "Storage instance created...";
 
 	qRegisterMetaType<Task>("Task");
 	qRegisterMetaTypeStreamOperators<Task>("Task");	
