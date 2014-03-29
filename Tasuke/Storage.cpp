@@ -93,9 +93,9 @@ QList<Task> IStorage::searchByDescription(QString keyword, Qt::CaseSensitivity c
 // Returns a list of all tasks that contain that tag.
 // Will also return partial results (if tag contains the searched keyword)
 // Case sensitivity optional, but insensitive is the default.
-QList<Task> IStorage::searchByTag(QString tag, Qt::CaseSensitivity caseSensitivity) {
+QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity) {
 	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Searching by tag: " << tag.toStdString();
+	LOG(INFO) << "Searching by tag: " << keyword.toStdString();
 	QList<Task> results;
 
 	int taskCount = tasks.size();
@@ -105,7 +105,7 @@ QList<Task> IStorage::searchByTag(QString tag, Qt::CaseSensitivity caseSensitivi
 		int tagCount = tags.size();
 
 		for (int j=0; j<tagCount; j++) {
-			if (tags[j].contains(tag, caseSensitivity)) {
+			if (tags[j].contains(keyword, caseSensitivity)) {
 				results.push_back(tasks[i]);
 			}
 		}
@@ -135,6 +135,13 @@ void IStorage::sortByDescription() {
 	});
 }
 
+void IStorage::sortByOngoing() {
+	LOG(INFO) << "Sorting by done status.";
+	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
+		return t1.isOngoing() < t2.isOngoing();
+	});
+}
+
 void IStorage::sortByDone() {
 	LOG(INFO) << "Sorting by done status.";
 	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
@@ -148,7 +155,7 @@ void IStorage::renumber() {
 	sortByDescription();
 	sortByEndDate();
 	sortByDone();
-	//sortByOngoing();
+	sortByOngoing();
 	sortByEndDate();
 
 	for (int i=0; i<tasks.size(); i++) {

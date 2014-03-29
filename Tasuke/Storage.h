@@ -24,11 +24,12 @@ public:
 	int totalTasks();
 
 	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
-	QList<Task> searchByTag(QString tag, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+	QList<Task> searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 
 	void sortByEndDate();
 	void sortByBeginDate();
 	void sortByDescription();
+	void sortByOngoing();
 	void sortByDone();
 
 	void renumber();

@@ -39,8 +39,8 @@ public:
 	void setId(int identifier);
 	int getId();
 
-	bool isOverdue();
-	bool isOngoing();
+	bool isOverdue() const;
+	bool isOngoing() const;
 	
 	bool operator!=(const Task& other) const;
 	bool operator==(const Task& other) const;/*

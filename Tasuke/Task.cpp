@@ -83,7 +83,7 @@ int Task::getId() {
 // than current date/time.
 // Returns TRUE if end date/time for this task is earlier
 // than current date/time.
-bool Task::isOverdue() {
+bool Task::isOverdue() const {
 	if (end.isNull() || !end.isValid()) {
 		return false;
 	}
@@ -101,7 +101,7 @@ bool Task::isOverdue() {
 // Returns FALSE if task is already overdue.
 // Returns TRUE if start date/time for this task is earlier
 // than current date.time.
-bool Task::isOngoing() {
+bool Task::isOngoing() const {
 	if (begin.isNull() || !begin.isValid()) {
 		return false;
 	}
