@@ -122,7 +122,7 @@ bool Task::operator!=(const Task& other) const {
 bool Task::operator==(const Task& other) const {
 	return true;
 }
-
+/*
 bool Task::operator<(const Task& other) const {
 	return true;
 }
@@ -138,7 +138,7 @@ bool Task::operator>(const Task& other) const {
 bool Task::operator>=(const Task& other) const {
 	return true;
 }
-
+*/
 
 QDataStream& operator<<(QDataStream& out, const Task& task) {
 	out << task.description;

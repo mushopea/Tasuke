@@ -91,8 +91,9 @@ QList<Task> IStorage::searchByDescription(QString keyword, Qt::CaseSensitivity c
 
 // Searches all tags in all tasks in memory for specified tag.
 // Returns a list of all tasks that contain that tag.
-// Searches by whole tag only. Case sensitive.
-QList<Task> IStorage::searchByTag(QString tag) {
+// Will also return partial results (if tag contains the searched keyword)
+// Case sensitivity optional, but insensitive is the default.
+QList<Task> IStorage::searchByTag(QString tag, Qt::CaseSensitivity caseSensitivity) {
 	QMutexLocker lock(&mutex);
 	LOG(INFO) << "Searching by tag: " << tag.toStdString();
 	QList<Task> results;
@@ -104,7 +105,7 @@ QList<Task> IStorage::searchByTag(QString tag) {
 		int tagCount = tags.size();
 
 		for (int j=0; j<tagCount; j++) {
-			if (tags[j] == tag) {
+			if (tags[j].contains(tag, caseSensitivity)) {
 				results.push_back(tasks[i]);
 			}
 		}
@@ -173,14 +174,14 @@ void IStorage::clearAllTasks() {
 Storage::Storage() {
 	LOG(INFO) << "Storage instance created...";
 
-	//path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/tasuke.ini";
-
 	qRegisterMetaType<Task>("Task");
 	qRegisterMetaTypeStreamOperators<Task>("Task");	
 }
 
 Storage::Storage(QString path) {
-	LOG(INFO) << "Storage instance created...";
+	LOG(INFO) << "Storage instance with custom save directory created...";
+
+	this->path = path;
 
 	qRegisterMetaType<Task>("Task");
 	qRegisterMetaTypeStreamOperators<Task>("Task");	
@@ -190,6 +191,8 @@ Storage::Storage(QString path) {
 // the memory. If there is no such file, this function does nothing.
 void Storage::loadFile() {
 	LOG(INFO) << "Loading file...";
+
+	renumber();
 
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 
@@ -230,12 +233,10 @@ void Storage::loadFile() {
 void Storage::saveFile() {
 	LOG(INFO) << "Saving file...";
 
-	sortByDescription();
-	sortByEndDate();
-	sortByDone();
+	renumber();
 
-	//QSettings settings(path, QSettings::IniFormat);
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+
 	settings.clear();
 	settings.beginWriteArray("Tasks");
 	for (int i=0; i<tasks.size(); i++) {

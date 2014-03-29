@@ -24,7 +24,7 @@ public:
 	int totalTasks();
 
 	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
-	QList<Task> searchByTag(QString tag);
+	QList<Task> searchByTag(QString tag, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 
 	void sortByEndDate();
 	void sortByBeginDate();
@@ -45,7 +45,7 @@ public:
 // Tasuke singleton.
 class Storage : public IStorage {
 private:
-
+	QString path;
 public:
 	Storage();
 	Storage(QString path);
