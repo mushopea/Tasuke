@@ -120,10 +120,15 @@ namespace StorageTests {
 		}
 		
 		TEST_METHOD(StorageSearchByTag) {
+			// Case sensitive tests
 			Assert::AreEqual(storage->searchByTag("tag1", Qt::CaseSensitive).size(), 3);
 			Assert::AreEqual(storage->searchByTag("tagcase", Qt::CaseSensitive).size(), 1);
 			Assert::AreEqual(storage->searchByTag("TAGCASE", Qt::CaseSensitive).size(), 1);
 			Assert::AreEqual(storage->searchByTag("tag3", Qt::CaseSensitive).size(), 2);
+
+			// Case insensitive tests
+			Assert::AreEqual(storage->searchByTag("TAGCASE").size(), 2);
+			Assert::AreEqual(storage->searchByTag("tagcase").size(), 2);
 		}
 	};
 }
