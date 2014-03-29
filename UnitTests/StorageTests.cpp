@@ -120,10 +120,10 @@ namespace StorageTests {
 		}
 		
 		TEST_METHOD(StorageSearchByTag) {
-			Assert::AreEqual(storage->searchByTag("tag1").size(), 3);
-			Assert::AreEqual(storage->searchByTag("tagcase").size(), 1);
-			Assert::AreEqual(storage->searchByTag("TAGCASE").size(), 1);
-			Assert::AreEqual(storage->searchByTag("tag3").size(), 2);
+			Assert::AreEqual(storage->searchByTag("tag1", Qt::CaseSensitive).size(), 3);
+			Assert::AreEqual(storage->searchByTag("tagcase", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByTag("TAGCASE", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByTag("tag3", Qt::CaseSensitive).size(), 2);
 		}
 	};
 }
