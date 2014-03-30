@@ -159,7 +159,7 @@ void IStorage::renumber() {
 	sortByEndDate();
 
 	for (int i=0; i<tasks.size(); i++) {
-		tasks[i].setId(i+1);
+		tasks[i].setId(i);
 	}
 }
 
