@@ -244,6 +244,7 @@ void TaskWindow::showListWidget() {
 
 void TaskWindow::showTutorialWidget() {
 	ui.stackedWidget->slideInIdx(1);
+	tutorial.reset();
 }
 
 //========================================
@@ -308,13 +309,28 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 				Tasuke::instance().runCommand(QString("redo"));
 				return true;
 			}
-		}
 
-		if (ui.stackedWidget->currentIndex() == 1) { // Is on tutorial
-			if (eventKey->key() == Qt::Key_Tab){
-				changeTutorialWidgetTabs();
+		} else {
+			// Tutorial shortcuts start here
+
+			if (ui.stackedWidget->currentIndex() == 1) { // Is on tutorial
+				if (eventKey->key() == Qt::Key_Tab){
+					changeTutorialWidgetTabs();
+					return true;
+				}
+			}
+
+			// Navigate tutorial pages.
+			if (eventKey->key() == Qt::Key_Right) {
+				tutorial.goNextPage();
 				return true;
 			}
+
+			if (eventKey->key() == Qt::Key_Left) {
+				tutorial.goPrevPage();
+				return true;
+			}
+			
 		}
 	}
 

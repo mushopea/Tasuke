@@ -93,7 +93,7 @@ QScrollBar::handle:vertical {
   </property>
   <widget class="QWidget" name="taskWin">
    <property name="focusPolicy">
-    <enum>Qt::StrongFocus</enum>
+    <enum>Qt::NoFocus</enum>
    </property>
    <widget class="QPushButton" name="closeButton">
     <property name="geometry">
@@ -111,6 +111,9 @@ QScrollBar::handle:vertical {
       <weight>75</weight>
       <bold>true</bold>
      </font>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
     </property>
     <property name="contextMenuPolicy">
      <enum>Qt::DefaultContextMenu</enum>
@@ -319,6 +322,9 @@ QScrollBar::handle:vertical {
       <weight>75</weight>
       <bold>true</bold>
      </font>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
     </property>
     <property name="styleSheet">
      <string notr="true"/>
@@ -550,6 +556,9 @@ background: transparent;</string>
          <underline>true</underline>
         </font>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Add one</string>
        </property>
@@ -729,6 +738,9 @@ color: grey;</string>
       </property>
       <property name="cursor">
        <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
       </property>
       <property name="toolTip">
        <string>Go back to default view</string>
