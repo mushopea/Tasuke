@@ -86,9 +86,7 @@ QList<Task> IStorage::searchByDescription(QString keyword, Qt::CaseSensitivity c
 	LOG(INFO) << "Searching by description keyword: " << keyword.toStdString();
 	QList<Task> results;
 
-	int taskCount = tasks.size();
-
-	for (int i=0; i<taskCount; i++) {
+	for (int i=0; i<tasks.size(); i++) {
 		QStringRef description(&tasks[i].getDescription());
 		if (description.contains(keyword, caseSensitivity)) {
 			results.push_back(tasks[i]);
@@ -107,9 +105,7 @@ QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensi
 	LOG(INFO) << "Searching by tag: " << keyword.toStdString();
 	QList<Task> results;
 
-	int taskCount = tasks.size();
-
-	for (int i=0; i<taskCount; i++) {
+	for (int i=0; i<tasks.size(); i++) {
 		QList<QString> tags = tasks[i].getTags();
 		int tagCount = tags.size();
 
@@ -117,6 +113,58 @@ QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensi
 			if (tags[j].contains(keyword, caseSensitivity)) {
 				results.push_back(tasks[i]);
 			}
+		}
+	}
+
+	return results;
+}
+
+// Searches all tasks for those that ends by (end date is no later than) 
+// specified date-time.
+QList<Task> IStorage::searchByEndDate(QDateTime byThisDate) {
+	QMutexLocker lock(&mutex);
+	LOG(INFO) << "Searching by end date/time.";
+	QList<Task> results;
+
+	for (int i=0; i<tasks.size(); i++) {
+		if (tasks[i].getEnd() <= byThisDate) {
+			results.push_back(tasks[i]);
+		}
+	}
+
+	return results;
+}
+
+// Searches all tasks for those that begins from (start date is no earlier than) 
+// specified date-time.
+QList<Task> IStorage::searchByBeginDate(QDateTime fromThisDate) {
+	QMutexLocker lock(&mutex);
+	LOG(INFO) << "Searching by begin date/time.";
+	QList<Task> results;
+
+	for (int i=0; i<tasks.size(); i++) {
+		if (tasks[i].getBegin() >= fromThisDate) {
+			results.push_back(tasks[i]);
+		}
+	}
+
+	return results;
+}
+
+// Searches all tasks that exist within a specified date-time interval.
+// For a task to qualify, its start date must be no earlier than fromThisDate, and
+// its end date must be no later than byThisDate.
+QList<Task> IStorage::searchByDateTimeInterval(QDateTime fromThisDate, QDateTime byThisDate) {
+	QMutexLocker lock(&mutex);
+	LOG(INFO) << "Searching by date/time interval.";
+	QList<Task> results;
+
+	for (int i=0; i<tasks.size(); i++) {
+		bool fromStart = tasks[i].getBegin() >= fromThisDate;
+		bool byEnd = tasks[i].getEnd() <= byThisDate;
+
+		if (fromStart && byEnd) {
+			results.push_back(tasks[i]);
 		}
 	}
 

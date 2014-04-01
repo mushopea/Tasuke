@@ -25,6 +25,9 @@ public:
 
 	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 	QList<Task> searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+	QList<Task> searchByEndDate(QDateTime byThisDate);
+	QList<Task> searchByBeginDate(QDateTime fromThisDate);
+	QList<Task> searchByDateTimeInterval(QDateTime fromThisDate, QDateTime byThisDate);
 
 	void sortByEndDate();
 	void sortByBeginDate();
