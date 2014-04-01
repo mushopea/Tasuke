@@ -227,7 +227,7 @@ void Tasuke::showTutorial() {
 	if (!taskWindow->isVisible()) {
 		showTaskWindow();
 	}
-
+	
 	taskWindow->showTutorialWidget();
 }
 
@@ -257,6 +257,16 @@ void Tasuke::updateTaskWindow(QList<Task> tasks) {
 	LOG(INFO) << "Updating task window with " << QString::number(tasks.size()).toStdString() << " tasks";
 
 	taskWindow->showTasks(tasks);
+}
+
+void Tasuke::highightTask(int id) {
+	if (!guiMode) {
+		return;
+	}
+
+	LOG(INFO) << "Highlighting task with id  " << id;
+
+	taskWindow->highlightTask(id);
 }
 
 bool Tasuke::spellCheck(QString word) {

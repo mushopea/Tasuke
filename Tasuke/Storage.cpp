@@ -23,7 +23,16 @@ void IStorage::addTask(Task& task) {
 
 	tasks.push_back(task);
 	saveFile();
+	QString description = task.getDescription();
+	int id = 0;
+	foreach(Task task, tasks) {
+		if (task.getDescription() == description) {
+			id = task.getId();
+			break;
+		}
+	}
 	Tasuke::instance().updateTaskWindow(tasks);
+	Tasuke::instance().highightTask(id);
 }
 
 void IStorage::addTask(Task& task, int pos) {
@@ -117,6 +126,9 @@ QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensi
 void IStorage::sortByEndDate() {
 	LOG(INFO) << "Sorting by end date.";
 	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
+		if (!t1.getEnd().isValid()) {
+			return true;
+		}
 		return t1.getEnd() < t2.getEnd();
 	});
 }
@@ -138,7 +150,14 @@ void IStorage::sortByDescription() {
 void IStorage::sortByOngoing() {
 	LOG(INFO) << "Sorting by done status.";
 	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
-		return t1.isOngoing() < t2.isOngoing();
+		return t1.isOngoing() > t2.isOngoing();
+	});
+}
+
+void IStorage::sortByOverdue() {
+	LOG(INFO) << "Sorting by done status.";
+	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
+		return t1.isOverdue() > t2.isOverdue();
 	});
 }
 
@@ -149,15 +168,23 @@ void IStorage::sortByDone() {
 	});
 }
 
+void IStorage::sortByHasBeginDate() {
+	LOG(INFO) << "Sorting by done status.";
+	qStableSort(tasks.begin(), tasks.end(), [](const Task& t1, const Task& t2) {
+		return t1.getBegin().isValid() > t2.getBegin().isValid();
+	});
+}
+
 // Renumbers the ID of all tasks in memory naively.
 void IStorage::renumber() {
 
 	sortByDescription();
 	sortByEndDate();
+	sortByHasBeginDate();
 	sortByDone();
 	sortByOngoing();
-	sortByEndDate();
-
+	sortByOverdue();
+	
 	for (int i=0; i<tasks.size(); i++) {
 		tasks[i].setId(i);
 	}

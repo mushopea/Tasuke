@@ -31,6 +31,8 @@ public:
 	void sortByDescription();
 	void sortByOngoing();
 	void sortByDone();
+	void sortByOverdue();
+	void sortByHasBeginDate();
 
 	void renumber();
 
