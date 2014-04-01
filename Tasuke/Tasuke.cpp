@@ -219,6 +219,21 @@ void Tasuke::toggleTaskWindow() {
 	}
 }
 
+void Tasuke::toggleBothWindows() {
+	if (!guiMode) {
+		return;
+	}
+
+	// If one of them is visible, hide all.
+	if (taskWindow->isVisible() || inputWindow->isVisible()) {
+		hideTaskWindow();
+		hideInputWindow();
+	} else { // None are visible, show both.
+		showTaskWindow();
+		showInputWindow();
+	}
+}
+
 void Tasuke::showTutorial() {
 	if (!guiMode) {
 		return;

@@ -209,7 +209,7 @@ void TaskWindow::showAndMoveToSide() {
 
 	move(center);
 	setWindowOpacity(0);
-	showNormal();
+	show();
 	raise();
 	setWindowOpacity(100);
 	animation->start();

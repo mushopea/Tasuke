@@ -34,6 +34,7 @@ public:
 	void hideTaskWindow();
 	void toggleInputWindow();
 	void toggleTaskWindow();
+	void toggleBothWindows();
 	void showSettingsWindow();
 	void showTutorial();
 	void showMessage(QString message);
