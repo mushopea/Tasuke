@@ -22,7 +22,7 @@ void HotKeyManager::handleHotKeyPress(KeyCombination key) {
 		Tasuke::instance().toggleInputWindow();
 	} else if (key == KeyCombination::ALT_SPACE) {
 		Tasuke::instance().toggleTaskWindow();
-	} else if (key == KeyCombination::SHIFT_SPACE) {
+	} else if (key == KeyCombination::CTRL_ALT_SPACE) {
 		Tasuke::instance().toggleBothWindows();
 	}
 }

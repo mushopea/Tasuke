@@ -30,8 +30,7 @@ void HotKeyThread::run() {
 	ATOM id3 = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+2));
 	::RegisterHotKey(NULL, id, MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
 	::RegisterHotKey(NULL, id2, MOD_ALT | MOD_NOREPEAT, VK_SPACE);
-	::RegisterHotKey(NULL, id3, MOD_SHIFT | MOD_NOREPEAT, VK_SPACE);
-
+	::RegisterHotKey(NULL, id3, MOD_ALT | MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
 
 	MSG msg = {0};
 	while (::GetMessage(&msg, NULL, 0, 0)) {
@@ -44,8 +43,8 @@ void HotKeyThread::run() {
 				emit hotKeyPress(KeyCombination::CTRL_SPACE);
 			} else if (mod == MOD_ALT && key == VK_SPACE) {
 				emit hotKeyPress(KeyCombination::ALT_SPACE);
-			} else if (mod == MOD_SHIFT && key == VK_SPACE) {
-				emit hotKeyPress(KeyCombination::SHIFT_SPACE);
+			} else if (mod == (MOD_CONTROL | MOD_ALT) && key == VK_SPACE) {
+				emit hotKeyPress(KeyCombination::CTRL_ALT_SPACE);
 			}
 		} else if (msg.message == WM_END_THREAD) {
 			break;
@@ -54,8 +53,10 @@ void HotKeyThread::run() {
 
 	::UnregisterHotKey(NULL, id);
 	::UnregisterHotKey(NULL, id2);
+	::UnregisterHotKey(NULL, id3);
 	::GlobalDeleteAtom(id);
 	::GlobalDeleteAtom(id2);
+	::GlobalDeleteAtom(id3);
 }
 
 #endif
