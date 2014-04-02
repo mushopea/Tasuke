@@ -220,6 +220,9 @@
     <CustomBuild Include="SettingsWindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="SubheadingEntry.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_TaskWindow.h">
@@ -253,6 +256,9 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_SettingsWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_SubheadingEntry.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

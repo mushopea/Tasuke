@@ -24,6 +24,7 @@
 
 class TaskWindow : public QMainWindow {
 	Q_OBJECT
+	Q_PROPERTY(qreal opacity READ getOpacity WRITE setOpacity)
 
 public:
 	TaskWindow(QWidget *parent = 0);
@@ -48,7 +49,6 @@ public:
 	void showListWidget();
 	void showTutorialWidget();
 
-	
 public slots:
 	void showAndMoveToSide();
 	void handleEmptyAddTaskButton();
@@ -75,8 +75,8 @@ private:
 	HotKeyThread *hotKeyThread;
 	QPoint mpos;
 	QList<Task> currentTasks;
-	QGraphicsOpacityEffect *fadeEffectThis;
 	QPropertyAnimation *animation;
+	qreal wOpacity;
 
 	// For selection of tasks
 	int currentlySelected; // Represents of the # of the selected entry in the UI. (Range: 1 < # < taskListSize)
@@ -90,6 +90,8 @@ private:
 	void initAnimation();
 	void decideContent();
 	void showBackButtonIfSearching(QString title);
+	void setOpacity(qreal value);
+	qreal getOpacity();
 
 	
 	// Handles task entry creation and addition to list
