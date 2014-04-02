@@ -173,7 +173,7 @@ void Tasuke::showTaskWindow() {
 	}
 	taskWindow->showAndMoveToSide();
 }
-
+ 
 void Tasuke::showAboutWindow(){
 	if (!guiMode) {
 		return;
