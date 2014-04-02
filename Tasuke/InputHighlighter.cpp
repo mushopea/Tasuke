@@ -25,7 +25,7 @@ void InputHighlighter::setRegex(){
 	keywordRegex = QRegExp("(^\\b(((much)|(such)|(wow such)|(wow much)|(so)|(many)) )?"
 							"((\\b(exit)|(quit)|(q)|(options)|(settings)|(help)|(tutorial)|(guide)|(instructions)|(about))\\b)+)");
 	
-	connectorRegex = QRegExp("((( to )|( from )|( by )|( at ))|( @)|-|#)");
+	connectorRegex = QRegExp("((( to )|( from )|( by )|( at )|( on ))|( @)|-|#)");
 }
 
 void InputHighlighter::setFormats(QColor commandC, QColor keywordC, QColor connectorC){
