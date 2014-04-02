@@ -348,8 +348,10 @@ void Storage::saveFile() {
 			settings.setValue("Tag", tags[j]);
 		}
 		settings.endArray();
+		settings.sync();
 	}
 	settings.endArray();
+	settings.sync();
 
 	LOG(INFO) << "File saved.";
 }

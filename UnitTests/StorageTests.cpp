@@ -30,11 +30,6 @@ namespace StorageTests {
 		TEST_METHOD_INITIALIZE(init) {
 			storage = new StorageStub();
 			Tasuke::instance().setStorage(storage);
-
-			Tasuke::instance().runCommand("add DESCRIPTION IN UPPERCASE #tag1 #tag2 #TAGCASE");
-			Tasuke::instance().runCommand("add description in lowercase #tag2 #tag3 #tagcase");
-			Tasuke::instance().runCommand("add DeScRiPtIoN iN iReGuLaR cAsE #tag3 #tag1");
-			Tasuke::instance().runCommand("add existing description #tag2 #tag1");
 		}
 
 		TEST_METHOD_CLEANUP(deinit) {
@@ -65,7 +60,7 @@ namespace StorageTests {
 		// Task should NOT be overdue (due date is year 2100, never overdue).
 		TEST_METHOD(TaskIsNotOverdue) {
 			Task task;
-			task.setEnd(QDateTime(QDate(2100, 12, 31),QTime(23, 59, 59)));
+			task.setEnd(QDateTime(QDate(2100, 12, 31), QTime(23, 59, 59)));
 			Assert::IsFalse(task.isOverdue());
 		}
 
@@ -79,7 +74,7 @@ namespace StorageTests {
 		// Task should never be ongoing (starts in year 2100, never ongoing).
 		TEST_METHOD(TaskIsNotOngoing) {
 			Task task;
-			task.setBegin(QDateTime(QDate(2100, 12, 31),QTime(23, 59, 59)));
+			task.setBegin(QDateTime(QDate(2100, 12, 31), QTime(23, 59, 59)));
 			Assert::IsFalse(task.isOngoing());
 		}
 
@@ -94,7 +89,7 @@ namespace StorageTests {
 		TEST_METHOD(TaskIsOngoingBecauseNotOverdue) {
 			Task task;
 			task.setBegin(QDateTime(QDate(2010, 1, 1), QTime(1, 1, 1)));
-			task.setEnd(QDateTime(QDate(2100, 12, 31),QTime(23, 59, 59)));
+			task.setEnd(QDateTime(QDate(2100, 12, 31), QTime(23, 59, 59)));
 			Assert::IsTrue(task.isOngoing());
 			Assert::IsFalse(task.isOverdue());
 		}
@@ -108,9 +103,48 @@ namespace StorageTests {
 			Assert::IsTrue(task.isOverdue());
 		}
 
+		// Tasks that are already overdue should return false.
+		TEST_METHOD(TaskIsDueToday) {
+			Task dueToday;
+			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(23, 59, 58)));
+			Assert::IsTrue(dueToday.isDueToday());
+
+			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 0)));
+			Assert::IsTrue(dueToday.isDueToday());
+
+			Task dueTomorrow;
+			dueTomorrow.setEnd(QDateTime(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 0)));
+			Assert::IsFalse(dueTomorrow.isDueToday());
+
+			Task alreadyOverdue;
+			alreadyOverdue.setEnd(QDateTime(QDate(2010, 1, 1), QTime(1, 1, 1)));
+			Assert::IsFalse(alreadyOverdue.isDueToday());
+		}
+
+		TEST_METHOD(TaskIsAnEvent) {
+			Task noBegin;
+			noBegin.setEnd(QDateTime(QDate(2010, 1, 2), QTime(1, 1, 1)));
+			Assert::IsFalse(noBegin.isEvent());
+
+			Task noEnd;
+			noEnd.setBegin(QDateTime(QDate(2010, 1, 2), QTime(1, 1, 1)));
+			Assert::IsFalse(noEnd.isEvent());
+
+			Task anEvent;
+			anEvent.setBegin(QDateTime(QDate(2010, 1, 2), QTime(1, 1, 1)));
+			anEvent.setEnd(QDateTime(QDate(2100, 12, 31), QTime(23, 59, 59)));
+			Assert::IsTrue(anEvent.isEvent());
+		}
+
 		/********** Tests for STORAGE class **********/
 		
 		TEST_METHOD(StorageSearchByDescription) {
+			// Add the test cases
+			Tasuke::instance().runCommand("add DESCRIPTION IN UPPERCASE");
+			Tasuke::instance().runCommand("add description in lowercase");
+			Tasuke::instance().runCommand("add DeScRiPtIoN iN iReGuLaR");
+			Tasuke::instance().runCommand("add existing description");
+
 			Assert::AreEqual(storage->searchByDescription("description").size(), 4);
 			Assert::AreEqual(storage->searchByDescription("DESCRIPTION").size(), 4);
 			Assert::AreEqual(storage->searchByDescription("description", Qt::CaseSensitive).size(), 2);
@@ -120,16 +154,87 @@ namespace StorageTests {
 		}
 		
 		TEST_METHOD(StorageSearchByTag) {
+			// Add the test cases
+			Tasuke::instance().runCommand("add task1 #tagcase #tag1 #tag3");
+			Tasuke::instance().runCommand("add task2 #TAGCASE #tag1");
+			Tasuke::instance().runCommand("add task3 #tag3 #tag2 #tag1");
+			Tasuke::instance().runCommand("add task4 #tag2");
+			Tasuke::instance().runCommand("add task5 #tag4 #tag4 #tag4");
+
 			// Case sensitive tests
 			Assert::AreEqual(storage->searchByTag("tagcase", Qt::CaseSensitive).size(), 1);
 			Assert::AreEqual(storage->searchByTag("TAGCASE", Qt::CaseSensitive).size(), 1);
 
 			Assert::AreEqual(storage->searchByTag("tag1", Qt::CaseSensitive).size(), 3);
 			Assert::AreEqual(storage->searchByTag("tag3", Qt::CaseSensitive).size(), 2);
+			Assert::AreEqual(storage->searchByTag("tag4").size(), 1);
 
 			// Case insensitive tests
 			Assert::AreEqual(storage->searchByTag("TAGCASE").size(), 2);
 			Assert::AreEqual(storage->searchByTag("tagcase").size(), 2);
 		}
+		/*
+		TEST_METHOD(StorageSearchByBeginDate) {
+		
+		}
+
+		TEST_METHOD(StorageSearchByEndDate) {
+		
+		}
+
+		TEST_METHOD(StorageSearchByTimeInterval) {
+
+		}*/
+		
+		TEST_METHOD(StorageSortByEndDescription) {
+			QList<Task> correct;
+
+			Task task1("aaaa");
+			correct.push_back(task1);
+			Task task2("bbbb");
+			correct.push_back(task2);
+			Task task3("cccc");
+			correct.push_back(task3);
+			Task task4("xxxx");
+			correct.push_back(task4);
+			Task task5("zzzz");
+			correct.push_back(task5);
+			
+			Tasuke::instance().runCommand("add zzzz");
+			Tasuke::instance().runCommand("add xxxx");
+			Tasuke::instance().runCommand("add aaaa");
+			Tasuke::instance().runCommand("add cccc");
+			Tasuke::instance().runCommand("add bbbb");
+
+			storage->sortByDescription();
+
+			Assert::IsTrue(storage->getTasks() == correct);
+		}
+		/*
+		TEST_METHOD(StorageSortByDone) {
+			QList<Task> correct;
+
+			Task task4("task3");
+			task4.markDone();
+			correct.push_back(task4);
+			Task task3("task4");
+			task3.setDone(true);
+			correct.push_back(task3);
+			Task task1("task2");
+			task1.setDone(false);
+			Task task2("task1");
+			correct.push_back(task2);
+
+			Tasuke::instance().runCommand("add task4");
+			Tasuke::instance().runCommand("done 1");
+			Tasuke::instance().runCommand("add task3");
+			Tasuke::instance().runCommand("add task2");
+			Tasuke::instance().runCommand("done 1");
+			Tasuke::instance().runCommand("add task1");
+
+			storage->sortByDone();
+
+			Assert::IsTrue(storage->getTasks() == correct);
+		}*/
 	};
 }

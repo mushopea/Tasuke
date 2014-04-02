@@ -16,6 +16,7 @@ private:
 
 public:
 	Task();
+	Task(QString description);
 	~Task();
 
 	void setDescription(QString _description);
@@ -39,8 +40,11 @@ public:
 	void setId(int identifier);
 	int getId();
 
+	bool isFloating() const;
 	bool isOverdue() const;
 	bool isOngoing() const;
+	bool isDueToday() const;
+	bool isEvent() const;
 	
 	bool operator!=(const Task& other) const;
 	bool operator==(const Task& other) const;/*

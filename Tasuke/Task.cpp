@@ -8,6 +8,11 @@ Task::Task() {
 	done = false;
 }
 
+Task::Task(QString description) {
+	done = false;
+	this->description = description;
+}
+
 Task::~Task() {
 
 }
@@ -109,6 +114,47 @@ bool Task::isOngoing() const {
 		return false;
 	}
 	if (begin < QDateTime::currentDateTime()) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+// Returns FALSE if this task has no valid end date.
+// Returns FALSE if this task is already overdue.
+// Returns FALSE if this task has a due date that is not
+// the current day, 2359hrs.
+// Returns TRUE if this task is already overdue but the due date
+// is the current day.
+// Returns TRUE if this task has a due date that is
+// the current day, 2359hrs.
+bool Task::isDueToday() const {
+	QDateTime todayStart(QDateTime::currentDateTime().date(), QTime(0, 0, 0));
+	QDateTime todayEnd(QDateTime::currentDateTime().date(), QTime(23, 59, 59));
+
+	if (!getEnd().isValid()) {
+		return false;
+	}
+
+	if (isOverdue()) {
+		if (getEnd() >= todayStart) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	if (getEnd() <= todayEnd) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+// An event is defined as a task that has a begin and end date/time.
+// This method returns true if a task has both, and false if otherwise.
+bool Task::isEvent() const {
+	if (begin.isValid() && end.isValid()) {
 		return true;
 	} else {
 		return false;
