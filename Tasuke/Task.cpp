@@ -81,6 +81,16 @@ int Task::getId() {
 	return id;
 }
 
+// Returns TRUE if task has neither a valid begin date/time, 
+// nor a valid end date/time.
+// Returns FALSE for all other cases.
+bool Task::isFloating() const {
+	if (!begin.isValid() && !end.isValid()) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 // Returns FALSE if there is no end date/time for this task,
 // or it is not valid.
@@ -89,7 +99,7 @@ int Task::getId() {
 // Returns TRUE if end date/time for this task is earlier
 // than current date/time.
 bool Task::isOverdue() const {
-	if (end.isNull() || !end.isValid()) {
+	if (!end.isValid()) {
 		return false;
 	}
 	if (end < QDateTime::currentDateTime()) {

@@ -103,6 +103,15 @@ namespace StorageTests {
 			Assert::IsTrue(task.isOverdue());
 		}
 
+		TEST_METHOD(TaskIsFloating) {
+			Task task;
+			Assert::IsTrue(task.isFloating());
+			task.setBegin(QDateTime(QDate(2010, 1, 1), QTime(1, 1, 1)));
+			Assert::IsFalse(task.isFloating());
+			task.setEnd(QDateTime(QDate(2100, 12, 31), QTime(23, 59, 59)));
+			Assert::IsFalse(task.isFloating());
+		}
+
 		// Tasks that are already overdue should return false.
 		TEST_METHOD(TaskIsDueToday) {
 			Task dueToday;
