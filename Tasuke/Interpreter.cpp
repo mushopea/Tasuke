@@ -413,13 +413,213 @@ QDateTime Interpreter::parseDate(QString dateString) {
 	timeOnlyFormats << "h";
 	timeOnlyFormats << "hh ap";
 	timeOnlyFormats << "hh";
-	
 
+	// ============================ musho addition start ====================================
+	// Fazli, please integrate this with the rest if you approve of them. 
+	// I am adding these to test my GUI more efficiently coz i keep screwing dates D:
+
+	// fullDateFormats
+	// No space between hours and am/pm
+	fullDateFormats << "d/M/yy h.mmap";
+	fullDateFormats << "dd/MM/yy h.mmap";
+	fullDateFormats << "dd/MM/yy hh.mmap";
+	fullDateFormats << "d/M h.mmap";
+	fullDateFormats << "dd/MM h.mmap";
+	fullDateFormats << "dd/MM hh.mmap";
+	fullDateFormats << "d MMM yy h.mmap";
+	fullDateFormats << "dd MMM yy h.mmap";
+	fullDateFormats << "dd MMM yy hh.mmap";
+	fullDateFormats << "d MMM h.mmap";
+	fullDateFormats << "dd MMM h.mmap";
+	fullDateFormats << "dd MMM hh.mmap";
+	fullDateFormats << "MMM d h.mmap";
+	fullDateFormats << "MMM dd h.mmap";
+	fullDateFormats << "MMM dd hh.mmap";
+	// 4 digit years
+	fullDateFormats << "dd/MM/yyyy h.mm ap";
+	fullDateFormats << "dd/MM/yyyy h.mm";
+	fullDateFormats << "dd/MM/yyyy hh.mm ap";
+	fullDateFormats << "dd/MM/yyyy hh.mm";
+	fullDateFormats << "d MMM yyyy h.mm ap";
+	fullDateFormats << "d MMM yyyy h.mm";
+	fullDateFormats << "dd MMM yyyy h.mm ap";
+	fullDateFormats << "dd MMM yyyy h.mm";
+	fullDateFormats << "dd MMM yyyy hh.mm ap";
+	fullDateFormats << "dd MMM yyyy hh.mm";
+	fullDateFormats << "d/M/yyyy h.mmap";
+	fullDateFormats << "dd/MM/yyyy h.mmap";
+	fullDateFormats << "dd/MM/yyyy hh.mmap";
+	fullDateFormats << "d MMM yyyy h.mmap";
+	fullDateFormats << "dd MMM yyyy h.mmap";
+	fullDateFormats << "dd MMM yyyy hh.mmap";
+	// fully spelt months 
+	fullDateFormats << "d MMMM yy h.mm ap";
+	fullDateFormats << "d MMMM yy h.mm";
+	fullDateFormats << "dd MMMM yy h.mm ap";
+	fullDateFormats << "dd MMMM yy h.mm";
+	fullDateFormats << "dd MMMM yy hh.mm ap";
+	fullDateFormats << "dd MMMM yy hh.mm";
+	fullDateFormats << "d MMMM h.mm ap";
+	fullDateFormats << "d MMMM h.mm";
+	fullDateFormats << "dd MMMM h.mm ap";
+	fullDateFormats << "dd MMMM h.mm";
+	fullDateFormats << "dd MMMM hh.mm ap";
+	fullDateFormats << "dd MMMM hh.mm";
+	fullDateFormats << "MMMM d h.mm ap";
+	fullDateFormats << "MMMM d h.mm";
+	fullDateFormats << "MMMM dd h.mm ap";
+	fullDateFormats << "MMMM dd h.mm";
+	fullDateFormats << "MMMM dd hh.mm ap";
+	fullDateFormats << "MMMM dd hh.mm";
+	fullDateFormats << "d MMMM yy h.mmap";
+	fullDateFormats << "dd MMMM yy h.mmap";
+	fullDateFormats << "dd MMMM yy hh.mmap";
+	fullDateFormats << "d MMMM h.mmap";
+	fullDateFormats << "dd MMMM h.mmap";
+	fullDateFormats << "dd MMMM hh.mmap";
+	fullDateFormats << "MMMM d h.mmap";
+	fullDateFormats << "MMMM dd h.mmap";
+	fullDateFormats << "MMMM dd hh.mmap";
+	fullDateFormats << "d MMMM yyyy h.mm ap";
+	fullDateFormats << "d MMMM yyyy h.mm";
+	fullDateFormats << "dd MMMM yyyy h.mm ap";
+	fullDateFormats << "dd MMMM yyyy h.mm";
+	fullDateFormats << "dd MMMM yyyy hh.mm ap";
+	fullDateFormats << "dd MMMM yyyy hh.mm";
+	fullDateFormats << "d MMMM yyyy h.mmap";
+	fullDateFormats << "dd MMMM yyyy h.mmap";
+	fullDateFormats << "dd MMMM yyyy hh.mmap";
+	// hours only, no minutes 
+	fullDateFormats << "d/M/yy h ap";
+	fullDateFormats << "d/M/yy h";
+	fullDateFormats << "dd/MM/yy h ap";
+	fullDateFormats << "dd/MM/yy h";
+	fullDateFormats << "dd/MM/yy hh ap";
+	fullDateFormats << "dd/MM/yy hh";
+	fullDateFormats << "d/M h ap";
+	fullDateFormats << "d/M h";
+	fullDateFormats << "dd/MM h ap";
+	fullDateFormats << "dd/MM h";
+	fullDateFormats << "dd/MM hh ap";
+	fullDateFormats << "dd/MM hh";
+	fullDateFormats << "d MMM yy h ap";
+	fullDateFormats << "d MMM yy h";
+	fullDateFormats << "dd MMM yy h ap";
+	fullDateFormats << "dd MMM yy h";
+	fullDateFormats << "dd MMM yy hh ap";
+	fullDateFormats << "dd MMM yy h";
+	fullDateFormats << "d MMM h ap";
+	fullDateFormats << "d MMM h";
+	fullDateFormats << "dd MMM h ap";
+	fullDateFormats << "dd MMM h";
+	fullDateFormats << "dd MMM hh ap";
+	fullDateFormats << "dd MMM hh";
+	fullDateFormats << "MMM d h ap";
+	fullDateFormats << "MMM d h";
+	fullDateFormats << "MMM dd h ap";
+	fullDateFormats << "MMM dd h";
+	fullDateFormats << "MMM dd hh ap";
+	fullDateFormats << "MMM dd hh";
+	fullDateFormats << "d/M/yy hap";
+	fullDateFormats << "dd/MM/yy hap";
+	fullDateFormats << "dd/MM/yy hhap";
+	fullDateFormats << "d/M hap";
+	fullDateFormats << "dd/MM hap";
+	fullDateFormats << "dd/MM hhap";
+	fullDateFormats << "d MMM yy hap";
+	fullDateFormats << "dd MMM yy hap";
+	fullDateFormats << "dd MMM yy hhap";
+	fullDateFormats << "d MMM hap";
+	fullDateFormats << "dd MMM hap";
+	fullDateFormats << "dd MMM hhap";
+	fullDateFormats << "MMM d hap";
+	fullDateFormats << "MMM dd hap";
+	fullDateFormats << "MMM dd hhap";
+	fullDateFormats << "dd/MM/yyyy h ap";
+	fullDateFormats << "dd/MM/yyyy h";
+	fullDateFormats << "dd/MM/yyyy hh ap";
+	fullDateFormats << "dd/MM/yyyy hh";
+	fullDateFormats << "d MMM yyyy h ap";
+	fullDateFormats << "d MMM yyyy h";
+	fullDateFormats << "dd MMM yyyy h ap";
+	fullDateFormats << "dd MMM yyyy h";
+	fullDateFormats << "dd MMM yyyy hh ap";
+	fullDateFormats << "dd MMM yyyy hh";
+	fullDateFormats << "d/M/yyyy hap";
+	fullDateFormats << "dd/MM/yyyy hap";
+	fullDateFormats << "dd/MM/yyyy hhap";
+	fullDateFormats << "d MMM yyyy hap";
+	fullDateFormats << "dd MMM yyyy hap";
+	fullDateFormats << "dd MMM yyyy hhap";
+	fullDateFormats << "d MMMM yy h ap";
+	fullDateFormats << "d MMMM yy h";
+	fullDateFormats << "dd MMMM yy h ap";
+	fullDateFormats << "dd MMMM yy h";
+	fullDateFormats << "dd MMMM yy hh ap";
+	fullDateFormats << "dd MMMM yy hh";
+	fullDateFormats << "d MMMM h ap";
+	fullDateFormats << "d MMMM h";
+	fullDateFormats << "dd MMMM h ap";
+	fullDateFormats << "dd MMMM h";
+	fullDateFormats << "dd MMMM hh ap";
+	fullDateFormats << "dd MMMM hh";
+	fullDateFormats << "MMMM d h ap";
+	fullDateFormats << "MMMM d h";
+	fullDateFormats << "MMMM dd h ap";
+	fullDateFormats << "MMMM dd h";
+	fullDateFormats << "MMMM dd hh ap";
+	fullDateFormats << "MMMM dd hh";
+	fullDateFormats << "d MMMM yy hap";
+	fullDateFormats << "dd MMMM yy hap";
+	fullDateFormats << "dd MMMM yy hhap";
+	fullDateFormats << "d MMMM hap";
+	fullDateFormats << "dd MMMM hap";
+	fullDateFormats << "dd MMMM hhap";
+	fullDateFormats << "MMMM d hap";
+	fullDateFormats << "MMMM dd hap";
+	fullDateFormats << "MMMM dd hhap";
+	fullDateFormats << "d MMMM yyyy h ap";
+	fullDateFormats << "d MMMM yyyy h";
+	fullDateFormats << "dd MMMM yyyy h ap";
+	fullDateFormats << "dd MMMM yyyy h";
+	fullDateFormats << "dd MMMM yyyy hh ap";
+	fullDateFormats << "dd MMMM yyyy hh";
+	fullDateFormats << "d MMMM yyyy hap";
+	fullDateFormats << "dd MMMM yyyy hap";
+	fullDateFormats << "dd MMMM yyyy hhap";
+
+
+	// dateOnlyFormats
+	// one digit months
+	dateOnlyFormats << "d/M/yy";
+	dateOnlyFormats << "dd/M/yy";
+	// four digit years
+	dateOnlyFormats << "d/M/yyyy";
+	dateOnlyFormats << "dd/M/yyyy";
+	dateOnlyFormats << "dd MMM yyyy";
+	dateOnlyFormats << "d MMM yyyy";
+	// fully spelt months
+	dateOnlyFormats << "dd MMM";
+	dateOnlyFormats << "dd MMMM yyyy";
+	dateOnlyFormats << "d MMMM yyyy";
+	dateOnlyFormats << "dd MMMM";
+	dateOnlyFormats << "dd MMMM yy";
+	dateOnlyFormats << "d MMMM yy";
+	dateOnlyFormats << "d MMMM";
+	dateOnlyFormats << "MMMM d";
+	dateOnlyFormats << "MMMM dd";
+	//no years
+	dateOnlyFormats << "d/M";
+	dateOnlyFormats << "d/MM";
+	dateOnlyFormats << "dd/M";
+	dateOnlyFormats << "dd/MM";
+
+	// ============================ musho addition end ====================================
 
 	for (int i=0; i<fullDateFormats.size(); i++) {
 		retVal = QDateTime::fromString(dateString, fullDateFormats[i]);
 		if (retVal.isValid()) {
-			// Musho:
+			// Musho attempt to fix date bug:
 			// Once the date string has been successfully matched with a format string, check
 			// If that format string does not contain a year. If it doesn't, the QDateTime
 			// Object will default to the year 1900, so move the year forward by currentYear - 1900.
