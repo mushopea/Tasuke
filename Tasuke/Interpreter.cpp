@@ -14,11 +14,13 @@ QString Interpreter::substitute(QString text) {
 	subbedText = subbedText.replace(" by ", " @ ");
 	subbedText = subbedText.replace(" at ", " @ ");
 	subbedText = subbedText.replace(" from ", " @ ");
+	subbedText = subbedText.replace(" on ", " @ ");
 	subbedText = subbedText.replace(" to ", " - ");
 
 	subbedText = subbedText.replace(" \\by ", " by ");
 	subbedText = subbedText.replace(" \\at ", " at ");
 	subbedText = subbedText.replace(" \\from ", " from ");
+	subbedText = subbedText.replace(" \\on ", " on ");
 	subbedText = subbedText.replace(" \\to ", " to ");
 
 	return subbedText;
@@ -417,6 +419,14 @@ QDateTime Interpreter::parseDate(QString dateString) {
 	for (int i=0; i<fullDateFormats.size(); i++) {
 		retVal = QDateTime::fromString(dateString, fullDateFormats[i]);
 		if (retVal.isValid()) {
+			// Musho:
+			// Once the date string has been successfully matched with a format string, check
+			// If that format string does not contain a year. If it doesn't, the QDateTime
+			// Object will default to the year 1900, so move the year forward by currentYear - 1900.
+			if (!fullDateFormats[i].contains("yy")) {
+				QString currentYearString = QDate::currentDate().toString("yyyy");
+				retVal = retVal.addYears(currentYearString.toInt() - 1900);
+			}
 			return retVal;
 		}
 	}
@@ -424,6 +434,10 @@ QDateTime Interpreter::parseDate(QString dateString) {
 	for (int i=0; i<dateOnlyFormats.size(); i++) {
 		retVal = QDateTime::fromString(dateString, dateOnlyFormats[i]);
 		if (retVal.isValid()) {
+			if (!dateOnlyFormats[i].contains("yy")) {
+				QString currentYearString = QDate::currentDate().toString("yyyy");
+				retVal = retVal.addYears(currentYearString.toInt() - 1900);
+			}
 			return retVal;
 		}
 	}

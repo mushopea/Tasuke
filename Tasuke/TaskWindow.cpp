@@ -9,7 +9,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	this->installEventFilter(this);
 
 	currentlySelected = 1;
-	initTutorial(); // Initialize tutorial window
+	initTutorial(); 
 	initAnimation();
 
 	connect(ui.emptyAddTaskButton, SIGNAL(pressed()), this, SLOT(handleEmptyAddTaskButton()));
@@ -202,17 +202,18 @@ void TaskWindow::pageDown() {
 //=========================================
 
 void TaskWindow::showAndMoveToSide() {
+	//if(animation->state() != QAbstractAnimation::Stopped)
+	//	return;
+	
 	showListWidget(); // Shows the task list
 
 	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
 	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
 
 	move(center);
-	setWindowOpacity(0);
-	show();
-	raise();
-	setWindowOpacity(100);
 	animation->start();
+	raise();
+	show();
 }
 
 // Shows message when task list is empty.
@@ -347,9 +348,7 @@ void TaskWindow::initTutorial() {
 }
 
 void TaskWindow::initAnimation() {
-	fadeEffectThis = new QGraphicsOpacityEffect(this); 
-	this->setGraphicsEffect(fadeEffectThis);
-	animation = new QPropertyAnimation(fadeEffectThis, "opacity"); 
+	animation = new QPropertyAnimation(this, "opacity"); 
 	animation->setEasingCurve(QEasingCurve::Linear); 
 	animation->setDuration(400); 
 	animation->setStartValue(0.0); 
@@ -373,4 +372,14 @@ void TaskWindow::showBackButtonIfSearching(QString title) {
 	} else {
 		ui.backButton->hide();
 	}
+}
+
+void TaskWindow::setOpacity(qreal value) {
+	wOpacity = value;
+	setWindowOpacity(value);
+	update();
+}
+
+qreal TaskWindow::getOpacity() {
+	return wOpacity;
 }

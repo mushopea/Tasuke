@@ -8,7 +8,7 @@
 enum class KeyCombination {
 	CTRL_SPACE,
 	ALT_SPACE,
-	SHIFT_SPACE
+	CTRL_ALT_SPACE
 };
 
 #ifdef Q_OS_WIN

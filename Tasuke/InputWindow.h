@@ -16,6 +16,8 @@
 
 class InputWindow : public QWidget {
 	Q_OBJECT
+	Q_PROPERTY(qreal opacity READ getOpacity WRITE setOpacity)
+
 
 public:
 	InputWindow(QWidget *parent = 0);
@@ -38,8 +40,12 @@ private slots:
 private:
 	Ui::InputWindow ui;
     InputHighlighter *highlighter;
-	QGraphicsOpacityEffect *fadeEffect;
 	QPropertyAnimation *animation;
+	qreal wOpacity;
+
+	void setOpacity(qreal value);
+	qreal getOpacity();
+
 };
 
 #endif // INPUTWINDOW_H

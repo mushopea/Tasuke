@@ -102,7 +102,7 @@ void InputWindow::showAndCenter() {
 	show(); 
 	raise(); 
 	activateWindow();
-	setWindowOpacity(95);
+	setWindowOpacity(1);
 	animation->start();
 }
 
@@ -128,9 +128,7 @@ void InputWindow::handleEditingFinished() {
 }
 
 void InputWindow::initAnimation() {
-	fadeEffect = new QGraphicsOpacityEffect(this); 
-	this->setGraphicsEffect(fadeEffect);
-	animation = new QPropertyAnimation(fadeEffect, "opacity"); 
+	animation = new QPropertyAnimation(this, "opacity"); 
 	animation->setEasingCurve(QEasingCurve::OutCubic); 
 	animation->setDuration(700); 
 	animation->setStartValue(0.0); 
@@ -151,4 +149,14 @@ void InputWindow::changeBorder(int themeNumber){
 // Will be updated when "themes" is implemented.
 void InputWindow::changeBG(int themeNumber){
 	//ui.label_2->setPixmap(pxr);
+}
+
+void InputWindow::setOpacity(qreal value) {
+	wOpacity = value;
+	setWindowOpacity(value);
+	update();
+}
+
+qreal InputWindow::getOpacity() {
+	return wOpacity;
 }
