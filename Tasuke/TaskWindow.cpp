@@ -54,16 +54,13 @@ TaskEntry* TaskWindow::createEntry(Task t, int index) {
 }
 
 // Add a QListWidgetItem in a specified row with a specified background.
-void TaskWindow::addListItemToRow(TaskEntry* entry, int row, int pixmapID) {
-	QPixmap pxr(":/Images/images/theme1/entryBgSelect.png"); // Highlighted bg image
-	QPixmap pxr2(":/Images/images/theme1/entryBg.png"); // Normal bg image
-
-	if (pixmapID == 1) {
-		entry->ui.bg->setPixmap(pxr);
+void TaskWindow::addListItemToRow(TaskEntry* entry, int row, QString type) {
+	if (type.compare("select") == 0) {
+		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(188, 188, 188);");
 	} 
 
-	if (pixmapID == 2) {
-		entry->ui.bg->setPixmap(pxr2);
+	if (type.compare("deselect") == 0) {
+		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(203, 202, 202);");
 	}
 
 	QListWidgetItem *listItem = new QListWidgetItem();
@@ -123,7 +120,7 @@ void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
 	if ((isInRange(previouslySelected)) && (prevSize!=0)) { 
 		Task t2 = currentTasks[previouslySelected];
 		TaskEntry * entry2 = createEntry(t2, previouslySelected+1);
-		addListItemToRow(entry2, previouslySelected, 2);
+		addListItemToRow(entry2, previouslySelected, "deselect");
 		ui.taskList->takeItem(previouslySelected+1);
 	}
 
@@ -131,7 +128,7 @@ void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
 	if(isInRange(currentlySelected)) {
 		Task t = currentTasks[currentlySelected];
 		TaskEntry * entry = createEntry(t, currentlySelected+1);
-		addListItemToRow(entry, currentlySelected, 1);
+		addListItemToRow(entry, currentlySelected, "select");
 		ui.taskList->takeItem(currentlySelected+1);
 	}
 }

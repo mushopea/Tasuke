@@ -68,6 +68,30 @@ void TaskEntry::highlightOverdue() {
 	setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
 }
 
+void TaskEntry::setTooltip(QString des, QDateTime start, QDateTime end) {
+
+	QString tooltipText(des);
+
+	if (!start.isNull()) {
+		QString strStartDate = start.toString("dd MMM yyyy (ddd)");
+		QString strStartTime = start.toString("h:mm ap");
+		tooltipText.append("\n\n Start: \n");
+		tooltipText.append(strStartDate);
+		tooltipText.append(strStartTime);
+	}
+
+	if (!end.isNull()) {
+		QString strEndDate = end.toString("dd MMM yyyy (ddd)");
+		QString strEndTime = end.toString("h:mm ap");
+		tooltipText.append("\n End: \n");
+		tooltipText.append(strEndDate);
+		tooltipText.append(strEndTime);
+	}
+
+	ui.description->setToolTip(tooltipText);
+
+}
+
 void TaskEntry::setDescription(QString des) {
 
 	// First, we have to make sure the text fits.
@@ -76,7 +100,6 @@ void TaskEntry::setDescription(QString des) {
 	if (fm.width(des) < TaskEntry::MAX_WIDTH_FOR_DESCRIPTION){ // The description fits into the column nicely.
 		ui.description->setText(des);
 	} else { // The description is too long.
-		ui.description->setToolTip(des);
 		ui.description->setText(fm.elidedText(des, Qt::ElideRight, MAX_WIDTH_FOR_DESCRIPTION));
 	}
 }
@@ -136,6 +159,8 @@ void TaskEntry::makeWidget() {
 	if (!task.getTags().isEmpty()) {
 		setTags(task.getTags());
 	}
+
+	setTooltip(task.getDescription(), task.getBegin(), task.getEnd());
 
 	ui.overdueLabel->hide();
 	ui.ongoingLabel->hide();

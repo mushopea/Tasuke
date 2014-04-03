@@ -150,11 +150,12 @@
      <height>70</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">border-radius: 10px;
+background-color: rgb(74, 74, 74);</string>
+   </property>
    <property name="text">
     <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="Resources.qrc">:/Images/images/theme1/inputWindowBorder.png</pixmap>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -163,10 +164,10 @@
   <widget class="QLabel" name="bg">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>840</width>
-     <height>70</height>
+     <x>10</x>
+     <y>10</y>
+     <width>820</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="palette">
@@ -175,27 +176,27 @@
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>30</red>
-         <green>30</green>
-         <blue>30</blue>
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>30</red>
-         <green>30</green>
-         <blue>30</blue>
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>30</red>
-         <green>30</green>
-         <blue>30</blue>
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
@@ -213,27 +214,27 @@
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>30</red>
-         <green>30</green>
-         <blue>30</blue>
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>30</red>
-         <green>30</green>
-         <blue>30</blue>
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>30</red>
-         <green>30</green>
-         <blue>30</blue>
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
@@ -251,27 +252,27 @@
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>30</red>
-         <green>30</green>
-         <blue>30</blue>
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>30</red>
-         <green>30</green>
-         <blue>30</blue>
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>30</red>
-         <green>30</green>
-         <blue>30</blue>
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
@@ -290,11 +291,12 @@
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
+   <property name="styleSheet">
+    <string notr="true">border-radius: 8px;
+background-color: white;</string>
+   </property>
    <property name="text">
     <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="Resources.qrc">:/Images/images/theme1/inputWindowBg.png</pixmap>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>

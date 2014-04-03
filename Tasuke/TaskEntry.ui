@@ -42,11 +42,12 @@
      <height>60</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">border-radius: 12px;
+background-color: rgb(203, 202, 202);</string>
+   </property>
    <property name="text">
     <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="Resources.qrc">:/Images/images/theme1/entryBg.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>

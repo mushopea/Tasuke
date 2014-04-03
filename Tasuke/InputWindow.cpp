@@ -1,6 +1,7 @@
 #include "Tasuke.h"
 #include "InputWindow.h"
 
+
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "InputWindow instance created";
 
@@ -137,18 +138,10 @@ void InputWindow::initAnimation() {
 
 // Will be updated when "themes" is implemented.
 void InputWindow::changeBorder(int themeNumber){
-	QPixmap pxr(":/Images/images/theme1/inputWindowBorder.png");
-	QPixmap pxr2(":/Images/images/theme1/inputWindowBorder.png");
-	pxr.fill(Qt::red);
-	pxr.setMask(pxr2.createMaskFromColor(Qt::transparent));
-
-
-    ui.border->setPixmap(pxr);
 }
 
 // Will be updated when "themes" is implemented.
 void InputWindow::changeBG(int themeNumber){
-	//ui.label_2->setPixmap(pxr);
 }
 
 void InputWindow::setOpacity(qreal value) {
