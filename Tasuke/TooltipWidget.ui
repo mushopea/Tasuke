@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>873</width>
-    <height>45</height>
+    <width>840</width>
+    <height>53</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,32 +21,32 @@
     <rect>
      <x>0</x>
      <y>10</y>
-     <width>871</width>
-     <height>31</height>
+     <width>841</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="styleSheet">
     <string notr="true">border-radius: 7px;
-background-color: rgb(34, 34, 34);
+background-color: rgb(34, 34, 34, 90%);
 color: white;</string>
    </property>
   </widget>
   <widget class="QLabel" name="triangle">
    <property name="geometry">
     <rect>
-     <x>-4</x>
-     <y>0</y>
+     <x>6</x>
+     <y>-3</y>
      <width>31</width>
-     <height>21</height>
+     <height>16</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>25</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(34, 34, 34);</string>
+    <string notr="true">color: rgb(34, 34, 34, 90%);</string>
    </property>
    <property name="text">
     <string>▲</string>
@@ -55,16 +55,16 @@ color: white;</string>
   <widget class="QLabel" name="text">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>45</x>
      <y>10</y>
-     <width>871</width>
-     <height>31</height>
+     <width>791</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Consolas</family>
-     <pointsize>9</pointsize>
+     <pointsize>11</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -72,13 +72,23 @@ color: white;</string>
 color: white;</string>
    </property>
    <property name="text">
-    <string>Success! Your task has been added. :)</string>
+    <string>Success! Your task has been added. :) gg</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
    <property name="margin">
     <number>10</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="icon">
+   <property name="geometry">
+    <rect>
+     <x>5</x>
+     <y>12</y>
+     <width>38</width>
+     <height>38</height>
+    </rect>
    </property>
   </widget>
  </widget>

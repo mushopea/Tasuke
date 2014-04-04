@@ -19,7 +19,7 @@ private:
 	static QString substitute(QString text);
 	static QHash<QString, QString> decompose(QString text);
 	static QString removeBefore(QString text, QString before);
-	static QString getType(QString commandString);
+	// static QString getType(QString commandString); // Moved to public for tooltipwidget's access
 	static int parseId(QString idString);
 	static TIME_PERIOD parseTimePeriod(QString timePeriod);
 	static QDateTime parseDate(QString dateString);
@@ -40,7 +40,8 @@ private:
 	static void doSettings();
 	static void doExit();
 
-public:
+public:	
+	static QString getType(QString commandString);
 	static ICommand* interpret(QString commandString);
 };
 

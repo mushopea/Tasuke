@@ -89,7 +89,7 @@ private:
 	void decideContent();
 	void showBackButtonIfSearching(QString title);
 	void setOpacity(qreal value);
-	qreal getOpacity();
+	qreal getOpacity() const;
 
 	
 	// Handles task entry creation and addition to list

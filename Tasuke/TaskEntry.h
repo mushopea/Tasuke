@@ -38,7 +38,7 @@ private:
 	QFontMetrics fm;
 
 	// functions
-	void setTooltip(QString des, QDateTime start, QDateTime end);
+	void setTooltip(QString des, QDateTime start, QDateTime end, QList<QString> tags);
 	void setDescription(QString description);
 	void setDateTimes(QDateTime start, QDateTime end);
 	QString createTagString(QList<QString> tags);

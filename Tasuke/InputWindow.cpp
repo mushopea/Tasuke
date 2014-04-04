@@ -1,22 +1,33 @@
 #include "Tasuke.h"
 #include "InputWindow.h"
-
+#include "Interpreter.h"
 
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "InputWindow instance created";
 
 	ui.setupUi(this);
 	highlighter = new InputHighlighter(ui.lineEdit->document());
+	tooltipWidget = new TooltipWidget(this);
 	ui.lineEdit->installEventFilter(this);
 	initAnimation();
 
 	setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("background:transparent;");
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
+
+	connect(ui.lineEdit, SIGNAL(textChanged()), this, SLOT(handleLineEditChanged()));
 }
 
 InputWindow::~InputWindow() {
 	LOG(INFO) << "InputWindow instance destroyed";
+}
+
+// Allows other classes to display a tooltip message relative to the status of the input.
+void InputWindow::showTooltipMessage(QString message, InputStatus status) {
+	if (!tooltipWidget->isVisible()) {
+		tooltipWidget->showAndAlign();
+	}
+	tooltipWidget->setText(message, status);
 }
 
 bool InputWindow::eventFilter(QObject* object, QEvent* event) {
@@ -99,11 +110,9 @@ void InputWindow::showAndCenter() {
 
 	move(pos);
 
-	setWindowOpacity(0);
 	show(); 
 	raise(); 
 	activateWindow();
-	setWindowOpacity(1);
 	animation->start();
 }
 
@@ -137,11 +146,58 @@ void InputWindow::initAnimation() {
 }
 
 // Will be updated when "themes" is implemented.
-void InputWindow::changeBorder(int themeNumber){
+void InputWindow::changeBorder(int themeNumber) {
 }
 
 // Will be updated when "themes" is implemented.
-void InputWindow::changeBG(int themeNumber){
+void InputWindow::changeBG(int themeNumber) {
+}
+
+void InputWindow::handleLineEditChanged() {
+	QString currText = ui.lineEdit->toPlainText();
+	QString commandType = Interpreter::getType(currText);
+
+	if (!tooltipWidget->isVisible()) {
+		tooltipWidget->showAndAlign();
+	}
+
+	if (commandType == "add") {
+		if (currText.contains("from")) { // period tasks
+			tooltipWidget->setText("add <my task> from <start> to <end> #tag", NORMAL);
+		} else if (currText.contains("by") || currText.contains("at") || currText.contains("on")) { // deadline tasks
+			tooltipWidget->setText("add <my task> by/on/at <end> #tag", NORMAL);
+		} else { // simple tasks
+			tooltipWidget->setText("add <my task> #tag", NORMAL);
+		}
+	} else if (commandType == "remove") {
+		tooltipWidget->setText("remove <task no> | remove <task no>, <task no>, ... | remove <task no> - <task no>", NORMAL);
+	} else if (commandType == "edit") {
+		tooltipWidget->setText("edit <task no> <thing to change> <-thing to remove>", NORMAL);
+	} else if (commandType == "done") {
+		tooltipWidget->setText("done <task no> | done <task no>, <task no>, ... | done <task no> - <task no>", NORMAL);
+	} else if (commandType == "undone") {
+		tooltipWidget->setText("undone <task no> | undone <task no>, <task no>, ... | undone <task no> - <task no>", NORMAL);
+	} else if (commandType == "show") {
+		tooltipWidget->setText("show <keyword> | done | undone | overdue | ongoing | today | tomorrow", NORMAL);
+	} else if (commandType == "hide") {
+		tooltipWidget->setText("Hide the task window.", NORMAL);		
+	} else if (commandType == "undo") {
+		tooltipWidget->setText("Undo your last action. (CTRL+Z)", NORMAL);		
+	} else if (commandType == "redo") {
+		tooltipWidget->setText("Redo your last action (CTRL+Y)", NORMAL);		
+	} else if (commandType == "clear") {
+		tooltipWidget->setText("Clear all tasks", NORMAL);		
+	} else if (commandType == "help") {
+		tooltipWidget->setText("View the tutorial", NORMAL);		
+	} else if (commandType == "settings") {
+		tooltipWidget->setText("Access the settings", NORMAL);		
+	} else if (commandType == "about") {
+		tooltipWidget->setText("See Tasuke's info", NORMAL);		
+	} else if (commandType == "exit") {
+		tooltipWidget->setText("Exit the application", NORMAL);		
+	} else { 
+		tooltipWidget->hide();
+	}
 }
 
 void InputWindow::setOpacity(qreal value) {
@@ -150,6 +206,7 @@ void InputWindow::setOpacity(qreal value) {
 	update();
 }
 
-qreal InputWindow::getOpacity() {
+qreal InputWindow::getOpacity() const {
 	return wOpacity;
 }
+

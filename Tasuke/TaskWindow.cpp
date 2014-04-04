@@ -1,5 +1,7 @@
 #include "Tasuke.h"
 #include "TaskWindow.h"
+#include "Constants.h"
+
 
 TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	LOG(INFO) << "TaskWindow instance created";
@@ -237,11 +239,11 @@ void TaskWindow::changeTutorialWidgetTabs(){
 }
 
 void TaskWindow::showListWidget() {
-	ui.stackedWidget->slideInIdx(0);
+	ui.stackedWidget->slideInIdx(TASKS_PAGE);
 }
 
 void TaskWindow::showTutorialWidget() {
-	ui.stackedWidget->slideInIdx(1);
+	ui.stackedWidget->slideInIdx(TUTORIAL_PAGE);
 	tutorial.reset();
 }
 
@@ -308,6 +310,12 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 				return true;
 			}
 
+			// Search backspace to go back
+			if (eventKey->key() == Qt::Key_Backspace) {
+				handleBackButton();
+				return true;
+			}
+
 		} else {
 			// Tutorial shortcuts start here
 
@@ -326,6 +334,11 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 
 			if (eventKey->key() == Qt::Key_Left) {
 				tutorial.goPrevPage();
+				return true;
+			}
+
+			if (eventKey->key() == Qt::Key_Backspace) {
+				showListWidget();
 				return true;
 			}
 			
@@ -377,6 +390,6 @@ void TaskWindow::setOpacity(qreal value) {
 	update();
 }
 
-qreal TaskWindow::getOpacity() {
+qreal TaskWindow::getOpacity() const {
 	return wOpacity;
 }

@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QPropertyAnimation>
+#include <glog/logging.h>
 #include "ui_SubheadingEntry.h"
 
 

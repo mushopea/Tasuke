@@ -1,5 +1,3 @@
-//TO DO: LEFT RIGHT EVENT FILTER SHORTCUT
-
 #include "Tasuke.h"
 #include "TutorialWidget.h"
 
@@ -107,7 +105,7 @@ bool TutorialWidget::eventFilter(QObject* object, QEvent* event) {
 	if (event->type() == QEvent::KeyPress) {
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
 
-		if (eventKey->key() == Qt::Key_Tab){
+		if (eventKey->key() == Qt::Key_Tab) {
 			changeTabs();
 			return true;
 		}

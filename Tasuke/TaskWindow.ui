@@ -89,6 +89,14 @@ QScrollBar::handle:vertical {
         height: 0px;
     }
 
+QToolTip {
+     border: none;
+	font: 9pt &quot;Consolas&quot;;
+     border-radius: 2px;
+     padding: 2px;
+	color:white;
+	background-color: rgb(128, 128, 128);
+ }
 </string>
   </property>
   <widget class="QWidget" name="taskWin">
