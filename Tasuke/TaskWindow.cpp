@@ -37,13 +37,13 @@ bool TaskWindow::isInRange(int index) {
 // Changes title text on top
 void TaskWindow::changeTitle(QString title) {
 	if (!title.isEmpty()) {
-		ui.taskScope->setText("Viewing " + title + " tasks");
+		ui.taskScope->setText("Viewing " + title);
 	}
 }
 
 // Creates and returns a new task entry.
-TaskEntry* TaskWindow::createEntry(Task t, int index) {
-	TaskEntry* entry = new TaskEntry(index, t, this);
+TaskEntry* TaskWindow::createEntry(Task t) {
+	TaskEntry* entry = new TaskEntry(t, this);
 
 	if (t.isOverdue()) {
 		entry->highlightOverdue();
@@ -80,13 +80,13 @@ void TaskWindow::addListItem(TaskEntry* entry) {
 }
 
 // Displays a task entry on the list.
-void TaskWindow::displayTask(Task t, int index, int showDone) {
+void TaskWindow::displayTask(Task t, int showDone) {
 	if (showDone == 0) { // Showing done tasks
-		TaskEntry * entry = createEntry(t, index);
+		TaskEntry * entry = createEntry(t);
 		addListItem(entry);
 	} else { // Showing undone tasks
 		if (!t.isDone()) {
-			TaskEntry * entry = createEntry(t, index);
+			TaskEntry * entry = createEntry(t);
 			addListItem(entry);
 		}
 	}
@@ -113,7 +113,6 @@ void TaskWindow::highlightTask(int row) {
 	assert(isInRange(row)); 
 	updateCurrentlySelectedTo(row);
 	jumpToCurrentlySelectedTask();
-	
 }
 
 // This function highlights the selected row and dehighlights the previously highlighted.
@@ -121,7 +120,7 @@ void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
 	// Dehighlight if previous state is not empty
 	if ((isInRange(previouslySelected)) && (prevSize!=0)) { 
 		Task t2 = currentTasks[previouslySelected];
-		TaskEntry * entry2 = createEntry(t2, previouslySelected+1);
+		TaskEntry * entry2 = createEntry(t2);
 		addListItemToRow(entry2, previouslySelected, "deselect");
 		ui.taskList->takeItem(previouslySelected+1);
 	}
@@ -129,7 +128,7 @@ void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
 	// Highlight currently selected
 	if(isInRange(currentlySelected)) {
 		Task t = currentTasks[currentlySelected];
-		TaskEntry * entry = createEntry(t, currentlySelected+1);
+		TaskEntry * entry = createEntry(t);
 		addListItemToRow(entry, currentlySelected, "select");
 		ui.taskList->takeItem(currentlySelected+1);
 	}
@@ -143,7 +142,7 @@ void TaskWindow::showTasks(QList<Task> tasks, QString title) {
 	ui.taskList->clear(); // Clear previous list
 	changeTitle(title);
 	for (int i = 0; i < tasks.size(); i++) {
-		displayTask(tasks[i], i+1, title.compare("done"));
+		displayTask(tasks[i], title.compare("done"));
 	}
 
 	decideContent(); // Show column label or 'no tasks' message.
@@ -222,7 +221,8 @@ void TaskWindow::handleEmptyAddTaskButton() {
 
 // Goes back to default view
 void TaskWindow::handleBackButton() {
-	showTasks(Tasuke::instance().getStorage().getTasks());
+	showTasks(Tasuke::instance().getStorage().getTasks());	
+	changeTitle("all tasks");
 }
 
 //========================================

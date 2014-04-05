@@ -24,5 +24,14 @@ enum Theme {
 	DOGE
 };
 
+enum IconSet {
+	NYANSUKE,
+	SYMBOLS,
+	SYMBOLSWHITE,
+	NICCAGE,
+	MEMES,
+	SHIBE
+};
+
 
 #endif

@@ -8,6 +8,23 @@
         <file>images/theme1/minButton.png</file>
         <file>images/theme1/closeButtonHover.png</file>
         <file>images/theme1/minButtonHover.png</file>
+		<file>images/icons/dogefailure.png</file>
+		<file>images/icons/dogesuccess.png</file>
+		<file>images/icons/dogenormal.png</file>
+		<file>images/icons/memefailure.png</file>
+		<file>images/icons/memesuccess.png</file>
+		<file>images/icons/memenormal.png</file>
+		<file>images/icons/niccagefailure.png</file>
+		<file>images/icons/niccagesuccess.png</file>
+		<file>images/icons/niccagenormal.png</file>
+		<file>images/icons/nyansukefailure.png</file>
+		<file>images/icons/nyansukesuccess.png</file>
+		<file>images/icons/nyansukenormal.png</file>
+		<file>images/icons/symbolfailure.png</file>
+		<file>images/icons/symbolnormal.png</file>
+		<file>images/icons/symbolsuccess.png</file>
+		<file>images/icons/symbolwhitefailure.png</file>
+		<file>images/icons/symbolwhitesuccess.png</file>
     </qresource>
     <qresource prefix="/Fonts">
         <file>fonts/PrintClearly.otf</file>

@@ -5,10 +5,9 @@ TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas"
 	LOG(INFO) << "TooltipWidget instance created";
 
 	ui.setupUi(this);
-	animation = new QPropertyAnimation(this, "pos");	
-	animation->setDuration(500);
-	animation->setEasingCurve(QEasingCurve::OutCubic);
-
+	initIcons();
+	initAnimation();
+	
 	setAttribute(Qt::WA_TranslucentBackground);
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::Tool);
 }
@@ -42,4 +41,30 @@ void TooltipWidget::showAndAlign() {
 
 void TooltipWidget::fitWidthToTextLength(QString text) {
 	ui.bg->resize(fm.width(text) + 70, ui.bg->height()); 
+}
+
+void TooltipWidget::initAnimation() {
+	animation = new QPropertyAnimation(this, "pos");	
+	animation->setDuration(500);
+	animation->setEasingCurve(QEasingCurve::OutCubic);
+}
+
+void TooltipWidget::initIcons() {
+	/*:Images/images/icons/dogefailure.png
+	:Images/images/icons/dogesuccess.png
+	:Images/images/icons/dogenormal.png
+	:Images/images/icons/memefailure.png
+	:Images/images/icons/memesuccess.png
+	:Images/images/icons/memenormal.png
+	:Images/images/icons/niccagefailure.png
+	:Images/images/icons/niccagesuccess.png
+	:Images/images/icons/niccagenormal.png
+	:Images/images/icons/nyansukefailure.png
+	:Images/images/icons/nyansukesuccess.png
+	:Images/images/icons/nyansukenormal.png
+	:Images/images/icons/symbolfailure.png
+	:Images/images/icons/symbolnormal.png
+	:Images/images/icons/symbolsuccess.png
+	:Images/images/icons/symbolwhitefailure.png
+	:Images/images/icons/symbolwhitesuccess.png*/
 }

@@ -1,23 +1,13 @@
 #include "Tasuke.h"
 #include "SettingsWindow.h"
-
-/* TO DO 
-- connect enable/disable features
-- connect hotkey OK button
-*/
-
-/* DONE
-- hotkey reset button. clears the field.
-*/
+#include <QSettings>
 
 SettingsWindow::SettingsWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "SettingsWindow instance created";
 
 	ui.setupUi(this);
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
-
-	//setAttribute(Qt::WA_TranslucentBackground);
-	//setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::Tool);
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 }
 
 SettingsWindow::~SettingsWindow() {
@@ -50,6 +40,18 @@ void SettingsWindow::changeTabs() {
 
 	ui.tabWidget->setCurrentIndex(nextTab);
 }
+
+void SettingsWindow::handleApplyButton() {
+	//QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	//settings.setValue("Description", tasks[i]->getDescription());
+	//settings.value("Description").toString()
+}
+
+void SettingsWindow::handleOKButton() {
+	handleApplyButton();
+	hide();
+}
+
 
 bool SettingsWindow::eventFilter(QObject* object, QEvent* event) {
 

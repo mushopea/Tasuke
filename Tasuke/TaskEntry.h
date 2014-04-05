@@ -11,7 +11,7 @@ class TaskEntry : public QWidget {
 	Q_OBJECT
 
 public:
-	TaskEntry(int id, Task t, QWidget *parent = 0);
+	TaskEntry(Task t, QWidget *parent = 0);
 	~TaskEntry();
 	void strikeOut();
 	void highlightOngoing();
@@ -30,7 +30,6 @@ private:
 	static const int MAX_WIDTH_FOR_TAGS = 160;
 
 	// fields
-	int id;
 	Task task;
 
 	// font metrics

@@ -3,10 +3,9 @@
 #include "Constants.h"
 
 
-TaskEntry::TaskEntry(int id, Task t, QWidget* parent) : QWidget(parent), font("Print Clearly", 20), fm(font)  {
+TaskEntry::TaskEntry(Task t, QWidget* parent) : QWidget(parent), font("Print Clearly", 20), fm(font)  {
 
 	// Initialize field elements
-	this->id = id;
 	this->task = t;
 
 	ui.setupUi(this);
@@ -68,6 +67,7 @@ void TaskEntry::highlightOngoing() {
 	ui.startTime->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
 	ui.endTime->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
 	ui.tag->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
+	ui.ID->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
 }
 
 void TaskEntry::highlightOverdue() {
@@ -78,6 +78,7 @@ void TaskEntry::highlightOverdue() {
 	ui.startTime->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
 	ui.endTime->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
 	ui.tag->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
+	ui.ID->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
 }
 
 void TaskEntry::setTooltip(QString des, QDateTime start, QDateTime end, QList<QString> tags) {
@@ -178,9 +179,7 @@ void TaskEntry::setTags(QList<QString> tags) {
 
 // This function sets the respective fields in the TaskEntry widget
 void TaskEntry::makeWidget() {
-	QString num;
-	num.setNum(this->id);
-	ui.ID->setText(num);
+	ui.ID->setText(QString::number(task.getId()+1));
 
 	setDescription(task.getDescription());
 

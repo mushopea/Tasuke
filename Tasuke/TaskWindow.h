@@ -95,10 +95,10 @@ private:
 	// Handles task entry creation and addition to list
 	bool isInRange(int index);
 	void changeTitle(QString title);
-	TaskEntry* createEntry(Task t, int index);
+	TaskEntry* createEntry(Task t);
 	void addListItemToRow(TaskEntry* entry, int row, QString type);
 	void addListItem(TaskEntry* entry);
-	void displayTask(Task t, int index, int showDone);
+	void displayTask(Task t, int showDone);
 };
 
 #endif // TASKWINDOW_H

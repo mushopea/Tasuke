@@ -18,6 +18,8 @@ public:
 
 public slots:
 	void changeTabs();
+	void handleApplyButton();
+	void handleOKButton();
 
 protected:
 	bool eventFilter(QObject* object, QEvent* event);

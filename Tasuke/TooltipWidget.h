@@ -28,8 +28,13 @@ private:
 	QPropertyAnimation *animation;
 	QFont font;
 	QFontMetrics fm;
+	QPixmap normalIcon;
+	QPixmap successIcon;
+	QPixmap failureIcon;
 
 	void fitWidthToTextLength(QString text);
+	void initAnimation();
+	void initIcons();
 };
 
 #endif //TOOLTIPWIDGET_H
