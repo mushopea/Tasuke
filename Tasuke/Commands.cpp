@@ -117,7 +117,9 @@ void DoneCommand::run() {
 	id = task.getId();
 	QString doneUndone = done ? "done" : "undone";
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().highlightTask(task.getId());
+	if (!done) {
+		Tasuke::instance().highlightTask(task.getId());
+	}
 	Tasuke::instance().showMessage(QString("Marked \"%1\" as %2").arg(task.getDescription(), doneUndone));
 }
 void DoneCommand::undo() {
@@ -127,6 +129,8 @@ void DoneCommand::undo() {
 	id = task.getId();
 	QString doneUndone = done ? "done" : "undone";
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().highlightTask(task.getId());
+	if (!done) {
+		Tasuke::instance().highlightTask(task.getId());
+	}
 	Tasuke::instance().showMessage(QString("Undone mark \"%1\" as %2").arg(task.getDescription(), doneUndone));
 }

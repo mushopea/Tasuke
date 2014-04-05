@@ -42,7 +42,7 @@ private:
 	static DoneCommand* createDoneCommand(QString commandString);
 	static DoneCommand* createUndoneCommand(QString commandString);
 
-	static void doShow();
+	static void doShow(QString commandString);
 	static void doAbout();
 	static void doHide();
 	static void doUndo();

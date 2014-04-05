@@ -164,7 +164,7 @@ ICommand* Interpreter::interpret(QString commandString) {
 	}
 	
 	if (commandType == "show") {
-		doShow();
+		doShow(commandString);
 	} else if (commandType == "hide") {
 		doHide();
 	} else if (commandType == "undo") {
@@ -297,7 +297,14 @@ DoneCommand* Interpreter::createUndoneCommand(QString commandString) {
 	return new DoneCommand(id-1, false);
 }
 
-void Interpreter::doShow() {
+void Interpreter::doShow(QString commandString) {
+	commandString = removeBefore(commandString, "show");
+	commandString = commandString.trimmed();
+
+	if (commandString == "done") {
+
+	}
+
 	Tasuke::instance().showTaskWindow();
 }
 void Interpreter::doAbout() {
