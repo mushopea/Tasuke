@@ -152,7 +152,7 @@ background-color: white;
     <enum>QTabWidget::Triangular</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="usesScrollButtons">
     <bool>true</bool>
@@ -917,7 +917,7 @@ height: 20px;
      <property name="font">
       <font>
        <family>Print Clearly</family>
-       <pointsize>18</pointsize>
+       <pointsize>15</pointsize>
       </font>
      </property>
      <property name="focusPolicy">

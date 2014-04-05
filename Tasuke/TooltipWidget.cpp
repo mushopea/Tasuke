@@ -16,7 +16,7 @@ TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas"
 TooltipWidget::~TooltipWidget() {
 }
 
-void TooltipWidget::setText(QString content, InputStatus status) {
+void TooltipWidget::setText(const QString& content, InputStatus status) {
 	setIconOnLabel(status);
 	ui.text->setText(content);
 	fitWidthToTextLength(content);

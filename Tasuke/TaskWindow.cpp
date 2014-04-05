@@ -11,7 +11,7 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	ui.backButton->hide();
 	this->installEventFilter(this);
 
-	currentlySelectedTask = 1;
+	currentlySelectedTask = -1;
 
 	resetSubheadingIndexes();
 	initTutorial(); 
@@ -69,7 +69,7 @@ void TaskWindow::addListItemToRow(TaskEntry* entry, int row, const QString& type
 	}
 
 	QListWidgetItem *listItem = new QListWidgetItem();
-	listItem->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
+	listItem->setSizeHint(entry->size());
 	ui.taskList->insertItem(row, listItem);
 	ui.taskList->setItemWidget(listItem, entry);
 }
@@ -77,7 +77,7 @@ void TaskWindow::addListItemToRow(TaskEntry* entry, int row, const QString& type
 // Adds a new QListWidgetItem
 void TaskWindow::addListItem(TaskEntry* entry) {
 	QListWidgetItem *listItem = new QListWidgetItem();
-	listItem->setSizeHint(QSize(TASK_ENTRY_WIDTH, TASK_ENTRY_HEIGHT));
+	listItem->setSizeHint(entry->size());
 	ui.taskList->addItem(listItem);
 	ui.taskList->setItemWidget(listItem, entry);
 }

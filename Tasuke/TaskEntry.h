@@ -13,7 +13,6 @@ class TaskEntry : public QWidget {
 public:
 	TaskEntry(const Task& t, QWidget *parent = 0);
 	~TaskEntry();
-	void strikeOut();
 	void highlightOngoing();
 	void highlightOverdue();
 	Ui::TaskEntry ui;
@@ -26,21 +25,31 @@ private slots:
 	
 
 private:
-	static const int MAX_WIDTH_FOR_DESCRIPTION = 336;
-	static const int MAX_WIDTH_FOR_TAGS = 160;
+	static const int FONT_SIZE_DIFF = 4;
+
+	enum TaskEntryLabel
+	{
+		ID,
+		DESCRIPTION,
+		START_DATE,
+		START_TIME,
+		END_DATE,
+		END_TIME,
+		TAG,
+		TASKENTRYLABEL_LAST_ITEM
+	};
 
 	// fields
 	const Task& task;
-
-	// font metrics
-	QFont font;
-	QFontMetrics fm;
+	QLabel* labels[TaskEntryLabel::TASKENTRYLABEL_LAST_ITEM];
 
 	// functions
+	void initLabelsArray();
+	void initFonts();
 	void setTooltip(const QString& des, const QDateTime& start, const QDateTime& end, const QList<QString>& tags);
 	void setDescription(const QString& description);
 	void setDateTimes(const QDateTime& start, const QDateTime& end);
-	QString createTagString(const QList<QString>& tags);
+	QString createTagString(const QList<QString>& tags) const;
 	void setTags(const QList<QString>& tags);
 	void makeWidget();
 };

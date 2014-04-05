@@ -407,9 +407,9 @@ border-radius: 9px;</string>
       <property name="geometry">
        <rect>
         <x>12</x>
-        <y>86</y>
+        <y>77</y>
         <width>797</width>
-        <height>327</height>
+        <height>336</height>
        </rect>
       </property>
       <property name="focusPolicy">
@@ -429,6 +429,9 @@ border-radius: 9px;</string>
       </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::NoSelection</enum>
+      </property>
+      <property name="spacing">
+       <number>3</number>
       </property>
      </widget>
      <widget class="QLabel" name="taskScope">

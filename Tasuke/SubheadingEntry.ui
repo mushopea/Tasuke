@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>780</width>
-    <height>40</height>
+    <height>29</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
      <x>0</x>
      <y>0</y>
      <width>780</width>
-     <height>40</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
@@ -40,7 +40,10 @@
     <string>subheading</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignCenter</set>
+    <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+   </property>
+   <property name="margin">
+    <number>0</number>
    </property>
   </widget>
  </widget>

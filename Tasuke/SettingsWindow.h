@@ -22,6 +22,7 @@ signals:
 	void themeChanged();
 	void iconsChanged();
 	void hotkeyChanged();
+	void fontChanged();
 
 public slots:
 	void changeTabs();
@@ -38,7 +39,7 @@ private slots:
 private:
 	Ui::SettingsWindow ui;	
 	QRadioButton * iconSelectButtons[IconSet::ICONSET_LAST_ITEM];
-	void linkIconsArray();
+	void initIconsArray();
 	void loadCurrSettings();
 };
 

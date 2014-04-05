@@ -11,7 +11,7 @@ SettingsWindow::SettingsWindow(QWidget* parent) : QWidget(parent) {
 	connect(ui.OK, SIGNAL(pressed()), this, SLOT(handleOKButton()));
 	connect(ui.apply, SIGNAL(pressed()), this, SLOT(handleApplyButton()));
 
-	linkIconsArray();
+	initIconsArray();
 }
 
 SettingsWindow::~SettingsWindow() {
@@ -55,13 +55,22 @@ void SettingsWindow::changeTabs() {
 void SettingsWindow::handleApplyButton() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 
+	// font change
+	QString oldFont = settings.value("Font", "Print Clearly").toString();
+	QString fontSelected = ui.fontSelect->currentFont().family();
+	if (fontSelected.compare(oldFont) != 0) {
+		settings.setValue("Font", fontSelected);
+		emit fontChanged();
+	}
+
+
 	// tooltip icons
-	IconSet old = (IconSet)settings.value("Icon", IconSet::NYANSUKE).toInt();
+	IconSet oldIcons = (IconSet)settings.value("Icon", IconSet::NYANSUKE).toInt();
 	for (int i = 0; i < 6; ++i) {
 		LOG(INFO) << "Radio button " << i << " " << iconSelectButtons[i]->text().toStdString() << " selected: " << iconSelectButtons[i]->isChecked() << std::flush;
 		if (iconSelectButtons[i]->isChecked()) {
 			settings.setValue("Icon", (IconSet)i);
-			if (old != i) {
+			if (oldIcons != i) {
 				emit iconsChanged();
 			}
 			break;
@@ -90,7 +99,7 @@ bool SettingsWindow::eventFilter(QObject* object, QEvent* event) {
 	return QObject::eventFilter(object, event);
 }
 
-void SettingsWindow::linkIconsArray() {
+void SettingsWindow::initIconsArray() {
 	iconSelectButtons[IconSet::MEME] = ui.optionMeme;
 	iconSelectButtons[IconSet::NICCAGE] = ui.optionNicCage;
 	iconSelectButtons[IconSet::NYANSUKE] = ui.optionNyansuke;

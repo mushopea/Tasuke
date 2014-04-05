@@ -65,8 +65,7 @@ private:
 	// ATTRIBUTES
 	//=========================================
 	static const int TASKS_PER_PAGE = 5;
-	static const int TASK_ENTRY_WIDTH = 780;
-	static const int TASK_ENTRY_HEIGHT = 65;
+
 
 	enum SubheadingType {
 		OVERDUE,

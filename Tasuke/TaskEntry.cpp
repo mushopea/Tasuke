@@ -1,13 +1,16 @@
+#include <QSettings>
 #include "Tasuke.h"
 #include "TaskEntry.h"
 #include "Constants.h"
 
 
-TaskEntry::TaskEntry(const Task& t, QWidget* parent) : QWidget(parent), font("Print Clearly", 20), fm(font), task(t)  {
-
+TaskEntry::TaskEntry(const Task& t, QWidget* parent) : QWidget(parent), task(t)  {
 	// Initialize field elements
 	ui.setupUi(this);
 	makeWidget();
+
+	initLabelsArray();
+	initFonts();
 
 	setAttribute(Qt::WA_TranslucentBackground);
 	setStyleSheet("background:transparent;");
@@ -18,44 +21,6 @@ TaskEntry::~TaskEntry() {
 
 }
 
-// Strikes out the entry as done
-void TaskEntry::strikeOut() {	     
-	QFont font;
-	font.setFamily(QStringLiteral("Print Clearly"));
-	font.setPointSize(20);
-	font.setStrikeOut(true);
-	ui.description->setFont(font);
-
-	QFont font1;
-	font1.setFamily(QStringLiteral("Print Clearly"));
-	font1.setPointSize(20);
-	font1.setStrikeOut(true);
-	ui.tag->setFont(font1);
-
-	QFont font2;
-	font2.setFamily(QStringLiteral("Print Clearly"));
-	font2.setPointSize(12);
-	font2.setStrikeOut(true);
-	ui.startDate->setFont(font2);
-
-	QFont font3;
-	font3.setFamily(QStringLiteral("Print Clearly"));
-	font3.setPointSize(12);
-	font3.setStrikeOut(true);
-	ui.endDate->setFont(font3);
-
-	QFont font4;
-	font4.setFamily(QStringLiteral("Print Clearly"));
-	font4.setPointSize(12);
-	font4.setStrikeOut(true);
-	ui.startTime->setFont(font4);
-
-	QFont font5;
-	font5.setFamily(QStringLiteral("Print Clearly"));
-	font5.setPointSize(12);
-	font5.setStrikeOut(true);
-	ui.endTime->setFont(font5);
-}
 
 void TaskEntry::highlightOngoing() {
 	ui.ongoingLabel->show();	
@@ -79,6 +44,34 @@ void TaskEntry::highlightOverdue() {
 	ui.ID->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
 }
 
+void TaskEntry::initLabelsArray() {
+	labels[TaskEntryLabel::DESCRIPTION] = ui.description;
+	labels[TaskEntryLabel::END_DATE] = ui.endDate;
+	labels[TaskEntryLabel::END_TIME] = ui.endTime;
+	labels[TaskEntryLabel::ID] = ui.ID;
+	labels[TaskEntryLabel::START_DATE] = ui.startDate;
+	labels[TaskEntryLabel::START_TIME] = ui.startTime;
+	labels[TaskEntryLabel::TAG] = ui.tag;
+}
+
+void TaskEntry::initFonts() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	QString fontFamily = settings.value("Font", "Print Clearly").toString();
+
+	for (int i = 0; i < TaskEntryLabel::TASKENTRYLABEL_LAST_ITEM; ++i) {
+		QFont font = labels[i]->font();
+		font.setFamily(fontFamily);
+		if (font.family().compare("Print Clearly") != 0) {
+			if ((i == TaskEntryLabel::DESCRIPTION) || (i == TaskEntryLabel::ID) || (i == TaskEntryLabel::TAG)) {
+				font.setPointSize(font.pointSize() - FONT_SIZE_DIFF);
+			}
+		}
+		labels[i]->setFont(font);
+	}
+
+	//fm = QFontMetrics(ui.description->font(), ui.description);
+}
+
 void TaskEntry::setTooltip(const QString& des, const QDateTime& start, const QDateTime& end, const QList<QString>& tags) {
 
 	// description
@@ -87,23 +80,13 @@ void TaskEntry::setTooltip(const QString& des, const QDateTime& start, const QDa
 
 	// start datetime
 	if (!start.isNull()) {
-		QString strStartDate = start.toString("dd MMMM yyyy (dddd)");
-		QString strStartTime = start.toString("h:mm ap");
-		tooltipText.append("\n\nStart: \n");
-		tooltipText.append(strStartDate);
-		tooltipText.append("\n");
-		tooltipText.append(strStartTime);
+		tooltipText.append("\n\nStart: \n" + start.toString("dd MMMM yyyy (dddd)\nh:mm ap"));
 	}
 
 	// end datetime
 	if (!end.isNull()) {
-		QString strEndDate = end.toString("dd MMMM yyyy (dddd)");
-		QString strEndTime = end.toString("h:mm ap");
-		tooltipText.append("\n\nEnd: \n");
-		tooltipText.append(strEndDate);
-		tooltipText.append("\n");
-		tooltipText.append(strEndTime);
-		
+		tooltipText.append("\n\nEnd: \n" + end.toString("dd MMMM yyyy (dddd)\nh:mm ap"));
+
 		// due in
 		int days = QDateTime::currentDateTime().daysTo(end);
 		tooltipText.append("\n\nDue in: ");
@@ -126,11 +109,7 @@ void TaskEntry::setDescription(const QString& des) {
 	// First, we have to make sure the text fits.
 	// If not, we will append with ellipses ("...")
 
-	if (fm.width(des) < TaskEntry::MAX_WIDTH_FOR_DESCRIPTION){ // The description fits into the column nicely.
-		ui.description->setText(des);
-	} else { // The description is too long.
-		ui.description->setText(fm.elidedText(des, Qt::ElideRight, MAX_WIDTH_FOR_DESCRIPTION));
-	}
+	ui.description->setText(ui.description->fontMetrics().elidedText(des, Qt::ElideRight, ui.description->contentsRect().width()));
 }
 
 void TaskEntry::setDateTimes(const QDateTime& start, const QDateTime& end) {
@@ -150,13 +129,13 @@ void TaskEntry::setDateTimes(const QDateTime& start, const QDateTime& end) {
 	}
 }
 
-QString TaskEntry::createTagString(const QList<QString>& tags) {
+QString TaskEntry::createTagString(const QList<QString>& tags) const {
 	QString strTags = tags[0];
 	strTags.prepend("#");
 
 	if (tags.size() > 1) {
 		for (int i = 1; i < tags.size(); i++) { // Iterate through the list to create a string of tags
-			strTags.append(QString(", #"));
+			strTags.append(", #");
 			strTags.append(tags[i]);
 		}
 	}
@@ -167,17 +146,12 @@ QString TaskEntry::createTagString(const QList<QString>& tags) {
 void TaskEntry::setTags(const QList<QString>& tags) {
 	QString strTags = createTagString(tags);
 
-	if (fm.width(strTags) < TaskEntry::MAX_WIDTH_FOR_TAGS) { // The tag string fits into the column nicely.
-		ui.tag->setText(strTags);
-	} else { // The tag string is too long.
-		ui.tag->setToolTip(strTags);
-		ui.tag->setText(fm.elidedText(strTags, Qt::ElideRight, MAX_WIDTH_FOR_TAGS));
-	}
+	ui.tag->setText(ui.tag->fontMetrics().elidedText(strTags, Qt::ElideRight, ui.tag->width()));
 }
 
 // This function sets the respective fields in the TaskEntry widget
 void TaskEntry::makeWidget() {
-	ui.ID->setText(QString::number(task.getId()+1));
+	ui.ID->setText(QString::number(task.getId() + 1));
 
 	setDescription(task.getDescription());
 
