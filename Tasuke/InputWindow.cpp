@@ -162,9 +162,9 @@ void InputWindow::handleLineEditChanged() {
 	}
 
 	if (commandType == "add") {
-		if (currText.contains("from")) { // period tasks
+		if (currText.contains(QRegExp("\\bfrom\\b"))) { // period tasks
 			tooltipWidget->setText("add <my task> from <start> to <end> #tag", NORMAL);
-		} else if (currText.contains("by") || currText.contains("at") || currText.contains("on")) { // deadline tasks
+		} else if (currText.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
 			tooltipWidget->setText("add <my task> by/on/at <end> #tag", NORMAL);
 		} else { // simple tasks
 			tooltipWidget->setText("add <my task> #tag", NORMAL);

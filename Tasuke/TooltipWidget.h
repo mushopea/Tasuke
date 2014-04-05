@@ -22,6 +22,7 @@ public:
 
 public slots:
 	void showAndAlign();
+	void initIcons();
 
 private:
 	Ui::TooltipWidget ui;
@@ -34,7 +35,8 @@ private:
 
 	void fitWidthToTextLength(QString text);
 	void initAnimation();
-	void initIcons();
+	void setIconOnLabel(InputStatus status);
+	bool connectedToSettings; 
 };
 
 #endif //TOOLTIPWIDGET_H
