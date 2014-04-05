@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <thread>
 #include <glog/logging.h>
 #include <QMessageBox>
 #include <QFontDatabase>
@@ -26,6 +27,12 @@ Tasuke::Tasuke() {
 	settingsWindow = nullptr;
 	systemTrayWidget = nullptr;
 	hotKeyManager = nullptr;
+
+	std::thread dateFormatGeneratorThread([]() {
+		Interpreter::initFormats();
+	});
+
+	dateFormatGeneratorThread.detach();
 
 	if (guiMode) {
 		initialize();

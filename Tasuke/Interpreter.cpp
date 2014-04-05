@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QString>
 #include <QStringList>
+#include <QMutexLocker>
 #include "Tasuke.h"
 #include "Commands.h"
 #include "Constants.h"
@@ -10,10 +11,16 @@
 #include "Interpreter.h"
 
 bool Interpreter::formatsAlreadyInit = false;
+
 QStringList Interpreter::timeFormats;
 QStringList Interpreter::dateFormatsWithoutYear;
 QStringList Interpreter::dateFormats;
 QStringList Interpreter::dateTimeFormats;
+
+QStringList Interpreter::timeFormatsAp;
+QStringList Interpreter::dateTimeFormatsAp;
+
+QMutex Interpreter::mutex;
 
 
 QString Interpreter::substitute(QString text) {
@@ -439,6 +446,37 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 
 	QDateTime retVal;
 
+	if (dateString.contains("am") || dateString.contains("pm") || dateString.contains("AM") || dateString.contains("PM")) {
+		// if the datetime contains am/pm means we can cut our search space
+
+		// these formats are complete
+		foreach(QString dateTimeFormat, dateTimeFormatsAp) {
+			retVal = QDateTime::fromString(dateString, dateTimeFormat);
+			if (retVal.isValid()) {
+				QDate date = retVal.date();
+				if (date.year() < 2000) {
+					// add a century
+					date = date.addYears(100);
+					retVal.setDate(date);
+				}
+				return retVal;
+			}
+		}
+
+		// these formats need the date added
+		foreach(QString timeFormat, timeFormatsAp) {
+			timePart = QTime::fromString(dateString, timeFormat);
+			if (timePart.isValid()) {
+				retVal.setDate(currentDate);
+				retVal.setTime(timePart);
+				return retVal;
+			}
+		}
+
+		// the other formats do not include am/pm so probably invalid
+		return retVal;
+	}
+
 	// these formats are complete
 	foreach(QString dateTimeFormat, dateTimeFormats) {
 		retVal = QDateTime::fromString(dateString, dateTimeFormat);
@@ -475,6 +513,7 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
 			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+			retVal.setTime(timePart);
 			return retVal;
 		}
 	}
@@ -493,6 +532,8 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 }
 
 void Interpreter::initFormats() {
+	QMutexLocker locker(&mutex);
+
 	if (formatsAlreadyInit) {
 		return;
 	}
@@ -530,16 +571,14 @@ void Interpreter::generateTimeFormats() {
 		}
 	}
 	timeFormats << toAdd;
-	toAdd.clear();
 	foreach(QString timeFormat, timeFormats) {
 		foreach(QString amPmFormat, amPmFormats) {
 			foreach(QString optionalSpace, optionalSpaces) {
-				toAdd << (timeFormat + optionalSpace + amPmFormat);
+				timeFormatsAp << (timeFormat + optionalSpace + amPmFormat);
 			}
 		}
 	}
-	timeFormats << toAdd;
-
+	
 	// special constructions
 	// military time:
 	timeFormats << "hhmm'hrs'";;
@@ -620,10 +659,15 @@ void Interpreter::generateDateTimeFormats() {
 	spaceOrCommas << " " << ", ";
 
 	foreach(QString dateFormat, dateFormats) {
-		foreach(QString timeFormat, timeFormats) {
-			foreach(QString spaceOrComma, spaceOrCommas) {
+		foreach(QString spaceOrComma, spaceOrCommas) {
+			foreach(QString timeFormat, timeFormats) {
 				dateTimeFormats << (dateFormat + spaceOrComma + timeFormat);
 				dateTimeFormats << (timeFormat + spaceOrComma + dateFormat);
+			}
+
+			foreach(QString timeFormatAp, timeFormatsAp) {
+				dateTimeFormatsAp << (dateFormat + spaceOrComma + timeFormatAp);
+				dateTimeFormatsAp << (timeFormatAp + spaceOrComma + dateFormat);
 			}
 		}
 	}

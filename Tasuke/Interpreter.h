@@ -1,9 +1,7 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
-#include <memory>
-#include <string>
-
+#include <QMutex>
 #include "Commands.h"
 
 // This class is a factory class. It creates an instance of an ICommand from
@@ -20,7 +18,12 @@ private:
 	static QStringList dateFormatsWithoutYear;
 	static QStringList dateFormats;
 	static QStringList dateTimeFormats;
+
+	static QStringList timeFormatsAp;
+	static QStringList dateTimeFormatsAp;
+
 	static bool formatsAlreadyInit;
+	static QMutex mutex;
 	
 	static QString substitute(QString text);
 	static QString substituteForTimePeriod(QString text);
@@ -29,7 +32,6 @@ private:
 	static int parseId(QString idString);
 	static TIME_PERIOD parseTimePeriod(QString timePeriod);
 	static QDateTime parseDate(QString dateString, bool isEnd = true);
-	static void initFormats();
 	static void generateTimeFormats();
 	static void generateDateFormatsWithoutYear();
 	static void generateDateFormats();
@@ -54,6 +56,7 @@ private:
 public:	
 	static QString getType(QString commandString);
 	static ICommand* interpret(QString commandString);
+	static void initFormats();
 };
 
 #endif
