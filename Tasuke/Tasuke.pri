@@ -15,7 +15,8 @@ HEADERS += ./Interpreter.h \
     ./SlidingStackedWidget.h \
     ./TaskEntry.h \
     ./Tasuke.h \
-    ./Storage.h
+    ./Storage.h \
+    ./TooltipWidget.h
 SOURCES += ./AboutWindow.cpp \
     ./HotKeyManager.cpp \
     ./InputHighlighter.cpp \
@@ -33,13 +34,15 @@ SOURCES += ./AboutWindow.cpp \
     ./TaskWindow.cpp \
     ./Tasuke.cpp \
     ./Storage.cpp \
-    ./TutorialWidget.cpp
+    ./TutorialWidget.cpp \
+    ./TooltipWidget.cpp
 FORMS += ./TaskWindow.ui \
     ./InputWindow.ui \
     ./AboutWindow.ui \
     ./TaskEntry.ui \
     ./TutorialWidget.ui \
-    ./SettingsWindow.ui
+    ./SettingsWindow.ui \
+    ./TooltipWidget.ui
 RESOURCES += ./Resources.qrc
 
 macx {
