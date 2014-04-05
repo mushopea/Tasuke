@@ -6,6 +6,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include "ui_SettingsWindow.h"
+#include "Constants.h"
 
 
 class SettingsWindow : public QWidget {
@@ -16,6 +17,12 @@ public:
 	~SettingsWindow();
 	void showAndCenter();
 
+signals:
+	void featuresChanged();
+	void themeChanged();
+	void iconsChanged();
+	void hotkeyChanged();
+
 public slots:
 	void changeTabs();
 	void handleApplyButton();
@@ -23,13 +30,16 @@ public slots:
 
 protected:
 	bool eventFilter(QObject* object, QEvent* event);
+	virtual void showEvent(QShowEvent *event) override;
 
 private slots:
 
 
 private:
-	Ui::SettingsWindow ui;
-
+	Ui::SettingsWindow ui;	
+	QRadioButton * iconSelectButtons[IconSet::ICONSET_LAST_ITEM];
+	void linkIconsArray();
+	void loadCurrSettings();
 };
 
 #endif // SETTINGSWINDOW_H

@@ -1002,7 +1002,7 @@ background: transparent;</string>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <item>
-          <widget class="QRadioButton" name="radioButton">
+          <widget class="QRadioButton" name="optionNyansuke">
            <property name="font">
             <font>
              <family>Quicksand Book</family>
@@ -1018,7 +1018,7 @@ background: transparent;</string>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButton_3">
+          <widget class="QRadioButton" name="optionSymbols">
            <property name="font">
             <font>
              <family>Quicksand Book</family>
@@ -1034,7 +1034,7 @@ background: transparent;</string>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButton_4">
+          <widget class="QRadioButton" name="optionSymbols2">
            <property name="font">
             <font>
              <family>Quicksand Book</family>
@@ -1051,7 +1051,7 @@ background: transparent;</string>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_10">
          <item>
-          <widget class="QRadioButton" name="radioButton_5">
+          <widget class="QRadioButton" name="optionShibe">
            <property name="font">
             <font>
              <family>Quicksand Book</family>
@@ -1059,12 +1059,12 @@ background: transparent;</string>
             </font>
            </property>
            <property name="text">
-            <string>Doge</string>
+            <string>Shibe</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButton_7">
+          <widget class="QRadioButton" name="optionNicCage">
            <property name="font">
             <font>
              <family>Quicksand Book</family>
@@ -1077,7 +1077,7 @@ background: transparent;</string>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButton_6">
+          <widget class="QRadioButton" name="optionMeme">
            <property name="font">
             <font>
              <family>Quicksand Book</family>

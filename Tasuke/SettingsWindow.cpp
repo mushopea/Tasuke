@@ -7,11 +7,20 @@ SettingsWindow::SettingsWindow(QWidget* parent) : QWidget(parent) {
 
 	ui.setupUi(this);
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+
+	connect(ui.OK, SIGNAL(pressed()), this, SLOT(handleOKButton()));
+	connect(ui.apply, SIGNAL(pressed()), this, SLOT(handleApplyButton()));
+
+	linkIconsArray();
 }
 
 SettingsWindow::~SettingsWindow() {
 	LOG(INFO) << "SettingsWindow instance destroyed";
+}
+
+void SettingsWindow::showEvent(QShowEvent *event) {
+	QWidget::showEvent(event);
+	loadCurrSettings();
 }
 
 void SettingsWindow::showAndCenter() {
@@ -26,6 +35,7 @@ void SettingsWindow::showAndCenter() {
 	ui.tabWidget->setCurrentIndex(0);
 
 }
+
 // Switches tabs to the next tab
 void SettingsWindow::changeTabs() {
 
@@ -41,17 +51,29 @@ void SettingsWindow::changeTabs() {
 	ui.tabWidget->setCurrentIndex(nextTab);
 }
 
+
 void SettingsWindow::handleApplyButton() {
-	//QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	//settings.setValue("Description", tasks[i]->getDescription());
-	//settings.value("Description").toString()
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+
+	// tooltip icons
+	IconSet old = (IconSet)settings.value("Icon", IconSet::NYANSUKE).toInt();
+	for (int i = 0; i < 6; ++i) {
+		LOG(INFO) << "Radio button " << i << " " << iconSelectButtons[i]->text().toStdString() << " selected: " << iconSelectButtons[i]->isChecked() << std::flush;
+		if (iconSelectButtons[i]->isChecked()) {
+			settings.setValue("Icon", (IconSet)i);
+			if (old != i) {
+				emit iconsChanged();
+			}
+			break;
+		}
+	}
+
 }
 
 void SettingsWindow::handleOKButton() {
 	handleApplyButton();
-	hide();
+	close();
 }
-
 
 bool SettingsWindow::eventFilter(QObject* object, QEvent* event) {
 
@@ -66,4 +88,20 @@ bool SettingsWindow::eventFilter(QObject* object, QEvent* event) {
 		}
 	}
 	return QObject::eventFilter(object, event);
+}
+
+void SettingsWindow::linkIconsArray() {
+	iconSelectButtons[IconSet::MEME] = ui.optionMeme;
+	iconSelectButtons[IconSet::NICCAGE] = ui.optionNicCage;
+	iconSelectButtons[IconSet::NYANSUKE] = ui.optionNyansuke;
+	iconSelectButtons[IconSet::SHIBE] = ui.optionShibe;
+	iconSelectButtons[IconSet::SYMBOLS] = ui.optionSymbols;
+	iconSelectButtons[IconSet::SYMBOLS2] = ui.optionSymbols2;
+}
+
+void SettingsWindow::loadCurrSettings() {
+	// icons
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	IconSet currIconSet = (IconSet)settings.value("Icon", IconSet::NYANSUKE).toInt();
+	iconSelectButtons[currIconSet]->setChecked(true);
 }
