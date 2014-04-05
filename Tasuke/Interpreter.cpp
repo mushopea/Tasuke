@@ -331,6 +331,10 @@ void Interpreter::doShow(QString commandString) {
 			return task.isDueTomorrow();
 		});
 		Tasuke::instance().updateTaskWindow(results, "due tomorrow");
+	} else  if (commandString == "" || commandString == "all" || commandString == "everything") {
+		Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	} else {
+		throw ExceptionBadCommand();
 	}
 
 	Tasuke::instance().showTaskWindow();
