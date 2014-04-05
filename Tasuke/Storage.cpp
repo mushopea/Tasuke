@@ -13,7 +13,7 @@
 #include "Tasuke.h"
 
 IStorage::IStorage() {
-	
+
 }
 
 IStorage::~IStorage() {
@@ -29,7 +29,7 @@ Task IStorage::addTask(Task& task) {
 
 	tasks.push_back(taskPtr);
 	renumber();
-	
+
 	return *taskPtr;
 }
 
@@ -42,7 +42,7 @@ Task IStorage::editTask(int id, Task& task) {
 
 	tasks.replace(id, taskPtr);
 	renumber();
-	
+
 	return *taskPtr;
 }
 
@@ -93,8 +93,6 @@ QList<Task> IStorage::search(std::function<bool(Task)> predicate) {
 		}
 	}
 
-	int size = results.size();
-
 	return results;
 }
 
@@ -107,8 +105,7 @@ QList<Task> IStorage::searchByDescription(QString keyword, Qt::CaseSensitivity c
 	QList<Task> results;
 
 	for (int i=0; i<tasks.size(); i++) {
-		QStringRef description(&tasks[i]->getDescription());
-		if (description.contains(keyword, caseSensitivity)) {
+		if (tasks[i]->getDescription().contains(keyword, caseSensitivity)) {
 			results.push_back(*tasks[i]);
 		}
 	}
@@ -139,7 +136,7 @@ QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensi
 	return results;
 }
 
-// Searches all tasks for those that ends by (end date is no later than) 
+// Searches all tasks for those that ends by (end date is no later than)
 // specified date-time.
 QList<Task> IStorage::searchByEndDate(QDateTime byThisDate) {
 	QMutexLocker lock(&mutex);
@@ -155,7 +152,7 @@ QList<Task> IStorage::searchByEndDate(QDateTime byThisDate) {
 	return results;
 }
 
-// Searches all tasks for those that begins from (start date is no earlier than) 
+// Searches all tasks for those that begins from (start date is no earlier than)
 // specified date-time.
 QList<Task> IStorage::searchByBeginDate(QDateTime fromThisDate) {
 	QMutexLocker lock(&mutex);
@@ -253,7 +250,7 @@ void IStorage::renumber() {
 	// internally within groups sort by date then alphabetically
 	sortByDescription();
 	sortByEndDate();
-	
+
 	// ongoing is always below overdue
 	sortByOngoing();
 
@@ -266,7 +263,7 @@ void IStorage::renumber() {
 	// done is alwayas at the bottom
 	sortByDone();
 
-	
+
 	for (int i=0; i<tasks.size(); i++) {
 		tasks[i]->setId(i);
 	}
@@ -292,11 +289,11 @@ Storage::Storage() {
 	LOG(INFO) << "Storage instance created...";
 
 	QDir dir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
-	
+
 	path = dir.absoluteFilePath("tasks.ini");
 
 	qRegisterMetaType<Task>("Task");
-	qRegisterMetaTypeStreamOperators<Task>("Task");	
+	qRegisterMetaTypeStreamOperators<Task>("Task");
 }
 
 Storage::Storage(QString _path) {
@@ -305,7 +302,7 @@ Storage::Storage(QString _path) {
 	path = _path;
 
 	qRegisterMetaType<Task>("Task");
-	qRegisterMetaTypeStreamOperators<Task>("Task");	
+	qRegisterMetaTypeStreamOperators<Task>("Task");
 }
 
 // This function loads the contents of the text file and serialize it into
@@ -329,7 +326,7 @@ void Storage::loadFile() {
 		if (endTime != 0) {
 			task->setEnd(QDateTime::fromTime_t(settings.value("EndTimeUnix").toInt()));
 		}
-		
+
 		task->setDone(settings.value("Done").toBool());
 
 		int tagCount = settings.beginReadArray("Tags");
