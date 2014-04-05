@@ -1,6 +1,7 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
+#include <functional>
 #include <QString>
 #include <QList>
 #include <QJsonObject>
@@ -25,7 +26,7 @@ public:
 	QList<Task> getTasks() const;
 	int totalTasks();
 
-	template<typename F> QList<Task> searchByBeginDate(F& predicate);
+	QList<Task> IStorage::search(std::function<bool(Task)> predicate);;
 	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 	QList<Task> searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 	QList<Task> searchByEndDate(QDateTime byThisDate);

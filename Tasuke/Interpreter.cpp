@@ -302,7 +302,30 @@ void Interpreter::doShow(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString == "done") {
-
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDone();
+		});
+		Tasuke::instance().updateTaskWindow(results, "done");
+	} else if (commandString == "undone") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDone();
+		});
+		Tasuke::instance().updateTaskWindow(results, "undone");
+	} else if (commandString == "ongoing") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isOngoing();
+		});
+		Tasuke::instance().updateTaskWindow(results, "ongoing");
+	} else if (commandString == "overdue") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isOverdue();
+		});
+		Tasuke::instance().updateTaskWindow(results, "overdue");
+	} else if (commandString == "today") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDueToday();
+		});
+		Tasuke::instance().updateTaskWindow(results, "due today");
 	}
 
 	Tasuke::instance().showTaskWindow();

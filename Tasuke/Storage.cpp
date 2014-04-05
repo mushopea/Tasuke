@@ -81,16 +81,18 @@ int IStorage::totalTasks() {
 	return tasks.size();
 }
 
-template<typename F> QList<Task> IStorage::searchByBeginDate(F& predicate) {
+QList<Task> IStorage::search(std::function<bool(Task)> predicate) {
 	QMutexLocker lock(&mutex);
 	LOG(INFO) << "Searching for tasks";
 	QList<Task> results;
 
 	foreach(QSharedPointer<Task> task, tasks) {
-		if (predicate(task)) {
+		if (predicate(*task)) {
 			results.push_back(*task);
 		}
 	}
+
+	int size = results.size();
 
 	return results;
 }

@@ -123,7 +123,7 @@ bool Task::isFloating() const {
 // Returns TRUE if end date/time for this task is earlier
 // than current date/time.
 bool Task::isOverdue() const {
-	if (!end.isValid()) {
+	if (end.isNull() || !end.isValid()) {
 		return false;
 	}
 	if (end < QDateTime::currentDateTime()) {

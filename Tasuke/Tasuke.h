@@ -38,7 +38,7 @@ public:
 	void showSettingsWindow();
 	void showTutorial();
 	void showMessage(QString message);
-	void updateTaskWindow(QList<Task> tasks);
+	void updateTaskWindow(QList<Task> tasks, QString title = "");
 	void highlightTask(int id);
 	bool spellCheck(QString word);
 
