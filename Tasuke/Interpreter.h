@@ -17,10 +17,12 @@ private:
 	static QStringList timeFormats;
 	static QStringList dateFormatsWithoutYear;
 	static QStringList dateFormats;
+	static QStringList dateTimeFormatsWithoutYear;
 	static QStringList dateTimeFormats;
 
 	static QStringList timeFormatsAp;
 	static QStringList dateTimeFormatsAp;
+	static QStringList dateTimeFormatsWithoutYearAp;
 
 	static bool formatsAlreadyInit;
 	static QMutex mutex;
@@ -35,6 +37,7 @@ private:
 	static void generateTimeFormats();
 	static void generateDateFormatsWithoutYear();
 	static void generateDateFormats();
+	static void generateDateTimeFormatsWithoutYear();
 	static void generateDateTimeFormats();
 
 	static AddCommand* createAddCommand(QString commandString);

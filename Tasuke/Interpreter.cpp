@@ -16,9 +16,11 @@ QStringList Interpreter::timeFormats;
 QStringList Interpreter::dateFormatsWithoutYear;
 QStringList Interpreter::dateFormats;
 QStringList Interpreter::dateTimeFormats;
+QStringList Interpreter::dateTimeFormatsWithoutYear;
 
 QStringList Interpreter::timeFormatsAp;
 QStringList Interpreter::dateTimeFormatsAp;
+QStringList Interpreter::dateTimeFormatsWithoutYearAp;
 
 QMutex Interpreter::mutex;
 
@@ -459,6 +461,16 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 			}
 		}
 
+		// these formats need the year added
+		foreach(QString dateTimeFormat, dateTimeFormatsWithoutYearAp) {
+			retVal = QDateTime::fromString(dateString, dateTimeFormat);
+			if (retVal.isValid()) {
+				QDate date = retVal.date();
+				retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+				return retVal;
+			}
+		}
+
 		// these formats are complete
 		foreach(QString dateTimeFormat, dateTimeFormatsAp) {
 			retVal = QDateTime::fromString(dateString, dateTimeFormat);
@@ -487,13 +499,23 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		}
 	}
 
-	// these formats need the current year added
+	// these formats need the current year and time added
 	foreach(QString dateFormat, dateFormatsWithoutYear) {
 		retVal = QDateTime::fromString(dateString, dateFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
 			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
 			retVal.setTime(timePart);
+			return retVal;
+		}
+	}
+	
+	// these formats need the year added
+	foreach(QString dateTimeFormat, dateTimeFormatsWithoutYear) {
+		retVal = QDateTime::fromString(dateString, dateTimeFormat);
+		if (retVal.isValid()) {
+			QDate date = retVal.date();
+			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
 			return retVal;
 		}
 	}
@@ -540,6 +562,7 @@ void Interpreter::initFormats() {
 	generateTimeFormats();
 	generateDateFormatsWithoutYear();
 	generateDateFormats();
+	generateDateTimeFormatsWithoutYear();
 	generateDateTimeFormats();
 
 	formatsAlreadyInit = true;
@@ -651,6 +674,28 @@ void Interpreter::generateDateFormats() {
 		}
 	}
 }
+
+void Interpreter::generateDateTimeFormatsWithoutYear() {
+	assert(formatsAlreadyInit == false);
+
+	QStringList spaceOrCommas;
+	spaceOrCommas << " " << ", ";
+
+	foreach(QString dateFormatWithoutYear, dateFormatsWithoutYear) {
+		foreach(QString spaceOrComma, spaceOrCommas) {
+			foreach(QString timeFormat, timeFormats) {
+				dateTimeFormatsWithoutYear << (dateFormatWithoutYear + spaceOrComma + timeFormat);
+				dateTimeFormatsWithoutYear << (timeFormat + spaceOrComma + dateFormatWithoutYear);
+			}
+
+			foreach(QString timeFormatAp, timeFormatsAp) {
+				dateTimeFormatsWithoutYearAp << (dateFormatWithoutYear + spaceOrComma + timeFormatAp);
+				dateTimeFormatsWithoutYearAp << (timeFormatAp + spaceOrComma + dateFormatWithoutYear);
+			}
+		}
+	}
+}
+
 void Interpreter::generateDateTimeFormats() {
 	assert(formatsAlreadyInit == false);
 
