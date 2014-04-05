@@ -39,7 +39,7 @@ public:
 	void showTutorial();
 	void showMessage(QString message);
 	void updateTaskWindow(QList<Task> tasks);
-	void highightTask(int id);
+	void highlightTask(int id);
 	bool spellCheck(QString word);
 
 	void runCommand(QString commandString);

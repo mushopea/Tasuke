@@ -274,7 +274,7 @@ void Tasuke::updateTaskWindow(QList<Task> tasks) {
 	taskWindow->showTasks(tasks);
 }
 
-void Tasuke::highightTask(int id) {
+void Tasuke::highlightTask(int id) {
 	if (!guiMode) {
 		return;
 	}
