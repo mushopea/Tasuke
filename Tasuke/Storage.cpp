@@ -27,27 +27,35 @@ Task IStorage::addTask(Task& task) {
 	LOG(INFO) << "Adding task " << task.getDescription().toStdString();
 
 	tasks.push_back(taskPtr);
-	saveFile();
-	QString description = task.getDescription();
-
-	Tasuke::instance().updateTaskWindow(getTasks());
-	//Tasuke::instance().highightTask(id);
-
+	renumber();
+	
 	return *taskPtr;
 }
 
-Task& IStorage::getTask(int pos) {
+Task IStorage::editTask(int id, Task& task) {
 	QMutexLocker lock(&mutex);
-	return *tasks[pos];
+
+	QSharedPointer<Task> taskPtr = QSharedPointer<Task>(new Task(task));
+
+	LOG(INFO) << "Replacing task " << task.getDescription().toStdString();
+
+	tasks.replace(id, taskPtr);
+	renumber();
+	
+	return *taskPtr;
 }
 
-void IStorage::removeTask(int pos) {
+Task IStorage::getTask(int id) {
 	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Removing task at position " << pos;
+	return *tasks[id];
+}
 
-	tasks.removeAt(pos);
-	saveFile();
-	Tasuke::instance().updateTaskWindow(getTasks());
+void IStorage::removeTask(int id) {
+	QMutexLocker lock(&mutex);
+	LOG(INFO) << "Removing task at position " << id;
+
+	tasks.removeAt(id);
+	renumber();
 }
 
 void IStorage::popTask() {
@@ -55,8 +63,7 @@ void IStorage::popTask() {
 	LOG(INFO) << "Popping task from back";
 
 	tasks.pop_back();
-	saveFile();
-	Tasuke::instance().updateTaskWindow(getTasks());
+	renumber();
 }
 
 // Read-only
@@ -170,9 +177,6 @@ QList<Task> IStorage::searchByDateTimeInterval(QDateTime fromThisDate, QDateTime
 void IStorage::sortByEndDate() {
 	LOG(INFO) << "Sorting by end date.";
 	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
-		if (!t1->getEnd().isValid()) {
-			return true;
-		}
 		return t1->getEnd() < t2->getEnd();
 	});
 }
@@ -192,14 +196,14 @@ void IStorage::sortByDescription() {
 }
 
 void IStorage::sortByOngoing() {
-	LOG(INFO) << "Sorting by done status.";
+	LOG(INFO) << "Sorting by ongoing status.";
 	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
 		return t1->isOngoing() > t2->isOngoing();
 	});
 }
 
 void IStorage::sortByOverdue() {
-	LOG(INFO) << "Sorting by done status.";
+	LOG(INFO) << "Sorting by overdue status.";
 	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
 		return t1->isOverdue() > t2->isOverdue();
 	});
@@ -212,13 +216,37 @@ void IStorage::sortByDone() {
 	});
 }
 
+void IStorage::sortByHasEndDate() {
+	LOG(INFO) << "Sorting by presence of end date.";
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+		if (t1->getEnd().isValid() == t2->getEnd().isValid()) {
+			return false;
+		}
+
+		if (t1->getEnd().isValid()) {
+			return true;
+		}
+
+		return false;
+	});
+}
+
 // Renumbers the ID of all tasks in memory naively.
 void IStorage::renumber() {
-
+	// internally within groups sort by date then alphabetically
 	sortByDescription();
-	sortByDone();
-	sortByOngoing();
 	sortByEndDate();
+
+	// no end date is always above done
+	sortByHasEndDate();
+
+	// done is alwayas at the bottom
+	sortByDone();
+
+	// ongoing is always below overdue
+	sortByOngoing();
+
+	// overdue is always at the top
 	sortByOverdue();
 	
 	for (int i=0; i<tasks.size(); i++) {
@@ -233,11 +261,13 @@ void IStorage::clearAllDone() {
 			tasks.removeOne(task);
 		}
 	}
+	renumber();
 }
 
 void IStorage::clearAllTasks() {
 	LOG(INFO) << "Clearing all tasks with great justice.";
 	tasks.clear();
+	renumber();
 }
 
 // Constructor for Storage.
@@ -265,36 +295,34 @@ Storage::Storage(QString path) {
 void Storage::loadFile() {
 	LOG(INFO) << "Loading file...";
 
-	renumber();
-
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 
 	int size = settings.beginReadArray("Tasks");
 	for (int i=0; i<size; i++) {
 		settings.setArrayIndex(i);
-		Task task;
+		Task* task = new Task();
 
-		task.setDescription(settings.value("Description").toString());
+		task->setDescription(settings.value("Description").toString());
 		uint beginTime = settings.value("BeginTimeUnix", 0).toUInt();
 		if (beginTime != 0) {
-			task.setBegin(QDateTime::fromTime_t(settings.value("BeginTimeUnix").toInt()));
+			task->setBegin(QDateTime::fromTime_t(settings.value("BeginTimeUnix").toInt()));
 		}
 		uint endTime = settings.value("EndTimeUnix", 0).toUInt();
 		if (endTime != 0) {
-			task.setEnd(QDateTime::fromTime_t(settings.value("EndTimeUnix").toInt()));
+			task->setEnd(QDateTime::fromTime_t(settings.value("EndTimeUnix").toInt()));
 		}
 		
-		task.setDone(settings.value("Done").toBool());
+		task->setDone(settings.value("Done").toBool());
 
 		int tagCount = settings.beginReadArray("Tags");
 		for (int j=0; j<tagCount; j++) {
 			settings.setArrayIndex(j);
 			QString tag = settings.value("Tag").toString();
-			task.addTag(tag);
+			task->addTag(tag);
 		}
 		settings.endArray();
 
-		tasks.push_back(task);
+		tasks.push_back(QSharedPointer<Task>(task));
 	}
 	settings.endArray();
 
@@ -306,34 +334,32 @@ void Storage::loadFile() {
 void Storage::saveFile() {
 	LOG(INFO) << "Saving file...";
 
-	renumber();
-
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 
 	settings.clear();
 	settings.beginWriteArray("Tasks");
 	for (int i=0; i<tasks.size(); i++) {
 		settings.setArrayIndex(i);
-		settings.setValue("Description", tasks[i].getDescription());
-		settings.setValue("BeginTime", tasks[i].getBegin().toString());
-		settings.setValue("EndTime", tasks[i].getEnd().toString());
+		settings.setValue("Description", tasks[i]->getDescription());
+		settings.setValue("BeginTime", tasks[i]->getBegin().toString());
+		settings.setValue("EndTime", tasks[i]->getEnd().toString());
 
-		if (tasks[i].getBegin().isNull() || !tasks[i].getBegin().isValid()) {
+		if (tasks[i]->getBegin().isNull() || !tasks[i]->getBegin().isValid()) {
 			settings.setValue("BeginTimeUnix", "");
 		} else {
-			settings.setValue("BeginTimeUnix", tasks[i].getBegin().toTime_t());
+			settings.setValue("BeginTimeUnix", tasks[i]->getBegin().toTime_t());
 		}
 
-		if (tasks[i].getEnd().isNull() || !tasks[i].getEnd().isValid()) {
+		if (tasks[i]->getEnd().isNull() || !tasks[i]->getEnd().isValid()) {
 			settings.setValue("EndTimeUnix", "");
 		} else {
-			settings.setValue("EndTimeUnix", tasks[i].getEnd().toTime_t());
+			settings.setValue("EndTimeUnix", tasks[i]->getEnd().toTime_t());
 		}
 
-		settings.setValue("Done", tasks[i].isDone());
+		settings.setValue("Done", tasks[i]->isDone());
 
 		settings.beginWriteArray("Tags");
-		QList<QString> tags = tasks[i].getTags();
+		QList<QString> tags = tasks[i]->getTags();
 		for (int j=0; j<tags.size(); j++) {
 			settings.setArrayIndex(j);
 			settings.setValue("Tag", tags[j]);

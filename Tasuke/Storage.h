@@ -18,8 +18,9 @@ public:
 	virtual ~IStorage();
 
 	Task addTask(Task& task);
-	Task& getTask(int pos);
-	void removeTask(int pos);
+	Task editTask(int id, Task& task);
+	Task getTask(int id);
+	void removeTask(int id);
 	void popTask();
 	QList<Task> getTasks() const;
 	int totalTasks();
@@ -36,6 +37,7 @@ public:
 	void sortByOngoing();
 	void sortByDone();
 	void sortByOverdue();
+	void sortByHasEndDate();
 
 	void renumber();
 

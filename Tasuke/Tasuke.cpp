@@ -310,6 +310,8 @@ void Tasuke::runCommand(QString commandString) {
 		LOG(INFO) << "Pushing command to history stack";
 		commandUndoHistory.push_back(command);
 		commandRedoHistory.clear();
+
+		storage->saveFile();
 	} catch (ExceptionBadCommand& exception) {
 		LOG(INFO) << "Error parsing command";
 		
