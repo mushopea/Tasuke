@@ -449,6 +449,16 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 	if (dateString.contains("am") || dateString.contains("pm") || dateString.contains("AM") || dateString.contains("PM")) {
 		// if the datetime contains am/pm means we can cut our search space
 
+		// these formats need the date added
+		foreach(QString timeFormat, timeFormatsAp) {
+			timePart = QTime::fromString(dateString, timeFormat);
+			if (timePart.isValid()) {
+				retVal.setDate(currentDate);
+				retVal.setTime(timePart);
+				return retVal;
+			}
+		}
+
 		// these formats are complete
 		foreach(QString dateTimeFormat, dateTimeFormatsAp) {
 			retVal = QDateTime::fromString(dateString, dateTimeFormat);
@@ -463,30 +473,27 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 			}
 		}
 
-		// these formats need the date added
-		foreach(QString timeFormat, timeFormatsAp) {
-			timePart = QTime::fromString(dateString, timeFormat);
-			if (timePart.isValid()) {
-				retVal.setDate(currentDate);
-				retVal.setTime(timePart);
-				return retVal;
-			}
-		}
-
 		// the other formats do not include am/pm so probably invalid
 		return retVal;
 	}
 
-	// these formats are complete
-	foreach(QString dateTimeFormat, dateTimeFormats) {
-		retVal = QDateTime::fromString(dateString, dateTimeFormat);
+	// these formats need the date added
+	foreach(QString timeFormat, timeFormats) {
+		timePart = QTime::fromString(dateString, timeFormat);
+		if (timePart.isValid()) {
+			retVal.setDate(currentDate);
+			retVal.setTime(timePart);
+			return retVal;
+		}
+	}
+
+	// these formats need the current year added
+	foreach(QString dateFormat, dateFormatsWithoutYear) {
+		retVal = QDateTime::fromString(dateString, dateFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			if (date.year() < 2000) {
-				// add a century
-				date = date.addYears(100);
-				retVal.setDate(date);
-			}
+			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+			retVal.setTime(timePart);
 			return retVal;
 		}
 	}
@@ -506,24 +513,16 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		}
 	}
 
-
-	// these formats need the current year added
-	foreach(QString dateFormat, dateFormatsWithoutYear) {
-		retVal = QDateTime::fromString(dateString, dateFormat);
+	// these formats are complete
+	foreach(QString dateTimeFormat, dateTimeFormats) {
+		retVal = QDateTime::fromString(dateString, dateTimeFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
-			retVal.setTime(timePart);
-			return retVal;
-		}
-	}
-
-	// these formats need the date added
-	foreach(QString timeFormat, timeFormats) {
-		timePart = QTime::fromString(dateString, timeFormat);
-		if (timePart.isValid()) {
-			retVal.setDate(currentDate);
-			retVal.setTime(timePart);
+			if (date.year() < 2000) {
+				// add a century
+				date = date.addYears(100);
+				retVal.setDate(date);
+			}
 			return retVal;
 		}
 	}
