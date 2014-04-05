@@ -22,7 +22,6 @@ QString Interpreter::substitute(QString text) {
 	subbedText = subbedText.replace(" at ", " @ ");
 	subbedText = subbedText.replace(" from ", " @ ");
 	subbedText = subbedText.replace(" on ", " @ ");
-	subbedText = subbedText.replace(" to ", " - ");
 
 	subbedText = subbedText.replace(" \\by ", " by ");
 	subbedText = subbedText.replace(" \\at ", " at ");
@@ -32,6 +31,15 @@ QString Interpreter::substitute(QString text) {
 
 	return subbedText;
 }
+
+QString Interpreter::substituteForTimePeriod(QString text) {
+	QString subbedText = text;
+	subbedText = subbedText.replace(" to ", " - ");
+	subbedText = subbedText.replace(" \\to ", " to ");
+
+	return subbedText;
+}
+
 
 QHash<QString, QString> Interpreter::decompose(QString text) {
 	QStringList tokens = text.split(" ");
@@ -331,34 +339,36 @@ int Interpreter::parseId(QString idString) {
 	return id;
 }
 
-Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriod) {
-	QStringList timePeriodParts = timePeriod.split("-");
-	TIME_PERIOD retVal;
+Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) {
+	timePeriodString = substitute(timePeriodString);
+
+	QStringList timePeriodParts = timePeriodString.split("-");
+	TIME_PERIOD timePeriod;
 
 	if (timePeriodParts.size() > 2) {
 		throw ExceptionBadCommand();
 	}
 
 	if (timePeriodParts.size() == 1) {
-		retVal.end = parseDate(timePeriod);
+		timePeriod.end = parseDate(timePeriodString);
 	} else if (timePeriodParts.size() == 2) {
-		retVal.begin = parseDate(timePeriodParts[0], false);
-		retVal.end = parseDate(timePeriodParts[1]);
+		timePeriod.begin = parseDate(timePeriodParts[0], false);
+		timePeriod.end = parseDate(timePeriodParts[1]);
 
-		if (!retVal.begin.isValid()) {
+		if (!timePeriod.begin.isValid()) {
 			throw ExceptionBadCommand();
 		}
 	}
 
-	if (!retVal.end.isValid()) {
+	if (!timePeriod.end.isValid()) {
 		throw ExceptionBadCommand();
 	}
 
-	if (retVal.begin.isValid() && retVal.end < retVal.begin) {
+	if (timePeriod.begin.isValid() && timePeriod.end < timePeriod.begin) {
 		throw ExceptionBadCommand();
 	}
 
-	return retVal;
+	return timePeriod;
 }
 
 QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {

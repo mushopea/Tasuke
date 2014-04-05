@@ -23,6 +23,7 @@ private:
 	static bool formatsAlreadyInit;
 	
 	static QString substitute(QString text);
+	static QString substituteForTimePeriod(QString text);
 	static QHash<QString, QString> decompose(QString text);
 	static QString removeBefore(QString text, QString before);
 	static int parseId(QString idString);
