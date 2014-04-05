@@ -10,11 +10,9 @@
 #include <QtWidgets/QMainWindow>
 #include <QMouseEvent>
 #include <QListView>
-#include <QBitmap>
 #include <QKeySequence>
 #include <QPoint>
 #include <QPropertyAnimation>
-#include <QGraphicsOpacityEffect>
 #include <assert.h>
 #include "Task.h"
 #include "ui_TaskWindow.h"
@@ -91,14 +89,14 @@ private:
 	void decideContent();
 	void showBackButtonIfSearching(QString title);
 	void setOpacity(qreal value);
-	qreal getOpacity();
+	qreal getOpacity() const;
 
 	
 	// Handles task entry creation and addition to list
 	bool isInRange(int index);
 	void changeTitle(QString title);
 	TaskEntry* createEntry(Task t, int index);
-	void addListItemToRow(TaskEntry* entry, int row, int pixmapID);
+	void addListItemToRow(TaskEntry* entry, int row, QString type);
 	void addListItem(TaskEntry* entry);
 	void displayTask(Task t, int index, int showDone);
 };

@@ -7,8 +7,7 @@
 #include <QDateTime>
 #include "Task.h"
 
-class TaskEntry : public QWidget
-{
+class TaskEntry : public QWidget {
 	Q_OBJECT
 
 public:
@@ -39,6 +38,7 @@ private:
 	QFontMetrics fm;
 
 	// functions
+	void setTooltip(QString des, QDateTime start, QDateTime end, QList<QString> tags);
 	void setDescription(QString description);
 	void setDateTimes(QDateTime start, QDateTime end);
 	QString createTagString(QList<QString> tags);

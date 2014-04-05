@@ -89,6 +89,14 @@ QScrollBar::handle:vertical {
         height: 0px;
     }
 
+QToolTip {
+     border: none;
+	font: 9pt &quot;Consolas&quot;;
+     border-radius: 2px;
+     padding: 2px;
+	color:white;
+	background-color: rgb(128, 128, 128);
+ }
 </string>
   </property>
   <widget class="QWidget" name="taskWin">
@@ -348,11 +356,12 @@ QScrollBar::handle:vertical {
       <height>447</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">border-radius: 11px;
+background-color: rgb(74, 74, 74);</string>
+    </property>
     <property name="text">
      <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="Resources.qrc">:/Images/images/theme1/taskWindowBorder.png</pixmap>
     </property>
     <property name="scaledContents">
      <bool>false</bool>
@@ -368,13 +377,11 @@ QScrollBar::handle:vertical {
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background: transparent;</string>
+     <string notr="true">background: white;
+border-radius: 9px;</string>
     </property>
     <property name="text">
      <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="Resources.qrc">:/Images/images/theme1/taskWindowBg.png</pixmap>
     </property>
    </widget>
    <widget class="SlidingStackedWidget" name="stackedWidget">

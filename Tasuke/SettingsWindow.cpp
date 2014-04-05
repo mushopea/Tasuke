@@ -52,10 +52,13 @@ void SettingsWindow::changeTabs() {
 }
 
 bool SettingsWindow::eventFilter(QObject* object, QEvent* event) {
+
 	if (event->type() == QEvent::KeyPress) {
+
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
 
-		if (eventKey->key() == Qt::Key_Tab){
+		if (eventKey->key() == Qt::Key_Tab) {
+			LOG(INFO) << "Settings Key_Tab pressed";
 			changeTabs();
 			return true;
 		}

@@ -1,5 +1,7 @@
 #include "Tasuke.h"
 #include "TaskEntry.h"
+#include "Constants.h"
+
 
 TaskEntry::TaskEntry(int id, Task t, QWidget* parent) : QWidget(parent), font("Print Clearly", 20), fm(font)  {
 
@@ -60,12 +62,64 @@ void TaskEntry::strikeOut() {
 
 void TaskEntry::highlightOngoing() {
 	ui.ongoingLabel->show();	
-	setStyleSheet("background:transparent; color: rgb(44, 99, 0);");
+	ui.description->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
+	ui.startDate->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
+	ui.endDate->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
+	ui.startTime->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
+	ui.endTime->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
+	ui.tag->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
 }
 
 void TaskEntry::highlightOverdue() {
 	ui.overdueLabel->show();	
-	setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
+	ui.description->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
+	ui.startDate->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
+	ui.endDate->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
+	ui.startTime->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
+	ui.endTime->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
+	ui.tag->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
+}
+
+void TaskEntry::setTooltip(QString des, QDateTime start, QDateTime end, QList<QString> tags) {
+
+	// description
+	QString tooltipText(des);
+	tooltipText.prepend("Task description: ");
+
+	// start datetime
+	if (!start.isNull()) {
+		QString strStartDate = start.toString("dd MMMM yyyy (dddd)");
+		QString strStartTime = start.toString("h:mm ap");
+		tooltipText.append("\n\nStart: \n");
+		tooltipText.append(strStartDate);
+		tooltipText.append("\n");
+		tooltipText.append(strStartTime);
+	}
+
+	// end datetime
+	if (!end.isNull()) {
+		QString strEndDate = end.toString("dd MMMM yyyy (dddd)");
+		QString strEndTime = end.toString("h:mm ap");
+		tooltipText.append("\n\nEnd: \n");
+		tooltipText.append(strEndDate);
+		tooltipText.append("\n");
+		tooltipText.append(strEndTime);
+		
+		// due in
+		int days = QDateTime::currentDateTime().daysTo(end);
+		tooltipText.append("\n\nDue in: ");
+		tooltipText.append(QString::number(days));
+		tooltipText.append(" days");
+		// to do: get countdown/get days ago
+	}
+
+	// tags
+	if (!tags.isEmpty()) {
+		tooltipText.append("\n\nTagged with: ");
+		tooltipText.append(createTagString(tags));
+	}
+
+	this->setToolTip(tooltipText);
 }
 
 void TaskEntry::setDescription(QString des) {
@@ -76,7 +130,6 @@ void TaskEntry::setDescription(QString des) {
 	if (fm.width(des) < TaskEntry::MAX_WIDTH_FOR_DESCRIPTION){ // The description fits into the column nicely.
 		ui.description->setText(des);
 	} else { // The description is too long.
-		ui.description->setToolTip(des);
 		ui.description->setText(fm.elidedText(des, Qt::ElideRight, MAX_WIDTH_FOR_DESCRIPTION));
 	}
 }
@@ -136,6 +189,8 @@ void TaskEntry::makeWidget() {
 	if (!task.getTags().isEmpty()) {
 		setTags(task.getTags());
 	}
+
+	setTooltip(task.getDescription(), task.getBegin(), task.getEnd(), task.getTags());
 
 	ui.overdueLabel->hide();
 	ui.ongoingLabel->hide();

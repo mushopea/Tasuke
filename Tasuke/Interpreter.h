@@ -15,14 +15,24 @@ private:
 		QDateTime begin;
 		QDateTime end;
 	} TIME_PERIOD;
+
+	static QStringList timeFormats;
+	static QStringList dateFormatsWithoutYear;
+	static QStringList dateFormats;
+	static QStringList dateTimeFormats;
+	static bool formatsAlreadyInit;
 	
 	static QString substitute(QString text);
 	static QHash<QString, QString> decompose(QString text);
 	static QString removeBefore(QString text, QString before);
-	static QString getType(QString commandString);
 	static int parseId(QString idString);
 	static TIME_PERIOD parseTimePeriod(QString timePeriod);
-	static QDateTime parseDate(QString dateString);
+	static QDateTime parseDate(QString dateString, bool isEnd = true);
+	static void initFormats();
+	static void generateTimeFormats();
+	static void generateDateFormatsWithoutYear();
+	static void generateDateFormats();
+	static void generateDateTimeFormats();
 
 	static AddCommand* createAddCommand(QString commandString);
 	static RemoveCommand* createRemoveCommand(QString commandString);
@@ -40,7 +50,8 @@ private:
 	static void doSettings();
 	static void doExit();
 
-public:
+public:	
+	static QString getType(QString commandString);
 	static ICommand* interpret(QString commandString);
 };
 

@@ -9,6 +9,13 @@
 #include "Exceptions.h"
 #include "Interpreter.h"
 
+bool Interpreter::formatsAlreadyInit = false;
+QStringList Interpreter::timeFormats;
+QStringList Interpreter::dateFormatsWithoutYear;
+QStringList Interpreter::dateFormats;
+QStringList Interpreter::dateTimeFormats;
+
+
 QString Interpreter::substitute(QString text) {
 	QString subbedText = text;
 	subbedText = subbedText.replace(" by ", " @ ");
@@ -335,123 +342,240 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriod) {
 	if (timePeriodParts.size() == 1) {
 		retVal.end = parseDate(timePeriod);
 	} else if (timePeriodParts.size() == 2) {
-		retVal.begin = parseDate(timePeriodParts[0]);
+		retVal.begin = parseDate(timePeriodParts[0], false);
 		retVal.end = parseDate(timePeriodParts[1]);
+
+		if (!retVal.begin.isValid()) {
+			throw ExceptionBadCommand();
+		}
+	}
+
+	if (!retVal.end.isValid()) {
+		throw ExceptionBadCommand();
+	}
+
+	if (retVal.begin.isValid() && retVal.end < retVal.begin) {
+		throw ExceptionBadCommand();
 	}
 
 	return retVal;
 }
 
-QDateTime Interpreter::parseDate(QString dateString) {
+QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 	dateString = dateString.trimmed();
 
+	QDate currentDate = QDate::currentDate();
+	QTime timePart = QTime(23,59);
+	if (!isEnd) {
+		QTime timePart = QTime(0,0);
+	}
+
 	if (dateString == "today") {
-		return QDateTime(QDate::currentDate(), QTime(23,59));
+		return QDateTime(currentDate, timePart);
 	} else if (dateString == "2day") {
-		return QDateTime(QDate::currentDate(),  QTime(23,59));
+		return QDateTime(currentDate, timePart);
 	} else if (dateString == "now") {
 		return QDateTime::currentDateTime();
 	} else if (dateString == "tomorrow") {
-		return QDateTime(QDate::currentDate(), QTime(23,59)).addDays(1);
+		return QDateTime(currentDate, timePart).addDays(1);
 	} else if (dateString == "tmr") {
-		return QDateTime(QDate::currentDate(),  QTime(23,59)).addDays(1);
+		return QDateTime(currentDate, timePart).addDays(1);
 	} else if (dateString == "day after tomorrow") {
-		return QDateTime(QDate::currentDate(),  QTime(23,59)).addDays(2);
+		return QDateTime(currentDate, timePart).addDays(2);
+	}
+
+	if (!formatsAlreadyInit) {
+		initFormats();
 	}
 
 	QDateTime retVal;
-	QStringList fullDateFormats;
-	QStringList dateOnlyFormats;
-	QStringList timeOnlyFormats;
 
-	fullDateFormats << "d/M/yy h.mm ap";
-	fullDateFormats << "d/M/yy h.mm";
-	fullDateFormats << "dd/MM/yy h.mm ap";
-	fullDateFormats << "dd/MM/yy h.mm";
-	fullDateFormats << "dd/MM/yy hh.mm ap";
-	fullDateFormats << "dd/MM/yy hh.mm";
-	fullDateFormats << "d/M h.mm ap";
-	fullDateFormats << "d/M h.mm";
-	fullDateFormats << "dd/MM h.mm ap";
-	fullDateFormats << "dd/MM h.mm";
-	fullDateFormats << "dd/MM hh.mm ap";
-	fullDateFormats << "dd/MM hh.mm";
-	fullDateFormats << "d MMM yy h.mm ap";
-	fullDateFormats << "d MMM yy h.mm";
-	fullDateFormats << "dd MMM yy h.mm ap";
-	fullDateFormats << "dd MMM yy h.mm";
-	fullDateFormats << "dd MMM yy hh.mm ap";
-	fullDateFormats << "dd MMM yy hh.mm";
-	fullDateFormats << "d MMM h.mm ap";
-	fullDateFormats << "d MMM h.mm";
-	fullDateFormats << "dd MMM h.mm ap";
-	fullDateFormats << "dd MMM h.mm";
-	fullDateFormats << "dd MMM hh.mm ap";
-	fullDateFormats << "dd MMM hh.mm";
-	fullDateFormats << "MMM d h.mm ap";
-	fullDateFormats << "MMM d h.mm";
-	fullDateFormats << "MMM dd h.mm ap";
-	fullDateFormats << "MMM dd h.mm";
-	fullDateFormats << "MMM dd hh.mm ap";
-	fullDateFormats << "MMM dd hh.mm";
-
-	dateOnlyFormats << "d/MM/yy";
-	dateOnlyFormats << "dd/MM/yy";
-	dateOnlyFormats << "dd MMM yy";
-	dateOnlyFormats << "d MMM yy";
-	dateOnlyFormats << "d MMM";
-	dateOnlyFormats << "MMM d";
-	dateOnlyFormats << "MMM dd";
-	
-	timeOnlyFormats << "h.mmap";
-	timeOnlyFormats << "h.mm ap";
-	timeOnlyFormats << "h.mm";
-	timeOnlyFormats << "hh.mmap";
-	timeOnlyFormats << "hh.mm";
-	timeOnlyFormats << "hap";
-	timeOnlyFormats << "h ap";
-	timeOnlyFormats << "h";
-	timeOnlyFormats << "hh ap";
-	timeOnlyFormats << "hh";
-	
-
-
-	for (int i=0; i<fullDateFormats.size(); i++) {
-		retVal = QDateTime::fromString(dateString, fullDateFormats[i]);
+	// these formats are complete
+	foreach(QString dateTimeFormat, dateTimeFormats) {
+		retVal = QDateTime::fromString(dateString, dateTimeFormat);
 		if (retVal.isValid()) {
-			// Musho:
-			// Once the date string has been successfully matched with a format string, check
-			// If that format string does not contain a year. If it doesn't, the QDateTime
-			// Object will default to the year 1900, so move the year forward by currentYear - 1900.
-			if (!fullDateFormats[i].contains("yy")) {
-				QString currentYearString = QDate::currentDate().toString("yyyy");
-				retVal = retVal.addYears(currentYearString.toInt() - 1900);
+			QDate date = retVal.date();
+			if (date.year() < 2000) {
+				// add a century
+				date = date.addYears(100);
+				retVal.setDate(date);
 			}
 			return retVal;
 		}
 	}
 
-	for (int i=0; i<dateOnlyFormats.size(); i++) {
-		retVal = QDateTime::fromString(dateString, dateOnlyFormats[i]);
+	// these formats need the time added
+	foreach(QString dateFormat, dateFormats) {
+		retVal = QDateTime::fromString(dateString, dateFormat);
 		if (retVal.isValid()) {
-			if (!dateOnlyFormats[i].contains("yy")) {
-				QString currentYearString = QDate::currentDate().toString("yyyy");
-				retVal = retVal.addYears(currentYearString.toInt() - 1900);
+			QDate date = retVal.date();
+			if (date.year() < 2000) {
+				// add a century
+				date = date.addYears(100);
+				retVal.setDate(date);
 			}
+			retVal.setTime(timePart);
 			return retVal;
 		}
 	}
 
-	QDate currentDate = QDate::currentDate();
-	QTime time;
-	for (int i=0; i<timeOnlyFormats.size(); i++) {
-		time = QTime::fromString(dateString, timeOnlyFormats[i]);
-		if (time.isValid()) {
+
+	// these formats need the current year added
+	foreach(QString dateFormat, dateFormatsWithoutYear) {
+		retVal = QDateTime::fromString(dateString, dateFormat);
+		if (retVal.isValid()) {
+			QDate date = retVal.date();
+			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+			return retVal;
+		}
+	}
+
+	// these formats need the date added
+	foreach(QString timeFormat, timeFormats) {
+		timePart = QTime::fromString(dateString, timeFormat);
+		if (timePart.isValid()) {
 			retVal.setDate(currentDate);
-			retVal.setTime(time);
+			retVal.setTime(timePart);
 			return retVal;
 		}
 	}
 
 	return retVal;
+}
+
+void Interpreter::initFormats() {
+	if (formatsAlreadyInit) {
+		return;
+	}
+
+	generateTimeFormats();
+	generateDateFormatsWithoutYear();
+	generateDateFormats();
+	generateDateTimeFormats();
+
+	formatsAlreadyInit = true;
+}
+
+void Interpreter::generateTimeFormats() {
+	assert(formatsAlreadyInit == false);
+
+	QStringList hourFormats;
+	QStringList minuteFomats;
+	QStringList amPmFormats;
+	QStringList separators;
+	QStringList optionalSpaces;
+	
+	hourFormats << "h" << "hh";
+	minuteFomats << "mm";
+	amPmFormats << "ap" << "AP";
+	separators << " " << ":" << ".";
+	optionalSpaces << " " << "";
+
+	timeFormats << hourFormats;
+	QStringList toAdd;
+	foreach(QString timeFormat, timeFormats) {
+		foreach(QString minuteFormat, minuteFomats) {
+			foreach(QString separator, separators) {
+				toAdd << (timeFormat + separator + minuteFormat);
+			}
+		}
+	}
+	timeFormats << toAdd;
+	toAdd.clear();
+	foreach(QString timeFormat, timeFormats) {
+		foreach(QString amPmFormat, amPmFormats) {
+			foreach(QString optionalSpace, optionalSpaces) {
+				toAdd << (timeFormat + optionalSpace + amPmFormat);
+			}
+		}
+	}
+	timeFormats << toAdd;
+
+	// special constructions
+	// military time:
+	timeFormats << "hhmm'hrs'";;
+}
+void Interpreter::generateDateFormatsWithoutYear() {
+	assert(formatsAlreadyInit == false);
+
+	QStringList dayFormats;
+	QStringList speltMonthFormats;
+	QStringList monthFormats;
+	QStringList dateSeparators;
+	QStringList spaceOrCommas;
+
+	dayFormats << "d" << "dd";
+	speltMonthFormats << "MMM" << "MMMM";
+	monthFormats << "M" << "MM";
+	spaceOrCommas << " " << ", ";
+	dateSeparators << "/" << "-"; 
+
+	foreach(QString dayFormat, dayFormats) {
+		foreach(QString speltMonthFormat, speltMonthFormats) {
+			foreach(QString spaceOrComma, spaceOrCommas) {
+				dateFormatsWithoutYear << (dayFormat + spaceOrComma + speltMonthFormat);
+				// american format:
+				dateFormatsWithoutYear << (speltMonthFormat + spaceOrComma + dayFormat);
+			}
+		}
+	}
+
+	//special constructions
+	foreach(QString dayFormat, dayFormats) {
+		foreach(QString monthFormat, monthFormats) {
+			foreach(QString dateSeparator, dateSeparators) {
+				dateFormatsWithoutYear << (dayFormat + dateSeparator + monthFormat);
+			}
+		}
+	}
+}
+void Interpreter::generateDateFormats() {
+	assert(formatsAlreadyInit == false);
+
+	QStringList dayFormats;
+	QStringList monthFormats;
+	QStringList yearFormats;
+	QStringList spaceOrCommas;
+	QStringList dateSeparators;
+
+	dayFormats << "d" << "dd";
+	monthFormats << "M" << "MM";
+	yearFormats << "yy" << "yyyy";
+	spaceOrCommas << " " << ", ";
+	dateSeparators << "/" << "-"; 
+
+	foreach(QString dateFormatWithoutYear, dateFormatsWithoutYear) {
+		foreach(QString yearFormat, yearFormats) {
+			foreach(QString spaceOrComma, spaceOrCommas) {
+				dateFormats << (dateFormatWithoutYear + spaceOrComma + yearFormat);
+				dateFormats << (yearFormat + spaceOrComma + dateFormatWithoutYear);
+			}
+		}
+	}
+
+	// special construction
+	foreach(QString dayFormat, dayFormats) {
+		foreach(QString monthFormat, monthFormats) {
+			foreach(QString yearFormat, yearFormats) {
+				foreach(QString dateSeparator, dateSeparators) {
+					dateFormats << (dayFormat + dateSeparator + monthFormat + dateSeparator + yearFormat);
+				}
+			}
+		}
+	}
+}
+void Interpreter::generateDateTimeFormats() {
+	assert(formatsAlreadyInit == false);
+
+	QStringList spaceOrCommas;
+	spaceOrCommas << " " << ", ";
+
+	foreach(QString dateFormat, dateFormats) {
+		foreach(QString timeFormat, timeFormats) {
+			foreach(QString spaceOrComma, spaceOrCommas) {
+				dateTimeFormats << (dateFormat + spaceOrComma + timeFormat);
+				dateTimeFormats << (timeFormat + spaceOrComma + dateFormat);
+			}
+		}
+	}
 }

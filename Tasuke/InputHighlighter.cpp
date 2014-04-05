@@ -16,7 +16,7 @@ void InputHighlighter::setRegex(){
 	// \b means start/end boundary
 	
 	commandRegex = QRegExp("(^\\b(((much)|(such)|(wow such)|(wow much)|(so)|(many)) )?"
-							"((\\b(add)|(create)|(a)|"
+							"((\\b(add)|(create)|(a)|(do)|"
 							"(remove)|(delete)|(clear)|(rm)|"
 							"(edit)|(update)|(modify)|(change)|(e)|"
 							"(show)|(display)|(list)|(find)|(search)|(ls)|"

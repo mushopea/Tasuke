@@ -5,8 +5,24 @@
 
 #define MAXIMUM_TAGS 10
 
-// TODO: place global constants here
+// Stacked widget page indexes
 static const int TASKS_PAGE = 0;
 static const int TUTORIAL_PAGE = 1;
+
+enum InputStatus {
+	SUCCESS, 
+	FAILURE,
+	NORMAL
+};
+
+enum Theme {
+	SIMPLE,
+	PINK,
+	BLUESKY,
+	DARK,
+	GALAXY,
+	DOGE
+};
+
 
 #endif

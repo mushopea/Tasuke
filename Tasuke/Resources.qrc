@@ -4,16 +4,10 @@
         <file>images/Traysuke.png</file>
         <file>images/about.png</file>
 		<file>images/oops.png</file>
-        <file>images/theme1/inputWindowBg.png</file>
-        <file>images/theme1/inputWindowBorder.png</file>
-        <file>images/theme1/taskWindowBorder.png</file>
-        <file>images/theme1/taskWindowBg.png</file>
         <file>images/theme1/closeButton.png</file>
         <file>images/theme1/minButton.png</file>
         <file>images/theme1/closeButtonHover.png</file>
         <file>images/theme1/minButtonHover.png</file>
-        <file>images/theme1/entryBg.png</file>
-        <file>images/theme1/entryBgSelect.png</file>
     </qresource>
     <qresource prefix="/Fonts">
         <file>fonts/PrintClearly.otf</file>
