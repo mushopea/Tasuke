@@ -340,7 +340,7 @@ int Interpreter::parseId(QString idString) {
 }
 
 Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) {
-	timePeriodString = substitute(timePeriodString);
+	timePeriodString = substituteForTimePeriod(timePeriodString);
 
 	QStringList timePeriodParts = timePeriodString.split("-");
 	TIME_PERIOD timePeriod;
