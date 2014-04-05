@@ -264,17 +264,17 @@ void Tasuke::showMessage(QString message) {
 	systemTrayWidget->showMessage(message);
 }
 
-void Tasuke::updateTaskWindow(QList<Task> tasks) {
+void Tasuke::updateTaskWindow(QList<Task> tasks, QString title) {
 	if (!guiMode) {
 		return;
 	}
 
 	LOG(INFO) << "Updating task window with " << QString::number(tasks.size()).toStdString() << " tasks";
 
-	taskWindow->showTasks(tasks);
+	taskWindow->showTasks(tasks, title);
 }
 
-void Tasuke::highightTask(int id) {
+void Tasuke::highlightTask(int id) {
 	if (!guiMode) {
 		return;
 	}

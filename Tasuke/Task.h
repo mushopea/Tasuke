@@ -57,6 +57,7 @@ public:
 	bool isOverdue() const;
 	bool isOngoing() const;
 	bool isDueToday() const;
+	bool isDueTomorrow() const;
 	bool isEvent() const;
 	
 	bool operator!=(const Task& other) const;

@@ -32,7 +32,7 @@ AddCommand::~AddCommand() {
 void AddCommand::run() {
 	task = Tasuke::instance().getStorage().addTask(task);
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().getTaskWindow().highlightTask(task.getId());
+	Tasuke::instance().highlightTask(task.getId());
 	Tasuke::instance().showMessage(QString("Added \"%1\"").arg(task.getDescription()));
 }
 void AddCommand::undo() {
@@ -72,13 +72,13 @@ void EditCommand::run() {
 	old = Tasuke::instance().getStorage().getTask(id);
 	task = Tasuke::instance().getStorage().editTask(id, task);
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().getTaskWindow().highlightTask(task.getId());
+	Tasuke::instance().highlightTask(task.getId());
 	Tasuke::instance().showMessage(QString("Edited \"%1\"").arg(task.getDescription()));
 }
 void EditCommand::undo() {
 	Tasuke::instance().getStorage().editTask(task.getId(), old);
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().getTaskWindow().highlightTask(old.getId());
+	Tasuke::instance().highlightTask(old.getId());
 	Tasuke::instance().showMessage(QString("Undone edit \"%1\"").arg(task.getDescription()));
 }
 
@@ -117,7 +117,9 @@ void DoneCommand::run() {
 	id = task.getId();
 	QString doneUndone = done ? "done" : "undone";
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().getTaskWindow().highlightTask(task.getId());
+	if (!done) {
+		Tasuke::instance().highlightTask(task.getId());
+	}
 	Tasuke::instance().showMessage(QString("Marked \"%1\" as %2").arg(task.getDescription(), doneUndone));
 }
 void DoneCommand::undo() {
@@ -127,6 +129,8 @@ void DoneCommand::undo() {
 	id = task.getId();
 	QString doneUndone = done ? "done" : "undone";
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().getTaskWindow().highlightTask(task.getId());
+	if (!done) {
+		Tasuke::instance().highlightTask(task.getId());
+	}
 	Tasuke::instance().showMessage(QString("Undone mark \"%1\" as %2").arg(task.getDescription(), doneUndone));
 }

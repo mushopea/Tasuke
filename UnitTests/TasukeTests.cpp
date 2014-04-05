@@ -72,7 +72,7 @@ namespace UnitTest {
 			Tasuke::instance().runCommand("edit 2 buy milk @ 2pm - 3pm #shopping");
 			Assert::AreEqual(storage->totalTasks(), 3);
 
-			Task task = storage->getTask(1);
+			Task task = storage->getTask(0);
 			Assert::AreEqual(task.getDescription(), QString("buy milk"));
 			Assert::IsTrue(task.getBegin().isValid());
 			Assert::AreEqual(task.getBegin().date(), QDate::currentDate());

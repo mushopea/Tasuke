@@ -81,6 +81,22 @@ int IStorage::totalTasks() {
 	return tasks.size();
 }
 
+QList<Task> IStorage::search(std::function<bool(Task)> predicate) {
+	QMutexLocker lock(&mutex);
+	LOG(INFO) << "Searching for tasks";
+	QList<Task> results;
+
+	foreach(QSharedPointer<Task> task, tasks) {
+		if (predicate(*task)) {
+			results.push_back(*task);
+		}
+	}
+
+	int size = results.size();
+
+	return results;
+}
+
 // Searches all descriptions of all tasks in memory for specified keyword(s).
 // Returns a list of all tasks that contain the keyword in its description.
 // Searches by any part of the description. Case insensitive is the default.
@@ -236,6 +252,12 @@ void IStorage::renumber() {
 	// internally within groups sort by date then alphabetically
 	sortByDescription();
 	sortByEndDate();
+	
+	// ongoing is always below overdue
+	sortByOngoing();
+
+	// overdue is always at the top
+	sortByOverdue();
 
 	// no end date is always above done
 	sortByHasEndDate();
@@ -243,11 +265,6 @@ void IStorage::renumber() {
 	// done is alwayas at the bottom
 	sortByDone();
 
-	// ongoing is always below overdue
-	sortByOngoing();
-
-	// overdue is always at the top
-	sortByOverdue();
 	
 	for (int i=0; i<tasks.size(); i++) {
 		tasks[i]->setId(i);

@@ -123,7 +123,7 @@ bool Task::isFloating() const {
 // Returns TRUE if end date/time for this task is earlier
 // than current date/time.
 bool Task::isOverdue() const {
-	if (!end.isValid()) {
+	if (end.isNull() || !end.isValid()) {
 		return false;
 	}
 	if (end < QDateTime::currentDateTime()) {
@@ -165,6 +165,29 @@ bool Task::isOngoing() const {
 bool Task::isDueToday() const {
 	QDateTime todayStart(QDateTime::currentDateTime().date(), QTime(0, 0, 0));
 	QDateTime todayEnd(QDateTime::currentDateTime().date(), QTime(23, 59, 59));
+
+	if (!getEnd().isValid()) {
+		return false;
+	}
+
+	if (isOverdue()) {
+		if (getEnd() >= todayStart) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	if (getEnd() <= todayEnd) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Task::isDueTomorrow() const {
+	QDateTime todayStart(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 0));
+	QDateTime todayEnd(QDateTime::currentDateTime().date().addDays(1), QTime(23, 59, 59));
 
 	if (!getEnd().isValid()) {
 		return false;

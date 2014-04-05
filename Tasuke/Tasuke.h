@@ -38,8 +38,8 @@ public:
 	void showSettingsWindow();
 	void showTutorial();
 	void showMessage(QString message);
-	void updateTaskWindow(QList<Task> tasks);
-	void highightTask(int id);
+	void updateTaskWindow(QList<Task> tasks, QString title = "");
+	void highlightTask(int id);
 	bool spellCheck(QString word);
 
 	void runCommand(QString commandString);
