@@ -326,6 +326,11 @@ void Interpreter::doShow(QString commandString) {
 			return task.isDueToday();
 		});
 		Tasuke::instance().updateTaskWindow(results, "due today");
+	} else if (commandString == "tomorrow") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDueTomorrow();
+		});
+		Tasuke::instance().updateTaskWindow(results, "due tomorrow");
 	}
 
 	Tasuke::instance().showTaskWindow();

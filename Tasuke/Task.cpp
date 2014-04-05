@@ -185,6 +185,29 @@ bool Task::isDueToday() const {
 	}
 }
 
+bool Task::isDueTomorrow() const {
+	QDateTime todayStart(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 0));
+	QDateTime todayEnd(QDateTime::currentDateTime().date().addDays(1), QTime(23, 59, 59));
+
+	if (!getEnd().isValid()) {
+		return false;
+	}
+
+	if (isOverdue()) {
+		if (getEnd() >= todayStart) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	if (getEnd() <= todayEnd) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 // An event is defined as a task that has a begin and end date/time.
 // This method returns true if a task has both, and false if otherwise.
 bool Task::isEvent() const {
