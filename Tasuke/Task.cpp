@@ -10,6 +10,7 @@ Task::Task() {
 }
 
 Task::Task(QString description) {
+	id = -1;
 	done = false;
 	this->description = description;
 }

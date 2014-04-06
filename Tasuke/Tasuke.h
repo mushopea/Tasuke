@@ -25,11 +25,6 @@ class Tasuke : public QObject {
 	Q_OBJECT
 
 public:
-	typedef struct {
-		QString message;
-		InputStatus status;
-	} TRY_RESULT;
-
 	void setStorage(IStorage* _storage);
 	IStorage& getStorage();
 	InputWindow& getInputWindow();
