@@ -89,7 +89,7 @@ QDateTime Task::getEnd() const {
 // there are 12 identical months in a year, and there are exactly 4 weeks every month,
 // and each month has exactly 30 days.
 QString Task::getTimeDifferenceString() const {
-	long delta = getEnd().toMSecsSinceEpoch() - QDateTime::currentDateTime().toMSecsSinceEpoch();
+	qint64 delta = getEnd().toMSecsSinceEpoch() - QDateTime::currentDateTime().toMSecsSinceEpoch();
 	bool isNegative = delta < 0;
 
 	// If date is in the past, set it to positive.
@@ -124,67 +124,58 @@ QString Task::getTimeDifferenceString() const {
 		if (years == 1) {
 			result.append("1 year");
 		} else { // Plural
-			result.append("%1 years").arg(years);
+			QString yr = QString("%1 years").arg(years);
+			result.append(yr);
 		}
+		result.append(", ");
 	}
 
 	if (months > 0) {
-		// Prepend a comma if there is a year in front.
-		if (years > 0) {
-			result.append(", ");
-		}
 		if (months == 1) {
 			result.append("1 month");
 		} else { // Plural
-			result.append("%1 months").arg(months);
+			QString mth = QString("%1 months").arg(months);
+			result.append(mth);
 		}
+		result.append(", ");
 	}
 
 	if (weeks > 0) {
-		// Prepend a comma if there is a month in front.
-		if (months > 0) {
-			result.append(", ");
-		}
 		if (weeks == 1) {
 			result.append("1 week");
 		} else { // Plural
-			result.append("%1 weeks").arg(weeks);
+			QString wks = QString("%1 weeks").arg(weeks);
+			result.append(wks);
 		}
+		result.append(", ");
 	}
 
 	if (days > 0) {
-		// Prepend a comma if there is a week in front.
-		if (weeks > 0) {
-			result.append(", ");
-		}
 		if (days == 1) {
 			result.append("1 day");
 		} else { //  Plural
-			result.append("%1 days").arg(days);
+			QString dys = QString("%1 days").arg(days);
+			result.append(dys);
 		}
+		result.append(", ");
 	}
 
 	if (hours > 0) {
-		// Prepend a comma if there is a day in front.
-		if (days > 0) {
-			result.append(", ");
-		}
 		if (hours == 1) {
 			result.append("1 hour");
 		} else { // Plural
-			result.append("%1 hours").arg(hours);
+			QString hrs = QString("%1 hours").arg(hours);
+			result.append(hrs);
 		}
+		result.append(", ");
 	}
 
 	if (minutes > 0) {
-		// Prepend a comma if there is an hour in front.
-		if (hours > 0) {
-			result.append(", ");
-		}
 		if (minutes == 1) {
 			result.append("1 minute");
 		} else { // Plural
-			result.append("%1 minutes").arg(minutes);
+			QString min = QString("%1 minutes").arg(minutes);
+			result.append(min);
 		}
 	}
 
