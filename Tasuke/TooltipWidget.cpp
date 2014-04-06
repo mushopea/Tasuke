@@ -2,7 +2,8 @@
 #include "TooltipWidget.h"
 #include <QSettings>
 
-TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas", 11), fm(font), connectedToSettings(false) {
+TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas", 11), fm(font), 
+												animation(this, "pos"), connectedToSettings(false) {
 	LOG(INFO) << "TooltipWidget instance created";
 
 	ui.setupUi(this);
@@ -43,11 +44,11 @@ void TooltipWidget::showAndAlign() {
 	posAfter.setY(Tasuke::instance().getInputWindow().y() + Tasuke::instance().getInputWindow().height());
 	posAfter.setX(Tasuke::instance().getInputWindow().x() + 8);
 
-	animation->setStartValue(posBefore);
-	animation->setEndValue(posAfter);
+	animation.setStartValue(posBefore);
+	animation.setEndValue(posAfter);
 	show();
 
-	animation->start();
+	animation.start();
 }
 
 void TooltipWidget::initIcons() {
@@ -95,11 +96,9 @@ void TooltipWidget::fitWidthToTextLength(QString text) {
 }
 
 void TooltipWidget::initAnimation() {
-	animation = new QPropertyAnimation(this, "pos");	
-	animation->setDuration(500);
-	animation->setEasingCurve(QEasingCurve::OutCubic);
+	animation.setDuration(500);
+	animation.setEasingCurve(QEasingCurve::OutCubic);
 }
-
 
 void TooltipWidget::setIconOnLabel(InputStatus status) {
 	switch (status) {

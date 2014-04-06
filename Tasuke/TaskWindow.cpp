@@ -4,7 +4,8 @@
 #include "SubheadingEntry.h"
 
 
-TaskWindow::TaskWindow(QWidget* parent) : connectedToSettings(false), currentlySelectedTask(-1), onlyShowDone(false), QMainWindow(parent) {
+TaskWindow::TaskWindow(QWidget* parent) : connectedToSettings(false), currentlySelectedTask(-1), onlyShowDone(false),
+										   animation(this, "opacity"), progressBar(this), QMainWindow(parent) {
 	LOG(INFO) << "TaskWindow instance created";
 
 	ui.setupUi(this);
@@ -169,7 +170,7 @@ void TaskWindow::showAndMoveToSide() {
 	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
 
 	move(center);
-	animation->start();
+	animation.start();
 	raise();
 	activateWindow();
 	show();
@@ -292,19 +293,17 @@ void TaskWindow::initTutorial() {
 }
 
 void TaskWindow::initAnimation() {
-	animation = new QPropertyAnimation(this, "opacity"); 
-	animation->setEasingCurve(QEasingCurve::Linear); 
-	animation->setDuration(400); 
-	animation->setStartValue(0.0); 
-	animation->setEndValue(1.0); 
+	animation.setEasingCurve(QEasingCurve::Linear); 
+	animation.setDuration(400); 
+	animation.setStartValue(0.0); 
+	animation.setEndValue(1.0); 
 }
 
 void TaskWindow::initProgressBar() {
-	progressBar = new QProgressBar(this);
-	progressBar->setObjectName(QStringLiteral("progressBar"));
-    progressBar->setGeometry(QRect(260, 230, 331, 23));
-	progressBar->setMinimum(0);
-	progressBar->setMaximum(100);
+	progressBar.setObjectName("progressBar");
+    progressBar.setGeometry(QRect(260, 230, 331, 23));
+	progressBar.setMinimum(0);
+	progressBar.setMaximum(100);
 }
 
 void TaskWindow::setOpacity(qreal value) {
@@ -331,10 +330,10 @@ void TaskWindow::displayTaskList() {
 		for (int i = 0; i < currentTasks.size(); i++) {
 			displayAndUpdateSubheadings(i);
 			displayTask(currentTasks[i]);
-			progressBar->setValue((int)((i+1) * 100 / currentTasks.size()));	
+			progressBar.setValue((int)((i+1) * 100 / currentTasks.size()));	
 		}
 	} else {
-		progressBar->hide();
+		progressBar.hide();
 	}
 	hideProgressBarWhenDone();
 }
@@ -475,11 +474,11 @@ void TaskWindow::changeTitle(const QString& title) {
 
 // Hides progress bar and displays the task list when all tasks are loaded.
 void TaskWindow::hideProgressBarWhenDone() {
-	if (progressBar->value() != progressBar->maximum()) {
+	if (progressBar.value() != progressBar.maximum()) {
 		ui.taskList->hide();
 	} else { 
 		ui.taskList->show();
-		progressBar->hide();
+		progressBar.hide();
 	}
 }
 
