@@ -72,7 +72,8 @@ void TaskEntry::initFonts() {
 	//fm = QFontMetrics(ui.description->font(), ui.description);
 }
 
-void TaskEntry::setTooltip(const QString& des, const QDateTime& start, const QDateTime& end, const QList<QString>& tags) {
+void TaskEntry::setTooltip(const QString& des, const QDateTime& start, const QDateTime& end, 
+						   const QList<QString>& tags, const QString& dueInMessage) {
 
 	// description
 	QString tooltipText(des);
@@ -86,22 +87,16 @@ void TaskEntry::setTooltip(const QString& des, const QDateTime& start, const QDa
 	// end datetime
 	if (!end.isNull()) {
 		tooltipText.append("\n\nEnd: \n" + end.toString("dd MMMM yyyy (dddd)\nh:mm ap"));
+		tooltipText.append("\n\n" + dueInMessage);
 
-		// due in
-		int days = QDateTime::currentDateTime().daysTo(end);
-		tooltipText.append("\n\nDue in: ");
-		tooltipText.append(QString::number(days));
-		tooltipText.append(" days");
-		// to do: get countdown/get days ago
+		// tags
+		if (!tags.isEmpty()) {
+			tooltipText.append("\n\nTagged with: ");
+			tooltipText.append(createTagString(tags));
+		}
+
+		this->setToolTip(tooltipText);
 	}
-
-	// tags
-	if (!tags.isEmpty()) {
-		tooltipText.append("\n\nTagged with: ");
-		tooltipText.append(createTagString(tags));
-	}
-
-	this->setToolTip(tooltipText);
 }
 
 void TaskEntry::setDescription(const QString& des) {
@@ -161,7 +156,7 @@ void TaskEntry::makeWidget() {
 		setTags(task.getTags());
 	}
 
-	setTooltip(task.getDescription(), task.getBegin(), task.getEnd(), task.getTags());
+	setTooltip(task.getDescription(), task.getBegin(), task.getEnd(), task.getTags(), task.getTimeDifferenceString());
 
 	ui.overdueLabel->hide();
 	ui.ongoingLabel->hide();
