@@ -327,7 +327,7 @@ ICommand* Interpreter::createUndoneCommand(QString commandString) {
 	QList<int> ids = parseIdList(commandString);
 	QList< QSharedPointer<ICommand> > commands;
 
-	qSort(ids.begin(), ids.end(), qGreater<int>());
+	qSort(ids.begin(), ids.end());
 
 	foreach(int id, ids) {
 		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new DoneCommand(id-1, false));
