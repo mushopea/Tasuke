@@ -9,13 +9,13 @@
 static const int TASKS_PAGE = 0;
 static const int TUTORIAL_PAGE = 1;
 
-enum InputStatus {
+enum class InputStatus : char {
 	SUCCESS, 
 	FAILURE,
 	NORMAL
 };
 
-enum Theme {
+enum class Theme : char {
 	SIMPLE,
 	PINK,
 	BLUESKY,
@@ -24,7 +24,7 @@ enum Theme {
 	DOGE
 };
 
-enum IconSet {
+enum class IconSet : char {
 	NYANSUKE,
 	SYMBOLS,
 	SYMBOLS2,

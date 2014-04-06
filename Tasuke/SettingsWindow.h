@@ -38,7 +38,7 @@ private slots:
 
 private:
 	Ui::SettingsWindow ui;	
-	QRadioButton * iconSelectButtons[IconSet::ICONSET_LAST_ITEM];
+	QRadioButton * iconSelectButtons[(char)IconSet::ICONSET_LAST_ITEM];
 	void initIconsArray();
 	void loadCurrSettings();
 };

@@ -17,6 +17,12 @@ TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
 	initTutorial(); 
 	initAnimation();
 
+	/*
+	progressBar = new QProgressBar(ui.taskList);
+	progressBar->setObjectName(QStringLiteral("progressBar"));
+    progressBar->setGeometry(QRect(260, 230, 331, 23));
+	*/
+
 	connect(ui.emptyAddTaskButton, SIGNAL(pressed()), this, SLOT(handleEmptyAddTaskButton()));
 	connect(ui.backButton, SIGNAL(released()), this, SLOT(handleBackButton()));
 
@@ -106,7 +112,7 @@ void TaskWindow::displayTask(const Task& t, int showDone) {
 
 int TaskWindow::getTaskEntryRow(int taskRow) const {
 	int result = taskRow;
-	for (int i = 0; i < SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
+	for (int i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
 		if (subheadingRowIndexes[i] != -1 && subheadingRowIndexes[i] <= taskRow) {
 			++result;
 		}
@@ -171,23 +177,23 @@ void TaskWindow::showTasks(const QList<Task>& tasks, const QString& title) {
 
 	for (int i = 0; i < tasks.size(); i++) {
 		if (tasks[i].isOverdue()) {
-			if (subheadingRowIndexes[SubheadingType::OVERDUE] == -1) {
-				subheadingRowIndexes[SubheadingType::OVERDUE] = i;
+			if (subheadingRowIndexes[(char)SubheadingType::OVERDUE] == -1) {
+				subheadingRowIndexes[(char)SubheadingType::OVERDUE] = i;
 				displaySubheading("Overdue tasks");
 			}
 		} else if (tasks[i].isDueToday()) {
-			if (subheadingRowIndexes[SubheadingType::DUE_TODAY] == -1) {
-				subheadingRowIndexes[SubheadingType::DUE_TODAY] = i;
+			if (subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] == -1) {
+				subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] = i;
 				displaySubheading("Today's tasks");
 			}
 		} else if (!tasks[i].getBegin().isNull() || !tasks[i].getEnd().isNull()) {
-			if (subheadingRowIndexes[SubheadingType::TIMED] == -1) {
-				subheadingRowIndexes[SubheadingType::TIMED] = i;
+			if (subheadingRowIndexes[(char)SubheadingType::TIMED] == -1) {
+				subheadingRowIndexes[(char)SubheadingType::TIMED] = i;
 				displaySubheading("Timed tasks");
 			}
 		} else {
-			if (subheadingRowIndexes[SubheadingType::FLOATING] == -1) {
-				subheadingRowIndexes[SubheadingType::FLOATING] = i;
+			if (subheadingRowIndexes[(char)SubheadingType::FLOATING] == -1) {
+				subheadingRowIndexes[(char)SubheadingType::FLOATING] = i;
 				displaySubheading("Untimed tasks");
 			}
 		}
@@ -405,7 +411,7 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 
 
 void TaskWindow::resetSubheadingIndexes(){
-	for (int i = 0; i < SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
+	for (int i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
 		subheadingRowIndexes[i] = -1;
 	}
 }

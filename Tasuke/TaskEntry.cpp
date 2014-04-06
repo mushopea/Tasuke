@@ -45,24 +45,24 @@ void TaskEntry::highlightOverdue() {
 }
 
 void TaskEntry::initLabelsArray() {
-	labels[TaskEntryLabel::DESCRIPTION] = ui.description;
-	labels[TaskEntryLabel::END_DATE] = ui.endDate;
-	labels[TaskEntryLabel::END_TIME] = ui.endTime;
-	labels[TaskEntryLabel::ID] = ui.ID;
-	labels[TaskEntryLabel::START_DATE] = ui.startDate;
-	labels[TaskEntryLabel::START_TIME] = ui.startTime;
-	labels[TaskEntryLabel::TAG] = ui.tag;
+	labels[(char)TaskEntryLabel::DESCRIPTION] = ui.description;
+	labels[(char)TaskEntryLabel::END_DATE] = ui.endDate;
+	labels[(char)TaskEntryLabel::END_TIME] = ui.endTime;
+	labels[(char)TaskEntryLabel::ID] = ui.ID;
+	labels[(char)TaskEntryLabel::START_DATE] = ui.startDate;
+	labels[(char)TaskEntryLabel::START_TIME] = ui.startTime;
+	labels[(char)TaskEntryLabel::TAG] = ui.tag;
 }
 
 void TaskEntry::initFonts() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	QString fontFamily = settings.value("Font", "Print Clearly").toString();
 
-	for (int i = 0; i < TaskEntryLabel::TASKENTRYLABEL_LAST_ITEM; ++i) {
+	for (int i = 0; i < (char)TaskEntryLabel::TASKENTRYLABEL_LAST_ITEM; ++i) {
 		QFont font = labels[i]->font();
 		font.setFamily(fontFamily);
 		if (font.family().compare("Print Clearly") != 0) {
-			if ((i == TaskEntryLabel::DESCRIPTION) || (i == TaskEntryLabel::ID) || (i == TaskEntryLabel::TAG)) {
+			if ((i == (char)TaskEntryLabel::DESCRIPTION) || (i == (char)TaskEntryLabel::ID) || (i == (char)TaskEntryLabel::TAG)) {
 				font.setPointSize(font.pointSize() - FONT_SIZE_DIFF);
 			}
 		}
