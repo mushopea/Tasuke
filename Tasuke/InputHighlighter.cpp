@@ -15,17 +15,21 @@ void InputHighlighter::setRegex(){
 	// + means at least one
 	// \b means start/end boundary
 	
-	commandRegex = QRegExp("(^\\b(((much)|(such)|(wow such)|(wow much)|(so)|(many)) )?"
-							"((\\b(add)|(create)|(a)|(do)|"
-							"(remove)|(delete)|(clear)|(rm)|"
-							"(edit)|(update)|(modify)|(change)|(e)|"
-							"(show)|(display)|(list)|(find)|(search)|(ls)|"
-							"(undo)|(redo)|(r)|(u)|(done)|(undone)|(d)|(nd))\\b)+)");
+	commandRegex = QRegularExpression("(^(((much)|(such)|(wow such)|(wow much)|(so)|(many)) )?"
+									  "((\\b(add)|(create)|(a)|(do)|"
+									  "(remove)|(delete)|(clear)|(rm)|"
+									  "(edit)|(update)|(modify)|(change)|(e)|"
+									  "(show)|(display)|(list)|(find)|(search)|(ls)|"
+									  "(undo)|(redo)|(r)|(u)|(done)|(undone)|(d)|(nd))\\b)+)");
 
-	keywordRegex = QRegExp("(^\\b(((much)|(such)|(wow such)|(wow much)|(so)|(many)) )?"
-							"((\\b(exit)|(quit)|(q)|(options)|(settings)|(help)|(tutorial)|(guide)|(instructions)|(about))\\b)+)");
+	keywordRegex = QRegularExpression("(^\\b((much|such|wow such|wow much|so|many) )?"
+									  "((\\b(exit)|(quit)|(q)|(options)|(settings)|(help)|(tutorial)|(guide)|(instructions)|(about))\\b)+)");
 	
-	connectorRegex = QRegExp("((\\b(to|from|by|at|on)\\b)|( @)|-|#)");
+	//connectorRegex = QRegExp("((\\b(to|from|by|at|on)\\b)|( @)|-|#)");
+	connectorRegex = QRegularExpression("^(?:(?:wow\\s+)?(?:[ms]uch|so|many)\\s+)?" // doge prefixes
+										"(?:add|create|a|do|edit|update|modify|change|e)" // commands with connectors
+										"(?:\\s+\\S+\\s+)" // item being added or edited
+										"(from|by|at|on)(?:\\s+(?:\\S+\\s+)(to))?"); // connectors, with optional "to" connector
 }
 
 void InputHighlighter::setFormats(QColor commandC, QColor keywordC, QColor connectorC){
@@ -59,12 +63,12 @@ void InputHighlighter::setupColorsFormatsRules(QColor commandC, QColor keywordC,
 
 void InputHighlighter::highlightBlock(const QString &text) {
     foreach (const HighlightingRule &rule, highlightingRules) {
-        QRegExp expression(rule.pattern);
-        int index = expression.indexIn(text);
-        while (index >= 0) {
-            int length = expression.matchedLength();
-            setFormat(index, length, rule.format);
-            index = expression.indexIn(text, index + length);
+		QRegularExpressionMatchIterator matchIter = rule.pattern.globalMatch(text);
+        while (matchIter.hasNext()) {
+			QRegularExpressionMatch match = matchIter.next();
+			for (int i = 1; i <= match.lastCapturedIndex(); ++i) {
+				setFormat(match.capturedStart(i), match.capturedLength(i), rule.format);
+			}
         }
     }
 
