@@ -316,6 +316,11 @@ bool Tasuke::spellCheck(QString word) {
 void Tasuke::runCommand(QString commandString) {
 	try {
 		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(Interpreter::interpret(commandString));
+
+		if (guiMode) {
+			inputWindow->closeAndClear();
+		}
+
 		if (command == nullptr) {
 			return;
 		}
@@ -326,10 +331,6 @@ void Tasuke::runCommand(QString commandString) {
 		commandRedoHistory.clear();
 
 		storage->saveFile();
-
-		if (guiMode) {
-			inputWindow->closeAndClear();
-		}
 	} catch (ExceptionBadCommand& exception) {
 		LOG(INFO) << "Error parsing command";
 		
