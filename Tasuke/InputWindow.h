@@ -49,8 +49,8 @@ private:
 	Ui::InputWindow ui;
     InputHighlighter *highlighter;
 	TooltipWidget *tooltipWidget;
-	QPropertyAnimation *animation;
-	QPropertyAnimation *errorAnimation;
+	QPropertyAnimation animation;
+	QPropertyAnimation errorAnimation;
 	qreal wOpacity;
 
 	void setOpacity(qreal value);

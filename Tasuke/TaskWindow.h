@@ -79,8 +79,8 @@ private:
 	qreal wOpacity;
 	bool connectedToSettings;
 	QList<Task> currentTasks;
-	QPropertyAnimation *animation;
-    QProgressBar *progressBar;
+	QPropertyAnimation animation;
+    QProgressBar progressBar;
 	TutorialWidget tutorial;
 	HotKeyThread *hotKeyThread;
 

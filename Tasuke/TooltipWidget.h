@@ -26,7 +26,7 @@ public slots:
 
 private:
 	Ui::TooltipWidget ui;
-	QPropertyAnimation *animation;
+	QPropertyAnimation animation;
 	QFont font;
 	QFontMetrics fm;
 	QPixmap normalIcon;

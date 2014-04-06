@@ -2,7 +2,7 @@
 #include "InputWindow.h"
 #include "Interpreter.h"
 
-InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
+InputWindow::InputWindow(QWidget* parent) : QWidget(parent), animation(this, "opacity"), errorAnimation(this, "pos") {
 	LOG(INFO) << "InputWindow instance created";
 
 	ui.setupUi(this);
@@ -10,7 +10,6 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	tooltipWidget = new TooltipWidget(this);
 	ui.lineEdit->installEventFilter(this);
 	initAnimation();
-	initErrorAnimation();
 
 	setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("background:transparent;");
@@ -36,17 +35,7 @@ void InputWindow::hideTooltip() {
 }
 
 void InputWindow::doErrorAnimation() {
-	QPoint posBefore;
-	posBefore.setY(y());
-	posBefore.setX(x() - 20);
-
-	QPoint posAfter;
-	posAfter.setY(y());
-	posAfter.setX(x());
-
-	errorAnimation->setStartValue(posBefore); 
-	errorAnimation->setEndValue(posAfter);
-	errorAnimation->start();
+	errorAnimation.start();
 }
 
 bool InputWindow::eventFilter(QObject* object, QEvent* event) {
@@ -126,11 +115,12 @@ void InputWindow::showAndCenter() {
 	}
 
 	move(pos);
+	initErrorAnimation();
 
 	show(); 
 	raise(); 
 	activateWindow();
-	animation->start();
+	animation.start();
 }
 
 void InputWindow::showAndAdd() {
@@ -151,20 +141,30 @@ void InputWindow::handleReturnPressed() {
 	}
 
 	Tasuke::instance().runCommand(command);
+	//doErrorAnimation();
 }
 
 void InputWindow::initAnimation() {
-	animation = new QPropertyAnimation(this, "opacity"); 
-	animation->setEasingCurve(QEasingCurve::OutCubic); 
-	animation->setDuration(700); 
-	animation->setStartValue(0.0); 
-	animation->setEndValue(1.0); 
+	animation.setEasingCurve(QEasingCurve::OutCubic); 
+	animation.setDuration(700); 
+	animation.setStartValue(0.0); 
+	animation.setEndValue(1.0); 
 }
 
 void InputWindow::initErrorAnimation() {
-	errorAnimation = new QPropertyAnimation(this, "pos"); 
-	errorAnimation->setEasingCurve(QEasingCurve::OutElastic); 
-	errorAnimation->setDuration(500); 
+	errorAnimation.setEasingCurve(QEasingCurve::OutElastic); 
+	errorAnimation.setDuration(500);
+
+	QPoint posBefore;
+	posBefore.setY(y());
+	posBefore.setX(x() - 20);
+
+	QPoint posAfter;
+	posAfter.setY(y());
+	posAfter.setX(x());
+
+	errorAnimation.setStartValue(posBefore); 
+	errorAnimation.setEndValue(posAfter);
 }
 
 // Will be updated when "themes" is implemented.
