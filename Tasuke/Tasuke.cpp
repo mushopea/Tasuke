@@ -341,6 +341,10 @@ bool Tasuke::spellCheck(QString word) {
 
 // This function runs a command in a string
 void Tasuke::runCommand(QString commandString) {
+	if (inputTimer.isActive()) {
+		inputTimer.stop();
+	}
+
 	try {
 		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(Interpreter::interpret(commandString));
 
@@ -363,6 +367,10 @@ void Tasuke::runCommand(QString commandString) {
 		LOG(INFO) << "Error parsing command";
 		
 		showMessage("Error parsing command");
+
+		if (guiMode) {
+			inputWindow->showTooltipMessage(InputStatus::FAILURE);
+		}
 	}
 }
 
@@ -423,7 +431,7 @@ void Tasuke::handleInputChanged(QString commandString) {
 		inputTimer.stop();
 	}
 
-	inputTimer.setInterval(1000);
+	inputTimer.setInterval(500);
 	inputTimer.setSingleShot(true);
 	inputTimer.start();
 }
@@ -450,7 +458,7 @@ void Tasuke::handleInputTimeout() {
 			emit tryFinish(result);
 		} catch (ExceptionBadCommand& exception) {
 			TRY_RESULT result;
-			result.status = InputStatus::FAILURE;
+			result.status = InputStatus::NORMAL;
 			emit tryFinish(result);
 		}
 	});
