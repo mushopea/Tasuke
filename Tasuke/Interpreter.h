@@ -32,6 +32,8 @@ private:
 	static QHash<QString, QString> decompose(QString text);
 	static QString removeBefore(QString text, QString before);
 	static int parseId(QString idString);
+	static QList<int> parseIdList(QString idListString);
+	static QList<int> parseIdRange(QString idRangeString);
 	static TIME_PERIOD parseTimePeriod(QString timePeriod);
 	static QDateTime parseDate(QString dateString, bool isEnd = true);
 	static void generateTimeFormats();
@@ -40,12 +42,12 @@ private:
 	static void generateDateTimeFormatsWithoutYear();
 	static void generateDateTimeFormats();
 
-	static AddCommand* createAddCommand(QString commandString);
-	static RemoveCommand* createRemoveCommand(QString commandString);
-	static EditCommand* createEditCommand(QString commandString);
-	static ClearCommand* createClearCommand(QString commandString);
-	static DoneCommand* createDoneCommand(QString commandString);
-	static DoneCommand* createUndoneCommand(QString commandString);
+	static ICommand* createAddCommand(QString commandString);
+	static ICommand* createRemoveCommand(QString commandString);
+	static ICommand* createEditCommand(QString commandString);
+	static ICommand* createClearCommand(QString commandString);
+	static ICommand* createDoneCommand(QString commandString);
+	static ICommand* createUndoneCommand(QString commandString);
 
 	static void doShow(QString commandString);
 	static void doAbout();

@@ -134,3 +134,24 @@ void DoneCommand::undo() {
 	}
 	Tasuke::instance().showMessage(QString("Undone mark \"%1\" as %2").arg(task.getDescription(), doneUndone));
 }
+
+CompositeCommand::CompositeCommand(QList< QSharedPointer<ICommand> > _commands) : commands(_commands) {
+	
+}
+
+CompositeCommand::~CompositeCommand() {
+	
+}
+
+void CompositeCommand::run() {
+	foreach(QSharedPointer<ICommand> command, commands) {
+		command->run();
+	}
+}
+
+void CompositeCommand::undo() {
+	// must be in reverse order
+	for(int i=commands.size()-1; i>=0; i--) {
+		commands[i]->undo();
+	}
+}

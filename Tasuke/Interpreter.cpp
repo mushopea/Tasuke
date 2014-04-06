@@ -200,7 +200,7 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 	return nullptr;
 }
 
-AddCommand* Interpreter::createAddCommand(QString commandString) {
+ICommand* Interpreter::createAddCommand(QString commandString) {
 	commandString = removeBefore(commandString, "add");
 	commandString = commandString.trimmed();
 
@@ -228,7 +228,7 @@ AddCommand* Interpreter::createAddCommand(QString commandString) {
 	return new AddCommand(task);
 }
 
-RemoveCommand* Interpreter::createRemoveCommand(QString commandString) {
+ICommand* Interpreter::createRemoveCommand(QString commandString) {
 	commandString = removeBefore(commandString, "remove");
 	commandString = commandString.trimmed();
 
@@ -236,13 +236,20 @@ RemoveCommand* Interpreter::createRemoveCommand(QString commandString) {
 		throw ExceptionBadCommand();
 	}
 
-	QString idString = commandString.split(' ')[0];
-	int id = parseId(idString);
+	QList<int> ids = parseIdList(commandString);
+	QList< QSharedPointer<ICommand> > commands;
 
-	return new RemoveCommand(id-1);
+	qSort(ids.begin(), ids.end(), qGreater<int>());
+
+	foreach(int id, ids) {
+		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new RemoveCommand(id-1));
+		commands.push_back(command);
+	}
+
+	return new CompositeCommand(commands);
 }
 
-EditCommand* Interpreter::createEditCommand(QString commandString) {
+ICommand* Interpreter::createEditCommand(QString commandString) {
 	commandString = removeBefore(commandString, "edit");
 	commandString = commandString.trimmed();
 
@@ -284,11 +291,11 @@ EditCommand* Interpreter::createEditCommand(QString commandString) {
 	return new EditCommand(id-1, task);
 }
 
-ClearCommand* Interpreter::createClearCommand(QString commandString) {
+ICommand* Interpreter::createClearCommand(QString commandString) {
 	return new ClearCommand();
 }
 
-DoneCommand* Interpreter::createDoneCommand(QString commandString) {
+ICommand* Interpreter::createDoneCommand(QString commandString) {
 	commandString = removeBefore(commandString, "done");
 	commandString = commandString.trimmed();
 
@@ -296,12 +303,20 @@ DoneCommand* Interpreter::createDoneCommand(QString commandString) {
 		throw ExceptionBadCommand();
 	}
 
-	QString idString = commandString.split(' ')[0];
-	int id = parseId(idString);
+	QList<int> ids = parseIdList(commandString);
+	QList< QSharedPointer<ICommand> > commands;
 
-	return new DoneCommand(id-1);
+	qSort(ids.begin(), ids.end(), qGreater<int>());
+
+	foreach(int id, ids) {
+		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new DoneCommand(id-1));
+		commands.push_back(command);
+	}
+
+	return new CompositeCommand(commands);
 }
-DoneCommand* Interpreter::createUndoneCommand(QString commandString) {
+
+ICommand* Interpreter::createUndoneCommand(QString commandString) {
 	commandString = removeBefore(commandString, "undone");
 	commandString = commandString.trimmed();
 
@@ -309,10 +324,17 @@ DoneCommand* Interpreter::createUndoneCommand(QString commandString) {
 		throw ExceptionBadCommand();
 	}
 
-	QString idString = commandString.split(' ')[0];
-	int id = parseId(idString);
+	QList<int> ids = parseIdList(commandString);
+	QList< QSharedPointer<ICommand> > commands;
 
-	return new DoneCommand(id-1, false);
+	qSort(ids.begin(), ids.end());
+
+	foreach(int id, ids) {
+		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new DoneCommand(id-1, false));
+		commands.push_back(command);
+	}
+
+	return new CompositeCommand(commands);
 }
 
 void Interpreter::doShow(QString commandString) {
@@ -380,6 +402,8 @@ void Interpreter::doExit() {
 }
 
 int Interpreter::parseId(QString idString) {
+	idString = idString.trimmed();
+
 	bool ok = false;
 	int id = idString.toInt(&ok);
 
@@ -394,6 +418,43 @@ int Interpreter::parseId(QString idString) {
 	}
 
 	return id;
+}
+
+QList<int> Interpreter::parseIdList(QString idListString) {
+	QStringList idListParts = idListString.split(",");
+
+	QList<int> results;
+	
+	foreach(QString idListPart, idListParts) {
+		results.append(parseIdRange(idListPart));
+	}
+
+	return results;
+}
+
+QList<int> Interpreter::parseIdRange(QString idRangeString) {
+	QStringList idRangeParts = idRangeString.split("-");
+	
+	QList<int> results;
+
+	if (idRangeParts.size() == 1) {
+		results.push_back(parseId(idRangeParts[0]));
+	} else if (idRangeParts.size() == 2) {
+		int begin = parseId(idRangeParts[0]);
+		int end = parseId(idRangeParts[1]);
+
+		if (end < begin) {
+			throw ExceptionBadCommand();
+		}
+
+		for (int i=begin; i<=end; i++) {
+			results.push_back(i);
+		}
+	} else {
+		throw ExceptionBadCommand();
+	}
+
+	return results;
 }
 
 Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) {

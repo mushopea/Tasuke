@@ -50,7 +50,7 @@ namespace InterpreterTests {
 		TEST_METHOD(InterpretRemove) {
 			Tasuke::instance().runCommand("add do homework");
 			ICommand* command = Interpreter::interpret("remove 1");
-			Assert::IsTrue(typeid(*command) == typeid(RemoveCommand));
+			Assert::IsTrue(typeid(*command) == typeid(RemoveCommand) || typeid(*command) == typeid(CompositeCommand));
 			delete command;
 		}
 
@@ -110,7 +110,7 @@ namespace InterpreterTests {
 		TEST_METHOD(InterpretDone) {
 			Tasuke::instance().runCommand("add do homework");
 			ICommand* command = Interpreter::interpret("done 1");
-			Assert::IsTrue(typeid(*command) == typeid(DoneCommand));
+			Assert::IsTrue(typeid(*command) == typeid(DoneCommand) || typeid(*command) == typeid(CompositeCommand));
 			delete command;
 		}
 
@@ -139,7 +139,7 @@ namespace InterpreterTests {
 		TEST_METHOD(InterpretUndone) {
 			Tasuke::instance().runCommand("add do homework");
 			ICommand* command = Interpreter::interpret("undone 1");
-			Assert::IsTrue(typeid(*command) == typeid(DoneCommand));
+			Assert::IsTrue(typeid(*command) == typeid(DoneCommand) || typeid(*command) == typeid(CompositeCommand));
 			delete command;
 		}
 

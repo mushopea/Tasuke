@@ -23,8 +23,8 @@ public:
 	AddCommand(Task& _task);
 	~AddCommand();
 	
-	void run();
-	void undo();
+	void run() override;
+	void undo() override;
 };
 
 class RemoveCommand : public ICommand {
@@ -35,8 +35,8 @@ public:
 	RemoveCommand(int _id);
 	~RemoveCommand();
 	
-	void run();
-	void undo();
+	void run() override;
+	void undo() override;
 };
 
 class EditCommand : public ICommand {
@@ -48,8 +48,8 @@ public:
 	EditCommand(int _id, Task& _task);
 	~EditCommand();
 	
-	void run();
-	void undo();
+	void run() override;
+	void undo() override;
 };
 
 class ClearCommand : public ICommand {
@@ -59,8 +59,8 @@ public:
 	ClearCommand();
 	~ClearCommand();
 	
-	void run();
-	void undo();
+	void run() override;
+	void undo() override;
 };
 
 class DoneCommand : public ICommand {
@@ -71,8 +71,19 @@ public:
 	DoneCommand(int _id, bool _done = true);
 	~DoneCommand();
 	
-	void run();
-	void undo();
+	void run() override;
+	void undo() override;
+};
+
+class CompositeCommand : public ICommand {
+private:
+	QList< QSharedPointer<ICommand> > commands;
+public:
+	CompositeCommand(QList< QSharedPointer<ICommand> > _commands);
+	~CompositeCommand();
+
+	void run() override;
+	void undo() override;
 };
 
 #endif
