@@ -339,6 +339,7 @@ void Tasuke::runCommand(QString commandString) {
 
 void Tasuke::handleInputChanged(QString commandString) {
 	if (commandString.isEmpty()) {
+		inputWindow->hideTooltip();
 		return;
 	}
 
