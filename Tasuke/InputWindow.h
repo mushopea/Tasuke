@@ -23,6 +23,7 @@ public:
 	~InputWindow();
 	void showTooltipMessage(InputStatus status, QString message = "");
 	void hideTooltip();
+	void doErrorAnimation();
 
 public slots:
 	void showAndCenter();	
@@ -39,6 +40,7 @@ signals:
 private slots:
 	void handleReturnPressed();
 	void initAnimation();
+	void initErrorAnimation();
 	void changeBorder(int themeNumber);
 	void changeBG(int themeNumber);
 	void handleLineEditChanged();
@@ -48,6 +50,7 @@ private:
     InputHighlighter *highlighter;
 	TooltipWidget *tooltipWidget;
 	QPropertyAnimation *animation;
+	QPropertyAnimation *errorAnimation;
 	qreal wOpacity;
 
 	void setOpacity(qreal value);

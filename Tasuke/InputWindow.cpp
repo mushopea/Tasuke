@@ -10,6 +10,7 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent) {
 	tooltipWidget = new TooltipWidget(this);
 	ui.lineEdit->installEventFilter(this);
 	initAnimation();
+	initErrorAnimation();
 
 	setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("background:transparent;");
@@ -32,6 +33,20 @@ void InputWindow::showTooltipMessage(InputStatus status, QString message) {
 
 void InputWindow::hideTooltip() {
 	tooltipWidget->hide();
+}
+
+void InputWindow::doErrorAnimation() {
+	QPoint posBefore;
+	posBefore.setY(y());
+	posBefore.setX(x() - 20);
+
+	QPoint posAfter;
+	posAfter.setY(y());
+	posAfter.setX(x());
+
+	errorAnimation->setStartValue(posBefore); 
+	errorAnimation->setEndValue(posAfter);
+	errorAnimation->start();
 }
 
 bool InputWindow::eventFilter(QObject* object, QEvent* event) {
@@ -136,6 +151,7 @@ void InputWindow::handleReturnPressed() {
 	}
 
 	Tasuke::instance().runCommand(command);
+	doErrorAnimation();
 }
 
 void InputWindow::initAnimation() {
@@ -143,7 +159,13 @@ void InputWindow::initAnimation() {
 	animation->setEasingCurve(QEasingCurve::OutCubic); 
 	animation->setDuration(700); 
 	animation->setStartValue(0.0); 
-	animation->setEndValue(0.95); 
+	animation->setEndValue(1.0); 
+}
+
+void InputWindow::initErrorAnimation() {
+	errorAnimation = new QPropertyAnimation(this, "pos"); 
+	errorAnimation->setEasingCurve(QEasingCurve::OutElastic); 
+	errorAnimation->setDuration(500); 
 }
 
 // Will be updated when "themes" is implemented.
