@@ -327,12 +327,15 @@ void TaskWindow::displayTaskList() {
 	LOG(INFO) << "Displaying task list";
 	ui.taskList->clear(); // Clear previous list
 	resetSubheadingIndexes(); // Reset subheadings
-	for (int i = 0; i < currentTasks.size(); i++) {
-		displayAndUpdateSubheadings(i);
-		displayTask(currentTasks[i]);
-		progressBar->setValue((int)(i * 100 / (currentTasks.size() - 1)));	
+	if (currentTasks.size() != 0) {
+		for (int i = 0; i < currentTasks.size(); i++) {
+			displayAndUpdateSubheadings(i);
+			displayTask(currentTasks[i]);
+			progressBar->setValue((int)((i+1) * 100 / currentTasks.size()));	
+		}
+	} else {
+		progressBar->hide();
 	}
-	
 	hideProgressBarWhenDone();
 }
 

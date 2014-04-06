@@ -1,6 +1,6 @@
 #pragma once
 #include <QSyntaxHighlighter>
-
+#include <QRegularExpression>
 
 class InputHighlighter : public QSyntaxHighlighter {
      Q_OBJECT
@@ -16,9 +16,9 @@ class InputHighlighter : public QSyntaxHighlighter {
      void highlightBlock(const QString &text);
 
  private:
-     QRegExp commandRegex;
-     QRegExp keywordRegex;
-	 QRegExp connectorRegex;
+     QRegularExpression commandRegex;
+     QRegularExpression keywordRegex;
+	 QRegularExpression connectorRegex;
 
 	 QTextCharFormat commandFormat;
      QTextCharFormat keywordFormat;
@@ -26,7 +26,7 @@ class InputHighlighter : public QSyntaxHighlighter {
 	 QTextCharFormat spellCheckFormat;
 
 	 struct HighlightingRule {
-         QRegExp pattern;
+         QRegularExpression pattern;
          QTextCharFormat format;
      };
 

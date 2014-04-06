@@ -592,16 +592,14 @@ void Interpreter::generateTimeFormats() {
 	separators << " " << ":" << ".";
 	optionalSpaces << " " << "";
 
-	timeFormats << hourFormats;
 	QStringList toAdd;
-	foreach(QString timeFormat, timeFormats) {
+	foreach(QString hourFormat, hourFormats) {
 		foreach(QString minuteFormat, minuteFomats) {
 			foreach(QString separator, separators) {
-				toAdd << (timeFormat + separator + minuteFormat);
+				timeFormats << (hourFormat + separator + minuteFormat);
 			}
 		}
 	}
-	timeFormats << toAdd;
 	foreach(QString timeFormat, timeFormats) {
 		foreach(QString amPmFormat, amPmFormats) {
 			foreach(QString optionalSpace, optionalSpaces) {
@@ -613,6 +611,14 @@ void Interpreter::generateTimeFormats() {
 	// special constructions
 	// military time:
 	timeFormats << "hhmm'hrs'";;
+	// 5pm:
+	foreach(QString hourFormat, hourFormats) {
+		foreach(QString amPmFormat, amPmFormats) {
+			foreach(QString optionalSpace, optionalSpaces) {
+				timeFormatsAp << (hourFormat + optionalSpace + amPmFormat);
+			}
+		}
+	}
 }
 void Interpreter::generateDateFormatsWithoutYear() {
 	assert(formatsAlreadyInit == false);
