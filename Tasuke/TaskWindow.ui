@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>488</height>
+    <height>493</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -353,7 +353,7 @@ QToolTip {
       <x>0</x>
       <y>0</y>
       <width>840</width>
-      <height>493</height>
+      <height>500</height>
      </rect>
     </property>
     <property name="styleSheet">

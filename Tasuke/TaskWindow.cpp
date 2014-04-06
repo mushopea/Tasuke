@@ -390,26 +390,26 @@ void TaskWindow::resetSubheadingIndexes() {
 
 void TaskWindow::displayAndUpdateSubheadings(int index) {
 	if (currentTasks[index].isOverdue()) {
-			if (subheadingRowIndexes[(char)SubheadingType::OVERDUE] == -1) {
-				subheadingRowIndexes[(char)SubheadingType::OVERDUE] = index;
-				displaySubheading("Overdue tasks");
-			}
-		} else if (currentTasks[index].isDueToday()) {
-			if (subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] == -1) {
-				subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] = index;
-				displaySubheading("Today's tasks");
-			}
-		} else if (!currentTasks[index].getBegin().isNull() || !currentTasks[index].getEnd().isNull()) {
-			if (subheadingRowIndexes[(char)SubheadingType::TIMED] == -1) {
-				subheadingRowIndexes[(char)SubheadingType::TIMED] = index;
-				displaySubheading("Timed tasks");
-			}
-		} else {
-			if (subheadingRowIndexes[(char)SubheadingType::FLOATING] == -1) {
-				subheadingRowIndexes[(char)SubheadingType::FLOATING] = index;
-				displaySubheading("Untimed tasks");
-			}
+		if (subheadingRowIndexes[(char)SubheadingType::OVERDUE] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::OVERDUE] = index;
+			displaySubheading("Overdue tasks");
 		}
+	} else if (currentTasks[index].isDueToday()) {
+		if (subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] = index;
+			displaySubheading("Today's tasks");
+		}
+	} else if (!currentTasks[index].getBegin().isNull() || !currentTasks[index].getEnd().isNull()) {
+		if (subheadingRowIndexes[(char)SubheadingType::TIMED] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::TIMED] = index;
+			displaySubheading("Timed tasks");
+		}
+	} else {
+		if (subheadingRowIndexes[(char)SubheadingType::FLOATING] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::FLOATING] = index;
+			displaySubheading("Untimed tasks");
+		}
+	}
 }
 
 void TaskWindow::displaySubheading(const QString& content) {
