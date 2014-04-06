@@ -326,7 +326,10 @@ void Tasuke::runCommand(QString commandString) {
 		commandRedoHistory.clear();
 
 		storage->saveFile();
-		inputWindow->closeAndClear();
+
+		if (guiMode) {
+			inputWindow->closeAndClear();
+		}
 	} catch (ExceptionBadCommand& exception) {
 		LOG(INFO) << "Error parsing command";
 		
