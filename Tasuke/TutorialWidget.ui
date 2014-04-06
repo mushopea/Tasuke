@@ -38,9 +38,6 @@ color: rgb(88, 88, 88);
    <property name="focusPolicy">
     <enum>Qt::NoFocus</enum>
    </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
    <property name="styleSheet">
     <string notr="true">QTabBar::tab{
 	background-color: rgb(129, 129, 129);

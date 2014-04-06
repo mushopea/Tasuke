@@ -152,13 +152,13 @@ background-color: white;
     <enum>QTabWidget::Triangular</enum>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>0</number>
    </property>
    <property name="usesScrollButtons">
     <bool>true</bool>
    </property>
    <property name="documentMode">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <widget class="QWidget" name="features">
     <property name="styleSheet">
@@ -902,6 +902,9 @@ height: 20px;
     </widget>
    </widget>
    <widget class="QWidget" name="fonts">
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
     <attribute name="title">
      <string>Fonts</string>
     </attribute>
@@ -922,6 +925,9 @@ height: 20px;
      </property>
      <property name="focusPolicy">
       <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background: none;</string>
      </property>
      <property name="editable">
       <bool>false</bool>
@@ -974,10 +980,13 @@ background: transparent;</string>
     </widget>
    </widget>
    <widget class="QWidget" name="icons">
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(209, 209, 209);</string>
+    </property>
     <attribute name="title">
      <string>Feedback Icons</string>
     </attribute>
-    <widget class="QGroupBox" name="iconSelect">
+    <widget class="QWidget" name="iconSelect" native="true">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -985,9 +994,6 @@ background: transparent;</string>
        <width>711</width>
        <height>291</height>
       </rect>
-     </property>
-     <property name="title">
-      <string>GroupBox</string>
      </property>
      <widget class="QWidget" name="horizontalLayoutWidget_4">
       <property name="geometry">
