@@ -21,19 +21,23 @@ class InputWindow : public QWidget {
 public:
 	InputWindow(QWidget *parent = 0);
 	~InputWindow();
-	void showTooltipMessage(QString message, InputStatus status);
+	void showTooltipMessage(InputStatus status, QString message = "");
 	void hideTooltip();
 
 public slots:
 	void showAndCenter();	
 	void showAndAdd();
+	void closeAndClear();
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
+	void hideEvent(QHideEvent *event);
+
+signals:
+	void inputChanged(QString text);
 
 private slots:
 	void handleReturnPressed();
-	void handleEditingFinished();
 	void initAnimation();
 	void changeBorder(int themeNumber);
 	void changeBG(int themeNumber);

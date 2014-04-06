@@ -13,7 +13,7 @@
 bool Tasuke::guiMode = true;
 
 // Constructor for the Tasuke singleton.
-Tasuke::Tasuke() {
+Tasuke::Tasuke() : QObject(nullptr) {
 	LOG(INFO) << "Tasuke object created";
 	
 	loadDictionary();
@@ -37,6 +37,11 @@ Tasuke::Tasuke() {
 	if (guiMode) {
 		initialize();
 	}
+
+	qRegisterMetaType<TRY_RESULT>("TRY_RESULT");
+	connect(this, SIGNAL(tryFinish(TRY_RESULT)), this, SLOT(handleTryFinish(TRY_RESULT)));
+
+	connect(&inputTimer, SIGNAL(timeout()), this, SLOT(handleInputTimeout()));
 }
 
 // Destructor for the Tasuke singleton.
@@ -117,6 +122,8 @@ void Tasuke::initialize(){
 	
 	updateTaskWindow(storage->getTasks());
 	showTaskWindow();
+
+	connect(inputWindow, SIGNAL(inputChanged(QString)), this, SLOT(handleInputChanged(QString)));
 }
 
 void Tasuke::setGuiMode(bool mode) {
@@ -313,6 +320,11 @@ bool Tasuke::spellCheck(QString word) {
 void Tasuke::runCommand(QString commandString) {
 	try {
 		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(Interpreter::interpret(commandString));
+
+		if (guiMode) {
+			inputWindow->closeAndClear();
+		}
+
 		if (command == nullptr) {
 			return;
 		}
@@ -328,6 +340,102 @@ void Tasuke::runCommand(QString commandString) {
 		
 		showMessage("Error parsing command");
 	}
+}
+
+void Tasuke::handleInputChanged(QString commandString) {
+	if (commandString.isEmpty()) {
+		inputWindow->hideTooltip();
+		return;
+	}
+
+	input = commandString;
+	QString commandType = Interpreter::getType(commandString);
+
+	QString message = "...";
+
+	// TODO!!
+	// TODO!! make this cleaner
+	// TODO!!
+
+	if (commandType == "add") {
+		if (commandString.contains(QRegExp("\\bfrom\\b"))) { // period tasks
+			message = "add <my task> from <start> to <end> #tag";
+		} else if (commandString.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
+			message = "add <my task> by/on/at <end> #tag";
+		} else { // simple tasks
+			message = "add <my task> #tag";
+		}
+	} else if (commandType == "remove") {
+		message = "remove <task no> | remove <task no>, <task no>, ... | remove <task no> - <task no>";
+	} else if (commandType == "edit") {
+		message = "edit <task no> <thing to change> <-thing to remove>";
+	} else if (commandType == "done") {
+		message = "done <task no> | done <task no>, <task no>, ... | done <task no> - <task no>";
+	} else if (commandType == "undone") {
+		message = "undone <task no> | undone <task no>, <task no>, ... | undone <task no> - <task no>";
+	} else if (commandType == "show") {
+		message = "show <keyword> | done | undone | overdue | ongoing | today | tomorrow";
+	} else if (commandType == "hide") {
+		message = "Hide the task window.";		
+	} else if (commandType == "undo") {
+		message = "Undo your last action. (CTRL+Z)";		
+	} else if (commandType == "redo") {
+		message = "Redo your last action (CTRL+Y)";		
+	} else if (commandType == "clear") {
+		message = "Clear all tasks";
+	} else if (commandType == "help") {
+		message = "View the tutorial";
+	} else if (commandType == "settings") {
+		message = "Access the settings";
+	} else if (commandType == "about") {
+		message = "See Tasuke's info";
+	} else if (commandType == "exit") {
+		message = "Exit the application";
+	}
+
+	inputWindow->showTooltipMessage(InputStatus::NORMAL, message);
+
+	if (inputTimer.isActive()) {
+		inputTimer.stop();
+	}
+
+	inputTimer.setInterval(500);
+	inputTimer.setSingleShot(true);
+	inputTimer.start();
+}
+
+void Tasuke::handleInputTimeout() {
+	if (!mutex.tryLock()) {
+		// try thread is still running! reschedule the timer
+		inputTimer.setInterval(500);
+		inputTimer.setSingleShot(true);
+		inputTimer.start();
+
+		return;
+	}
+
+	std::thread tryThread([&]() {
+		try {
+			ICommand* command = Interpreter::interpret(input, true);
+			if (command != nullptr) {
+				delete command;
+			}
+		
+			TRY_RESULT result;
+			result.status = InputStatus::SUCCESS;
+			emit tryFinish(result);
+		} catch (ExceptionBadCommand& exception) {
+			TRY_RESULT result;
+			result.status = InputStatus::FAILURE;
+			emit tryFinish(result);
+		}
+	});
+	tryThread.detach();
+}
+
+void Tasuke::handleTryFinish(TRY_RESULT result) {
+	inputWindow->showTooltipMessage(result.status, result.message);
+	mutex.unlock();
 }
 
 void Tasuke::undoCommand() {

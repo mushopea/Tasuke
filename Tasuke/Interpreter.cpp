@@ -255,6 +255,10 @@ EditCommand* Interpreter::createEditCommand(QString commandString) {
 
 	commandString = commandString.section(' ', 1);
 
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
+
 	QHash<QString, QString> parts = decompose(commandString);
 	Task task = Tasuke::instance().getStorage().getTask(id-1);
 

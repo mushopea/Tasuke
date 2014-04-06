@@ -16,10 +16,14 @@ TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas"
 TooltipWidget::~TooltipWidget() {
 }
 
-void TooltipWidget::setText(const QString& content, InputStatus status) {
+void TooltipWidget::setText(InputStatus status, QString content) {
 	setIconOnLabel(status);
-	ui.text->setText(content);
-	fitWidthToTextLength(content);
+
+	// only update text if provided
+	if (!content.isEmpty()) {
+		ui.text->setText(content);
+		fitWidthToTextLength(content);
+	}
 }
 
 void TooltipWidget::showAndAlign() {

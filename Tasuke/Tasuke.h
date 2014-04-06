@@ -1,7 +1,11 @@
 #ifndef TASUKE_H
 #define TASUKE_H
 
+#include <future>
+#include <thread>
 #include <hunspell/hunspell.hxx>
+#include <QObject>
+#include <QTimer>
 #include <QSharedPointer>
 #include "Commands.h"
 #include "Storage.h"
@@ -17,8 +21,15 @@
 // destructor is private. The only way to retrieve an instance of this
 // singleton is the instance() method which guarantees there is only one sole
 // instance of this class.
-class Tasuke {
+class Tasuke : public QObject {
+	Q_OBJECT
+
 public:
+	typedef struct {
+		QString message;
+		InputStatus status;
+	} TRY_RESULT;
+
 	void setStorage(IStorage* _storage);
 	IStorage& getStorage();
 	InputWindow& getInputWindow();
@@ -43,6 +54,7 @@ public:
 	bool spellCheck(QString word);
 
 	void runCommand(QString commandString);
+	void tryCommand(QString commandString);
 	void undoCommand();
 	void redoCommand();
 
@@ -53,11 +65,19 @@ public:
 	static void setGuiMode(bool mode);
 	static Tasuke &instance();
 
+signals:
+	void tryFinish(TRY_RESULT result);
+
+private slots:
+	void handleInputChanged(QString text);
+	void handleInputTimeout();
+	void handleTryFinish(TRY_RESULT result);
+
 private:
 	static bool guiMode;
 	IStorage* storage;
-	QList<QSharedPointer<ICommand> > commandUndoHistory;
-	QList<QSharedPointer<ICommand> > commandRedoHistory;
+	QList< QSharedPointer<ICommand> > commandUndoHistory;
+	QList< QSharedPointer<ICommand> > commandRedoHistory;
 	TaskWindow* taskWindow;
 	InputWindow* inputWindow;
 	AboutWindow* aboutWindow;
@@ -65,6 +85,9 @@ private:
 	SystemTrayWidget* systemTrayWidget;
 	HotKeyManager* hotKeyManager;
 	Hunspell* spellObj;
+	QMutex mutex;
+	QTimer inputTimer;
+	QString input;
 
 	Tasuke();
 	Tasuke(const Tasuke& old);
