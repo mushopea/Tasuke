@@ -18,7 +18,7 @@ class TooltipWidget : public QWidget {
 public:
 	TooltipWidget(QWidget *parent = 0);
 	~TooltipWidget();
-	void setText(const QString& content, InputStatus status);
+	void setText(InputStatus status, QString content = "");
 
 public slots:
 	void showAndAlign();
