@@ -60,6 +60,7 @@ void SettingsWindow::handleApplyButton() {
 	QString fontSelected = ui.fontSelect->currentFont().family();
 	if (fontSelected.compare(oldFont) != 0) {
 		settings.setValue("Font", fontSelected);
+		LOG(INFO) << "Font changed to " << fontSelected.toStdString() << " from " << oldFont.toStdString();
 		emit fontChanged();
 	}
 
@@ -112,4 +113,6 @@ void SettingsWindow::loadCurrSettings() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	IconSet currIconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
 	iconSelectButtons[(char)currIconSet]->setChecked(true);
+	QString fontSelected = settings.value("Font", "Print Clearly").toString();
+	ui.fontSelect->setCurrentFont(QFont(fontSelected, ui.fontSelect->currentFont().pointSize()));
 }

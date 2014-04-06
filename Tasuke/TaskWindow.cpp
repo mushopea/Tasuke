@@ -4,24 +4,17 @@
 #include "SubheadingEntry.h"
 
 
-TaskWindow::TaskWindow(QWidget* parent) : QMainWindow(parent) {
+TaskWindow::TaskWindow(QWidget* parent) : connectedToSettings(false), currentlySelectedTask(-1), onlyShowDone(false), QMainWindow(parent) {
 	LOG(INFO) << "TaskWindow instance created";
 
 	ui.setupUi(this);
 	ui.backButton->hide();
 	this->installEventFilter(this);
 
-	currentlySelectedTask = -1;
-
 	resetSubheadingIndexes();
 	initTutorial(); 
 	initAnimation();
-
-	/*
-	progressBar = new QProgressBar(ui.taskList);
-	progressBar->setObjectName(QStringLiteral("progressBar"));
-    progressBar->setGeometry(QRect(260, 230, 331, 23));
-	*/
+	initProgressBar();
 
 	connect(ui.emptyAddTaskButton, SIGNAL(pressed()), this, SLOT(handleEmptyAddTaskButton()));
 	connect(ui.backButton, SIGNAL(released()), this, SLOT(handleBackButton()));
@@ -48,39 +41,12 @@ void TaskWindow::highlightTask(int taskID) {
 // This function is responsible for showing all the tasks entries and subheadings.
 void TaskWindow::showTasks(const QList<Task>& tasks, const QString& title) {
 
-	resetSubheadingIndexes();
-
 	previousSize = currentTasks.size(); // Size of previous list
 	currentTasks = tasks; // Update current tasks
-
-	ui.taskList->clear(); // Clear previous list
-	changeTitle(title);
-
-	for (int i = 0; i < tasks.size(); i++) {
-		if (tasks[i].isOverdue()) {
-			if (subheadingRowIndexes[(char)SubheadingType::OVERDUE] == -1) {
-				subheadingRowIndexes[(char)SubheadingType::OVERDUE] = i;
-				displaySubheading("Overdue tasks");
-			}
-		} else if (tasks[i].isDueToday()) {
-			if (subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] == -1) {
-				subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] = i;
-				displaySubheading("Today's tasks");
-			}
-		} else if (!tasks[i].getBegin().isNull() || !tasks[i].getEnd().isNull()) {
-			if (subheadingRowIndexes[(char)SubheadingType::TIMED] == -1) {
-				subheadingRowIndexes[(char)SubheadingType::TIMED] = i;
-				displaySubheading("Timed tasks");
-			}
-		} else {
-			if (subheadingRowIndexes[(char)SubheadingType::FLOATING] == -1) {
-				subheadingRowIndexes[(char)SubheadingType::FLOATING] = i;
-				displaySubheading("Untimed tasks");
-			}
-		}
-
-		displayTask(tasks[i], title.compare("done"));
-	}
+	changeTitle(title); // Change title scope
+	
+	onlyShowDone = title.compare("done") == 0;
+	displayTaskList();
 
 	decideContent(); // Show column label or 'no tasks' message.
 	showBackButtonIfSearching(title);
@@ -133,6 +99,36 @@ void TaskWindow::pageDown() {
 	jumpToCurrentlySelectedTask();
 }
 
+void TaskWindow::gotoPreviousSection() {
+	char thisSection = -1, prevSection = -1;
+	for (char i = (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM - 1; i >= 0; --i) {
+		if (subheadingRowIndexes[i] != -1 && subheadingRowIndexes[i] <= currentlySelectedTask) {
+			if (thisSection == -1) {
+				thisSection = i;
+			} else if (prevSection == -1) {
+				prevSection = i;
+				break;
+			}
+		}
+	}
+	highlightTask(prevSection == -1 ? 0 : subheadingRowIndexes[prevSection]);
+	ui.taskList->scrollToItem(ui.taskList->item(getTaskEntryRow(currentlySelectedTask) - 1));
+}
+
+void TaskWindow::gotoNextSection() {
+	char nextSection = -1;
+	for (char i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
+		if (subheadingRowIndexes[i] != -1 && subheadingRowIndexes[i] > currentlySelectedTask) {
+			if (nextSection == -1) {
+				nextSection = i;
+				break;
+			}
+		}
+	}
+	highlightTask(nextSection == -1 ? currentTasks.count() - 1 : subheadingRowIndexes[nextSection]);
+	ui.taskList->scrollToItem(ui.taskList->item(getTaskEntryRow(currentlySelectedTask) - 1));
+}
+
 //========================================
 // STACKED WIDGET FUNCTIONS
 //=========================================
@@ -160,8 +156,12 @@ void TaskWindow::showTutorialWidget() {
 //=========================================
 
 void TaskWindow::showAndMoveToSide() {
-	//if(animation->state() != QAbstractAnimation::Stopped)
-	//	return;
+
+	if (!connectedToSettings) {
+		connectedToSettings = true;
+		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(fontChanged()), this, SLOT(displayTaskList()));
+		LOG(INFO) << "Connected TaskWindow to SettingsWindow";
+	}
 
 	showListWidget(); // Shows the task list
 
@@ -215,29 +215,31 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 
 		// Scroll task list
 		if (ui.stackedWidget->currentIndex() == 0) { // Is on task list
-
-			if (eventKey->modifiers() & Qt::CTRL) {
-				if (eventKey->key() == Qt::Key_Down) {
-					pageDown();
+			switch (eventKey->key()) {
+				case Qt::Key::Key_Up:
+					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+						pageUp();
+					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+						gotoPreviousSection();
+					} else {
+						scrollUp();
+					}
 					return true;
-				}
-
-				if (eventKey->key() == Qt::Key_Up) {
-					pageUp();
+				case Qt::Key::Key_Down:
+					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+						pageDown();
+					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+						gotoNextSection();
+					} else {
+						scrollDown();
+					}
 					return true;
-				}
+				// Search backspace to go back
+				case Qt::Key::Key_Backspace:
+					handleBackButton();
+					return true;
 			}
-
-			if (eventKey->key() == Qt::Key_Down) {
-				scrollDown();
-				return true;
-			}
-
-			if (eventKey->key() == Qt::Key_Up) {
-				scrollUp();
-				return true;
-			}
-
+			
 			// Undo and redo shortcuts
 			if (eventKey->matches(QKeySequence::Undo)) {
 				Tasuke::instance().runCommand(QString("undo"));
@@ -248,13 +250,6 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 				Tasuke::instance().runCommand(QString("redo"));
 				return true;
 			}
-
-			// Search backspace to go back
-			if (eventKey->key() == Qt::Key_Backspace) {
-				handleBackButton();
-				return true;
-			}
-
 		} else {
 			// Tutorial shortcuts start here
 
@@ -304,6 +299,14 @@ void TaskWindow::initAnimation() {
 	animation->setEndValue(1.0); 
 }
 
+void TaskWindow::initProgressBar() {
+	progressBar = new QProgressBar(this);
+	progressBar->setObjectName(QStringLiteral("progressBar"));
+    progressBar->setGeometry(QRect(260, 230, 331, 23));
+	progressBar->setMinimum(0);
+	progressBar->setMaximum(100);
+}
+
 void TaskWindow::setOpacity(qreal value) {
 	wOpacity = value;
 	setWindowOpacity(value);
@@ -318,6 +321,20 @@ qreal TaskWindow::getOpacity() const {
 //========================================
 // PRIVATE HELPER TASK DISPLAY FUNCTIONS
 //=========================================
+
+// Displays current tasks
+void TaskWindow::displayTaskList() {
+	LOG(INFO) << "Displaying task list";
+	ui.taskList->clear(); // Clear previous list
+	resetSubheadingIndexes(); // Reset subheadings
+	for (int i = 0; i < currentTasks.size(); i++) {
+		displayAndUpdateSubheadings(i);
+		displayTask(currentTasks[i]);
+		progressBar->setValue((int)(i * 100 / (currentTasks.size() - 1)));	
+	}
+	
+	hideProgressBarWhenDone();
+}
 
 // Creates and returns a new task entry.
 TaskEntry* TaskWindow::createEntry(const Task& t) {
@@ -358,8 +375,8 @@ void TaskWindow::addListItem(TaskEntry* entry) {
 }
 
 // Displays a task entry on the list.
-void TaskWindow::displayTask(const Task& t, int showDone) {
-	if (showDone == 0) { // Showing done tasks
+void TaskWindow::displayTask(const Task& t) {
+	if (onlyShowDone) { // Showing done tasks
 		TaskEntry * entry = createEntry(t);
 		addListItem(entry);
 	} else { // Showing undone tasks
@@ -453,6 +470,15 @@ void TaskWindow::changeTitle(const QString& title) {
 	}
 }
 
+// Hides progress bar and displays the task list when all tasks are loaded.
+void TaskWindow::hideProgressBarWhenDone() {
+	if (progressBar->value() != progressBar->maximum()) {
+		ui.taskList->hide();
+	} else { 
+		ui.taskList->show();
+		progressBar->hide();
+	}
+}
 
 //=============================================
 // PRIVATE HELPER SCROLLING/HIGHLIGHT FUNCTIONS

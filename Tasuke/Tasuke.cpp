@@ -134,8 +134,12 @@ void Tasuke::setGuiMode(bool mode) {
 Tasuke& Tasuke::instance() {
 	static Tasuke *instance = 0;
 
-	if(instance == 0){
-		instance = new Tasuke();
+	if(instance == 0) {
+		// Allocates memory *before* constructor, so Tasuke::instance() will work within a constructor-called method
+		instance = (Tasuke *) ::operator new (sizeof(Tasuke));
+		// Actually runs the constructor now
+		new (instance) Tasuke;
+		//instance = new Tasuke();
 		return *instance;
 	} else {
 		return *instance;

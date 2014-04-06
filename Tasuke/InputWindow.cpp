@@ -45,26 +45,25 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 
 		if (Tasuke::instance().getTaskWindow().getScreen() == 0){
 			// Scroll keys for tasks
-			if (eventKey->modifiers() & Qt::CTRL) {
-				if (eventKey->key() == Qt::Key_Down) {
-					Tasuke::instance().getTaskWindow().pageDown();
+			switch (eventKey->key()) {
+				case Qt::Key::Key_Up:
+					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+						Tasuke::instance().getTaskWindow().pageUp();
+					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+						Tasuke::instance().getTaskWindow().gotoPreviousSection();
+					} else {
+						Tasuke::instance().getTaskWindow().scrollUp();
+					}
 					return true;
-				}
-
-				if (eventKey->key() == Qt::Key_Up) {
-					Tasuke::instance().getTaskWindow().pageUp();
+				case Qt::Key::Key_Down:
+					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+						Tasuke::instance().getTaskWindow().pageDown();
+					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+						Tasuke::instance().getTaskWindow().gotoNextSection();
+					} else {
+						Tasuke::instance().getTaskWindow().scrollDown();
+					}
 					return true;
-				}
-			}
-
-			if (eventKey->key() == Qt::Key_Down) {
-				Tasuke::instance().getTaskWindow().scrollDown();
-				return true;
-			}
-
-			if (eventKey->key() == Qt::Key_Up) {
-				Tasuke::instance().getTaskWindow().scrollUp();
-				return true;
 			}
 
 			// undo keys

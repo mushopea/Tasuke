@@ -38,6 +38,8 @@ public:
 	void scrollDown();
 	void pageUp();
 	void pageDown();
+	void gotoPreviousSection();
+	void gotoNextSection();
 
 	// Stacked widget functions
 	int getScreen() const; // Helps decide which key press events to execute
@@ -49,6 +51,7 @@ public slots:
 	void showAndMoveToSide();
 	void handleEmptyAddTaskButton();
 	void handleBackButton();
+	void displayTaskList();
 
 protected:
 	void closeEvent(QCloseEvent *event);
@@ -74,6 +77,7 @@ private:
 	Ui::TaskWindowClass ui;	
 	QPoint mpos;
 	qreal wOpacity;
+	bool connectedToSettings;
 	QList<Task> currentTasks;
 	QPropertyAnimation *animation;
     QProgressBar *progressBar;
@@ -81,6 +85,7 @@ private:
 	HotKeyThread *hotKeyThread;
 
 	// For selection of tasks
+	bool onlyShowDone;
 	int currentlySelectedTask;
 	int previouslySelectedTask;
 	int previousSize;
@@ -93,6 +98,7 @@ private:
 	// For initialization
 	void initTutorial();
 	void initAnimation();
+	void initProgressBar();
 	void setOpacity(qreal value);
 	qreal getOpacity() const;
 
@@ -100,7 +106,7 @@ private:
 	TaskEntry* createEntry(const Task& t);
 	void addListItemToRow(TaskEntry* entry, int row, const QString& type);
 	void addListItem(TaskEntry* entry);
-	void displayTask(const Task& t, int showDone);
+	void displayTask(const Task& t);
 	int getTaskEntryRow(int taskID) const;
 
 	// Private helper functions for subheadings display
@@ -112,6 +118,7 @@ private:
 	void decideContent();
 	void showBackButtonIfSearching(const QString& title);
 	void changeTitle(const QString& title);
+	void hideProgressBarWhenDone();
 
 	// Private helper functions for scrolling and highlighting of tasks
 	bool isInRange(int taskID) const;
