@@ -145,6 +145,20 @@ namespace StorageTests {
 			Assert::IsTrue(anEvent.isEvent());
 		}
 
+		TEST_METHOD(TaskIsDueOnDate) {
+			Task task;
+			Assert::IsFalse(task.isDueOn(QDate::currentDate()));
+
+			task.setEnd(QDateTime::currentDateTime());
+			Assert::IsTrue(task.isDueOn(QDate::currentDate()));
+
+			task.setEndDate(QDate(2010, 1, 1));
+			Assert::IsTrue(task.isDueOn(QDate::currentDate()));
+
+			task.setEndDate(QDate(2100, 12, 31));
+			Assert::IsFalse(task.isDueOn(QDate::currentDate()));
+		}
+
 		/********** Tests for STORAGE class **********/
 		
 		TEST_METHOD(StorageSearchByDescription) {

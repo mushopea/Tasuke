@@ -8,6 +8,7 @@
 #include <QMenu>
 #include <QCloseEvent>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QProgressBar>
 #include <QMouseEvent>
 #include <QListView>
 #include <QKeySequence>
@@ -67,7 +68,7 @@ private:
 	static const int TASKS_PER_PAGE = 5;
 
 
-	enum SubheadingType {
+	enum class SubheadingType : char {
 		OVERDUE,
 		DUE_TODAY,
 		TIMED,
@@ -81,6 +82,7 @@ private:
 	QPoint mpos;
 	QList<Task> currentTasks;
 	QPropertyAnimation *animation;
+    QProgressBar *progressBar;
 	qreal wOpacity;
 
 	// For selection of tasks

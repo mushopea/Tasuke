@@ -80,6 +80,11 @@ void Task::setEndTime(QTime _endTime) {
 QDateTime Task::getEnd() const {
 	return end;
 }
+/*
+// Possibly the biggest piece of code in this object.
+QString Task::getTimeLeftString() const {
+	
+}*/
 
 void Task::setDone(bool _done) {
 	done = _done;
@@ -154,6 +159,28 @@ bool Task::isOngoing() const {
 	}
 }
 
+// Returns FALSE if task has no valid end date.
+// Returns TRUE if task is already overdue.
+// Returns TRUE if task has an end time within specified date.
+bool Task::isDueOn(QDate _date) const {
+	QDateTime dateStart(_date, QTime(0, 0, 0));
+	QDateTime dateEnd(_date, QTime(23, 59, 59));
+
+	if (!getEnd().isValid()) {
+		return false;
+	}
+
+	if (isOverdue()) {
+		return true;
+	}
+
+	if ((getEnd() <= dateEnd) && (getEnd() >= dateStart)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 // Returns FALSE if this task has no valid end date.
 // Returns FALSE if this task is already overdue.
 // Returns FALSE if this task has a due date that is not
@@ -186,22 +213,22 @@ bool Task::isDueToday() const {
 }
 
 bool Task::isDueTomorrow() const {
-	QDateTime todayStart(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 0));
-	QDateTime todayEnd(QDateTime::currentDateTime().date().addDays(1), QTime(23, 59, 59));
+	QDateTime tomorrowStart(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 0));
+	QDateTime tomorrowEnd(QDateTime::currentDateTime().date().addDays(1), QTime(23, 59, 59));
 
 	if (!getEnd().isValid()) {
 		return false;
 	}
 
 	if (isOverdue()) {
-		if (getEnd() >= todayStart) {
+		if (getEnd() >= tomorrowStart) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	if (getEnd() <= todayEnd) {
+	if (getEnd() <= tomorrowEnd) {
 		return true;
 	} else {
 		return false;

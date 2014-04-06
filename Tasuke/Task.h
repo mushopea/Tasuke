@@ -58,6 +58,7 @@ public:
 	bool isOngoing() const;
 	bool isDueToday() const;
 	bool isDueTomorrow() const;
+	bool isDueOn(QDate _date) const;
 	bool isEvent() const;
 	
 	bool operator!=(const Task& other) const;

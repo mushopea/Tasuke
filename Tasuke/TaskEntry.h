@@ -27,7 +27,7 @@ private slots:
 private:
 	static const int FONT_SIZE_DIFF = 4;
 
-	enum TaskEntryLabel
+	enum class TaskEntryLabel : char
 	{
 		ID,
 		DESCRIPTION,
@@ -41,7 +41,7 @@ private:
 
 	// fields
 	const Task& task;
-	QLabel* labels[TaskEntryLabel::TASKENTRYLABEL_LAST_ITEM];
+	QLabel* labels[(char)TaskEntryLabel::TASKENTRYLABEL_LAST_ITEM];
 
 	// functions
 	void initLabelsArray();

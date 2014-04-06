@@ -30,6 +30,10 @@ void InputWindow::showTooltipMessage(QString message, InputStatus status) {
 	tooltipWidget->setText(message, status);
 }
 
+void InputWindow::hideTooltip() {
+	tooltipWidget->hide();
+}
+
 bool InputWindow::eventFilter(QObject* object, QEvent* event) {
     if(event->type() == QEvent::KeyPress) {
 		// enter key
@@ -163,38 +167,38 @@ void InputWindow::handleLineEditChanged() {
 
 	if (commandType == "add") {
 		if (currText.contains(QRegExp("\\bfrom\\b"))) { // period tasks
-			tooltipWidget->setText("add <my task> from <start> to <end> #tag", NORMAL);
+			tooltipWidget->setText("add <my task> from <start> to <end> #tag", InputStatus::NORMAL);
 		} else if (currText.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
-			tooltipWidget->setText("add <my task> by/on/at <end> #tag", NORMAL);
+			tooltipWidget->setText("add <my task> by/on/at <end> #tag", InputStatus::NORMAL);
 		} else { // simple tasks
-			tooltipWidget->setText("add <my task> #tag", NORMAL);
+			tooltipWidget->setText("add <my task> #tag", InputStatus::NORMAL);
 		}
 	} else if (commandType == "remove") {
-		tooltipWidget->setText("remove <task no> | remove <task no>, <task no>, ... | remove <task no> - <task no>", NORMAL);
+		tooltipWidget->setText("remove <task no> | remove <task no>, <task no>, ... | remove <task no> - <task no>", InputStatus::NORMAL);
 	} else if (commandType == "edit") {
-		tooltipWidget->setText("edit <task no> <thing to change> <-thing to remove>", NORMAL);
+		tooltipWidget->setText("edit <task no> <thing to change> <-thing to remove>", InputStatus::NORMAL);
 	} else if (commandType == "done") {
-		tooltipWidget->setText("done <task no> | done <task no>, <task no>, ... | done <task no> - <task no>", NORMAL);
+		tooltipWidget->setText("done <task no> | done <task no>, <task no>, ... | done <task no> - <task no>", InputStatus::NORMAL);
 	} else if (commandType == "undone") {
-		tooltipWidget->setText("undone <task no> | undone <task no>, <task no>, ... | undone <task no> - <task no>", NORMAL);
+		tooltipWidget->setText("undone <task no> | undone <task no>, <task no>, ... | undone <task no> - <task no>", InputStatus::NORMAL);
 	} else if (commandType == "show") {
-		tooltipWidget->setText("show <keyword> | done | undone | overdue | ongoing | today | tomorrow", NORMAL);
+		tooltipWidget->setText("show <keyword> | done | undone | overdue | ongoing | today | tomorrow", InputStatus::NORMAL);
 	} else if (commandType == "hide") {
-		tooltipWidget->setText("Hide the task window.", NORMAL);		
+		tooltipWidget->setText("Hide the task window.", InputStatus::NORMAL);		
 	} else if (commandType == "undo") {
-		tooltipWidget->setText("Undo your last action. (CTRL+Z)", NORMAL);		
+		tooltipWidget->setText("Undo your last action. (CTRL+Z)", InputStatus::NORMAL);		
 	} else if (commandType == "redo") {
-		tooltipWidget->setText("Redo your last action (CTRL+Y)", NORMAL);		
+		tooltipWidget->setText("Redo your last action (CTRL+Y)", InputStatus::NORMAL);		
 	} else if (commandType == "clear") {
-		tooltipWidget->setText("Clear all tasks", NORMAL);		
+		tooltipWidget->setText("Clear all tasks", InputStatus::NORMAL);
 	} else if (commandType == "help") {
-		tooltipWidget->setText("View the tutorial", NORMAL);		
+		tooltipWidget->setText("View the tutorial", InputStatus::NORMAL);
 	} else if (commandType == "settings") {
-		tooltipWidget->setText("Access the settings", NORMAL);		
+		tooltipWidget->setText("Access the settings", InputStatus::NORMAL);
 	} else if (commandType == "about") {
-		tooltipWidget->setText("See Tasuke's info", NORMAL);		
+		tooltipWidget->setText("See Tasuke's info", InputStatus::NORMAL);
 	} else if (commandType == "exit") {
-		tooltipWidget->setText("Exit the application", NORMAL);		
+		tooltipWidget->setText("Exit the application", InputStatus::NORMAL);
 	} else { 
 		tooltipWidget->hide();
 	}

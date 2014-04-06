@@ -48,35 +48,35 @@ void TooltipWidget::showAndAlign() {
 
 void TooltipWidget::initIcons() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	IconSet iconSet = (IconSet)settings.value("Icon", IconSet::NYANSUKE).toInt();
+	IconSet iconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
 
 	switch (iconSet) {
-		case NYANSUKE:
+		case IconSet::NYANSUKE:
 			normalIcon = QPixmap(":Images/images/icons/nyansukenormal.png");
 			successIcon = QPixmap(":Images/images/icons/nyansukesuccess.png");
 			failureIcon = QPixmap(":Images/images/icons/nyansukefailure.png");
 			break;
-		case SYMBOLS:
+		case IconSet::SYMBOLS:
 			normalIcon = QPixmap(":Images/images/icons/symbolnormal.png");
 			successIcon = QPixmap(":Images/images/icons/symbolsuccess.png");
 			failureIcon = QPixmap(":Images/images/icons/symbolfailure.png");
 			break;
-		case SYMBOLS2:
+		case IconSet::SYMBOLS2:
 			normalIcon = QPixmap(":Images/images/icons/symbolnormal.png");
 			successIcon = QPixmap(":Images/images/icons/symbolwhitesuccess.png");
 			failureIcon = QPixmap(":Images/images/icons/symbolwhitefailure.png");
 			break;
-		case NICCAGE:
+		case IconSet::NICCAGE:
 			normalIcon = QPixmap(":Images/images/icons/niccagenormal.png");
 			successIcon = QPixmap(":Images/images/icons/niccagesuccess.png");
 			failureIcon = QPixmap(":Images/images/icons/niccagefailure.png");
 			break;
-		case MEME:
+		case IconSet::MEME:
 			normalIcon = QPixmap(":Images/images/icons/memenormal.png");
 			successIcon = QPixmap(":Images/images/icons/memesuccess.png");
 			failureIcon = QPixmap(":Images/images/icons/memefailure.png");
 			break;
-		case SHIBE:
+		case IconSet::SHIBE:
 			normalIcon = QPixmap(":Images/images/icons/dogenormal.png");
 			successIcon = QPixmap(":Images/images/icons/dogesuccess.png");
 			failureIcon = QPixmap(":Images/images/icons/dogefailure.png");
@@ -99,13 +99,13 @@ void TooltipWidget::initAnimation() {
 
 void TooltipWidget::setIconOnLabel(InputStatus status) {
 	switch (status) {
-		case SUCCESS:
+		case InputStatus::SUCCESS:
 			ui.icon->setPixmap(successIcon);
 			break;
-		case FAILURE:
+		case InputStatus::FAILURE:
 			ui.icon->setPixmap(failureIcon);
 			break;
-		case NORMAL:
+		case InputStatus::NORMAL:
 			ui.icon->setPixmap(normalIcon);
 			break;
 		default:

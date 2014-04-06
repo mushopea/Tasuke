@@ -65,12 +65,11 @@ void SettingsWindow::handleApplyButton() {
 
 
 	// tooltip icons
-	IconSet oldIcons = (IconSet)settings.value("Icon", IconSet::NYANSUKE).toInt();
-	for (int i = 0; i < 6; ++i) {
-		LOG(INFO) << "Radio button " << i << " " << iconSelectButtons[i]->text().toStdString() << " selected: " << iconSelectButtons[i]->isChecked() << std::flush;
+	IconSet oldIcons = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
+	for (int i = 0; i < (char)IconSet::ICONSET_LAST_ITEM; ++i) {
 		if (iconSelectButtons[i]->isChecked()) {
-			settings.setValue("Icon", (IconSet)i);
-			if (oldIcons != i) {
+			settings.setValue("Icon", i);
+			if (oldIcons != (IconSet)i) {
 				emit iconsChanged();
 			}
 			break;
@@ -100,17 +99,17 @@ bool SettingsWindow::eventFilter(QObject* object, QEvent* event) {
 }
 
 void SettingsWindow::initIconsArray() {
-	iconSelectButtons[IconSet::MEME] = ui.optionMeme;
-	iconSelectButtons[IconSet::NICCAGE] = ui.optionNicCage;
-	iconSelectButtons[IconSet::NYANSUKE] = ui.optionNyansuke;
-	iconSelectButtons[IconSet::SHIBE] = ui.optionShibe;
-	iconSelectButtons[IconSet::SYMBOLS] = ui.optionSymbols;
-	iconSelectButtons[IconSet::SYMBOLS2] = ui.optionSymbols2;
+	iconSelectButtons[(char)IconSet::MEME] = ui.optionMeme;
+	iconSelectButtons[(char)IconSet::NICCAGE] = ui.optionNicCage;
+	iconSelectButtons[(char)IconSet::NYANSUKE] = ui.optionNyansuke;
+	iconSelectButtons[(char)IconSet::SHIBE] = ui.optionShibe;
+	iconSelectButtons[(char)IconSet::SYMBOLS] = ui.optionSymbols;
+	iconSelectButtons[(char)IconSet::SYMBOLS2] = ui.optionSymbols2;
 }
 
 void SettingsWindow::loadCurrSettings() {
 	// icons
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	IconSet currIconSet = (IconSet)settings.value("Icon", IconSet::NYANSUKE).toInt();
-	iconSelectButtons[currIconSet]->setChecked(true);
+	IconSet currIconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
+	iconSelectButtons[(char)currIconSet]->setChecked(true);
 }

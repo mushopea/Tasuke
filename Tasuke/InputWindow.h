@@ -22,6 +22,7 @@ public:
 	InputWindow(QWidget *parent = 0);
 	~InputWindow();
 	void showTooltipMessage(QString message, InputStatus status);
+	void hideTooltip();
 
 public slots:
 	void showAndCenter();	

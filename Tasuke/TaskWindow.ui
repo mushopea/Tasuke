@@ -595,6 +595,11 @@ background: transparent;</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
+      <zorder>emptyTasksMessage1</zorder>
+      <zorder>emptyTaskMessage2</zorder>
+      <zorder>emptyAddTaskButton</zorder>
+      <zorder>oopsImage</zorder>
+      <zorder>progressBar</zorder>
      </widget>
      <widget class="QWidget" name="columnLabels" native="true">
       <property name="geometry">
