@@ -58,7 +58,7 @@ private:
 
 public:	
 	static QString getType(QString commandString);
-	static ICommand* interpret(QString commandString);
+	static ICommand* interpret(QString commandString, bool dry = false);
 	static void initFormats();
 };
 

@@ -36,6 +36,7 @@ public:
 	void sortByBeginDate();
 	void sortByDescription();
 	void sortByOngoing();
+	void sortByIsDueToday();
 	void sortByDone();
 	void sortByOverdue();
 	void sortByHasEndDate();

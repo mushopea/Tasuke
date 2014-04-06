@@ -149,7 +149,7 @@ QString Interpreter::getType(QString commandString) {
 
 // This static helper function returns an instance of a ICommand that represents
 // the user's command. The caller must clean up using delete.
-ICommand* Interpreter::interpret(QString commandString) {
+ICommand* Interpreter::interpret(QString commandString, bool dry) {
 	LOG(INFO) << "Interpretting " << commandString.toStdString();
 
 	commandString = substitute(commandString);
@@ -166,12 +166,19 @@ ICommand* Interpreter::interpret(QString commandString) {
 		return createDoneCommand(commandString);
 	} else if (commandType == "undone") {
 		return createUndoneCommand(commandString);
+	} else if (commandType == "clear") {
+		return createClearCommand(commandString);
 	}
 
 	if (commandType == "") {
 		throw ExceptionBadCommand();
 	}
 	
+	// if this was a dry run, don't actually do anything
+	if (dry) {
+		return nullptr;
+	}
+
 	if (commandType == "show") {
 		doShow(commandString);
 	} else if (commandType == "hide") {
@@ -180,8 +187,6 @@ ICommand* Interpreter::interpret(QString commandString) {
 		doUndo();
 	} else if (commandType == "redo") {
 		doRedo();
-	} else if (commandType == "clear") {
-		return createClearCommand(commandString);
 	} else if (commandType == "help") {
 		doHelp();
 	} else if (commandType == "settings") {
@@ -249,6 +254,10 @@ EditCommand* Interpreter::createEditCommand(QString commandString) {
 	int id = parseId(idString);
 
 	commandString = commandString.section(' ', 1);
+
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
 
 	QHash<QString, QString> parts = decompose(commandString);
 	Task task = Tasuke::instance().getStorage().getTask(id-1);

@@ -12,6 +12,7 @@ namespace InterpreterTests {
 		char *argv[] = { "Tasuke.exe" };
 		FLAGS_logtostderr = true;
 		google::InitGoogleLogging(argv[0]);
+		app = new QApplication(argc, argv);
 		Tasuke::setGuiMode(false);
 		Tasuke::instance();
 		storage = nullptr;
@@ -21,6 +22,9 @@ namespace InterpreterTests {
 		if (storage == nullptr) {
 			delete storage;
 		}
+
+		app->quit();
+		delete app;
 	}
 
 	TEST_CLASS(InterpreterTests) {

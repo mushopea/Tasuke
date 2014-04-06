@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>447</height>
+    <height>493</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -353,7 +353,7 @@ QToolTip {
       <x>0</x>
       <y>0</y>
       <width>840</width>
-      <height>447</height>
+      <height>493</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -373,7 +373,7 @@ background-color: rgb(74, 74, 74);</string>
       <x>10</x>
       <y>10</y>
       <width>820</width>
-      <height>427</height>
+      <height>473</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -390,7 +390,7 @@ border-radius: 9px;</string>
       <x>10</x>
       <y>15</y>
       <width>820</width>
-      <height>411</height>
+      <height>461</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -409,7 +409,7 @@ border-radius: 9px;</string>
         <x>12</x>
         <y>77</y>
         <width>797</width>
-        <height>336</height>
+        <height>385</height>
        </rect>
       </property>
       <property name="focusPolicy">
@@ -431,7 +431,7 @@ border-radius: 9px;</string>
        <enum>QAbstractItemView::NoSelection</enum>
       </property>
       <property name="spacing">
-       <number>3</number>
+       <number>2</number>
       </property>
      </widget>
      <widget class="QLabel" name="taskScope">
@@ -474,7 +474,7 @@ background: transparent;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>100</y>
+        <y>130</y>
         <width>821</width>
         <height>241</height>
        </rect>
@@ -595,11 +595,6 @@ background: transparent;</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <zorder>emptyTasksMessage1</zorder>
-      <zorder>emptyTaskMessage2</zorder>
-      <zorder>emptyAddTaskButton</zorder>
-      <zorder>oopsImage</zorder>
-      <zorder>progressBar</zorder>
      </widget>
      <widget class="QWidget" name="columnLabels" native="true">
       <property name="geometry">

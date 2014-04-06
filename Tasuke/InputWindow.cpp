@@ -23,11 +23,11 @@ InputWindow::~InputWindow() {
 }
 
 // Allows other classes to display a tooltip message relative to the status of the input.
-void InputWindow::showTooltipMessage(QString message, InputStatus status) {
+void InputWindow::showTooltipMessage(InputStatus status, QString message) {
 	if (!tooltipWidget->isVisible()) {
 		tooltipWidget->showAndAlign();
 	}
-	tooltipWidget->setText(message, status);
+	tooltipWidget->setText(status, message);
 }
 
 void InputWindow::hideTooltip() {
@@ -40,32 +40,30 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
 		if(eventKey->key() == Qt::Key_Return) {
 			handleReturnPressed();
-			handleEditingFinished();
 			return true;
 		}
 
 		if (Tasuke::instance().getTaskWindow().getScreen() == 0){
 			// Scroll keys for tasks
-			if (eventKey->modifiers() & Qt::CTRL) {
-				if (eventKey->key() == Qt::Key_Down) {
-					Tasuke::instance().getTaskWindow().pageDown();
+			switch (eventKey->key()) {
+				case Qt::Key::Key_Up:
+					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+						Tasuke::instance().getTaskWindow().pageUp();
+					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+						Tasuke::instance().getTaskWindow().gotoPreviousSection();
+					} else {
+						Tasuke::instance().getTaskWindow().scrollUp();
+					}
 					return true;
-				}
-
-				if (eventKey->key() == Qt::Key_Up) {
-					Tasuke::instance().getTaskWindow().pageUp();
+				case Qt::Key::Key_Down:
+					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+						Tasuke::instance().getTaskWindow().pageDown();
+					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+						Tasuke::instance().getTaskWindow().gotoNextSection();
+					} else {
+						Tasuke::instance().getTaskWindow().scrollDown();
+					}
 					return true;
-				}
-			}
-
-			if (eventKey->key() == Qt::Key_Down) {
-				Tasuke::instance().getTaskWindow().scrollDown();
-				return true;
-			}
-
-			if (eventKey->key() == Qt::Key_Up) {
-				Tasuke::instance().getTaskWindow().scrollUp();
-				return true;
 			}
 
 			// undo keys
@@ -94,7 +92,7 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
     }
 
 	if(event->type() == QEvent::FocusOut) {
-	   handleEditingFinished();	
+		closeAndClear();
     }
 
     return QObject::eventFilter(object, event);
@@ -125,6 +123,10 @@ void InputWindow::showAndAdd() {
 	ui.lineEdit->insertPlainText(QString("add "));
 }
 
+void InputWindow::closeAndClear() {
+	hide();
+	ui.lineEdit->clear();
+}
 
 void InputWindow::handleReturnPressed() {
 	QString command = ui.lineEdit->toPlainText();
@@ -134,11 +136,6 @@ void InputWindow::handleReturnPressed() {
 	}
 
 	Tasuke::instance().runCommand(command);
-}
-
-void InputWindow::handleEditingFinished() {
-	hide();
-	ui.lineEdit->clear();
 }
 
 void InputWindow::initAnimation() {
@@ -159,48 +156,11 @@ void InputWindow::changeBG(int themeNumber) {
 
 void InputWindow::handleLineEditChanged() {
 	QString currText = ui.lineEdit->toPlainText();
-	QString commandType = Interpreter::getType(currText);
 
-	if (!tooltipWidget->isVisible()) {
-		tooltipWidget->showAndAlign();
-	}
-
-	if (commandType == "add") {
-		if (currText.contains(QRegExp("\\bfrom\\b"))) { // period tasks
-			tooltipWidget->setText("add <my task> from <start> to <end> #tag", InputStatus::NORMAL);
-		} else if (currText.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
-			tooltipWidget->setText("add <my task> by/on/at <end> #tag", InputStatus::NORMAL);
-		} else { // simple tasks
-			tooltipWidget->setText("add <my task> #tag", InputStatus::NORMAL);
-		}
-	} else if (commandType == "remove") {
-		tooltipWidget->setText("remove <task no> | remove <task no>, <task no>, ... | remove <task no> - <task no>", InputStatus::NORMAL);
-	} else if (commandType == "edit") {
-		tooltipWidget->setText("edit <task no> <thing to change> <-thing to remove>", InputStatus::NORMAL);
-	} else if (commandType == "done") {
-		tooltipWidget->setText("done <task no> | done <task no>, <task no>, ... | done <task no> - <task no>", InputStatus::NORMAL);
-	} else if (commandType == "undone") {
-		tooltipWidget->setText("undone <task no> | undone <task no>, <task no>, ... | undone <task no> - <task no>", InputStatus::NORMAL);
-	} else if (commandType == "show") {
-		tooltipWidget->setText("show <keyword> | done | undone | overdue | ongoing | today | tomorrow", InputStatus::NORMAL);
-	} else if (commandType == "hide") {
-		tooltipWidget->setText("Hide the task window.", InputStatus::NORMAL);		
-	} else if (commandType == "undo") {
-		tooltipWidget->setText("Undo your last action. (CTRL+Z)", InputStatus::NORMAL);		
-	} else if (commandType == "redo") {
-		tooltipWidget->setText("Redo your last action (CTRL+Y)", InputStatus::NORMAL);		
-	} else if (commandType == "clear") {
-		tooltipWidget->setText("Clear all tasks", InputStatus::NORMAL);
-	} else if (commandType == "help") {
-		tooltipWidget->setText("View the tutorial", InputStatus::NORMAL);
-	} else if (commandType == "settings") {
-		tooltipWidget->setText("Access the settings", InputStatus::NORMAL);
-	} else if (commandType == "about") {
-		tooltipWidget->setText("See Tasuke's info", InputStatus::NORMAL);
-	} else if (commandType == "exit") {
-		tooltipWidget->setText("Exit the application", InputStatus::NORMAL);
-	} else { 
-		tooltipWidget->hide();
+	if (currText.isEmpty()) {
+		hideTooltip();
+	} else {
+		emit inputChanged(currText);
 	}
 }
 
@@ -214,3 +174,7 @@ qreal InputWindow::getOpacity() const {
 	return wOpacity;
 }
 
+void InputWindow::hideEvent(QHideEvent* event) {
+	Q_UNUSED(event);
+	hideTooltip();
+}

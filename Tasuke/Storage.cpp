@@ -215,6 +215,13 @@ void IStorage::sortByOngoing() {
 	});
 }
 
+void IStorage::sortByIsDueToday() {
+	LOG(INFO) << "Sorting by due today.";
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+		return t1->isDueToday() > t2->isDueToday();
+	});
+}
+
 void IStorage::sortByOverdue() {
 	LOG(INFO) << "Sorting by overdue status.";
 	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
@@ -250,8 +257,8 @@ void IStorage::renumber() {
 	sortByDescription();
 	sortByEndDate();
 
-	// ongoing is always below overdue
-	sortByOngoing();
+	// today is always below overdue
+	sortByIsDueToday();
 
 	// overdue is always at the top
 	sortByOverdue();
