@@ -91,9 +91,32 @@ void Tasuke::loadDictionary() {
 	spellObj->add_dic((path + "/../Resources/en_US.dic").toUtf8().constData());
 #endif
 
+	// commands
 	spellObj->add("rm");
 	spellObj->add("ls");
 	spellObj->add("nd");
+
+	// months
+	spellObj->add("jan");
+	spellObj->add("feb");
+	spellObj->add("mar");
+	spellObj->add("apr");
+	spellObj->add("may");
+	spellObj->add("jun");
+	spellObj->add("jul");
+	spellObj->add("aug");
+	spellObj->add("sep");
+	spellObj->add("oct");
+	spellObj->add("nov");
+	spellObj->add("dec");
+
+	// days
+	spellObj->add("mon");
+	spellObj->add("tue");
+	spellObj->add("wed");
+	spellObj->add("thu");
+	spellObj->add("fri");
+	spellObj->add("sat");
 }
 
 void Tasuke::loadFonts(){
@@ -400,7 +423,7 @@ void Tasuke::handleInputChanged(QString commandString) {
 		inputTimer.stop();
 	}
 
-	inputTimer.setInterval(500);
+	inputTimer.setInterval(1000);
 	inputTimer.setSingleShot(true);
 	inputTimer.start();
 }
