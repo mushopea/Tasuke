@@ -28,8 +28,8 @@ void InputHighlighter::setRegex(){
 	//connectorRegex = QRegExp("((\\b(to|from|by|at|on)\\b)|( @)|-|#)");
 	connectorRegex = QRegularExpression("^(?:(?:wow\\s+)?(?:[ms]uch|so|many)\\s+)?" // doge prefixes
 										"(?:add|create|a|do|edit|update|modify|change|e)" // commands with connectors
-										"(?:\\s+\\S+\\s+)" // item being added or edited
-										"(from|by|at|on)(?:\\s+(?:\\S+\\s+)(to))?"); // connectors, with optional "to" connector
+										"\\s+(?:\\S+\\s+)+" // item being added or edited
+										"(from|by|at|on)(?:\\s+(?:\\S+\\s+)+(to))?"); // connectors, with optional "to" connector
 }
 
 void InputHighlighter::setFormats(QColor commandC, QColor keywordC, QColor connectorC){

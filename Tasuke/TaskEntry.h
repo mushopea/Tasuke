@@ -46,7 +46,8 @@ private:
 	// functions
 	void initLabelsArray();
 	void initFonts();
-	void setTooltip(const QString& des, const QDateTime& start, const QDateTime& end, const QList<QString>& tags);
+	void setTooltip(const QString& des, const QDateTime& start, const QDateTime& end, 
+					const QList<QString>& tags, const QString& dueInMessage);
 	void setDescription(const QString& description);
 	void setDateTimes(const QDateTime& start, const QDateTime& end);
 	QString createTagString(const QList<QString>& tags) const;
