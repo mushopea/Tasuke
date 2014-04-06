@@ -151,7 +151,6 @@ void InputWindow::handleReturnPressed() {
 	}
 
 	Tasuke::instance().runCommand(command);
-	doErrorAnimation();
 }
 
 void InputWindow::initAnimation() {
