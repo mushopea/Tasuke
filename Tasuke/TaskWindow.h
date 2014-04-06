@@ -30,13 +30,10 @@ public:
 	virtual ~TaskWindow();
 
 	// Handles task list display
-	void jumpToCurrentlySelectedTask();
-	void updateCurrentlySelectedTo(int taskID);
 	void highlightTask(int taskID);
-	void highlightCurrentlySelectedTask(int prevsize);
 	void showTasks(const QList<Task>& tasks, const QString& title = "");
 
-	// Handles scrolling
+	// Handles scrolling (public because InputWindow accesses)
 	void scrollUp();
 	void scrollDown();
 	void pageUp();
@@ -62,12 +59,11 @@ protected:
 
 private:
 
-	//========================================
+	//=========================================
 	// ATTRIBUTES
 	//=========================================
+
 	static const int TASKS_PER_PAGE = 5;
-
-
 	enum class SubheadingType : char {
 		OVERDUE,
 		DUE_TODAY,
@@ -75,43 +71,53 @@ private:
 		FLOATING,
 		SUBHEADING_TYPE_LAST_ITEM
 	};
-
 	Ui::TaskWindowClass ui;	
-	TutorialWidget tutorial;
-	HotKeyThread *hotKeyThread;
 	QPoint mpos;
+	qreal wOpacity;
 	QList<Task> currentTasks;
 	QPropertyAnimation *animation;
     QProgressBar *progressBar;
-	qreal wOpacity;
+	TutorialWidget tutorial;
+	HotKeyThread *hotKeyThread;
 
 	// For selection of tasks
-	int currentlySelectedTask; // Represents of the # of the selected entry in the UI. (Range: 1 < # < taskListSize)
+	int currentlySelectedTask;
 	int previouslySelectedTask;
 	int previousSize;
 	int subheadingRowIndexes[SubheadingType::SUBHEADING_TYPE_LAST_ITEM];
 
-	//========================================
-	// FUNCTIONS
 	//=========================================
-	void resetSubheadingIndexes();
+	// HELPER FUNCTIONS
+	//=========================================
+
+	// For initialization
 	void initTutorial();
 	void initAnimation();
-	void decideContent();
-	void showBackButtonIfSearching(const QString& title);
 	void setOpacity(qreal value);
 	qreal getOpacity() const;
 
-	
-	// Handles task entry creation and addition to list
-	bool isInRange(int taskID) const;
-	void changeTitle(const QString& title);
+	//  Private helper functions for task display
 	TaskEntry* createEntry(const Task& t);
 	void addListItemToRow(TaskEntry* entry, int row, const QString& type);
 	void addListItem(TaskEntry* entry);
-	void displaySubheading(const QString& content);
 	void displayTask(const Task& t, int showDone);
 	int getTaskEntryRow(int taskID) const;
+
+	// Private helper functions for subheadings display
+	void displayAndUpdateSubheadings(int index);	
+	void resetSubheadingIndexes();
+	void displaySubheading(const QString& content);
+
+	// Private helper functions for window content display
+	void decideContent();
+	void showBackButtonIfSearching(const QString& title);
+	void changeTitle(const QString& title);
+
+	// Private helper functions for scrolling and highlighting of tasks
+	bool isInRange(int taskID) const;
+	void updateCurrentlySelectedTo(int taskID);	
+	void jumpToCurrentlySelectedTask();
+	void highlightCurrentlySelectedTask(int prevsize);
 };
 
 #endif // TASKWINDOW_H

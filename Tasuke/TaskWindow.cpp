@@ -35,133 +35,14 @@ TaskWindow::~TaskWindow() {
 }
 
 //========================================
-// TASK DISPLAY FUNCTIONS
-//=========================================
-
-// Checks if a given index is in range of the task list.
-bool TaskWindow::isInRange(int taskID) const {
-	return (taskID >= 0) && (taskID < currentTasks.size());
-}
-
-// Changes title text on top
-void TaskWindow::changeTitle(const QString& title) {
-	if (!title.isEmpty()) {
-		ui.taskScope->setText("Viewing " + title);
-	}
-}
-
-// Creates and returns a new task entry.
-TaskEntry* TaskWindow::createEntry(const Task& t) {
-	TaskEntry* entry = new TaskEntry(t, this);
-
-	if (t.isOverdue()) {
-		entry->highlightOverdue();
-	}
-
-	if (t.isOngoing()) {
-		entry->highlightOngoing();
-	}
-	return entry;
-}
-
-// Add a QListWidgetItem in a specified row with a specified background.
-void TaskWindow::addListItemToRow(TaskEntry* entry, int row, const QString& type) {
-	if (type.compare("select") == 0) {
-		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(188, 188, 188);");
-	} 
-
-	if (type.compare("deselect") == 0) {
-		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(203, 202, 202);");
-	}
-
-	QListWidgetItem *listItem = new QListWidgetItem();
-	listItem->setSizeHint(entry->size());
-	ui.taskList->insertItem(row, listItem);
-	ui.taskList->setItemWidget(listItem, entry);
-}
-
-// Adds a new QListWidgetItem
-void TaskWindow::addListItem(TaskEntry* entry) {
-	QListWidgetItem *listItem = new QListWidgetItem();
-	listItem->setSizeHint(entry->size());
-	ui.taskList->addItem(listItem);
-	ui.taskList->setItemWidget(listItem, entry);
-}
-
-void TaskWindow::displaySubheading(const QString& content) {
-	SubheadingEntry * subheading = new SubheadingEntry(content, this);
-	QListWidgetItem *listItem = new QListWidgetItem();
-	listItem->setSizeHint(subheading->size());
-	ui.taskList->addItem(listItem);
-	ui.taskList->setItemWidget(listItem, subheading);
-}
-
-// Displays a task entry on the list.
-void TaskWindow::displayTask(const Task& t, int showDone) {
-	if (showDone == 0) { // Showing done tasks
-		TaskEntry * entry = createEntry(t);
-		addListItem(entry);
-	} else { // Showing undone tasks
-		if (!t.isDone()) {
-			TaskEntry * entry = createEntry(t);
-			addListItem(entry);
-		}
-	}
-}
-
-
-int TaskWindow::getTaskEntryRow(int taskRow) const {
-	int result = taskRow;
-	for (int i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
-		if (subheadingRowIndexes[i] != -1 && subheadingRowIndexes[i] <= taskRow) {
-			++result;
-		}
-	}
-	return result;
-}
-
-//========================================
 // TASK DISPLAY AND SELECTION
 //=========================================
-
-// This function updates the latest selected task.
-void TaskWindow::updateCurrentlySelectedTo(int taskID) {
-	previouslySelectedTask = currentlySelectedTask;
-	currentlySelectedTask = taskID;
-}
-
-// This function will scroll to, and highlight, the currently selected task.
-void TaskWindow::jumpToCurrentlySelectedTask() {
-	ui.taskList->scrollToItem(ui.taskList->item(currentlySelectedTask == 0 ? 0 : getTaskEntryRow(currentlySelectedTask)));
-	highlightCurrentlySelectedTask(currentTasks.size());
-}
 
 // This function is for Tasuke to get TaskWindow to highlight a particular task.
 void TaskWindow::highlightTask(int taskID) {
 	assert(isInRange(taskID)); 
 	updateCurrentlySelectedTo(taskID);
 	jumpToCurrentlySelectedTask();
-}
-
-// This function highlights the selected row and dehighlights the previously highlighted.
-void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
-	// Dehighlight if previous state is not empty
-	if ((isInRange(previouslySelectedTask)) && (prevSize!=0)) { 
-		Task t2 = currentTasks[previouslySelectedTask];
-		TaskEntry * entry2 = createEntry(t2);
-		int prevSelectedRow = getTaskEntryRow(previouslySelectedTask);
-		addListItemToRow(entry2, prevSelectedRow, "deselect");
-		ui.taskList->takeItem(prevSelectedRow + 1);
-	}
-
-	// Highlight currently selected
-	if(isInRange(currentlySelectedTask)) {
-		Task t = currentTasks[currentlySelectedTask];
-		TaskEntry * entry = createEntry(t);
-		int currSelectedRow = getTaskEntryRow(currentlySelectedTask);
-		addListItemToRow(entry, currSelectedRow, "select");
-		ui.taskList->takeItem(currSelectedRow + 1);
-	}
 }
 
 // This function is responsible for showing all the tasks entries and subheadings.
@@ -253,6 +134,28 @@ void TaskWindow::pageDown() {
 }
 
 //========================================
+// STACKED WIDGET FUNCTIONS
+//=========================================
+
+// Returns 0 if task list is shown, 1 if tutorial is shown
+int TaskWindow::getScreen() const {
+	return ui.stackedWidget->currentIndex();
+}
+
+void TaskWindow::changeTutorialWidgetTabs(){
+	tutorial.changeTabs();
+}
+
+void TaskWindow::showListWidget() {
+	ui.stackedWidget->slideInIdx(TASKS_PAGE);
+}
+
+void TaskWindow::showTutorialWidget() {
+	ui.stackedWidget->slideInIdx(TUTORIAL_PAGE);
+	tutorial.reset();
+}
+
+//========================================
 // SLOTS
 //=========================================
 
@@ -283,31 +186,8 @@ void TaskWindow::handleBackButton() {
 }
 
 //========================================
-// STACKED WIDGET FUNCTIONS
-//=========================================
-
-// Returns 0 if task list is shown, 1 if tutorial is shown
-int TaskWindow::getScreen() const {
-	return ui.stackedWidget->currentIndex();
-}
-
-void TaskWindow::changeTutorialWidgetTabs(){
-	tutorial.changeTabs();
-}
-
-void TaskWindow::showListWidget() {
-	ui.stackedWidget->slideInIdx(TASKS_PAGE);
-}
-
-void TaskWindow::showTutorialWidget() {
-	ui.stackedWidget->slideInIdx(TUTORIAL_PAGE);
-	tutorial.reset();
-}
-
-//========================================
 // EVENTS
 //=========================================
-
 
 void TaskWindow::closeEvent(QCloseEvent *event) {
 	hide();
@@ -409,13 +289,6 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 // INITIALIZATION
 //=========================================
 
-
-void TaskWindow::resetSubheadingIndexes(){
-	for (int i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
-		subheadingRowIndexes[i] = -1;
-	}
-}
-
 void TaskWindow::initTutorial() {
 	ui.stackedWidget->addWidget(&tutorial);
 	tutorial.goToFirstPage();
@@ -429,6 +302,129 @@ void TaskWindow::initAnimation() {
 	animation->setEndValue(1.0); 
 }
 
+void TaskWindow::setOpacity(qreal value) {
+	wOpacity = value;
+	setWindowOpacity(value);
+	update();
+}
+
+qreal TaskWindow::getOpacity() const {
+	return wOpacity;
+}
+
+
+//========================================
+// PRIVATE HELPER TASK DISPLAY FUNCTIONS
+//=========================================
+
+// Creates and returns a new task entry.
+TaskEntry* TaskWindow::createEntry(const Task& t) {
+	TaskEntry* entry = new TaskEntry(t, this);
+
+	if (t.isOverdue()) {
+		entry->highlightOverdue();
+	}
+
+	if (t.isOngoing()) {
+		entry->highlightOngoing();
+	}
+	return entry;
+}
+
+// Add a QListWidgetItem in a specified row with a specified background.
+void TaskWindow::addListItemToRow(TaskEntry* entry, int row, const QString& type) {
+	if (type.compare("select") == 0) {
+		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(188, 188, 188);");
+	} 
+
+	if (type.compare("deselect") == 0) {
+		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(203, 202, 202);");
+	}
+
+	QListWidgetItem *listItem = new QListWidgetItem();
+	listItem->setSizeHint(entry->size());
+	ui.taskList->insertItem(row, listItem);
+	ui.taskList->setItemWidget(listItem, entry);
+}
+
+// Adds a new QListWidgetItem
+void TaskWindow::addListItem(TaskEntry* entry) {
+	QListWidgetItem *listItem = new QListWidgetItem();
+	listItem->setSizeHint(entry->size());
+	ui.taskList->addItem(listItem);
+	ui.taskList->setItemWidget(listItem, entry);
+}
+
+// Displays a task entry on the list.
+void TaskWindow::displayTask(const Task& t, int showDone) {
+	if (showDone == 0) { // Showing done tasks
+		TaskEntry * entry = createEntry(t);
+		addListItem(entry);
+	} else { // Showing undone tasks
+		if (!t.isDone()) {
+			TaskEntry * entry = createEntry(t);
+			addListItem(entry);
+		}
+	}
+}
+
+int TaskWindow::getTaskEntryRow(int taskRow) const {
+	int result = taskRow;
+	for (int i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
+		if (subheadingRowIndexes[i] != -1 && subheadingRowIndexes[i] <= taskRow) {
+			++result;
+		}
+	}
+	return result;
+}
+
+//============================================
+// PRIVATE HELPER SUBHEADING DISPLAY FUNCTIONS
+//============================================
+
+void TaskWindow::resetSubheadingIndexes() {
+	for (int i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
+		subheadingRowIndexes[i] = -1;
+	}
+}
+
+void TaskWindow::displayAndUpdateSubheadings(int index) {
+	if (currentTasks[index].isOverdue()) {
+		if (subheadingRowIndexes[(char)SubheadingType::OVERDUE] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::OVERDUE] = index;
+			displaySubheading("Overdue tasks");
+		}
+	} else if (currentTasks[index].isDueToday()) {
+		if (subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] = index;
+			displaySubheading("Today's tasks");
+		}
+	} else if (!currentTasks[index].getBegin().isNull() || !currentTasks[index].getEnd().isNull()) {
+		if (subheadingRowIndexes[(char)SubheadingType::TIMED] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::TIMED] = index;
+			displaySubheading("Timed tasks");
+		}
+	} else {
+		if (subheadingRowIndexes[(char)SubheadingType::FLOATING] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::FLOATING] = index;
+			displaySubheading("Untimed tasks");
+		}
+	}
+}
+
+void TaskWindow::displaySubheading(const QString& content) {
+	SubheadingEntry * subheading = new SubheadingEntry(content, this);
+	QListWidgetItem *listItem = new QListWidgetItem();
+	listItem->setSizeHint(subheading->size());
+	ui.taskList->addItem(listItem);
+	ui.taskList->setItemWidget(listItem, subheading);
+}
+
+//================================================
+// PRIVATE HELPER WINDOW CONTENT DISPLAY FUNCTIONS
+//================================================
+
+// This function decides the content to show on the TaskWindow
 void TaskWindow::decideContent() {
 	if (ui.taskList->count() == 0) {
 		ui.emptyTaskMessage->show();
@@ -448,12 +444,52 @@ void TaskWindow::showBackButtonIfSearching(const QString& title) {
 	}
 }
 
-void TaskWindow::setOpacity(qreal value) {
-	wOpacity = value;
-	setWindowOpacity(value);
-	update();
+// Changes title text on top
+void TaskWindow::changeTitle(const QString& title) {
+	if (!title.isEmpty()) {
+		ui.taskScope->setText("Viewing " + title);
+	}
 }
 
-qreal TaskWindow::getOpacity() const {
-	return wOpacity;
+
+//=============================================
+// PRIVATE HELPER SCROLLING/HIGHLIGHT FUNCTIONS
+//=============================================
+
+// Checks if a given index is in range of the task list.
+bool TaskWindow::isInRange(int taskID) const {
+	return (taskID >= 0) && (taskID < currentTasks.size());
+}
+
+// This function updates the latest selected task.
+void TaskWindow::updateCurrentlySelectedTo(int taskID) {
+	previouslySelectedTask = currentlySelectedTask;
+	currentlySelectedTask = taskID;
+}
+
+// This function will scroll to, and highlight, the currently selected task.
+void TaskWindow::jumpToCurrentlySelectedTask() {
+	ui.taskList->scrollToItem(ui.taskList->item(currentlySelectedTask == 0 ? 0 : getTaskEntryRow(currentlySelectedTask)));
+	highlightCurrentlySelectedTask(currentTasks.size());
+}
+
+// This function highlights the selected row and dehighlights the previously highlighted.
+void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
+	// Dehighlight if previous state is not empty
+	if ((isInRange(previouslySelectedTask)) && (prevSize!=0)) { 
+		Task t2 = currentTasks[previouslySelectedTask];
+		TaskEntry * entry2 = createEntry(t2);
+		int prevSelectedRow = getTaskEntryRow(previouslySelectedTask);
+		addListItemToRow(entry2, prevSelectedRow, "deselect");
+		ui.taskList->takeItem(prevSelectedRow + 1);
+	}
+
+	// Highlight currently selected
+	if(isInRange(currentlySelectedTask)) {
+		Task t = currentTasks[currentlySelectedTask];
+		TaskEntry * entry = createEntry(t);
+		int currSelectedRow = getTaskEntryRow(currentlySelectedTask);
+		addListItemToRow(entry, currSelectedRow, "select");
+		ui.taskList->takeItem(currSelectedRow + 1);
+	}
 }
