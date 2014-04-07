@@ -77,6 +77,9 @@ QDate Interpreter::nextWeekday(int weekday) {
 QString Interpreter::substituteForDate(QString text) {
 	QString subbedText = text.toLower();
 
+	// strip commas
+	subbedText = subbedText.replace(QRegExp(",\\b"), "");
+
 	// strip this, next and the
 	subbedText = subbedText.replace(QRegExp("\\bthis\\b"), "");
 	subbedText = subbedText.replace(QRegExp("\\bnext\\b"), "");
@@ -834,21 +837,17 @@ void Interpreter::generateDateFormatsWithoutYear() {
 	QStringList speltMonthFormats;
 	QStringList monthFormats;
 	QStringList dateSeparators;
-	QStringList spaceOrCommas;
 
 	dayFormats << "d" << "dd";
 	speltMonthFormats << "MMM" << "MMMM";
 	monthFormats << "M" << "MM";
-	spaceOrCommas << " " << ", ";
 	dateSeparators << "/" << "-"; 
 
 	foreach(QString dayFormat, dayFormats) {
 		foreach(QString speltMonthFormat, speltMonthFormats) {
-			foreach(QString spaceOrComma, spaceOrCommas) {
-				dateFormatsWithoutYear << (dayFormat + spaceOrComma + speltMonthFormat);
-				// american format:
-				dateFormatsWithoutYear << (speltMonthFormat + spaceOrComma + dayFormat);
-			}
+			dateFormatsWithoutYear << (dayFormat + " " + speltMonthFormat);
+			// american format:
+			dateFormatsWithoutYear << (speltMonthFormat + " " + dayFormat);
 		}
 	}
 
@@ -867,21 +866,17 @@ void Interpreter::generateDateFormats() {
 	QStringList dayFormats;
 	QStringList monthFormats;
 	QStringList yearFormats;
-	QStringList spaceOrCommas;
 	QStringList dateSeparators;
 
 	dayFormats << "d" << "dd";
 	monthFormats << "M" << "MM";
 	yearFormats << "yy" << "yyyy";
-	spaceOrCommas << " " << ", ";
 	dateSeparators << "/" << "-"; 
 
 	foreach(QString dateFormatWithoutYear, dateFormatsWithoutYear) {
 		foreach(QString yearFormat, yearFormats) {
-			foreach(QString spaceOrComma, spaceOrCommas) {
-				dateFormats << (dateFormatWithoutYear + spaceOrComma + yearFormat);
-				dateFormats << (yearFormat + spaceOrComma + dateFormatWithoutYear);
-			}
+			dateFormats << (dateFormatWithoutYear + " " + yearFormat);
+			dateFormats << (yearFormat + " " + dateFormatWithoutYear);
 		}
 	}
 
@@ -900,20 +895,15 @@ void Interpreter::generateDateFormats() {
 void Interpreter::generateDateTimeFormatsWithoutYear() {
 	assert(formatsAlreadyInit == false);
 
-	QStringList spaceOrCommas;
-	spaceOrCommas << " " << ", ";
-
 	foreach(QString dateFormatWithoutYear, dateFormatsWithoutYear) {
-		foreach(QString spaceOrComma, spaceOrCommas) {
-			foreach(QString timeFormat, timeFormats) {
-				dateTimeFormatsWithoutYear << (dateFormatWithoutYear + spaceOrComma + timeFormat);
-				dateTimeFormatsWithoutYear << (timeFormat + spaceOrComma + dateFormatWithoutYear);
-			}
+		foreach(QString timeFormat, timeFormats) {
+			dateTimeFormatsWithoutYear << (dateFormatWithoutYear + " " + timeFormat);
+			dateTimeFormatsWithoutYear << (timeFormat + " " + dateFormatWithoutYear);
+		}
 
-			foreach(QString timeFormatAp, timeFormatsAp) {
-				dateTimeFormatsWithoutYearAp << (dateFormatWithoutYear + spaceOrComma + timeFormatAp);
-				dateTimeFormatsWithoutYearAp << (timeFormatAp + spaceOrComma + dateFormatWithoutYear);
-			}
+		foreach(QString timeFormatAp, timeFormatsAp) {
+			dateTimeFormatsWithoutYearAp << (dateFormatWithoutYear + " " + timeFormatAp);
+			dateTimeFormatsWithoutYearAp << (timeFormatAp + " " + dateFormatWithoutYear);
 		}
 	}
 }
@@ -921,20 +911,15 @@ void Interpreter::generateDateTimeFormatsWithoutYear() {
 void Interpreter::generateDateTimeFormats() {
 	assert(formatsAlreadyInit == false);
 
-	QStringList spaceOrCommas;
-	spaceOrCommas << " " << ", ";
-
 	foreach(QString dateFormat, dateFormats) {
-		foreach(QString spaceOrComma, spaceOrCommas) {
-			foreach(QString timeFormat, timeFormats) {
-				dateTimeFormats << (dateFormat + spaceOrComma + timeFormat);
-				dateTimeFormats << (timeFormat + spaceOrComma + dateFormat);
-			}
+		foreach(QString timeFormat, timeFormats) {
+			dateTimeFormats << (dateFormat + spaceOrComma + timeFormat);
+			dateTimeFormats << (timeFormat + spaceOrComma + dateFormat);
+		}
 
-			foreach(QString timeFormatAp, timeFormatsAp) {
-				dateTimeFormatsAp << (dateFormat + spaceOrComma + timeFormatAp);
-				dateTimeFormatsAp << (timeFormatAp + spaceOrComma + dateFormat);
-			}
+		foreach(QString timeFormatAp, timeFormatsAp) {
+			dateTimeFormatsAp << (dateFormat + spaceOrComma + timeFormatAp);
+			dateTimeFormatsAp << (timeFormatAp + spaceOrComma + dateFormat);
 		}
 	}
 }
