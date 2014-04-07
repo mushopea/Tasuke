@@ -444,9 +444,39 @@ QList<int> Interpreter::parseIdList(QString idListString) {
 }
 
 QList<int> Interpreter::parseIdRange(QString idRangeString) {
-	QStringList idRangeParts = idRangeString.split("-");
-	
+	idRangeString = idRangeString.trimmed();
+
+	QList<Task> special;
+	if (idRangeString == "done") {
+		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDone();
+		});
+	} else if (idRangeString == "overdue") {
+		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isOverdue();
+		});
+	} else if (idRangeString == "today") {
+		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDueToday();
+		});
+	} else if (idRangeString == "undone") {
+		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return !task.isDone();
+		});
+	}
+
 	QList<int> results;
+
+	// if this is a sepcial range
+	if (special.size() > 0) {
+		foreach(Task task, special) {
+			results.push_back(task.getId());;
+		}
+
+		return results;
+	}
+
+	QStringList idRangeParts = idRangeString.split("-");
 
 	if (idRangeParts.size() == 1) {
 		results.push_back(parseId(idRangeParts[0]));
