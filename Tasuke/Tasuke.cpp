@@ -127,11 +127,12 @@ void Tasuke::loadDictionary() {
 	spellObj->add("tue");
 	spellObj->add("wed");
 	spellObj->add("thu");
+	spellObj->add("thurs");
 	spellObj->add("fri");
 	spellObj->add("sat");
 	spellObj->add("monday");
 	spellObj->add("tueday");
-	spellObj->add("wedday");
+	spellObj->add("wednesday");
 	spellObj->add("thurday");
 	spellObj->add("friday");
 	spellObj->add("satday");
