@@ -2,6 +2,7 @@
 #include "Tasuke.h"
 #include "Constants.h"
 #include "Commands.h"
+#include "Interpreter.h"
 
 ICommand::ICommand() {
 	hasRun = false;
@@ -34,6 +35,7 @@ void AddCommand::run() {
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
 	Tasuke::instance().highlightTask(task.getId());
 	Tasuke::instance().showMessage(QString("Added \"%1\"").arg(task.getDescription()));
+	Interpreter::setLast(task.getId()+1);
 }
 void AddCommand::undo() {
 	Tasuke::instance().getStorage().removeTask(task.getId());
@@ -74,12 +76,14 @@ void EditCommand::run() {
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
 	Tasuke::instance().highlightTask(task.getId());
 	Tasuke::instance().showMessage(QString("Edited \"%1\"").arg(task.getDescription()));
+	Interpreter::setLast(task.getId()+1);
 }
 void EditCommand::undo() {
 	Tasuke::instance().getStorage().editTask(task.getId(), old);
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
 	Tasuke::instance().highlightTask(old.getId());
 	Tasuke::instance().showMessage(QString("Undone edit \"%1\"").arg(task.getDescription()));
+	Interpreter::setLast(task.getId()+1);
 }
 
 ClearCommand::ClearCommand() {

@@ -14,6 +14,8 @@ private:
 		QDateTime end;
 	} TIME_PERIOD;
 
+	static int last;
+
 	static QStringList timeFormats;
 	static QStringList dateFormatsWithoutYear;
 	static QStringList dateFormats;
@@ -59,6 +61,7 @@ private:
 	static void doExit();
 
 public:	
+	static void setLast(int _last);
 	static QString getType(QString commandString, bool doSub = true);
 	static ICommand* interpret(QString commandString, bool dry = false);
 	static void initFormats();

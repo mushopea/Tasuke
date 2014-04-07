@@ -10,6 +10,8 @@
 #include "Exceptions.h"
 #include "Interpreter.h"
 
+int Interpreter::last = -1;
+
 bool Interpreter::formatsAlreadyInit = false;
 
 QStringList Interpreter::timeFormats;
@@ -24,6 +26,9 @@ QStringList Interpreter::dateTimeFormatsWithoutYearAp;
 
 QMutex Interpreter::mutex;
 
+void Interpreter::setLast(int _last) {
+	last = _last;
+}
 
 QString Interpreter::substitute(QString text) {
 	QString subbedText = text;
@@ -38,7 +43,7 @@ QString Interpreter::substitute(QString text) {
 	subbedText = subbedText.replace(" \\on ", " on ");
 	subbedText = subbedText.replace(" \\to ", " to ");
 
-	subbedText = subbedText.replace(QRegExp("^do"), "add");
+	subbedText = subbedText.replace(QRegExp("^do "), "add ");
 	subbedText = subbedText.replace(QRegExp("^create"), "add");
 	subbedText = subbedText.replace(QRegExp("^change"), "edit");
 	subbedText = subbedText.replace(QRegExp("^rm"), "remove");
@@ -415,6 +420,10 @@ void Interpreter::doExit() {
 int Interpreter::parseId(QString idString) {
 	idString = idString.trimmed();
 
+	if (idString == "last") {
+		return last;
+	}
+
 	bool ok = false;
 	int id = idString.toInt(&ok);
 
@@ -446,6 +455,7 @@ QList<int> Interpreter::parseIdList(QString idListString) {
 QList<int> Interpreter::parseIdRange(QString idRangeString) {
 	idRangeString = idRangeString.trimmed();
 
+	QList<int> results;
 	QList<Task> special;
 	if (idRangeString == "done") {
 		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
@@ -465,12 +475,10 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 		});
 	}
 
-	QList<int> results;
-
 	// if this is a sepcial range
 	if (special.size() > 0) {
 		foreach(Task task, special) {
-			results.push_back(task.getId());;
+			results.push_back(task.getId()+1);
 		}
 
 		return results;
