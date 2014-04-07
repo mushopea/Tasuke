@@ -22,10 +22,10 @@ public:
 	Task getTask(int id);
 	void removeTask(int id);
 	void popTask();
-	QList<Task> getTasks() const;
+	QList<Task> getTasks(bool hideDone = true) const;
 	int totalTasks();
 
-	QList<Task> search(std::function<bool(Task)> predicate);;
+	QList<Task> search(std::function<bool(Task)> predicate) const;
 	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 	QList<Task> searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 	QList<Task> searchByEndDate(QDateTime byThisDate);

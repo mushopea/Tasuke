@@ -67,13 +67,20 @@ void IStorage::popTask() {
 }
 
 // Read-only
-QList<Task> IStorage::getTasks() const {
-	QList<Task> result;
+QList<Task> IStorage::getTasks(bool hideDone) const {
+	QList<Task> results;
 
-	foreach (QSharedPointer<Task> task, tasks) {
-		result.push_back(*task);
+	if (hideDone) {
+		results = search([](Task task) -> bool {
+			return !task.isDone();
+		});
+	} else {
+		foreach (QSharedPointer<Task> task, tasks) {
+			results.push_back(*task);
+		}
 	}
-	return result;
+
+	return results;
 }
 
 int IStorage::totalTasks() {
@@ -81,8 +88,7 @@ int IStorage::totalTasks() {
 	return tasks.size();
 }
 
-QList<Task> IStorage::search(std::function<bool(Task)> predicate) {
-	QMutexLocker lock(&mutex);
+QList<Task> IStorage::search(std::function<bool(Task)> predicate) const {
 	LOG(INFO) << "Searching for tasks";
 	QList<Task> results;
 
