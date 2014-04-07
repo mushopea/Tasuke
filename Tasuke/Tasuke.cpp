@@ -321,7 +321,7 @@ void Tasuke::showMessage(QString message) {
 		return;
 	}
 
-	systemTrayWidget->showMessage(message);
+	//systemTrayWidget->showMessage(message);
 }
 
 void Tasuke::updateTaskWindow(QList<Task> tasks, QString title) {
