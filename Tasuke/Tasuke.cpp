@@ -109,6 +109,18 @@ void Tasuke::loadDictionary() {
 	spellObj->add("oct");
 	spellObj->add("nov");
 	spellObj->add("dec");
+	spellObj->add("january");
+	spellObj->add("february");
+	spellObj->add("march");
+	spellObj->add("april");
+	spellObj->add("may");
+	spellObj->add("june");
+	spellObj->add("july");
+	spellObj->add("august");
+	spellObj->add("september");
+	spellObj->add("october");
+	spellObj->add("november");
+	spellObj->add("december");
 
 	// days
 	spellObj->add("mon");
@@ -117,6 +129,12 @@ void Tasuke::loadDictionary() {
 	spellObj->add("thu");
 	spellObj->add("fri");
 	spellObj->add("sat");
+	spellObj->add("monday");
+	spellObj->add("tueday");
+	spellObj->add("wedday");
+	spellObj->add("thuday");
+	spellObj->add("friday");
+	spellObj->add("satday");
 }
 
 void Tasuke::loadFonts(){
