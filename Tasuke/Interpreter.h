@@ -31,6 +31,8 @@ private:
 	
 	static QString substitute(QString text);
 	static QString substituteForTimePeriod(QString text);
+	static QString substituteForDate(QString text);
+
 	static QHash<QString, QString> decompose(QString text);
 	static QString removeBefore(QString text, QString before);
 	static int parseId(QString idString);
@@ -38,6 +40,7 @@ private:
 	static QList<int> parseIdRange(QString idRangeString);
 	static TIME_PERIOD parseTimePeriod(QString timePeriod);
 	static QDateTime parseDate(QString dateString, bool isEnd = true);
+	static QDate nextWeekday(int weekday);
 	static void generateTimeFormats();
 	static void generateDateFormatsWithoutYear();
 	static void generateDateFormats();

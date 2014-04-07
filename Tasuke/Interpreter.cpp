@@ -64,6 +64,56 @@ QString Interpreter::substituteForTimePeriod(QString text) {
 	return subbedText;
 }
 
+QDate Interpreter::nextWeekday(int weekday) {
+	QDate date = QDate::currentDate();
+	
+	while (date.dayOfWeek() != weekday) {
+		date = date.addDays(1);
+	}
+
+	return date;
+}
+
+QString Interpreter::substituteForDate(QString text) {
+	QString subbedText = text.toLower();
+
+	// expand out abbrev
+	subbedText = subbedText.replace(QRegExp("\\b2day\\b"), "today");
+	subbedText = subbedText.replace(QRegExp("\\btmr\\b"), "tomorrow");
+	subbedText = subbedText.replace(QRegExp("\\btml\\b"), "tomorrow");
+	subbedText = subbedText.replace(QRegExp("\\bmon\\b"), "monday");
+	subbedText = subbedText.replace(QRegExp("\\btue\\b"), "tuesday");
+	subbedText = subbedText.replace(QRegExp("\\btues\\b"), "tuesday");
+	subbedText = subbedText.replace(QRegExp("\\bthu\\b"), "thursday");
+	subbedText = subbedText.replace(QRegExp("\\bthur\\b"), "thursday");
+	subbedText = subbedText.replace(QRegExp("\\bthurs\\b"), "thursday");
+	subbedText = subbedText.replace(QRegExp("\\bfri\\b"), "friday");
+	subbedText = subbedText.replace(QRegExp("\\bsat\\b"), "saturday");
+	subbedText = subbedText.replace(QRegExp("\\bsun\\b"), "sunday");
+
+	subbedText = subbedText.replace(QRegExp("\\byesterday\\b"), QDate::currentDate().addDays(-1).toString("dd/MM/yyyy"));
+	subbedText = subbedText.replace(QRegExp("\\btoday\\b"), QDate::currentDate().toString("dd/MM/yyyy"));
+	subbedText = subbedText.replace(QRegExp("\\btomorrow\\b"), QDate::currentDate().addDays(1).toString("dd/MM/yyyy"));
+	subbedText = subbedText.replace(QRegExp("\\bday after tomorrow\\b"), QDate::currentDate().addDays(2).toString("dd/MM/yyyy"));
+
+	if (subbedText.contains("monday")) {
+		subbedText = subbedText.replace("monday", nextWeekday(1).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("tuesday")) {
+		subbedText = subbedText.replace("tuesday", nextWeekday(2).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("wednesday")) {
+		subbedText = subbedText.replace("wednesday", nextWeekday(3).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("thursday")) {
+		subbedText = subbedText.replace("thursday", nextWeekday(4).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("friday")) {
+		subbedText = subbedText.replace("friday", nextWeekday(5).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("saturday")) {
+		subbedText = subbedText.replace("saturday", nextWeekday(6).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("sunday")) {
+		subbedText = subbedText.replace("sunday", nextWeekday(7).toString("dd/MM/yyyy"));
+	}
+
+	return subbedText;
+}
 
 QHash<QString, QString> Interpreter::decompose(QString text) {
 	QStringList tokens = text.split(" ");
@@ -592,26 +642,13 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) 
 }
 
 QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
+	dateString = substituteForDate(dateString);
 	dateString = dateString.trimmed();
 
 	QDate currentDate = QDate::currentDate();
 	QTime timePart = QTime(23,59);
 	if (!isEnd) {
 		QTime timePart = QTime(0,0);
-	}
-
-	if (dateString == "today") {
-		return QDateTime(currentDate, timePart);
-	} else if (dateString == "2day") {
-		return QDateTime(currentDate, timePart);
-	} else if (dateString == "now") {
-		return QDateTime::currentDateTime();
-	} else if (dateString == "tomorrow") {
-		return QDateTime(currentDate, timePart).addDays(1);
-	} else if (dateString == "tmr") {
-		return QDateTime(currentDate, timePart).addDays(1);
-	} else if (dateString == "day after tomorrow") {
-		return QDateTime(currentDate, timePart).addDays(2);
 	}
 
 	if (!formatsAlreadyInit) {
@@ -625,7 +662,7 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 
 		// these formats need the date added
 		foreach(QString timeFormat, timeFormatsAp) {
-			timePart = QTime::fromString(dateString, timeFormat);
+			QTime timePart = QTime::fromString(dateString, timeFormat);
 			if (timePart.isValid()) {
 				retVal.setDate(currentDate);
 				retVal.setTime(timePart);
@@ -663,7 +700,7 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 
 	// these formats need the date added
 	foreach(QString timeFormat, timeFormats) {
-		timePart = QTime::fromString(dateString, timeFormat);
+		QTime timePart = QTime::fromString(dateString, timeFormat);
 		if (timePart.isValid()) {
 			retVal.setDate(currentDate);
 			retVal.setTime(timePart);
