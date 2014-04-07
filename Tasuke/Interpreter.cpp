@@ -667,7 +667,7 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 	QDate currentDate = QDate::currentDate();
 	QTime timePart = QTime(23,59);
 	if (!isEnd) {
-		QTime timePart = QTime(0,0);
+		timePart = QTime(0,0);
 	}
 
 	if (!formatsAlreadyInit) {
