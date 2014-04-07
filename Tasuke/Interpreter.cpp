@@ -47,8 +47,11 @@ QString Interpreter::substitute(QString text) {
 	subbedText = subbedText.replace(QRegExp("^create"), "add");
 	subbedText = subbedText.replace(QRegExp("^change"), "edit");
 	subbedText = subbedText.replace(QRegExp("^rm"), "remove");
+	subbedText = subbedText.replace(QRegExp("^delete"), "remove");
 	subbedText = subbedText.replace(QRegExp("^ls"), "show");
 	subbedText = subbedText.replace(QRegExp("^quit"), "exit");
+	subbedText = subbedText.replace(QRegExp("^search"), "show");
+	subbedText = subbedText.replace(QRegExp("^find"), "show");
 
 	return subbedText;
 }
