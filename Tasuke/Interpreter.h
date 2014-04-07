@@ -54,8 +54,8 @@ private:
 	static void doShow(QString commandString);
 	static void doAbout();
 	static void doHide();
-	static void doUndo();
-	static void doRedo();
+	static void doUndo(QString commandString);
+	static void doRedo(QString commandString);
 	static void doHelp();
 	static void doSettings();
 	static void doExit();

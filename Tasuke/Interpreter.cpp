@@ -203,9 +203,9 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 	} else if (commandType == "hide") {
 		doHide();
 	} else if (commandType == "undo") {
-		doUndo();
+		doUndo(commandString);
 	} else if (commandType == "redo") {
-		doRedo();
+		doRedo(commandString);
 	} else if (commandType == "help") {
 		doHelp();
 	} else if (commandType == "settings") {
@@ -409,11 +409,43 @@ void Interpreter::doAbout() {
 void Interpreter::doHide() {
 	Tasuke::instance().hideTaskWindow();
 }
-void Interpreter::doUndo() {
-	Tasuke::instance().undoCommand();
+void Interpreter::doUndo(QString commandString) {
+	commandString = removeBefore(commandString, "undo");
+	commandString = commandString.trimmed();
+
+	int times = 1;
+
+	if (!commandString.isEmpty()) {
+		bool ok = false;
+		times = commandString.toInt(&ok);
+
+		if (ok == false) {
+			throw ExceptionBadCommand();
+		}
+	}
+
+	for (int i=0; i<times; i++) {
+		Tasuke::instance().undoCommand();
+	}
 }
-void Interpreter::doRedo() {
-	Tasuke::instance().redoCommand();
+void Interpreter::doRedo(QString commandString) {
+	commandString = removeBefore(commandString, "redo");
+	commandString = commandString.trimmed();
+
+	int times = 1;
+
+	if (!commandString.isEmpty()) {
+		bool ok = false;
+		times = commandString.toInt(&ok);
+
+		if (ok == false) {
+			throw ExceptionBadCommand();
+		}
+	}
+
+	for (int i=0; i<times; i++) {
+		Tasuke::instance().redoCommand();
+	}
 }
 void Interpreter::doSettings() {
 	Tasuke::instance().showSettingsWindow();
