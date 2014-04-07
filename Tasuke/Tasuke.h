@@ -57,6 +57,8 @@ public:
 	void tryCommand(QString commandString);
 	void undoCommand();
 	void redoCommand();
+	int undoSize() const;
+	int redoSize() const;
 
 	void loadDictionary();
 	void loadFonts();

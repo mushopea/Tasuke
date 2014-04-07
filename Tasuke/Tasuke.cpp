@@ -500,3 +500,11 @@ void Tasuke::redoCommand() {
 	commandUndoHistory.push_back(command);
 	storage->saveFile();
 }
+
+int Tasuke::undoSize() const {
+	return commandUndoHistory.size();
+}
+
+int Tasuke::redoSize() const {
+	return commandRedoHistory.size();
+}

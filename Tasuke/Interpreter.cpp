@@ -415,7 +415,9 @@ void Interpreter::doUndo(QString commandString) {
 
 	int times = 1;
 
-	if (!commandString.isEmpty()) {
+	if (commandString == "max") {
+		times = Tasuke::instance().undoSize();
+	} else if (!commandString.isEmpty()) {
 		bool ok = false;
 		times = commandString.toInt(&ok);
 
@@ -434,7 +436,9 @@ void Interpreter::doRedo(QString commandString) {
 
 	int times = 1;
 
-	if (!commandString.isEmpty()) {
+	if (commandString == "max") {
+		times = Tasuke::instance().redoSize();
+	} else if (!commandString.isEmpty()) {
 		bool ok = false;
 		times = commandString.toInt(&ok);
 
