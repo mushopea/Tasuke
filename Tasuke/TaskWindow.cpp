@@ -369,7 +369,7 @@ TaskEntry* TaskWindow::createEntry(const Task& t) {
 // Add a QListWidgetItem in a specified row with a specified background.
 void TaskWindow::addListItemToRow(TaskEntry* entry, int row, const QString& type) {
 	if (type.compare("select") == 0) {
-		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(170, 170, 170);");
+		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(176, 175, 175);");
 	} 
 
 	if (type.compare("deselect") == 0) {
