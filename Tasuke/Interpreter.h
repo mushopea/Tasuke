@@ -59,7 +59,7 @@ private:
 	static void doExit();
 
 public:	
-	static QString getType(QString commandString);
+	static QString getType(QString commandString, bool doSub = true);
 	static ICommand* interpret(QString commandString, bool dry = false);
 	static void initFormats();
 };

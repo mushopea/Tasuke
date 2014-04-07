@@ -38,6 +38,13 @@ QString Interpreter::substitute(QString text) {
 	subbedText = subbedText.replace(" \\on ", " on ");
 	subbedText = subbedText.replace(" \\to ", " to ");
 
+	subbedText = subbedText.replace(QRegExp("^do"), "add");
+	subbedText = subbedText.replace(QRegExp("^create"), "add");
+	subbedText = subbedText.replace(QRegExp("^change"), "edit");
+	subbedText = subbedText.replace(QRegExp("^rm"), "remove");
+	subbedText = subbedText.replace(QRegExp("^ls"), "show");
+	subbedText = subbedText.replace(QRegExp("^quit"), "exit");
+
 	return subbedText;
 }
 
@@ -107,7 +114,11 @@ QString Interpreter::removeBefore(QString text, QString before) {
 	return retVal;
 }
 
-QString Interpreter::getType(QString commandString) {
+QString Interpreter::getType(QString commandString, bool doSub) {
+	if (doSub) {
+		commandString = substitute(commandString);
+	}
+
 	QStringList delimiters;
 	QStringList typeKeywords;
 
@@ -154,7 +165,7 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 
 	commandString = substitute(commandString);
 
-	QString commandType = getType(commandString);
+	QString commandType = getType(commandString, false);
 
 	if (commandType == "add") {
 		return createAddCommand(commandString);
