@@ -129,7 +129,7 @@ QString Interpreter::substituteForDate(QString text) {
 	subbedText = subbedText.replace(QRegExp("\\bnoon\\b"), QTime(12,0).toString("hh:mm ap"));
 	subbedText = subbedText.replace(QRegExp("\\bafternoon\\b"), QTime(18,0).toString("hh:mm ap"));
 	subbedText = subbedText.replace(QRegExp("\\bevening\\b"), QTime(20,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bnight\\b"), QTime(22,0).toString("hh:mm apy"));
+	subbedText = subbedText.replace(QRegExp("\\bnight\\b"), QTime(22,0).toString("hh:mm ap"));
 	subbedText = subbedText.replace(QRegExp("\\bmidnight\\b"), QTime(23,59).toString("hh:mm ap"));
 
 	return subbedText;
