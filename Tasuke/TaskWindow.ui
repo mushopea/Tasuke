@@ -505,7 +505,7 @@ color: rgb(74, 74, 74);
 background: transparent;</string>
        </property>
        <property name="text">
-        <string>You don't have any undone tasks at the moment.</string>
+        <string>You don't have any tasks at the moment.</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -595,6 +595,11 @@ background: transparent;</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
+      <zorder>emptyTasksMessage1</zorder>
+      <zorder>emptyTaskMessage2</zorder>
+      <zorder>emptyAddTaskButton</zorder>
+      <zorder>oopsImage</zorder>
+      <zorder>emptySearchMessage</zorder>
      </widget>
      <widget class="QWidget" name="columnLabels" native="true">
       <property name="geometry">
@@ -761,6 +766,234 @@ color: grey;</string>
       <property name="text">
        <string>◀ Back</string>
       </property>
+     </widget>
+     <widget class="QWidget" name="emptySearchMessage" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>130</y>
+        <width>821</width>
+        <height>241</height>
+       </rect>
+      </property>
+      <widget class="QLabel" name="emptySearchMessage1">
+       <property name="geometry">
+        <rect>
+         <x>-10</x>
+         <y>160</y>
+         <width>841</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>16</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+         <stylestrategy>PreferAntialias</stylestrategy>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">text-align: center;
+color: rgb(74, 74, 74);
+background: transparent;</string>
+       </property>
+       <property name="text">
+        <string>Sorry, your search turned no results.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::NoTextInteraction</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="oopsImage_2">
+       <property name="geometry">
+        <rect>
+         <x>3</x>
+         <y>10</y>
+         <width>815</width>
+         <height>154</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="Resources.qrc">:/Images/images/oops.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="emptySearchMessage1_2">
+       <property name="geometry">
+        <rect>
+         <x>-10</x>
+         <y>190</y>
+         <width>841</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>16</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+         <stylestrategy>PreferAntialias</stylestrategy>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">text-align: center;
+color: rgb(74, 74, 74);
+background: transparent;</string>
+       </property>
+       <property name="text">
+        <string>Press &lt;Backspace&gt; to go back to the main view.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::NoTextInteraction</set>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="allDoneMessage" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>130</y>
+        <width>821</width>
+        <height>241</height>
+       </rect>
+      </property>
+      <widget class="QLabel" name="Amazing">
+       <property name="geometry">
+        <rect>
+         <x>-10</x>
+         <y>160</y>
+         <width>841</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>16</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+         <stylestrategy>PreferAntialias</stylestrategy>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">text-align: center;
+color: rgb(74, 74, 74);
+background: transparent;</string>
+       </property>
+       <property name="text">
+        <string>Amazing, you've completed all your tasks!</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::NoTextInteraction</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="yayImage">
+       <property name="geometry">
+        <rect>
+         <x>3</x>
+         <y>10</y>
+         <width>815</width>
+         <height>154</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>images/yaynyansuke.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="questionAdd">
+       <property name="geometry">
+        <rect>
+         <x>-10</x>
+         <y>190</y>
+         <width>841</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>16</pointsize>
+         <weight>50</weight>
+         <italic>false</italic>
+         <bold>false</bold>
+         <stylestrategy>PreferAntialias</stylestrategy>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">text-align: center;
+color: rgb(74, 74, 74);
+background: transparent;</string>
+       </property>
+       <property name="text">
+        <string>Would you like to add another?</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::NoTextInteraction</set>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="doneAllAddButton">
+       <property name="geometry">
+        <rect>
+         <x>426</x>
+         <y>199</y>
+         <width>141</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Book</family>
+         <pointsize>16</pointsize>
+         <italic>false</italic>
+         <underline>true</underline>
+        </font>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>add another</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>

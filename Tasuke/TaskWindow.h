@@ -49,7 +49,7 @@ public:
 
 public slots:
 	void showAndMoveToSide();
-	void handleEmptyAddTaskButton();
+	void handleAddTaskButton();
 	void handleBackButton();
 	void displayTaskList();
 
@@ -115,7 +115,7 @@ private:
 	void displaySubheading(const QString& content);
 
 	// Private helper functions for window content display
-	void decideContent();
+	void decideContent(QString title);
 	void showBackButtonIfSearching(const QString& title);
 	void changeTitle(const QString& title);
 	void hideProgressBarWhenDone();
