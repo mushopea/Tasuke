@@ -441,10 +441,19 @@ int Interpreter::parseId(QString idString) {
 }
 
 QList<int> Interpreter::parseIdList(QString idListString) {
-	QStringList idListParts = idListString.split(",");
-
+	idListString = idListString.trimmed();
+	
 	QList<int> results;
 	
+	if (idListString == "all") {
+		int lastId = Tasuke::instance().getStorage().totalTasks();
+		for (int i=1; i<=lastId; i++) {
+			results.push_back(i);
+		}
+		return results;
+	}
+
+	QStringList idListParts = idListString.split(",");
 	foreach(QString idListPart, idListParts) {
 		results.append(parseIdRange(idListPart));
 	}
