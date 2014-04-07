@@ -458,21 +458,27 @@ void TaskWindow::decideContent(QString title) {
 	ui.allDoneMessage->hide();
 
 	bool allDone = Tasuke::instance().getStorage().isAllDone();
+	int totalTasks = Tasuke::instance().getStorage().totalTasks();
 
 	if (currentTasks.isEmpty()) {
 		if (!title.isEmpty()) { // searching
 			if (currentTasks.isEmpty()) {
 				ui.emptySearchMessage->show(); // no search result to display
+				return;
 			}
 		} else { // default display
-			if (alldone) {
+			if (allDone && totalTasks != 0) {
 				ui.allDoneMessage->show(); // There are tasks, which are all done.
-			} else {
+				return;
+			} 
+			if (totalTasks == 0) {
 				ui.emptyTaskMessage->show(); // There are no tasks at all.
+				return;
 			}
 		}
 	} else {
 		ui.columnLabels->show();
+		return;
 	}
 }
 
