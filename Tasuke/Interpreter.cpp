@@ -122,6 +122,15 @@ QString Interpreter::substituteForDate(QString text) {
 		subbedText = subbedText.replace("sunday", nextWeekday(7).toString("dd/MM/yyyy"));
 	}
 
+	// time of days
+	subbedText = subbedText.replace(QRegExp("\\bdawn\\b"), QTime(6,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bmorning\\b"), QTime(10,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bnoon\\b"), QTime(12,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bafternoon\\b"), QTime(18,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bevening\\b"), QTime(20,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bnight\\b"), QTime(22,0).toString("hh:mm apy"));
+	subbedText = subbedText.replace(QRegExp("\\bmidnight\\b"), QTime(23,59).toString("hh:mm ap"));
+
 	return subbedText;
 }
 
@@ -913,13 +922,13 @@ void Interpreter::generateDateTimeFormats() {
 
 	foreach(QString dateFormat, dateFormats) {
 		foreach(QString timeFormat, timeFormats) {
-			dateTimeFormats << (dateFormat + spaceOrComma + timeFormat);
-			dateTimeFormats << (timeFormat + spaceOrComma + dateFormat);
+			dateTimeFormats << (dateFormat + " " + timeFormat);
+			dateTimeFormats << (timeFormat + " " + dateFormat);
 		}
 
 		foreach(QString timeFormatAp, timeFormatsAp) {
-			dateTimeFormatsAp << (dateFormat + spaceOrComma + timeFormatAp);
-			dateTimeFormatsAp << (timeFormatAp + spaceOrComma + dateFormat);
+			dateTimeFormatsAp << (dateFormat + " " + timeFormatAp);
+			dateTimeFormatsAp << (timeFormatAp + " " + dateFormat);
 		}
 	}
 }
