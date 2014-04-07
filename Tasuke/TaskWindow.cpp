@@ -272,6 +272,12 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 				return true;
 			}
 
+			//delete after op2
+			if (eventKey->key() == Qt::Key_F9) {
+				tutorial.goNextPage();
+				return true;
+			}
+
 			if (eventKey->key() == Qt::Key_Left) {
 				tutorial.goPrevPage();
 				return true;
