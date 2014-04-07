@@ -77,6 +77,11 @@ QDate Interpreter::nextWeekday(int weekday) {
 QString Interpreter::substituteForDate(QString text) {
 	QString subbedText = text.toLower();
 
+	// strip this, next and the
+	subbedText = subbedText.replace(QRegExp("\\bthis\\b"), "");
+	subbedText = subbedText.replace(QRegExp("\\bnext\\b"), "");
+	subbedText = subbedText.replace(QRegExp("\\bnthe\\b"), "");
+
 	// expand out abbrev
 	subbedText = subbedText.replace(QRegExp("\\b2day\\b"), "today");
 	subbedText = subbedText.replace(QRegExp("\\btmr\\b"), "tomorrow");
@@ -91,11 +96,13 @@ QString Interpreter::substituteForDate(QString text) {
 	subbedText = subbedText.replace(QRegExp("\\bsat\\b"), "saturday");
 	subbedText = subbedText.replace(QRegExp("\\bsun\\b"), "sunday");
 
+	// today, tomorrow etc.
 	subbedText = subbedText.replace(QRegExp("\\byesterday\\b"), QDate::currentDate().addDays(-1).toString("dd/MM/yyyy"));
 	subbedText = subbedText.replace(QRegExp("\\btoday\\b"), QDate::currentDate().toString("dd/MM/yyyy"));
 	subbedText = subbedText.replace(QRegExp("\\btomorrow\\b"), QDate::currentDate().addDays(1).toString("dd/MM/yyyy"));
 	subbedText = subbedText.replace(QRegExp("\\bday after tomorrow\\b"), QDate::currentDate().addDays(2).toString("dd/MM/yyyy"));
 
+	// weekdays
 	if (subbedText.contains("monday")) {
 		subbedText = subbedText.replace("monday", nextWeekday(1).toString("dd/MM/yyyy"));
 	} else if (subbedText.contains("tuesday")) {
