@@ -389,8 +389,13 @@ void Interpreter::doShow(QString commandString) {
 		Tasuke::instance().updateTaskWindow(results, "due tomorrow");
 	} else  if (commandString == "" || commandString == "all" || commandString == "everything") {
 		Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	} else if (commandString.startsWith("#") && !commandString.contains(" ")) {
+		QString tag = commandString.remove(0,1);
+		QList<Task> results = Tasuke::instance().getStorage().searchByTag(tag);
+		Tasuke::instance().updateTaskWindow(results, "#" + tag);
 	} else {
-		throw ExceptionBadCommand();
+		QList<Task> results = Tasuke::instance().getStorage().searchByDescription(commandString);
+		Tasuke::instance().updateTaskWindow(results, "\"" + commandString + "\"");
 	}
 
 	Tasuke::instance().showTaskWindow();
