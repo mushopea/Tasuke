@@ -484,6 +484,7 @@ void Tasuke::undoCommand() {
 	commandUndoHistory.pop_back();
 	command->undo();
 	commandRedoHistory.push_back(command);
+	storage->saveFile();
 }
 
 void Tasuke::redoCommand() {
@@ -497,4 +498,5 @@ void Tasuke::redoCommand() {
 	commandRedoHistory.pop_back();
 	command->run();
 	commandUndoHistory.push_back(command);
+	storage->saveFile();
 }
