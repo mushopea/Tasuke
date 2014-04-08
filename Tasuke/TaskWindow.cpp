@@ -193,7 +193,7 @@ void TaskWindow::handleAddTaskButton() {
 // Goes back to default view
 void TaskWindow::handleBackButton() {
 	showTasks(Tasuke::instance().getStorage().getTasks());	
-	changeTitle("all tasks");
+	changeTitle("");
 }
 
 //========================================
@@ -502,8 +502,11 @@ void TaskWindow::showBackButtonIfSearching(const QString& title) {
 
 // Changes title text on top
 void TaskWindow::changeTitle(const QString& title) {
+	LOG(INFO) << "Changing title";
 	if (!title.isEmpty()) {
 		ui.taskScope->setText("Viewing " + title);
+	} else {
+		ui.taskScope->setText("Viewing all tasks");
 	}
 }
 
