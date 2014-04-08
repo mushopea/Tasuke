@@ -6,6 +6,7 @@
 #include <QList>
 #include "Task.h"
 
+//@author A0096863M
 // Interface class for Storage.
 class IStorage {
 protected:

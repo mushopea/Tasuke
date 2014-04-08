@@ -2,7 +2,6 @@
 
 #include <glog/logging.h>
 #include <QSettings>
-#include <QVariant>
 #include <QStandardPaths>
 #include <QDir>
 #include <iostream>
@@ -11,6 +10,7 @@
 #include "Storage.h"
 #include "Tasuke.h"
 
+//@author A0096863M
 IStorage::IStorage() {
 
 }
@@ -193,6 +193,8 @@ QList<Task> IStorage::searchByDateTimeInterval(QDateTime fromThisDate, QDateTime
 	return results;
 }
 
+// Returns true if every task in memory is done.
+// Returns false if any task in memory is not done.
 bool IStorage::isAllDone() {
 	bool _isAllDone = true;
 	foreach (const QSharedPointer<Task>& task, tasks) {
@@ -269,20 +271,20 @@ void IStorage::sortByHasEndDate() {
 
 // Renumbers the ID of all tasks in memory naively.
 void IStorage::renumber() {
-	// internally within groups sort by date then alphabetically
+	// Internally within groups sort by date then alphabetically
 	sortByDescription();
 	sortByEndDate();
 
-	// today is always below overdue
+	// Today is always below overdue
 	sortByIsDueToday();
 
-	// overdue is always at the top
+	// Overdue is always at the top
 	sortByOverdue();
 
-	// no end date is always above done
+	// No end date is always above done
 	sortByHasEndDate();
 
-	// done is alwayas at the bottom
+	// Done is alwayas at the bottom
 	sortByDone();
 
 
@@ -291,6 +293,7 @@ void IStorage::renumber() {
 	}
 }
 
+// Removes all tasks that are done from memory.
 void IStorage::clearAllDone() {
 	LOG(INFO) << "Clearing all tasks marked as done.";
 	foreach (const QSharedPointer<Task>& task, tasks) {
@@ -301,12 +304,15 @@ void IStorage::clearAllDone() {
 	renumber();
 }
 
+// Removes all tasks from memory regardless of status.
 void IStorage::clearAllTasks() {
 	LOG(INFO) << "Clearing all tasks with great justice.";
 	tasks.clear();
 	renumber();
 }
 
+// The default constructor for Storage automatically sets the path of the
+// .ini save file to be %APPDATA%/Tasuke.
 Storage::Storage() {
 	LOG(INFO) << "Storage instance created...";
 
@@ -318,6 +324,8 @@ Storage::Storage() {
 	qRegisterMetaTypeStreamOperators<Task>("Task");
 }
 
+// This constructor for Storage takes in a filepath as an argument.
+// Storage will read from and write to the .ini file at that path.
 Storage::Storage(QString _path) {
 	LOG(INFO) << "Storage instance with custom path created...";
 
@@ -327,7 +335,7 @@ Storage::Storage(QString _path) {
 	qRegisterMetaTypeStreamOperators<Task>("Task");
 }
 
-// This function loads the contents of the text file and serialize it into
+// This function loads the contents of the text file and serializes it into
 // the memory. If there is no such file, this function does nothing.
 void Storage::loadFile() {
 	LOG(INFO) << "Loading file...";
@@ -368,7 +376,7 @@ void Storage::loadFile() {
 	LOG(INFO) << "File loaded.";
 }
 
-// This function deserialize the data from memory and writes it to the text
+// This function deserializes the data from memory and writes it to the text
 // file. If the file cannot be written, an ExceptionNotOpen is thrown.
 void Storage::saveFile() {
 	LOG(INFO) << "Saving file...";
@@ -402,7 +410,6 @@ void Storage::saveFile() {
 		for (int j=0; j<tags.size(); j++) {
 			settings.setArrayIndex(j);
 			settings.setValue("Tag", tags[j]);
-
 		}
 		settings.endArray();
 		settings.sync();

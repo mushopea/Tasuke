@@ -5,32 +5,28 @@
 #include <QString>
 #include <QDateTime>
 
+//@author A0096863M
 class Task {
 private:
 	QString description;
 	QList<QString> tags;
 
 	QDateTime begin;
-	QDate beginDate;
-	QTime beginTime;
-
 	QDateTime end;
-	QDate endDate;
-	QTime endTime;
 
 	bool done;
 	int id;
 
 public:
 	Task();
-	Task(QString description);
+	Task(QString _description);
 	~Task();
 
 	void setDescription(QString _description);
 	QString getDescription() const;
 
-	void addTag(QString tag);
-	void removeTag(QString tag);
+	void addTag(QString _tag);
+	void removeTag(QString _tag);
 	QList<QString> getTags() const;
 
 	void setBegin(QDateTime _begin);
@@ -50,7 +46,7 @@ public:
 	void markUndone();
 	bool isDone() const;
 
-	void setId(int identifier);
+	void setId(int _id);
 	int getId() const;
 
 	bool isFloating() const;
@@ -60,13 +56,9 @@ public:
 	bool isDueTomorrow() const;
 	bool isDueOn(QDate _date) const;
 	bool isEvent() const;
-	
+
+	bool operator==(const Task& other) const;
 	bool operator!=(const Task& other) const;
-	bool operator==(const Task& other) const;/*
-	bool operator<(const Task& other) const;
-	bool operator<=(const Task& other) const;
-	bool operator>(const Task& other) const;
-	bool operator>=(const Task& other) const;*/
 	
 	friend QDataStream& operator<<(QDataStream& out, const Task& task);
 	friend QDataStream& operator>>(QDataStream& in, Task& task);

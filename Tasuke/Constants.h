@@ -1,17 +1,18 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#include <string>
+// Maximum number of tags a task can have
+static const int MAXIMUM_TAGS = 10;
 
-#define MAXIMUM_TAGS 10
-
-#define MONTHS_IN_YEAR 12
-#define WEEKS_IN_MONTH 4
-#define DAYS_IN_WEEK 7
-#define HOURS_IN_DAY 24
-#define MINUTES_IN_HOUR 60
-#define SECONDS_IN_MINUTE 60
-#define MILLISECONDS_IN_SECOND 1000
+// These are magic numbers that are used in the modular
+// arithmetic in Task::getTimeDifferenceString().
+static const int MONTHS_IN_YEAR = 12;
+static const int WEEKS_IN_MONTH = 4;
+static const int DAYS_IN_WEEK = 7;
+static const int HOURS_IN_DAY = 24;
+static const int MINUTES_IN_HOUR = 60;
+static const int SECONDS_IN_MINUTE = 60;
+static const int MSECS_IN_SECOND = 1000;
 
 // Stacked widget page indexes
 static const int TASKS_PAGE = 0;
