@@ -6,6 +6,7 @@
 #include <QDesktopWidget>
 #include "ui_AboutWindow.h"
 
+//@author A0100189
 
 class AboutWindow : public QDialog {
 	Q_OBJECT

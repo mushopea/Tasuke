@@ -8,6 +8,7 @@
 #include <glog/logging.h>
 #include "ui_SubheadingEntry.h"
 
+//@author A0100189
 
 class SubheadingEntry : public QWidget {
 	Q_OBJECT

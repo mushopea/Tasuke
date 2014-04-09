@@ -3,6 +3,7 @@
 #include "TaskEntry.h"
 #include "Constants.h"
 
+//@author A0100189
 
 TaskEntry::TaskEntry(const Task& t, QWidget* parent) : QWidget(parent), task(t)  {
 	// Initialize field elements

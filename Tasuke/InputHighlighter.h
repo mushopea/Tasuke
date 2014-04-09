@@ -2,6 +2,8 @@
 #include <QSyntaxHighlighter>
 #include <QRegularExpression>
 
+//@author A0100189
+
 class InputHighlighter : public QSyntaxHighlighter {
      Q_OBJECT
 

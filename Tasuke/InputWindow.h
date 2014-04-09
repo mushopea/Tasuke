@@ -14,6 +14,8 @@
 #include "TooltipWidget.h"
 #include "Constants.h"
 
+//@author A0100189
+
 class InputWindow : public QWidget {
 	Q_OBJECT
 	Q_PROPERTY(qreal opacity READ getOpacity WRITE setOpacity)

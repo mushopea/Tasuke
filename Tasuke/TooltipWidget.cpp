@@ -2,6 +2,8 @@
 #include "TooltipWidget.h"
 #include <QSettings>
 
+//@author A0100189
+
 TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas", 11), fm(font), 
 												animation(this, "pos"), connectedToSettings(false) {
 	LOG(INFO) << "TooltipWidget instance created";

@@ -1,6 +1,8 @@
 #include "Tasuke.h"
 #include "TutorialWidget.h"
 
+//@author A0100189
+
 TutorialWidget::TutorialWidget(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "Tutorialwidget instance created";
 

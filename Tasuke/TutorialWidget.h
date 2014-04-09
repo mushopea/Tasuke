@@ -7,6 +7,8 @@
 #include <QDesktopWidget>
 #include "ui_TutorialWidget.h"
 
+//@author A0100189
+
 class TutorialWidget : public QWidget {
 	Q_OBJECT
 

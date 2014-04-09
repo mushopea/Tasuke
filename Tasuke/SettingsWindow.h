@@ -8,6 +8,7 @@
 #include "ui_SettingsWindow.h"
 #include "Constants.h"
 
+//@author A0100189
 
 class SettingsWindow : public QWidget {
 	Q_OBJECT

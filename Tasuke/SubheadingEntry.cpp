@@ -1,6 +1,8 @@
 #include "Tasuke.h"
 #include "SubheadingEntry.h"
 
+//@author A0100189
+
 SubheadingEntry::SubheadingEntry(const QString& content, QWidget *parent): QWidget(parent) {
 	ui.setupUi(this);
 

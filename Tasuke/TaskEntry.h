@@ -7,6 +7,8 @@
 #include <QDateTime>
 #include "Task.h"
 
+//@author A0100189
+
 class TaskEntry : public QWidget {
 	Q_OBJECT
 

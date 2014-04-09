@@ -1,6 +1,8 @@
 #include "Tasuke.h"
 #include "AboutWindow.h"
 
+//@author A0100189
+
 AboutWindow::AboutWindow(QDialog* parent) : QDialog(parent) {
 	ui.setupUi(this);
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);

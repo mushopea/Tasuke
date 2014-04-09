@@ -2,6 +2,8 @@
 #include "InputWindow.h"
 #include "Interpreter.h"
 
+//@author A0100189
+
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent), animation(this, "opacity"), errorAnimation(this, "pos") {
 	LOG(INFO) << "InputWindow instance created";
 

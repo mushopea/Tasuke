@@ -11,6 +11,7 @@
 #include <QFontMetrics>
 #include <QFont>
 
+//@author A0100189
 
 class TooltipWidget : public QWidget {
 	Q_OBJECT

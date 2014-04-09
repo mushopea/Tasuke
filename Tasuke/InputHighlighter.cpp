@@ -1,6 +1,8 @@
 #include "Tasuke.h"
 #include "InputHighlighter.h"
 
+//@author A0100189
+
 InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent){
 	setRegex();
 	setupColorsFormatsRules(QColor(51, 204, 255), Qt::darkCyan, QColor(164, 219, 0));

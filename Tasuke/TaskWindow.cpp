@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "SubheadingEntry.h"
 
+//@author A0100189
 
 TaskWindow::TaskWindow(QWidget* parent) : connectedToSettings(false), currentlySelectedTask(-1), onlyShowDone(false),
 	animation(this, "opacity"), progressBar(this), QMainWindow(parent) {

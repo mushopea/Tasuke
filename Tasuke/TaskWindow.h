@@ -21,6 +21,8 @@
 #include "TaskEntry.h"
 #include "TutorialWidget.h"
 
+//@author A0100189
+
 class TaskWindow : public QMainWindow {
 	Q_OBJECT
 	Q_PROPERTY(qreal opacity READ getOpacity WRITE setOpacity)

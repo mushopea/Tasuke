@@ -2,6 +2,8 @@
 #include "SettingsWindow.h"
 #include <QSettings>
 
+//@author A0100189
+
 SettingsWindow::SettingsWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "SettingsWindow instance created";
 
