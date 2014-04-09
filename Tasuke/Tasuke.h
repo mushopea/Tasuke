@@ -90,6 +90,7 @@ private:
 	QMutex mutex;
 	QTimer inputTimer;
 	QString input;
+	bool spellCheckEnabled;
 
 	Tasuke();
 	Tasuke(const Tasuke& old);

@@ -143,7 +143,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tasuke.png</pixmap>
+        <pixmap>::Images/images/:Images/images/Tasuke.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
@@ -186,7 +186,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/1.png</pixmap>
+        <pixmap>:Images/images/Tutorial/1.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -204,7 +204,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/2.png</pixmap>
+        <pixmap>:Images/images/Tutorial/2.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -222,7 +222,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/3.png</pixmap>
+        <pixmap>:Images/images/Tutorial/3.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -430,7 +430,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/3a.png</pixmap>
+        <pixmap>:Images/images/Tutorial/3a.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -448,7 +448,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/4.png</pixmap>
+        <pixmap>:Images/images/Tutorial/4.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -466,7 +466,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/5.png</pixmap>
+        <pixmap>:Images/images/Tutorial/5.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -484,7 +484,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/6.png</pixmap>
+        <pixmap>:Images/images/Tutorial/6.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -502,7 +502,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/7.png</pixmap>
+        <pixmap>:Images/images/Tutorial/7.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -520,7 +520,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/8.png</pixmap>
+        <pixmap>:Images/images/Tutorial/8.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -538,7 +538,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/9.png</pixmap>
+        <pixmap>:Images/images/Tutorial/9.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -556,7 +556,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/10.png</pixmap>
+        <pixmap>:Images/images/Tutorial/10.png</pixmap>
        </property>
       </widget>
      </widget>
@@ -665,7 +665,7 @@ QTabBar::tab:selected{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/Tutorial/11.png</pixmap>
+        <pixmap>:Images/images/Tutorial/11.png</pixmap>
        </property>
       </widget>
      </widget>

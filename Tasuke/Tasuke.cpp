@@ -2,6 +2,7 @@
 #include <iostream>
 #include <thread>
 #include <glog/logging.h>
+
 #include <QMessageBox>
 #include <QFontDatabase>
 #include "Constants.h"
@@ -82,6 +83,14 @@ Tasuke::~Tasuke() {
 }
 
 void Tasuke::loadDictionary() {
+	spellCheckEnabled = true;
+
+	if (!QFile("en_GB.aff").exists() || !QFile("en_GB.dic").exists()) {
+		spellCheckEnabled = false;
+		return;
+	}
+
+
 #ifndef Q_OS_MAC
 	spellObj = new Hunspell("en_GB.aff", "en_GB.dic");
 	spellObj->add_dic("en_US.dic");
@@ -345,6 +354,10 @@ void Tasuke::highlightTask(int id) {
 }
 
 bool Tasuke::spellCheck(QString word) {
+	if (!spellCheckEnabled) {
+		return true;
+	}
+
 	if (word.size() == 0) {
 		return true;
 	} else if (!word[0].isLetter()) {

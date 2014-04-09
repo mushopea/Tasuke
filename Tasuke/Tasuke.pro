@@ -3,7 +3,7 @@ include(Tasuke.pri)
 TEMPLATE = app
 TARGET = Tasuke
 QT += core widgets gui
-CONFIG += qt
+CONFIG += qt static release
 
 DEPENDPATH += .
 UI_DIR += ./GeneratedFiles
@@ -25,9 +25,18 @@ CONFIG(release, debug|release) {
     OBJECTS_DIR += debug
 }
 
+win32 {
+    LIBS += -L$$_PRO_FILE_PWD_/../Win32/Release -llibglog
+    LIBS += -L$$_PRO_FILE_PWD_/../Win32/Release -llibhunspell
+    INCLUDEPATH += $$_PRO_FILE_PWD_/../hunspell-1.3.2/src
+    INCLUDEPATH += $$_PRO_FILE_PWD_/../glog-0.3.3/src/windows
+    DEFINES += GOOGLE_GLOG_DLL_DECL=
+    DEFINES += HUNSPELL_STATIC
+}
+
 unix {
-    LIBS += -L/usr/local/lib -L/usr/lib -lglog
-    LIBS += -L/usr/local/lib -L/usr/lib -lhunspell-1.3
+    LIBS += -L/usr/local/lib -L/usr/lib -llibglog
+    LIBS += -L/usr/local/lib -L/usr/lib -llibhunspell-1.3
     INCLUDEPATH += /usr/local/include \
         /usr/include
 }

@@ -16,7 +16,8 @@ HEADERS += ./Interpreter.h \
     ./TaskEntry.h \
     ./Tasuke.h \
     ./Storage.h \
-    ./TooltipWidget.h
+    ./TooltipWidget.h \
+    ./SubheadingEntry.h
 SOURCES += ./AboutWindow.cpp \
     ./HotKeyManager.cpp \
     ./InputHighlighter.cpp \
@@ -35,14 +36,16 @@ SOURCES += ./AboutWindow.cpp \
     ./Tasuke.cpp \
     ./Storage.cpp \
     ./TutorialWidget.cpp \
-    ./TooltipWidget.cpp
+    ./TooltipWidget.cpp \
+    ./SubheadingEntry.cpp
 FORMS += ./TaskWindow.ui \
     ./InputWindow.ui \
     ./AboutWindow.ui \
     ./TaskEntry.ui \
     ./TutorialWidget.ui \
     ./SettingsWindow.ui \
-    ./TooltipWidget.ui
+    ./TooltipWidget.ui \
+    ./SubheadingEntry.ui
 RESOURCES += ./Resources.qrc
 
 macx {
