@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+//@author A0096836M
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace InterpreterTests {

@@ -3,6 +3,8 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
+//@author A0096836M
+
 namespace UnitTest {
 	QApplication *app;
 	StorageStub *storage;
@@ -88,6 +90,7 @@ namespace UnitTest {
 			Assert::AreEqual(task.getTags()[0], QString("shopping"));
 		}
 
+		//@author A0100189M
 		TEST_METHOD(TasukeUndoingTasks) {
 			for (int i=0; i<MAX_TASKS; i++) {
 				Tasuke::instance().runCommand(QString("add task %1").arg(i));
