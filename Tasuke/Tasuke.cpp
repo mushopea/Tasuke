@@ -12,17 +12,17 @@
 
 //@author A0096836M
 
-const char const* MSG_TASUKE_CREATED = "Tasuke object created";
-const char const* MSG_TASUKE_DESTROYED = "Tasuke object destroyed";
-const char const* MSG_LOADING_DICTIONARY = "Loading dictionary";
-const char const* MSG_LOADING_FONTS = "Loading fonts";
-const char const* MSG_STORAGE_CHANGED = "Storage changed";
-const char const* MSG_COMMAND_STACK_PUSH =  "Pushing command to history stack";
-const char const* MSG_ERROR_PARSING = "Error parsing command";
-const char const* MSG_UNDO = "Undoing command";
-const char const* MSG_NO_UNDO ="Nothing to undo";
-const char const* MSG_REDO = "Redoing command";
-const char const* MSG_NO_REDO = "Nothing to redo";
+const char* const MSG_TASUKE_CREATED = "Tasuke object created";
+const char* const MSG_TASUKE_DESTROYED = "Tasuke object destroyed";
+const char* const MSG_LOADING_DICTIONARY = "Loading dictionary";
+const char* const MSG_LOADING_FONTS = "Loading fonts";
+const char* const MSG_STORAGE_CHANGED = "Storage changed";
+const char* const MSG_COMMAND_STACK_PUSH =  "Pushing command to history stack";
+const char* const MSG_ERROR_PARSING = "Error parsing command";
+const char* const MSG_UNDO = "Undoing command";
+const char* const MSG_NO_UNDO ="Nothing to undo";
+const char* const MSG_REDO = "Redoing command";
+const char* const MSG_NO_REDO = "Nothing to redo";
 
 #define MSG_SHOWING_MESSAGE(message) \
 	"Showing message: " << message
@@ -31,13 +31,13 @@ const char const* MSG_NO_REDO = "Nothing to redo";
 #define MSG_HIGHLIGHT_TASK(id) \
 	"Highlighting task with id  " << id
 
-const char const* SPELL_GB_DICFILE = "en_GB.dic";
-const char const* SPELL_GB_AFFFILE = "en_GB.aff";
-const char const* SPELL_US_DICFILE = "en_US.dic";
+const char* const SPELL_GB_DICFILE = "en_GB.dic";
+const char* const SPELL_GB_AFFFILE = "en_GB.aff";
+const char* const SPELL_US_DICFILE = "en_US.dic";
 
-const char const* MAC_RESOURCE_PATH = "/../Resources/";
+const char* const MAC_RESOURCE_PATH = "/../Resources/";
 
-const char const* METATYPE_TRY_RESULT = "TRY_RESULT";
+const char* const METATYPE_TRY_RESULT = "TRY_RESULT";
 
 const QStringList SPELL_NONWORD_COMMANDS = QStringList() << "rm" << "ls"
 	<< "nd";
