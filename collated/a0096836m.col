@@ -1,0 +1,2432 @@
+//@author: a0096836m
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Commands.cpp
+	 */
+
+
+ICommand::ICommand() {
+	hasRun = false;
+}
+
+ICommand::~ICommand() {
+
+}
+
+void ICommand::run() {
+	assert(hasRun == false);
+	hasRun = true;
+}
+
+void ICommand::undo() {
+	assert(hasRun == true);
+	hasRun = false;
+}
+
+AddCommand::AddCommand(Task& _task) : task(_task) {
+
+}
+
+AddCommand::~AddCommand() {
+
+}
+	
+void AddCommand::run() {
+	task = Tasuke::instance().getStorage().addTask(task);
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	Tasuke::instance().highlightTask(task.getId());
+	Tasuke::instance().showMessage(QString("Added \"%1\"").arg(task.getDescription()));
+	Interpreter::setLast(task.getId()+1);
+}
+void AddCommand::undo() {
+	Tasuke::instance().getStorage().removeTask(task.getId());
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	Tasuke::instance().showMessage(QString("Undone add \"%1\"").arg(task.getDescription()));
+}
+
+RemoveCommand::RemoveCommand(int _id) {
+	id = _id;
+	task = Tasuke::instance().getStorage().getTask(id);
+}
+
+RemoveCommand::~RemoveCommand() {
+
+}
+	
+void RemoveCommand::run() {
+	Tasuke::instance().getStorage().removeTask(id);
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	Tasuke::instance().showMessage(QString("Removed \"%1\"").arg(task.getDescription()));
+}
+void RemoveCommand::undo() {
+	Tasuke::instance().getStorage().addTask(task);
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	Tasuke::instance().showMessage(QString("Undone remove \"%1\"").arg(task.getDescription()));
+}
+
+EditCommand::EditCommand(int _id, Task& _task) : id(_id), task(_task) {
+	
+}
+EditCommand::~EditCommand() {
+
+}
+
+void EditCommand::run() {
+	old = Tasuke::instance().getStorage().getTask(id);
+	task = Tasuke::instance().getStorage().editTask(id, task);
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	Tasuke::instance().highlightTask(task.getId());
+	Tasuke::instance().showMessage(QString("Edited \"%1\"").arg(task.getDescription()));
+	Interpreter::setLast(task.getId()+1);
+}
+void EditCommand::undo() {
+	Tasuke::instance().getStorage().editTask(task.getId(), old);
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	Tasuke::instance().highlightTask(old.getId());
+	Tasuke::instance().showMessage(QString("Undone edit \"%1\"").arg(task.getDescription()));
+	Interpreter::setLast(task.getId()+1);
+}
+
+ClearCommand::ClearCommand() {
+
+}
+ClearCommand::~ClearCommand() {
+
+}
+
+void ClearCommand::run() {
+	old = QList<Task>(Tasuke::instance().getStorage().getTasks());
+	Tasuke::instance().getStorage().clearAllTasks();
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	Tasuke::instance().showMessage(QString("Cleared all tasks"));
+}
+void ClearCommand::undo() {
+	for (int i=0; i<old.size(); i++) {
+		Tasuke::instance().getStorage().addTask(old[i]);
+	}
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	Tasuke::instance().showMessage(QString("Undone clear all tasks"));
+}
+
+DoneCommand::DoneCommand(int _id, bool _done) : id(_id), done(_done) {
+
+}
+DoneCommand::~DoneCommand() {
+
+}
+	
+void DoneCommand::run() {
+	Task task = Tasuke::instance().getStorage().getTask(id);
+	task.setDone(done);
+	task = Tasuke::instance().getStorage().editTask(id, task);
+	id = task.getId();
+	QString doneUndone = done ? "done" : "undone";
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	if (!done) {
+		Tasuke::instance().highlightTask(task.getId());
+	}
+	Tasuke::instance().showMessage(QString("Marked \"%1\" as %2").arg(task.getDescription(), doneUndone));
+}
+void DoneCommand::undo() {
+	Task task = Tasuke::instance().getStorage().getTask(id);
+	task.setDone(!done);
+	task = Tasuke::instance().getStorage().editTask(id, task);
+	id = task.getId();
+	QString doneUndone = done ? "done" : "undone";
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	if (!done) {
+		Tasuke::instance().highlightTask(task.getId());
+	}
+	Tasuke::instance().showMessage(QString("Undone mark \"%1\" as %2").arg(task.getDescription(), doneUndone));
+}
+
+CompositeCommand::CompositeCommand(QList< QSharedPointer<ICommand> > _commands) : commands(_commands) {
+	
+}
+
+CompositeCommand::~CompositeCommand() {
+	
+}
+
+void CompositeCommand::run() {
+	foreach(QSharedPointer<ICommand> command, commands) {
+		command->run();
+	}
+}
+
+void CompositeCommand::undo() {
+	// must be in reverse order
+	for(int i=commands.size()-1; i>=0; i--) {
+		commands[i]->undo();
+	}
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Commands.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Commands.h
+	 */
+
+
+// This is an interface for all user commands. The intended method to intialize
+// a ICommand instance is through the Interpreter.
+class ICommand {
+private:
+	bool hasRun;
+public:
+	ICommand();
+	virtual ~ICommand();
+	
+	virtual void run();
+	virtual void undo();
+};
+
+class AddCommand : public ICommand {
+private:
+	Task task;
+public:
+	AddCommand(Task& _task);
+	~AddCommand();
+	
+	void run() override;
+	void undo() override;
+};
+
+class RemoveCommand : public ICommand {
+private:
+	int id;
+	Task task;
+public:
+	RemoveCommand(int _id);
+	~RemoveCommand();
+	
+	void run() override;
+	void undo() override;
+};
+
+class EditCommand : public ICommand {
+private:
+	int id;
+	Task old;
+	Task task;
+public:
+	EditCommand(int _id, Task& _task);
+	~EditCommand();
+	
+	void run() override;
+	void undo() override;
+};
+
+class ClearCommand : public ICommand {
+private:
+	QList<Task> old;
+public:
+	ClearCommand();
+	~ClearCommand();
+	
+	void run() override;
+	void undo() override;
+};
+
+class DoneCommand : public ICommand {
+private:
+	int id;
+	bool done;
+public:
+	DoneCommand(int _id, bool _done = true);
+	~DoneCommand();
+	
+	void run() override;
+	void undo() override;
+};
+
+class CompositeCommand : public ICommand {
+private:
+	QList< QSharedPointer<ICommand> > commands;
+public:
+	CompositeCommand(QList< QSharedPointer<ICommand> > _commands);
+	~CompositeCommand();
+
+	void run() override;
+	void undo() override;
+};
+
+#endif
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Commands.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Exceptions.cpp
+	 */
+
+
+const char* EXCEPTION_NULL_PTR = "attempt to dereference null pointer";
+const char* EXCEPTION_BAD_COMMAND = "bad command given";
+const char* EXCEPTION_NOT_IMPLEMENTED = "not implemented";
+const char* EXCEPTION_TOO_MANY_TAGS = "exceeded tag limit";
+
+// This method returns a user readable error for the ExceptionNullPtr
+// exception
+const char* ExceptionNullPtr::what() const throw()
+{
+	return EXCEPTION_NULL_PTR;
+}
+
+// This method returns a user readable error for the ExceptionBadCommand
+// exception
+const char* ExceptionBadCommand::what() const throw()
+{
+	return EXCEPTION_BAD_COMMAND;
+}
+
+const char* ExceptionNotImplemented::what() const throw()
+{
+	return EXCEPTION_NOT_IMPLEMENTED;
+}
+
+const char* ExceptionTooManyTags::what() const throw()
+{
+	return EXCEPTION_TOO_MANY_TAGS;
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Exceptions.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Exceptions.h
+	 */
+
+
+// This exception is thrown only during programming errors. If this happens,
+// then it indicates a bug in the code
+class ExceptionNullPtr : public std::exception
+{
+	virtual const char *what() const throw();
+};
+
+// This exception is thrown when an invalid command is input by the user
+class ExceptionBadCommand : public std::exception
+{
+	virtual const char *what() const throw();
+};
+
+class ExceptionNotImplemented : public std::exception
+{
+	virtual const char *what() const throw();
+};
+
+// This exception is thrown when the user tries to add too many tags.
+class ExceptionTooManyTags : public std::exception
+{
+	virtual const char *what() const throw();
+};
+
+#endif
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Exceptions.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyManager.cpp
+	 */
+
+
+HotKeyManager::HotKeyManager(QObject *parent) : QObject(parent) {
+	hotKeyThread = new HotKeyThread(this);
+	connect(hotKeyThread, SIGNAL(hotKeyPress(KeyCombination)), this, SLOT(handleHotKeyPress(KeyCombination)), Qt::QueuedConnection);
+	hotKeyThread->start();
+}
+
+HotKeyManager::~HotKeyManager() {
+	if (hotKeyThread != nullptr) {
+		hotKeyThread->stop();
+		delete hotKeyThread;
+	}
+}
+
+void HotKeyManager::handleHotKeyPress(KeyCombination key) {
+	LOG(INFO) << "Hot key pressed with keycode " << (int)key;
+
+	if (key == KeyCombination::CTRL_SPACE) {
+		Tasuke::instance().toggleInputWindow();
+	} else if (key == KeyCombination::ALT_SPACE) {
+		Tasuke::instance().toggleTaskWindow();
+	} else if (key == KeyCombination::CTRL_ALT_SPACE) {
+		Tasuke::instance().toggleBothWindows();
+	}
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyManager.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyManager.h
+	 */
+
+
+class HotKeyManager : public QObject {
+	Q_OBJECT
+
+public:
+	HotKeyManager(QObject *parent = 0);
+	~HotKeyManager();
+
+public slots:
+	void handleHotKeyPress(KeyCombination key);
+
+private:
+	HotKeyThread *hotKeyThread;
+};
+
+#endif // HOTKEYMANAGER_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyManager.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.cpp
+	 */
+
+
+const char * const METATYPE_KEYCOMIBNATION = "KeyCombination";
+
+#ifdef Q_OS_WIN
+
+#include <process.h>
+
+// randomly chosen
+#define MAGIC_NUM 1128
+#define WM_END_THREAD (WM_USER+2)
+
+HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
+	qRegisterMetaType<KeyCombination>(METATYPE_KEYCOMIBNATION);
+	pid = 0;
+}
+
+HotKeyThread::~HotKeyThread() {
+
+}
+
+void HotKeyThread::stop() {
+	if (pid != 0) {
+		::PostThreadMessage(pid, WM_END_THREAD, 0, 0);
+	}
+}
+
+void HotKeyThread::run() {
+	pid = ::GetCurrentThreadId();
+	ATOM idCtrlSpace = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM));
+	ATOM idAltSpace = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+1));
+	ATOM idCtrlAltSpace = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+2));
+	::RegisterHotKey(NULL, idCtrlSpace, MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
+	::RegisterHotKey(NULL, idAltSpace, MOD_ALT | MOD_NOREPEAT, VK_SPACE);
+	::RegisterHotKey(NULL, idCtrlAltSpace, MOD_ALT | MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
+
+	MSG msg = {0};
+	while (::GetMessage(&msg, NULL, 0, 0)) {
+		if (msg.message == WM_HOTKEY) {
+			int keyCode = msg.lParam;
+			int key = keyCode >> 16;
+			int mod = keyCode & 0xFFFF;
+
+			if (mod == MOD_CONTROL && key == VK_SPACE) {
+				emit hotKeyPress(KeyCombination::CTRL_SPACE);
+			} else if (mod == MOD_ALT && key == VK_SPACE) {
+				emit hotKeyPress(KeyCombination::ALT_SPACE);
+			} else if (mod == (MOD_CONTROL | MOD_ALT) && key == VK_SPACE) {
+				emit hotKeyPress(KeyCombination::CTRL_ALT_SPACE);
+			}
+		} else if (msg.message == WM_END_THREAD) {
+			break;
+		}
+	}
+
+	::UnregisterHotKey(NULL, idCtrlSpace);
+	::UnregisterHotKey(NULL, idAltSpace);
+	::UnregisterHotKey(NULL, idCtrlAltSpace);
+	::GlobalDeleteAtom(idCtrlSpace);
+	::GlobalDeleteAtom(idAltSpace);
+	::GlobalDeleteAtom(idCtrlAltSpace);
+}
+
+#endif
+
+#ifdef Q_OS_MAC
+
+#include "MacWindowActivator.h"
+#include "Tasuke.h"
+
+HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
+	qRegisterMetaType<KeyCombination>(METATYPE_KEYCOMIBNATION);
+
+}
+
+HotKeyThread::~HotKeyThread() {
+
+}
+
+void HotKeyThread::stop() {
+
+}
+
+void HotKeyThread::run() {
+    //handler
+    hotKeyFunction = NewEventHandlerUPP(hotKeyHandler);
+    EventTypeSpec eventType;
+    eventType.eventClass = kEventClassKeyboard;
+    eventType.eventKind = kEventHotKeyReleased;
+    InstallApplicationEventHandler(hotKeyFunction,1,&eventType,this,NULL);
+    //hotkey
+    UInt32 keyCode = kVK_Space;
+    EventHotKeyRef theRef = NULL;
+    EventHotKeyID keyID;
+    keyID.signature = 123; //arbitrary string
+    keyID.id = 1;
+    RegisterEventHotKey(keyCode, controlKey, keyID,GetApplicationEventTarget(), 0, &theRef);
+}
+
+OSStatus HotKeyThread::hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void *userData) {
+    WindowActivator::activate();
+    Tasuke::instance().getHotKeyManager().handleHotKeyPress(KeyCombination::CTRL_SPACE);
+    return noErr;
+}
+
+#endif
+
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+#error "your os is not supported"
+#endif
+#endif
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.h
+	 */
+
+
+enum class KeyCombination {
+	CTRL_SPACE,
+	ALT_SPACE,
+	CTRL_ALT_SPACE
+};
+
+#ifdef Q_OS_WIN
+
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+class HotKeyThread : public QThread {
+	Q_OBJECT
+
+public:
+	HotKeyThread(QObject *parent);
+	~HotKeyThread();
+
+signals:
+	void hotKeyPress(KeyCombination);
+
+public slots:
+	void run();
+	void stop();
+	
+private:
+	DWORD pid;
+};
+
+#else
+
+#include <Carbon/Carbon.h>
+
+class HotKeyThread : public QThread {
+	Q_OBJECT
+
+public:
+	HotKeyThread(QObject *parent);
+	~HotKeyThread();
+
+signals:
+	void hotKeyPress(KeyCombination);
+
+public slots:
+	void run();
+	void stop();
+	
+private:
+    EventHandlerUPP hotKeyFunction;
+    static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler, EventRef theEvent, void *userData);
+};
+
+#endif
+
+#endif
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Interpreter.cpp
+	 */
+
+
+int Interpreter::last = -1;
+
+bool Interpreter::formatsAlreadyInit = false;
+
+QStringList Interpreter::timeFormats;
+QStringList Interpreter::dateFormatsWithoutYear;
+QStringList Interpreter::dateFormats;
+QStringList Interpreter::dateTimeFormats;
+QStringList Interpreter::dateTimeFormatsWithoutYear;
+
+QStringList Interpreter::timeFormatsAp;
+QStringList Interpreter::dateTimeFormatsAp;
+QStringList Interpreter::dateTimeFormatsWithoutYearAp;
+
+QMutex Interpreter::mutex;
+
+void Interpreter::setLast(int _last) {
+	last = _last;
+}
+
+QString Interpreter::substitute(QString text) {
+	QString subbedText = text;
+	subbedText = subbedText.replace(" by ", " @ ");
+	subbedText = subbedText.replace(" at ", " @ ");
+	subbedText = subbedText.replace(" from ", " @ ");
+	subbedText = subbedText.replace(" on ", " @ ");
+
+	subbedText = subbedText.replace(" \\by ", " by ");
+	subbedText = subbedText.replace(" \\at ", " at ");
+	subbedText = subbedText.replace(" \\from ", " from ");
+	subbedText = subbedText.replace(" \\on ", " on ");
+	subbedText = subbedText.replace(" \\to ", " to ");
+
+	subbedText = subbedText.replace(QRegExp("^do "), "add ");
+	subbedText = subbedText.replace(QRegExp("^create"), "add");
+	subbedText = subbedText.replace(QRegExp("^change"), "edit");
+	subbedText = subbedText.replace(QRegExp("^rm"), "remove");
+	subbedText = subbedText.replace(QRegExp("^delete"), "remove");
+	subbedText = subbedText.replace(QRegExp("^ls"), "show");
+	subbedText = subbedText.replace(QRegExp("^quit"), "exit");
+	subbedText = subbedText.replace(QRegExp("^search"), "show");
+	subbedText = subbedText.replace(QRegExp("^find"), "show");
+
+	return subbedText;
+}
+
+QString Interpreter::substituteForTimePeriod(QString text) {
+	QString subbedText = text;
+	subbedText = subbedText.replace(" to ", " - ");
+	subbedText = subbedText.replace(" \\to ", " to ");
+
+	return subbedText;
+}
+
+QDate Interpreter::nextWeekday(int weekday) {
+	QDate date = QDate::currentDate();
+	
+	while (date.dayOfWeek() != weekday) {
+		date = date.addDays(1);
+	}
+
+	return date;
+}
+
+QString Interpreter::substituteForDate(QString text) {
+	QString subbedText = text.toLower();
+
+	// strip commas
+	subbedText = subbedText.replace(QRegExp(",\\b"), "");
+
+	// strip this, next and the
+	subbedText = subbedText.replace(QRegExp("\\bthis\\b"), "");
+	subbedText = subbedText.replace(QRegExp("\\bnext\\b"), "");
+	subbedText = subbedText.replace(QRegExp("\\bnthe\\b"), "");
+
+	// expand out abbrev
+	subbedText = subbedText.replace(QRegExp("\\b2day\\b"), "today");
+	subbedText = subbedText.replace(QRegExp("\\btmr\\b"), "tomorrow");
+	subbedText = subbedText.replace(QRegExp("\\btml\\b"), "tomorrow");
+	subbedText = subbedText.replace(QRegExp("\\bmon\\b"), "monday");
+	subbedText = subbedText.replace(QRegExp("\\btue\\b"), "tuesday");
+	subbedText = subbedText.replace(QRegExp("\\btues\\b"), "tuesday");
+	subbedText = subbedText.replace(QRegExp("\\bwed\\b"), "wednesday");
+	subbedText = subbedText.replace(QRegExp("\\bthu\\b"), "thursday");
+	subbedText = subbedText.replace(QRegExp("\\bthur\\b"), "thursday");
+	subbedText = subbedText.replace(QRegExp("\\bthurs\\b"), "thursday");
+	subbedText = subbedText.replace(QRegExp("\\bfri\\b"), "friday");
+	subbedText = subbedText.replace(QRegExp("\\bsat\\b"), "saturday");
+	subbedText = subbedText.replace(QRegExp("\\bsun\\b"), "sunday");
+
+	// today, tomorrow etc.
+	subbedText = subbedText.replace(QRegExp("\\byesterday\\b"), QDate::currentDate().addDays(-1).toString("dd/MM/yyyy"));
+	subbedText = subbedText.replace(QRegExp("\\btoday\\b"), QDate::currentDate().toString("dd/MM/yyyy"));
+	subbedText = subbedText.replace(QRegExp("\\btomorrow\\b"), QDate::currentDate().addDays(1).toString("dd/MM/yyyy"));
+	subbedText = subbedText.replace(QRegExp("\\bday after tomorrow\\b"), QDate::currentDate().addDays(2).toString("dd/MM/yyyy"));
+
+	// weekdays
+	if (subbedText.contains("monday")) {
+		subbedText = subbedText.replace("monday", nextWeekday(1).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("tuesday")) {
+		subbedText = subbedText.replace("tuesday", nextWeekday(2).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("wednesday")) {
+		subbedText = subbedText.replace("wednesday", nextWeekday(3).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("thursday")) {
+		subbedText = subbedText.replace("thursday", nextWeekday(4).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("friday")) {
+		subbedText = subbedText.replace("friday", nextWeekday(5).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("saturday")) {
+		subbedText = subbedText.replace("saturday", nextWeekday(6).toString("dd/MM/yyyy"));
+	} else if (subbedText.contains("sunday")) {
+		subbedText = subbedText.replace("sunday", nextWeekday(7).toString("dd/MM/yyyy"));
+	}
+
+	// time of days
+	subbedText = subbedText.replace(QRegExp("\\bdawn\\b"), QTime(6,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bmorning\\b"), QTime(10,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bnoon\\b"), QTime(12,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bafternoon\\b"), QTime(18,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bevening\\b"), QTime(20,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bnight\\b"), QTime(22,0).toString("hh:mm ap"));
+	subbedText = subbedText.replace(QRegExp("\\bmidnight\\b"), QTime(23,59).toString("hh:mm ap"));
+
+	return subbedText;
+}
+
+QHash<QString, QString> Interpreter::decompose(QString text) {
+	QStringList tokens = text.split(" ");
+	QString current = "";
+	bool expectNewDelimiter = false;
+	QHash<QString, QString> retVal;
+
+	for (int i=0; i<tokens.size(); i++) {
+		if (tokens[i].size() > 0 && (tokens[i][0] == '@' || tokens[i][0] == '#' || tokens[i] == "-@" || tokens[i].startsWith("-#"))) {
+			current = tokens[i];
+
+			if (tokens[i][0] == '@') {
+				current = tokens[i][0];
+				tokens[i].remove(0,1);
+
+				if (retVal.contains(current) == true) {
+					throw ExceptionBadCommand();
+				}
+			} else if (tokens[i][0] == '#') {
+				tokens[i].remove(0,1);
+				expectNewDelimiter = true;
+			} else if (tokens[i] == "-@") {
+				tokens[i].remove(0,2);
+				expectNewDelimiter = true;
+			} else if (tokens[i].startsWith("-#")) {
+				tokens[i].remove(0,2);
+				expectNewDelimiter = true;
+			}
+		} else {
+			if (expectNewDelimiter) {
+				throw ExceptionBadCommand();
+			}
+		}
+
+		expectNewDelimiter = false;
+
+		QString newVal =  tokens[i];
+		QString temp = retVal[current];
+		if (temp.isEmpty() == false) {
+			newVal = temp + " " + newVal;
+		}
+		retVal[current] = newVal;
+	}
+
+	return retVal;
+}
+
+QString Interpreter::removeBefore(QString text, QString before) {
+	QString retVal = text;
+	int pos = retVal.indexOf(before);
+
+	if (pos != -1) {
+		retVal.remove(0, pos + before.size());
+	}
+
+	return retVal;
+}
+
+QString Interpreter::getType(QString commandString, bool doSub) {
+	if (doSub) {
+		commandString = substitute(commandString);
+	}
+
+	QStringList delimiters;
+	QStringList typeKeywords;
+
+	delimiters << "@";
+	delimiters << "#";
+	delimiters << "-";
+
+	typeKeywords << "add";
+	typeKeywords << "edit";
+	typeKeywords << "remove";
+	typeKeywords << "show";
+	typeKeywords << "hide";
+	typeKeywords << "done";
+	typeKeywords << "undone";
+	typeKeywords << "undo";
+	typeKeywords << "redo";
+	typeKeywords << "clear";
+	typeKeywords << "help";
+	typeKeywords << "about";
+	typeKeywords << "settings";
+	typeKeywords << "exit";
+	
+	QString temp = commandString.trimmed();
+	
+	for (int i=0; i<delimiters.size(); i++) {
+		temp = temp.split(delimiters[i])[0];
+	}
+	QStringList tokens = temp.split(' ');
+	for (int i=0; i<tokens.size(); i++) {
+		for (int j=0; j<typeKeywords.size(); j++) {
+			if (tokens[i] == typeKeywords[j]) {
+				return typeKeywords[j];
+			}
+		}
+	}
+
+	return "";
+}
+
+// This static helper function returns an instance of a ICommand that represents
+// the user's command. The caller must clean up using delete.
+ICommand* Interpreter::interpret(QString commandString, bool dry) {
+	LOG(INFO) << "Interpretting " << commandString.toStdString();
+
+	commandString = substitute(commandString);
+
+	QString commandType = getType(commandString, false);
+
+	if (commandType == "add") {
+		return createAddCommand(commandString);
+	} else if (commandType == "remove") {
+		return createRemoveCommand(commandString);
+	} else if (commandType == "edit") {
+		return createEditCommand(commandString);
+	} else if (commandType == "done") {
+		return createDoneCommand(commandString);
+	} else if (commandType == "undone") {
+		return createUndoneCommand(commandString);
+	} else if (commandType == "clear") {
+		return createClearCommand(commandString);
+	}
+
+	if (commandType == "") {
+		throw ExceptionBadCommand();
+	}
+	
+	// if this was a dry run, don't actually do anything
+	if (dry) {
+		return nullptr;
+	}
+
+	if (commandType == "show") {
+		doShow(commandString);
+	} else if (commandType == "hide") {
+		doHide();
+	} else if (commandType == "undo") {
+		doUndo(commandString);
+	} else if (commandType == "redo") {
+		doRedo(commandString);
+	} else if (commandType == "help") {
+		doHelp();
+	} else if (commandType == "settings") {
+		doSettings();
+	} else if (commandType == "about") {
+		doAbout();
+	} else if (commandType == "exit") {
+		doExit();
+	}
+
+	return nullptr;
+}
+
+ICommand* Interpreter::createAddCommand(QString commandString) {
+	commandString = removeBefore(commandString, "add");
+	commandString = commandString.trimmed();
+
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
+
+	QHash<QString, QString> parts = decompose(commandString);
+	Task task;
+
+	task.setDescription(parts[""]);
+
+	foreach(const QString &key, parts.keys()) {
+		QString value = parts[key].trimmed();
+
+		if (key.startsWith('#')) {
+			task.addTag(value);
+		} else if (key == "@") {
+			TIME_PERIOD period = parseTimePeriod(value);
+			task.setBegin(period.begin);
+			task.setEnd(period.end);
+		}
+	}
+
+	return new AddCommand(task);
+}
+
+ICommand* Interpreter::createRemoveCommand(QString commandString) {
+	commandString = removeBefore(commandString, "remove");
+	commandString = commandString.trimmed();
+
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
+
+	QList<int> ids = parseIdList(commandString);
+	QList< QSharedPointer<ICommand> > commands;
+
+	qSort(ids.begin(), ids.end(), qGreater<int>());
+
+	foreach(int id, ids) {
+		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new RemoveCommand(id-1));
+		commands.push_back(command);
+	}
+
+	return new CompositeCommand(commands);
+}
+
+ICommand* Interpreter::createEditCommand(QString commandString) {
+	commandString = removeBefore(commandString, "edit");
+	commandString = commandString.trimmed();
+
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
+
+	QString idString = commandString.split(' ')[0];
+	int id = parseId(idString);
+
+	commandString = commandString.section(' ', 1);
+
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
+
+	QHash<QString, QString> parts = decompose(commandString);
+	Task task = Tasuke::instance().getStorage().getTask(id-1);
+
+	foreach(const QString &key, parts.keys()) {
+		QString value = parts[key].trimmed();
+
+		if (key == "") {
+			task.setDescription(value);
+		} else if (key.startsWith('#')) {
+			task.addTag(value);
+		} else if (key == "@") {
+			TIME_PERIOD period = parseTimePeriod(value);
+			task.setBegin(period.begin);
+			task.setEnd(period.end);
+		} else if (key.startsWith("-#")) {
+			task.removeTag(value);
+		} else if (key.startsWith("-@")) {
+			task.setBegin(QDateTime());
+			task.setEnd(QDateTime());
+		}
+	}
+
+	return new EditCommand(id-1, task);
+}
+
+ICommand* Interpreter::createClearCommand(QString commandString) {
+	return new ClearCommand();
+}
+
+ICommand* Interpreter::createDoneCommand(QString commandString) {
+	commandString = removeBefore(commandString, "done");
+	commandString = commandString.trimmed();
+
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
+
+	QList<int> ids = parseIdList(commandString);
+	QList< QSharedPointer<ICommand> > commands;
+
+	qSort(ids.begin(), ids.end(), qGreater<int>());
+
+	foreach(int id, ids) {
+		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new DoneCommand(id-1));
+		commands.push_back(command);
+	}
+
+	return new CompositeCommand(commands);
+}
+
+ICommand* Interpreter::createUndoneCommand(QString commandString) {
+	commandString = removeBefore(commandString, "undone");
+	commandString = commandString.trimmed();
+
+	if (commandString.isEmpty()) {
+		throw ExceptionBadCommand();
+	}
+
+	QList<int> ids = parseIdList(commandString);
+	QList< QSharedPointer<ICommand> > commands;
+
+	qSort(ids.begin(), ids.end());
+
+	foreach(int id, ids) {
+		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new DoneCommand(id-1, false));
+		commands.push_back(command);
+	}
+
+	return new CompositeCommand(commands);
+}
+
+void Interpreter::doShow(QString commandString) {
+	commandString = removeBefore(commandString, "show");
+	commandString = commandString.trimmed();
+
+	if (commandString == "done") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDone();
+		});
+		Tasuke::instance().updateTaskWindow(results, "done");
+	} else if (commandString == "undone") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDone();
+		});
+		Tasuke::instance().updateTaskWindow(results, "undone");
+	} else if (commandString == "ongoing") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isOngoing();
+		});
+		Tasuke::instance().updateTaskWindow(results, "ongoing");
+	} else if (commandString == "overdue") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isOverdue();
+		});
+		Tasuke::instance().updateTaskWindow(results, "overdue");
+	} else if (commandString == "today") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDueToday();
+		});
+		Tasuke::instance().updateTaskWindow(results, "due today");
+	} else if (commandString == "tomorrow") {
+		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDueTomorrow();
+		});
+		Tasuke::instance().updateTaskWindow(results, "due tomorrow");
+	} else  if (commandString == "" || commandString == "all" || commandString == "everything") {
+		Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+	} else if (commandString.startsWith("#") && !commandString.contains(" ")) {
+		QString tag = commandString.remove(0,1);
+		QList<Task> results = Tasuke::instance().getStorage().searchByTag(tag);
+		Tasuke::instance().updateTaskWindow(results, "#" + tag);
+	} else {
+		QList<Task> results = Tasuke::instance().getStorage().searchByDescription(commandString);
+		Tasuke::instance().updateTaskWindow(results, "\"" + commandString + "\"");
+	}
+
+	Tasuke::instance().showTaskWindow();
+}
+void Interpreter::doAbout() {
+	Tasuke::instance().showAboutWindow();
+}
+void Interpreter::doHide() {
+	Tasuke::instance().hideTaskWindow();
+}
+void Interpreter::doUndo(QString commandString) {
+	commandString = removeBefore(commandString, "undo");
+	commandString = commandString.trimmed();
+
+	int times = 1;
+
+	if (commandString == "max") {
+		times = Tasuke::instance().undoSize();
+	} else if (!commandString.isEmpty()) {
+		bool ok = false;
+		times = commandString.toInt(&ok);
+
+		if (ok == false) {
+			throw ExceptionBadCommand();
+		}
+	}
+
+	for (int i=0; i<times; i++) {
+		Tasuke::instance().undoCommand();
+	}
+}
+void Interpreter::doRedo(QString commandString) {
+	commandString = removeBefore(commandString, "redo");
+	commandString = commandString.trimmed();
+
+	int times = 1;
+
+	if (commandString == "max") {
+		times = Tasuke::instance().redoSize();
+	} else if (!commandString.isEmpty()) {
+		bool ok = false;
+		times = commandString.toInt(&ok);
+
+		if (ok == false) {
+			throw ExceptionBadCommand();
+		}
+	}
+
+	for (int i=0; i<times; i++) {
+		Tasuke::instance().redoCommand();
+	}
+}
+void Interpreter::doSettings() {
+	Tasuke::instance().showSettingsWindow();
+}
+void Interpreter::doHelp() {
+	Tasuke::instance().showTutorial();
+}
+void Interpreter::doExit() {
+	QApplication::quit();
+}
+
+int Interpreter::parseId(QString idString) {
+	idString = idString.trimmed();
+
+	if (idString == "last") {
+		return last;
+	}
+
+	bool ok = false;
+	int id = idString.toInt(&ok);
+
+	if (ok == false) {
+		throw ExceptionBadCommand();
+	}
+
+	int numTasks = Tasuke::instance().getStorage().totalTasks();
+
+	if (id < 1 || id > numTasks) {
+		throw ExceptionBadCommand();
+	}
+
+	return id;
+}
+
+QList<int> Interpreter::parseIdList(QString idListString) {
+	idListString = idListString.trimmed();
+	
+	QList<int> results;
+	
+	if (idListString == "all") {
+		int lastId = Tasuke::instance().getStorage().totalTasks();
+		for (int i=1; i<=lastId; i++) {
+			results.push_back(i);
+		}
+		return results;
+	}
+
+	QStringList idListParts = idListString.split(",");
+	foreach(QString idListPart, idListParts) {
+		results.append(parseIdRange(idListPart));
+	}
+
+	return results;
+}
+
+QList<int> Interpreter::parseIdRange(QString idRangeString) {
+	idRangeString = idRangeString.trimmed();
+
+	QList<int> results;
+	QList<Task> special;
+	if (idRangeString == "done") {
+		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDone();
+		});
+	} else if (idRangeString == "overdue") {
+		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isOverdue();
+		});
+	} else if (idRangeString == "today") {
+		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return task.isDueToday();
+		});
+	} else if (idRangeString == "undone") {
+		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
+			return !task.isDone();
+		});
+	}
+
+	// if this is a sepcial range
+	if (special.size() > 0) {
+		foreach(Task task, special) {
+			results.push_back(task.getId()+1);
+		}
+
+		return results;
+	}
+
+	QStringList idRangeParts = idRangeString.split("-");
+
+	if (idRangeParts.size() == 1) {
+		results.push_back(parseId(idRangeParts[0]));
+	} else if (idRangeParts.size() == 2) {
+		int begin = parseId(idRangeParts[0]);
+		int end = parseId(idRangeParts[1]);
+
+		if (end < begin) {
+			throw ExceptionBadCommand();
+		}
+
+		for (int i=begin; i<=end; i++) {
+			results.push_back(i);
+		}
+	} else {
+		throw ExceptionBadCommand();
+	}
+
+	return results;
+}
+
+Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) {
+	timePeriodString = substituteForTimePeriod(timePeriodString);
+
+	QStringList timePeriodParts = timePeriodString.split("-");
+	TIME_PERIOD timePeriod;
+
+	if (timePeriodParts.size() > 2) {
+		throw ExceptionBadCommand();
+	}
+
+	if (timePeriodParts.size() == 1) {
+		timePeriod.end = parseDate(timePeriodString);
+	} else if (timePeriodParts.size() == 2) {
+		timePeriod.begin = parseDate(timePeriodParts[0], false);
+		timePeriod.end = parseDate(timePeriodParts[1]);
+
+		if (!timePeriod.begin.isValid()) {
+			throw ExceptionBadCommand();
+		}
+	}
+
+	if (!timePeriod.end.isValid()) {
+		throw ExceptionBadCommand();
+	}
+
+	if (timePeriod.begin.isValid() && timePeriod.end < timePeriod.begin) {
+		throw ExceptionBadCommand();
+	}
+
+	return timePeriod;
+}
+
+QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
+	dateString = substituteForDate(dateString);
+	dateString = dateString.trimmed();
+
+	QDate currentDate = QDate::currentDate();
+	QTime timePart = QTime(23,59);
+	if (!isEnd) {
+		timePart = QTime(0,0);
+	}
+
+	if (!formatsAlreadyInit) {
+		initFormats();
+	}
+
+	QDateTime retVal;
+
+	if (dateString.contains("am") || dateString.contains("pm") || dateString.contains("AM") || dateString.contains("PM")) {
+		// if the datetime contains am/pm means we can cut our search space
+
+		// these formats need the date added
+		foreach(QString timeFormat, timeFormatsAp) {
+			QTime timePart = QTime::fromString(dateString, timeFormat);
+			if (timePart.isValid()) {
+				retVal.setDate(currentDate);
+				retVal.setTime(timePart);
+				return retVal;
+			}
+		}
+
+		// these formats need the year added
+		foreach(QString dateTimeFormat, dateTimeFormatsWithoutYearAp) {
+			retVal = QDateTime::fromString(dateString, dateTimeFormat);
+			if (retVal.isValid()) {
+				QDate date = retVal.date();
+				retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+				return retVal;
+			}
+		}
+
+		// these formats are complete
+		foreach(QString dateTimeFormat, dateTimeFormatsAp) {
+			retVal = QDateTime::fromString(dateString, dateTimeFormat);
+			if (retVal.isValid()) {
+				QDate date = retVal.date();
+				if (date.year() < 2000) {
+					// add a century
+					date = date.addYears(100);
+					retVal.setDate(date);
+				}
+				return retVal;
+			}
+		}
+
+		// the other formats do not include am/pm so probably invalid
+		return retVal;
+	}
+
+	// these formats need the date added
+	foreach(QString timeFormat, timeFormats) {
+		QTime timePart = QTime::fromString(dateString, timeFormat);
+		if (timePart.isValid()) {
+			retVal.setDate(currentDate);
+			retVal.setTime(timePart);
+			return retVal;
+		}
+	}
+
+	// these formats need the current year and time added
+	foreach(QString dateFormat, dateFormatsWithoutYear) {
+		retVal = QDateTime::fromString(dateString, dateFormat);
+		if (retVal.isValid()) {
+			QDate date = retVal.date();
+			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+			retVal.setTime(timePart);
+			return retVal;
+		}
+	}
+	
+	// these formats need the year added
+	foreach(QString dateTimeFormat, dateTimeFormatsWithoutYear) {
+		retVal = QDateTime::fromString(dateString, dateTimeFormat);
+		if (retVal.isValid()) {
+			QDate date = retVal.date();
+			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+			return retVal;
+		}
+	}
+
+	// these formats need the time added
+	foreach(QString dateFormat, dateFormats) {
+		retVal = QDateTime::fromString(dateString, dateFormat);
+		if (retVal.isValid()) {
+			QDate date = retVal.date();
+			if (date.year() < 2000) {
+				// add a century
+				date = date.addYears(100);
+				retVal.setDate(date);
+			}
+			retVal.setTime(timePart);
+			return retVal;
+		}
+	}
+
+	// these formats are complete
+	foreach(QString dateTimeFormat, dateTimeFormats) {
+		retVal = QDateTime::fromString(dateString, dateTimeFormat);
+		if (retVal.isValid()) {
+			QDate date = retVal.date();
+			if (date.year() < 2000) {
+				// add a century
+				date = date.addYears(100);
+				retVal.setDate(date);
+			}
+			return retVal;
+		}
+	}
+
+	return retVal;
+}
+
+void Interpreter::initFormats() {
+	QMutexLocker locker(&mutex);
+
+	if (formatsAlreadyInit) {
+		return;
+	}
+
+	generateTimeFormats();
+	generateDateFormatsWithoutYear();
+	generateDateFormats();
+	generateDateTimeFormatsWithoutYear();
+	generateDateTimeFormats();
+
+	formatsAlreadyInit = true;
+}
+
+void Interpreter::generateTimeFormats() {
+	assert(formatsAlreadyInit == false);
+
+	QStringList hourFormats;
+	QStringList minuteFomats;
+	QStringList amPmFormats;
+	QStringList separators;
+	QStringList optionalSpaces;
+	
+	hourFormats << "h" << "hh";
+	minuteFomats << "mm";
+	amPmFormats << "ap" << "AP";
+	separators << " " << ":" << ".";
+	optionalSpaces << " " << "";
+
+	QStringList toAdd;
+	foreach(QString hourFormat, hourFormats) {
+		foreach(QString minuteFormat, minuteFomats) {
+			foreach(QString separator, separators) {
+				timeFormats << (hourFormat + separator + minuteFormat);
+			}
+		}
+	}
+	foreach(QString timeFormat, timeFormats) {
+		foreach(QString amPmFormat, amPmFormats) {
+			foreach(QString optionalSpace, optionalSpaces) {
+				timeFormatsAp << (timeFormat + optionalSpace + amPmFormat);
+			}
+		}
+	}
+	
+	// special constructions
+	// military time:
+	timeFormats << "hhmm'hrs'";;
+	// 5pm:
+	foreach(QString hourFormat, hourFormats) {
+		foreach(QString amPmFormat, amPmFormats) {
+			foreach(QString optionalSpace, optionalSpaces) {
+				timeFormatsAp << (hourFormat + optionalSpace + amPmFormat);
+			}
+		}
+	}
+}
+void Interpreter::generateDateFormatsWithoutYear() {
+	assert(formatsAlreadyInit == false);
+
+	QStringList dayFormats;
+	QStringList speltMonthFormats;
+	QStringList monthFormats;
+	QStringList dateSeparators;
+
+	dayFormats << "d" << "dd";
+	speltMonthFormats << "MMM" << "MMMM";
+	monthFormats << "M" << "MM";
+	dateSeparators << "/" << "-"; 
+
+	foreach(QString dayFormat, dayFormats) {
+		foreach(QString speltMonthFormat, speltMonthFormats) {
+			dateFormatsWithoutYear << (dayFormat + " " + speltMonthFormat);
+			// american format:
+			dateFormatsWithoutYear << (speltMonthFormat + " " + dayFormat);
+		}
+	}
+
+	//special constructions
+	foreach(QString dayFormat, dayFormats) {
+		foreach(QString monthFormat, monthFormats) {
+			foreach(QString dateSeparator, dateSeparators) {
+				dateFormatsWithoutYear << (dayFormat + dateSeparator + monthFormat);
+			}
+		}
+	}
+}
+void Interpreter::generateDateFormats() {
+	assert(formatsAlreadyInit == false);
+
+	QStringList dayFormats;
+	QStringList monthFormats;
+	QStringList yearFormats;
+	QStringList dateSeparators;
+
+	dayFormats << "d" << "dd";
+	monthFormats << "M" << "MM";
+	yearFormats << "yy" << "yyyy";
+	dateSeparators << "/" << "-"; 
+
+	foreach(QString dateFormatWithoutYear, dateFormatsWithoutYear) {
+		foreach(QString yearFormat, yearFormats) {
+			dateFormats << (dateFormatWithoutYear + " " + yearFormat);
+			dateFormats << (yearFormat + " " + dateFormatWithoutYear);
+		}
+	}
+
+	// special construction
+	foreach(QString dayFormat, dayFormats) {
+		foreach(QString monthFormat, monthFormats) {
+			foreach(QString yearFormat, yearFormats) {
+				foreach(QString dateSeparator, dateSeparators) {
+					dateFormats << (dayFormat + dateSeparator + monthFormat + dateSeparator + yearFormat);
+				}
+			}
+		}
+	}
+}
+
+void Interpreter::generateDateTimeFormatsWithoutYear() {
+	assert(formatsAlreadyInit == false);
+
+	foreach(QString dateFormatWithoutYear, dateFormatsWithoutYear) {
+		foreach(QString timeFormat, timeFormats) {
+			dateTimeFormatsWithoutYear << (dateFormatWithoutYear + " " + timeFormat);
+			dateTimeFormatsWithoutYear << (timeFormat + " " + dateFormatWithoutYear);
+		}
+
+		foreach(QString timeFormatAp, timeFormatsAp) {
+			dateTimeFormatsWithoutYearAp << (dateFormatWithoutYear + " " + timeFormatAp);
+			dateTimeFormatsWithoutYearAp << (timeFormatAp + " " + dateFormatWithoutYear);
+		}
+	}
+}
+
+void Interpreter::generateDateTimeFormats() {
+	assert(formatsAlreadyInit == false);
+
+	foreach(QString dateFormat, dateFormats) {
+		foreach(QString timeFormat, timeFormats) {
+			dateTimeFormats << (dateFormat + " " + timeFormat);
+			dateTimeFormats << (timeFormat + " " + dateFormat);
+		}
+
+		foreach(QString timeFormatAp, timeFormatsAp) {
+			dateTimeFormatsAp << (dateFormat + " " + timeFormatAp);
+			dateTimeFormatsAp << (timeFormatAp + " " + dateFormat);
+		}
+	}
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Interpreter.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Interpreter.h
+	 */
+
+
+// This class acts as an interpreter. It either returns an ICommand object
+// or a nullptr. If it returns an ICommand object the caller must manage
+// the memory
+class Interpreter {
+private:
+	typedef struct {
+		QDateTime begin;
+		QDateTime end;
+	} TIME_PERIOD;
+
+	static int last;
+
+	static QStringList timeFormats;
+	static QStringList dateFormatsWithoutYear;
+	static QStringList dateFormats;
+	static QStringList dateTimeFormatsWithoutYear;
+	static QStringList dateTimeFormats;
+
+	static QStringList timeFormatsAp;
+	static QStringList dateTimeFormatsAp;
+	static QStringList dateTimeFormatsWithoutYearAp;
+
+	static bool formatsAlreadyInit;
+	static QMutex mutex;
+	
+	static QString substitute(QString text);
+	static QString substituteForTimePeriod(QString text);
+	static QString substituteForDate(QString text);
+
+	static QHash<QString, QString> decompose(QString text);
+	static QString removeBefore(QString text, QString before);
+	static int parseId(QString idString);
+	static QList<int> parseIdList(QString idListString);
+	static QList<int> parseIdRange(QString idRangeString);
+	static TIME_PERIOD parseTimePeriod(QString timePeriod);
+	static QDateTime parseDate(QString dateString, bool isEnd = true);
+	static QDate nextWeekday(int weekday);
+	static void generateTimeFormats();
+	static void generateDateFormatsWithoutYear();
+	static void generateDateFormats();
+	static void generateDateTimeFormatsWithoutYear();
+	static void generateDateTimeFormats();
+
+	static ICommand* createAddCommand(QString commandString);
+	static ICommand* createRemoveCommand(QString commandString);
+	static ICommand* createEditCommand(QString commandString);
+	static ICommand* createClearCommand(QString commandString);
+	static ICommand* createDoneCommand(QString commandString);
+	static ICommand* createUndoneCommand(QString commandString);
+
+	static void doShow(QString commandString);
+	static void doAbout();
+	static void doHide();
+	static void doUndo(QString commandString);
+	static void doRedo(QString commandString);
+	static void doHelp();
+	static void doSettings();
+	static void doExit();
+
+public:	
+	static void setLast(int _last);
+	static QString getType(QString commandString, bool doSub = true);
+	static ICommand* interpret(QString commandString, bool dry = false);
+	static void initFormats();
+};
+
+#endif
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Interpreter.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\main.cpp
+	 */
+
+
+const char* const TASUKE = "Tasuke";
+const char* const NAME_ORGANIZATION = TASUKE;
+const char* const NAME_APPLICATION = TASUKE;
+const char* const SHARED_MEMORY_KEY = TASUKE;
+
+const char* const MSG_STARTING_UP = "Tasuke starting up!";
+const char* const MSG_ALREADY_RUNNING =  "Tasuke is already running! Open Tasuke using ctrl+space";
+
+void exitIfAlreadyRunning() {
+	QSharedMemory sharedMemory;
+	sharedMemory.setKey(SHARED_MEMORY_KEY);
+	sharedMemory.attach();
+
+	if (!sharedMemory.create(1)) {
+		QMessageBox::information(nullptr, NAME_APPLICATION, MSG_ALREADY_RUNNING);
+		exit(EXIT_FAILURE);
+	}
+}
+
+void initLogging(int argc, char *argv[]) {
+	Q_UNUSED(argc);
+
+	google::InitGoogleLogging(argv[0]);
+	LOG(INFO) << MSG_STARTING_UP;
+}
+
+void setOrganizationAndApplicationName() {
+	QCoreApplication::setOrganizationName(NAME_ORGANIZATION);
+	QCoreApplication::setApplicationName(NAME_APPLICATION);
+}
+
+int main(int argc, char *argv[]) {
+	QApplication app(argc, argv);
+
+	exitIfAlreadyRunning();
+	initLogging(argc, argv);
+	setOrganizationAndApplicationName();;
+
+	Tasuke::instance();
+
+	return app.exec();
+}
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\main.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SystemTrayWidget.cpp
+	 */
+
+
+SystemTrayWidget::SystemTrayWidget(QWidget *parent ) : QWidget(parent) {
+	LOG(INFO) << "SystemTrayWidget object created";
+
+	//context menu actions
+	QAction* quitAction = new QAction("&Quit", this);
+	QAction* showInputWindowAction = new QAction("Show &Command Box", this);
+	QAction* showTaskWindowAction = new QAction("Show &Task Window", this);
+	QAction* showSettingsWindowAction = new QAction("&Settings", this);
+	QAction* showTutorialWidgetAction = new QAction("&Tutorial", this);
+	QAction* showAboutWindowAction = new QAction("&About Tasuke", this);
+
+	//tray stuff
+	QMenu* trayIconMenu = new QMenu(this);
+	trayIcon = new QSystemTrayIcon(this);
+	trayIcon->setContextMenu(trayIconMenu);
+	trayIcon->setIcon(QIcon(":/Images/images/Traysuke.png"));
+	trayIcon->show();
+
+	//add actions
+	trayIconMenu->addAction(quitAction);
+	trayIconMenu->addAction(showTaskWindowAction);
+	trayIconMenu->addAction(showInputWindowAction);
+	trayIconMenu->addAction(showSettingsWindowAction);
+	trayIconMenu->addAction(showTutorialWidgetAction);
+	trayIconMenu->addAction(showAboutWindowAction);
+
+	//connect context menu actions
+	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+	connect(showTaskWindowAction, SIGNAL(triggered()), this, SLOT(handleShowTaskWindow()));
+	connect(showInputWindowAction, SIGNAL(triggered()), this, SLOT(handleShowInputWindow()));
+	connect(showTutorialWidgetAction, SIGNAL(triggered()),  this, SLOT(handleShowTutorialWidget()));
+	connect(showSettingsWindowAction, SIGNAL(triggered()),  this, SLOT(handleShowSettingsWindow()));
+	connect(showAboutWindowAction, SIGNAL(triggered()),  this, SLOT(handleShowAboutWindow()));
+
+	//when tray icon is clicked..
+	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(handleIconActivated(QSystemTrayIcon::ActivationReason)));
+
+	//when quiting
+	connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(handleAboutToQuit()));
+}
+
+SystemTrayWidget::~SystemTrayWidget() {
+	LOG(INFO) << "SystemTrayWidget object destroyed";
+
+	trayIcon->hide();
+	delete trayIcon;
+	trayIcon = nullptr;
+}
+
+void SystemTrayWidget::showMessage(QString message) {
+	trayIcon->showMessage("Tasuke", message);
+}
+
+void SystemTrayWidget::handleShowTaskWindow() {
+	Tasuke::instance().showTaskWindow();
+}
+
+void SystemTrayWidget::handleShowInputWindow() {
+	Tasuke::instance().showInputWindow();
+}
+
+void SystemTrayWidget::handleShowTutorialWidget() {
+	Tasuke::instance().showTutorial();
+}
+
+void SystemTrayWidget::handleShowSettingsWindow() {
+	Tasuke::instance().showSettingsWindow();
+}
+
+void SystemTrayWidget::handleShowAboutWindow() {
+	Tasuke::instance().showAboutWindow();
+}
+
+void SystemTrayWidget::handleIconActivated(QSystemTrayIcon::ActivationReason reason) {
+	if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
+		Tasuke::instance().showTaskWindow();
+		Tasuke::instance().showInputWindow();	
+	}
+}
+
+void SystemTrayWidget::handleAboutToQuit() {
+	trayIcon->hide();
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SystemTrayWidget.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SystemTrayWidget.h
+	 */
+
+
+class SystemTrayWidget : public QWidget {
+	Q_OBJECT
+
+public:
+	SystemTrayWidget(QWidget *parent = 0);
+	~SystemTrayWidget();
+
+	void showMessage(QString message);
+
+private slots:
+	void handleShowTaskWindow();
+	void handleShowInputWindow();
+	void handleShowTutorialWidget();
+	void handleShowSettingsWindow();
+	void handleShowAboutWindow();
+	void handleIconActivated(QSystemTrayIcon::ActivationReason reason);
+	void handleAboutToQuit();
+
+private:
+	QSystemTrayIcon* trayIcon;
+};
+
+#endif // SYSTEMTRAYWIDGET_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SystemTrayWidget.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Tasuke.cpp
+	 */
+
+
+const char* const MSG_TASUKE_CREATED = "Tasuke object created";
+const char* const MSG_TASUKE_DESTROYED = "Tasuke object destroyed";
+const char* const MSG_LOADING_DICTIONARY = "Loading dictionary";
+const char* const MSG_LOADING_FONTS = "Loading fonts";
+const char* const MSG_STORAGE_CHANGED = "Storage changed";
+const char* const MSG_COMMAND_STACK_PUSH =  "Pushing command to history stack";
+const char* const MSG_ERROR_PARSING = "Error parsing command";
+const char* const MSG_UNDO = "Undoing command";
+const char* const MSG_NO_UNDO ="Nothing to undo";
+const char* const MSG_REDO = "Redoing command";
+const char* const MSG_NO_REDO = "Nothing to redo";
+
+#define MSG_SHOWING_MESSAGE(message) \
+	"Showing message: " << message
+#define MSG_UPDATING_TASKWINDOW(tasks) \
+	"Updating task window with " << tasks << " tasks"
+#define MSG_HIGHLIGHT_TASK(id) \
+	"Highlighting task with id  " << id
+
+const char* const SPELL_GB_DICFILE = "en_GB.dic";
+const char* const SPELL_GB_AFFFILE = "en_GB.aff";
+const char* const SPELL_US_DICFILE = "en_US.dic";
+
+const char* const MAC_RESOURCE_PATH = "/../Resources/";
+
+const char* const METATYPE_TRY_RESULT = "TRY_RESULT";
+
+const QStringList SPELL_NONWORD_COMMANDS = QStringList() << "rm" << "ls"
+	<< "nd";
+const QStringList SPELL_MONTH_NAMES = QStringList() << "january" << "february"
+	<< "march" << "april" << "may" << "june" << "july" << "august"
+	<< "september" << "october" << "november" << "december";
+const QStringList SPELL_MONTH_NAMES_SHORT = QStringList() << "jan" << "feb"
+	<< "mar" << "apr" << "jun" << "jul" << "aug" << "sep" << "sept" << "oct"
+	<< "nov" << "dec";
+const QStringList SPELL_DAY_NAMES = QStringList() << "monday" << "tuesday"
+	<< "wednesday" << "thursday" << "friday" << "saturday" << "sunday";
+const QStringList SPELL_DAY_NAMES_SHORT = QStringList() << "mon" << "tue" << "tues"
+	<< "wed" << "thu" << "thur" << "fri" << "sat" << "sun";
+const QList<QStringList> SPELL_INCLUDE_LISTS = QList<QStringList>()
+	<< SPELL_NONWORD_COMMANDS << SPELL_MONTH_NAMES << SPELL_MONTH_NAMES_SHORT
+	<< SPELL_DAY_NAMES << SPELL_DAY_NAMES_SHORT;
+
+const QStringList FONT_LIST = QStringList() << ":/Fonts/fonts/Quicksand_Book.otf"
+	<< ":/Fonts/fonts/Quicksand_Book_Oblique.otf"
+	<< ":/Fonts/fonts/Quicksand_Light.otf"
+	<< ":/Fonts/fonts/Quicksand_Light_Oblique.otf"
+	<< ":/Fonts/fonts/Quicksand_Bold.otf"
+	<< ":/Fonts/fonts/Quicksand_Bold_Oblique.otf"
+	<< ":/Fonts/fonts/PrintClearly.otf"
+	<< ":/Fonts/fonts/PrintBold.otf";
+
+bool Tasuke::guiMode = true;
+
+// Constructor for the Tasuke singleton.
+Tasuke::Tasuke() : QObject(nullptr) {
+	LOG(INFO) << MSG_TASUKE_CREATED;
+	
+	loadDictionary();
+	
+	storage = new Storage();
+	storage->loadFile();
+
+	taskWindow = nullptr;
+	inputWindow = nullptr;
+	aboutWindow = nullptr;
+	settingsWindow = nullptr;
+	systemTrayWidget = nullptr;
+	hotKeyManager = nullptr;
+
+	std::thread dateFormatGeneratorThread([]() {
+		Interpreter::initFormats();
+	});
+
+	dateFormatGeneratorThread.detach();
+
+	if (guiMode) {
+		initialize();
+	}
+
+	qRegisterMetaType<TRY_RESULT>(METATYPE_TRY_RESULT);
+	connect(this, SIGNAL(tryFinish(TRY_RESULT)), this, SLOT(handleTryFinish(TRY_RESULT)));
+
+	connect(&inputTimer, SIGNAL(timeout()), this, SLOT(handleInputTimeout()));
+}
+
+// Destructor for the Tasuke singleton.
+Tasuke::~Tasuke() {
+	LOG(INFO) << MSG_TASUKE_DESTROYED;
+
+	if (hotKeyManager != nullptr) {
+		delete hotKeyManager;
+	}
+	
+	if (systemTrayWidget != nullptr) {
+		delete systemTrayWidget;
+	}
+
+	if (aboutWindow != nullptr) {
+		delete aboutWindow;
+	}
+	
+	if (settingsWindow != nullptr) {
+		delete settingsWindow;
+	}
+
+	if (inputWindow != nullptr) {
+		delete inputWindow;
+	}
+
+	if (taskWindow != nullptr) {
+		delete taskWindow;
+	}
+
+	if (storage != nullptr) {
+		delete storage;
+	}
+
+	if (spellObj != nullptr) {
+		delete spellObj;
+	}
+}
+
+void Tasuke::loadDictionary() {
+	LOG(INFO) << MSG_LOADING_DICTIONARY;
+
+	spellCheckEnabled = true;
+
+	if (!QFile(SPELL_GB_AFFFILE).exists() || !QFile(SPELL_GB_DICFILE).exists()) {
+		spellCheckEnabled = false;
+		return;
+	}
+
+
+#ifndef Q_OS_MAC
+	spellObj = new Hunspell(SPELL_GB_AFFFILE, SPELL_GB_DICFILE);
+	spellObj->add_dic(SPELL_US_DICFILE);
+#else
+	QString path = QCoreApplication::applicationDirPath();
+	spellObj = new Hunspell((path + MAC_RESOURCE_PATH + SPELL_GB_AFFFILE).toUtf8().constData(), (path + MAC_RESOURCE_PATH + SPELL_GB_DICFILE).toUtf8().constData());
+	spellObj->add_dic((path + MAC_RESOURCE_PATH + SPELL_US_DICFILE).toUtf8().constData());
+#endif
+
+	foreach(QStringList list, SPELL_INCLUDE_LISTS) {
+		foreach(QString word, list) {
+			spellObj->add(word.toLatin1());
+		}
+	}
+}
+
+void Tasuke::loadFonts(){
+	LOG(INFO) << MSG_LOADING_FONTS;
+
+	QFontDatabase fontDatabase; 
+	foreach(QString font, FONT_LIST) {
+		fontDatabase.addApplicationFont(font);
+	}
+}
+
+void Tasuke::initialize(){
+	loadFonts();
+	
+	taskWindow = new TaskWindow();
+	inputWindow = new InputWindow();
+	aboutWindow = new AboutWindow();
+	settingsWindow = new SettingsWindow();
+	systemTrayWidget = new SystemTrayWidget();
+	hotKeyManager = new HotKeyManager();
+	
+	updateTaskWindow(storage->getTasks());
+	showTaskWindow();
+
+	connect(inputWindow, SIGNAL(inputChanged(QString)), this, SLOT(handleInputChanged(QString)));
+}
+
+void Tasuke::setGuiMode(bool mode) {
+	guiMode = mode;
+}
+
+// Static method that returns the sole instance of Tasuke.
+Tasuke& Tasuke::instance() {
+	static Tasuke *instance = 0;
+
+	if(instance == 0) {
+		// Allocates memory *before* constructor, so Tasuke::instance() will work within a constructor-called method
+		instance = (Tasuke *) ::operator new (sizeof(Tasuke));
+		// Actually runs the constructor now
+		new (instance) Tasuke;
+		//instance = new Tasuke();
+		return *instance;
+	} else {
+		return *instance;
+	}
+}
+
+void Tasuke::setStorage(IStorage* _storage) {
+	LOG(INFO) << MSG_STORAGE_CHANGED;
+
+	storage = _storage;
+}
+
+InputWindow& Tasuke::getInputWindow(){
+	return *inputWindow;
+}
+
+AboutWindow& Tasuke::getAboutWindow(){
+	return *aboutWindow;
+}
+
+SettingsWindow& Tasuke::getSettingsWindow(){
+	return *settingsWindow;
+}
+
+TaskWindow& Tasuke::getTaskWindow(){
+	return *taskWindow;
+}
+
+HotKeyManager& Tasuke::getHotKeyManager() {
+    return *hotKeyManager;
+}
+
+
+// This function exposes the Storage instance for editing.
+IStorage& Tasuke::getStorage() {
+	return *storage;
+}
+
+void Tasuke::showInputWindow() {
+	if (!guiMode) {
+		return;
+	}
+	inputWindow->showAndCenter();
+}
+
+void Tasuke::showTaskWindow() {
+	if (!guiMode) {
+		return;
+	}
+	taskWindow->showAndMoveToSide();
+}
+ 
+void Tasuke::showAboutWindow(){
+	if (!guiMode) {
+		return;
+	}
+	aboutWindow->showAndCenter();
+}
+
+void Tasuke::hideInputWindow() {
+	if (!guiMode) {
+		return;
+	}
+	inputWindow->hide();
+}
+
+void Tasuke::hideTaskWindow() {
+	if (!guiMode) {
+		return;
+	}
+	taskWindow->hide();
+}
+
+void Tasuke::toggleInputWindow() {
+	if (!guiMode) {
+		return;
+	}
+
+	if (inputWindow->isVisible()) {
+		hideInputWindow();
+	} else {
+		showInputWindow();
+	}
+}
+
+void Tasuke::toggleTaskWindow() {
+	if (!guiMode) {
+		return;
+	}
+
+	if (taskWindow->isVisible()) {
+		hideTaskWindow();
+	} else {
+		showTaskWindow();
+	}
+}
+
+void Tasuke::toggleBothWindows() {
+	if (!guiMode) {
+		return;
+	}
+
+	// If one of them is visible, hide all.
+	if (taskWindow->isVisible() || inputWindow->isVisible()) {
+		hideTaskWindow();
+		hideInputWindow();
+	} else { // None are visible, show both.
+		showTaskWindow();
+		showInputWindow();
+	}
+}
+
+void Tasuke::showTutorial() {
+	if (!guiMode) {
+		return;
+	}
+
+	if (!taskWindow->isVisible()) {
+		showTaskWindow();
+	}
+	
+	taskWindow->showTutorialWidget();
+}
+
+void Tasuke::showSettingsWindow() {
+	if (!guiMode) {
+		return;
+	}
+
+	settingsWindow->showAndCenter();
+}
+
+void Tasuke::showMessage(QString message) {
+	LOG(INFO) << MSG_SHOWING_MESSAGE(message.toStdString());
+
+	if (!guiMode) {
+		return;
+	}
+
+	//systemTrayWidget->showMessage(message);
+}
+
+void Tasuke::updateTaskWindow(QList<Task> tasks, QString title) {
+	if (!guiMode) {
+		return;
+	}
+
+	LOG(INFO) << MSG_UPDATING_TASKWINDOW(QString::number(tasks.size()).toStdString());
+
+	taskWindow->showTasks(tasks, title);
+}
+
+void Tasuke::highlightTask(int id) {
+	if (!guiMode) {
+		return;
+	}
+
+	LOG(INFO) << MSG_HIGHLIGHT_TASK(id);
+
+	taskWindow->highlightTask(id);
+}
+
+bool Tasuke::spellCheck(QString word) {
+	if (!spellCheckEnabled) {
+		return true;
+	}
+
+	if (word.size() == 0) {
+		return true;
+	} else if (!word[0].isLetter()) {
+		return true;
+	}
+
+	if (spellObj->spell(word.toUtf8().data())) {
+		return true;
+	}
+
+	return false;
+}
+
+// This function runs a command in a string
+void Tasuke::runCommand(QString commandString) {
+	if (inputTimer.isActive()) {
+		inputTimer.stop();
+	}
+
+	try {
+		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(Interpreter::interpret(commandString));
+
+		if (guiMode) {
+			inputWindow->hideTooltip();
+			inputWindow->closeAndClear();
+		}
+
+		if (command == nullptr) {
+			return;
+		}
+		command->run();
+
+		LOG(INFO) << MSG_COMMAND_STACK_PUSH;
+		commandUndoHistory.push_back(command);
+		commandRedoHistory.clear();
+
+		storage->saveFile();
+	} catch (ExceptionBadCommand& exception) {
+		LOG(INFO) << MSG_ERROR_PARSING;
+		
+		showMessage(MSG_ERROR_PARSING);
+
+		if (guiMode) {
+			inputWindow->showTooltipMessage(InputStatus::FAILURE);
+			inputWindow->doErrorAnimation();
+		}
+	}
+}
+
+void Tasuke::handleInputChanged(QString commandString) {
+	if (commandString.isEmpty()) {
+		inputWindow->hideTooltip();
+		return;
+	}
+
+	input = commandString;
+	QString commandType = Interpreter::getType(commandString);
+
+	QString message = "...";
+
+	// TODO!!
+	// TODO!! make this cleaner
+	// TODO!!
+
+	if (commandType == "add") {
+		if (commandString.contains(QRegExp("\\bfrom\\b"))) { // period tasks
+			message = "add <my task> from <start> to <end> #tag";
+		} else if (commandString.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
+			message = "add <my task> by/on/at <end> #tag";
+		} else { // simple tasks
+			message = "add <my task> #tag";
+		}
+	} else if (commandType == "remove") {
+		message = "remove <task no> | remove <task no>, <task no>, ... | remove <task no> - <task no>";
+	} else if (commandType == "edit") {
+		message = "edit <task no> <thing to change> <-thing to remove>";
+	} else if (commandType == "done") {
+		message = "done <task no> | done <task no>, <task no>, ... | done <task no> - <task no>";
+	} else if (commandType == "undone") {
+		message = "undone <task no> | undone <task no>, <task no>, ... | undone <task no> - <task no>";
+	} else if (commandType == "show") {
+		message = "show <keyword> | done | undone | overdue | ongoing | today | tomorrow";
+	} else if (commandType == "hide") {
+		message = "Hide the task window.";		
+	} else if (commandType == "undo") {
+		message = "Undo your last action. (CTRL+Z)";		
+	} else if (commandType == "redo") {
+		message = "Redo your last action (CTRL+Y)";		
+	} else if (commandType == "clear") {
+		message = "Clear all tasks";
+	} else if (commandType == "help") {
+		message = "View the tutorial";
+	} else if (commandType == "settings") {
+		message = "Access the settings";
+	} else if (commandType == "about") {
+		message = "See Tasuke's info";
+	} else if (commandType == "exit") {
+		message = "Exit the application";
+	}
+
+	inputWindow->showTooltipMessage(InputStatus::NORMAL, message);
+
+	if (inputTimer.isActive()) {
+		inputTimer.stop();
+	}
+
+	inputTimer.setInterval(500);
+	inputTimer.setSingleShot(true);
+	inputTimer.start();
+}
+
+void Tasuke::handleInputTimeout() {
+	if (!mutex.tryLock()) {
+		// try thread is still running! reschedule the timer
+		inputTimer.setInterval(500);
+		inputTimer.setSingleShot(true);
+		inputTimer.start();
+
+		return;
+	}
+
+	std::thread tryThread([&]() {
+		try {
+			ICommand* command = Interpreter::interpret(input, true);
+			if (command != nullptr) {
+				delete command;
+			}
+		
+			TRY_RESULT result;
+			result.status = InputStatus::SUCCESS;
+			emit tryFinish(result);
+		} catch (ExceptionBadCommand& exception) {
+			TRY_RESULT result;
+			result.status = InputStatus::NORMAL;
+			emit tryFinish(result);
+		}
+	});
+	tryThread.detach();
+}
+
+void Tasuke::handleTryFinish(TRY_RESULT result) {
+	if (inputWindow->isVisible()) {
+		inputWindow->showTooltipMessage(result.status, result.message);
+	}
+	mutex.unlock();
+}
+
+void Tasuke::undoCommand() {
+	if (commandUndoHistory.size() == 0) {
+		showMessage(MSG_NO_UNDO);
+		return;
+	}
+
+	LOG(INFO) << MSG_UNDO;
+	QSharedPointer<ICommand> command = commandUndoHistory.back();
+	commandUndoHistory.pop_back();
+	command->undo();
+	commandRedoHistory.push_back(command);
+	storage->saveFile();
+}
+
+void Tasuke::redoCommand() {
+	if (commandRedoHistory.size() == 0) {
+		showMessage(MSG_NO_REDO);
+		return;
+	}
+
+	LOG(INFO) << MSG_REDO;
+	QSharedPointer<ICommand> command = commandRedoHistory.back();
+	commandRedoHistory.pop_back();
+	command->run();
+	commandUndoHistory.push_back(command);
+	storage->saveFile();
+}
+
+int Tasuke::undoSize() const {
+	return commandUndoHistory.size();
+}
+
+int Tasuke::redoSize() const {
+	return commandRedoHistory.size();
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Tasuke.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Tasuke.h
+	 */
+
+
+// This class handles the control flow of the entire program. This class is a
+// singleton; it cannot be created anywhere else because its constructor and
+// destructor is private. The only way to retrieve an instance of this
+// singleton is the instance() method which guarantees there is only one sole
+// instance of this class.
+class Tasuke : public QObject {
+	Q_OBJECT
+
+public:
+	typedef struct {
+		QString message;
+		InputStatus status;
+	} TRY_RESULT;
+
+	void setStorage(IStorage* _storage);
+	IStorage& getStorage();
+	InputWindow& getInputWindow();
+	AboutWindow& getAboutWindow();
+	SettingsWindow& getSettingsWindow();
+	TaskWindow& getTaskWindow();
+    HotKeyManager& getHotKeyManager();
+
+	void showInputWindow();
+	void showTaskWindow();
+	void showAboutWindow();
+	void hideInputWindow();
+	void hideTaskWindow();
+	void toggleInputWindow();
+	void toggleTaskWindow();
+	void toggleBothWindows();
+	void showSettingsWindow();
+	void showTutorial();
+	void showMessage(QString message);
+	void updateTaskWindow(QList<Task> tasks, QString title = "");
+	void highlightTask(int id);
+	bool spellCheck(QString word);
+
+	void runCommand(QString commandString);
+	void tryCommand(QString commandString);
+	void undoCommand();
+	void redoCommand();
+	int undoSize() const;
+	int redoSize() const;
+
+	void loadDictionary();
+	void loadFonts();
+	void initialize();
+
+	static void setGuiMode(bool mode);
+	static Tasuke &instance();
+
+signals:
+	void tryFinish(TRY_RESULT result);
+
+private slots:
+	void handleInputChanged(QString text);
+	void handleInputTimeout();
+	void handleTryFinish(TRY_RESULT result);
+
+private:
+	static bool guiMode;
+	IStorage* storage;
+	QList< QSharedPointer<ICommand> > commandUndoHistory;
+	QList< QSharedPointer<ICommand> > commandRedoHistory;
+	TaskWindow* taskWindow;
+	InputWindow* inputWindow;
+	AboutWindow* aboutWindow;
+	SettingsWindow* settingsWindow;
+	SystemTrayWidget* systemTrayWidget;
+	HotKeyManager* hotKeyManager;
+	Hunspell* spellObj;
+	QMutex mutex;
+	QTimer inputTimer;
+	QString input;
+	bool spellCheckEnabled;
+
+	Tasuke();
+	Tasuke(const Tasuke& old);
+	const Tasuke& operator=(const Tasuke& old);
+	~Tasuke();
+};
+
+#endif
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Tasuke.h
+
+
+
+
+
