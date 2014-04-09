@@ -1,0 +1,52 @@
+<RCC>
+    <qresource prefix="/Images">
+        <file>images/Tasuke.png</file>
+        <file>images/Traysuke.png</file>
+        <file>images/about.png</file>
+        <file>images/oops.png</file>
+        <file>images/theme1/closeButton.png</file>
+        <file>images/theme1/minButton.png</file>
+        <file>images/theme1/closeButtonHover.png</file>
+        <file>images/theme1/minButtonHover.png</file>
+        <file>images/icons/dogefailure.png</file>
+        <file>images/icons/dogesuccess.png</file>
+        <file>images/icons/dogenormal.png</file>
+        <file>images/icons/memefailure.png</file>
+        <file>images/icons/memesuccess.png</file>
+        <file>images/icons/memenormal.png</file>
+        <file>images/icons/niccagefailure.png</file>
+        <file>images/icons/niccagesuccess.png</file>
+        <file>images/icons/niccagenormal.png</file>
+        <file>images/icons/nyansukefailure.png</file>
+        <file>images/icons/nyansukesuccess.png</file>
+        <file>images/icons/nyansukenormal.png</file>
+        <file>images/icons/symbolfailure.png</file>
+        <file>images/icons/symbolnormal.png</file>
+        <file>images/icons/symbolsuccess.png</file>
+        <file>images/icons/symbolwhitefailure.png</file>
+        <file>images/icons/symbolwhitesuccess.png</file>
+        <file>images/Tutorial/1.png</file>
+        <file>images/Tutorial/2.png</file>
+        <file>images/Tutorial/3.png</file>
+        <file>images/Tutorial/3a.png</file>
+        <file>images/Tutorial/4.png</file>
+        <file>images/Tutorial/5.png</file>
+        <file>images/Tutorial/6.png</file>
+        <file>images/Tutorial/7.png</file>
+        <file>images/Tutorial/8.png</file>
+        <file>images/Tutorial/9.png</file>
+        <file>images/Tutorial/10.png</file>
+        <file>images/Tutorial/11.png</file>
+        <file>images/yaynyansuke.png</file>
+    </qresource>
+    <qresource prefix="/Fonts">
+        <file>fonts/PrintClearly.otf</file>
+        <file>fonts/PrintBold.otf</file>
+        <file>fonts/Quicksand_Bold.otf</file>
+        <file>fonts/Quicksand_Bold_Oblique.otf</file>
+        <file>fonts/Quicksand_Light.otf</file>
+        <file>fonts/Quicksand_Light_Oblique.otf</file>
+        <file>fonts/Quicksand_Book.otf</file>
+        <file>fonts/Quicksand_Book_Oblique.otf</file>
+    </qresource>
+</RCC>
