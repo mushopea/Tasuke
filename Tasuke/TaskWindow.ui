@@ -926,7 +926,7 @@ background: transparent;</string>
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>images/yaynyansuke.png</pixmap>
+        <pixmap>:/Images/images/yaynyansuke.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>false</bool>
