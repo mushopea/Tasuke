@@ -4,6 +4,8 @@
 #include "Commands.h"
 #include "Interpreter.h"
 
+//@author A0096836M
+
 ICommand::ICommand() {
 	hasRun = false;
 }

@@ -4,9 +4,11 @@
 #include <QMutex>
 #include "Commands.h"
 
-// This class is a factory class. It creates an instance of an ICommand from
-// the string input by the user at the prompt. All ICommands produced from
-// this factory must be cleaned up using delete.
+//@author A0096836M
+
+// This class acts as an interpreter. It either returns an ICommand object
+// or a nullptr. If it returns an ICommand object the caller must manage
+// the memory
 class Interpreter {
 private:
 	typedef struct {

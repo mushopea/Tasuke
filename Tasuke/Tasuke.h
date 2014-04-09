@@ -16,6 +16,8 @@
 #include "SystemTrayWidget.h"
 #include "HotKeyManager.h"
 
+//@author A0096836M
+
 // This class handles the control flow of the entire program. This class is a
 // singleton; it cannot be created anywhere else because its constructor and
 // destructor is private. The only way to retrieve an instance of this

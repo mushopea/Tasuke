@@ -5,6 +5,8 @@
 #include "Tasuke.h"
 #include "SystemTrayWidget.h"
 
+//@author A0096836M
+
 SystemTrayWidget::SystemTrayWidget(QWidget *parent ) : QWidget(parent) {
 	LOG(INFO) << "SystemTrayWidget object created";
 

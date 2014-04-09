@@ -1,15 +1,20 @@
 #include <QSysInfo>
 #include "HotKeyThread.h"
 
+//@author A0096836M
+
+const char * const METATYPE_KEYCOMIBNATION = "KeyCombination";
+
 #ifdef Q_OS_WIN
 
 #include <process.h>
 
+// randomly chosen
 #define MAGIC_NUM 1128
 #define WM_END_THREAD (WM_USER+2)
 
 HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
-	qRegisterMetaType<KeyCombination>("KeyCombination");
+	qRegisterMetaType<KeyCombination>(METATYPE_KEYCOMIBNATION);
 	pid = 0;
 }
 
@@ -25,12 +30,12 @@ void HotKeyThread::stop() {
 
 void HotKeyThread::run() {
 	pid = ::GetCurrentThreadId();
-	ATOM id = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM));
-	ATOM id2 = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+1));
-	ATOM id3 = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+2));
-	::RegisterHotKey(NULL, id, MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
-	::RegisterHotKey(NULL, id2, MOD_ALT | MOD_NOREPEAT, VK_SPACE);
-	::RegisterHotKey(NULL, id3, MOD_ALT | MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
+	ATOM idCtrlSpace = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM));
+	ATOM idAltSpace = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+1));
+	ATOM idCtrlAltSpace = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+2));
+	::RegisterHotKey(NULL, idCtrlSpace, MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
+	::RegisterHotKey(NULL, idAltSpace, MOD_ALT | MOD_NOREPEAT, VK_SPACE);
+	::RegisterHotKey(NULL, idCtrlAltSpace, MOD_ALT | MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
 
 	MSG msg = {0};
 	while (::GetMessage(&msg, NULL, 0, 0)) {
@@ -51,12 +56,12 @@ void HotKeyThread::run() {
 		}
 	}
 
-	::UnregisterHotKey(NULL, id);
-	::UnregisterHotKey(NULL, id2);
-	::UnregisterHotKey(NULL, id3);
-	::GlobalDeleteAtom(id);
-	::GlobalDeleteAtom(id2);
-	::GlobalDeleteAtom(id3);
+	::UnregisterHotKey(NULL, idCtrlSpace);
+	::UnregisterHotKey(NULL, idAltSpace);
+	::UnregisterHotKey(NULL, idCtrlAltSpace);
+	::GlobalDeleteAtom(idCtrlSpace);
+	::GlobalDeleteAtom(idAltSpace);
+	::GlobalDeleteAtom(idCtrlAltSpace);
 }
 
 #endif
@@ -67,7 +72,7 @@ void HotKeyThread::run() {
 #include "Tasuke.h"
 
 HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
-	qRegisterMetaType<KeyCombination>("KeyCombination");
+	qRegisterMetaType<KeyCombination>(METATYPE_KEYCOMIBNATION);
 
 }
 
@@ -105,6 +110,6 @@ OSStatus HotKeyThread::hotKeyHandler(EventHandlerCallRef nextHandler,EventRef th
 
 #ifdef Q_OS_UNIX
 #ifndef Q_OS_MAC
-#error your os is not supported
+#error "your os is not supported"
 #endif
 #endif

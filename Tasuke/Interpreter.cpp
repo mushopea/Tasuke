@@ -10,6 +10,8 @@
 #include "Exceptions.h"
 #include "Interpreter.h"
 
+//@author A0096836M
+
 int Interpreter::last = -1;
 
 bool Interpreter::formatsAlreadyInit = false;

@@ -3,6 +3,8 @@
 
 #include <exception>
 
+//@author A0096836M
+
 // This exception is thrown only during programming errors. If this happens,
 // then it indicates a bug in the code
 class ExceptionNullPtr : public std::exception

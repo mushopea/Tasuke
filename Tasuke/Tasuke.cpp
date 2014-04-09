@@ -2,7 +2,6 @@
 #include <iostream>
 #include <thread>
 #include <glog/logging.h>
-
 #include <QMessageBox>
 #include <QFontDatabase>
 #include "Constants.h"
@@ -11,11 +10,65 @@
 #include "Commands.h"
 #include "Tasuke.h"
 
+//@author A0096836M
+
+const char const* MSG_TASUKE_CREATED = "Tasuke object created";
+const char const* MSG_TASUKE_DESTROYED = "Tasuke object destroyed";
+const char const* MSG_LOADING_DICTIONARY = "Loading dictionary";
+const char const* MSG_LOADING_FONTS = "Loading fonts";
+const char const* MSG_STORAGE_CHANGED = "Storage changed";
+const char const* MSG_COMMAND_STACK_PUSH =  "Pushing command to history stack";
+const char const* MSG_ERROR_PARSING = "Error parsing command";
+const char const* MSG_UNDO = "Undoing command";
+const char const* MSG_NO_UNDO ="Nothing to undo";
+const char const* MSG_REDO = "Redoing command";
+const char const* MSG_NO_REDO = "Nothing to redo";
+
+#define MSG_SHOWING_MESSAGE(message) \
+	"Showing message: " << message
+#define MSG_UPDATING_TASKWINDOW(tasks) \
+	"Updating task window with " << tasks << " tasks"
+#define MSG_HIGHLIGHT_TASK(id) \
+	"Highlighting task with id  " << id
+
+const char const* SPELL_GB_DICFILE = "en_GB.dic";
+const char const* SPELL_GB_AFFFILE = "en_GB.aff";
+const char const* SPELL_US_DICFILE = "en_US.dic";
+
+const char const* MAC_RESOURCE_PATH = "/../Resources/";
+
+const char const* METATYPE_TRY_RESULT = "TRY_RESULT";
+
+const QStringList SPELL_NONWORD_COMMANDS = QStringList() << "rm" << "ls"
+	<< "nd";
+const QStringList SPELL_MONTH_NAMES = QStringList() << "january" << "february"
+	<< "march" << "april" << "may" << "june" << "july" << "august"
+	<< "september" << "october" << "november" << "december";
+const QStringList SPELL_MONTH_NAMES_SHORT = QStringList() << "jan" << "feb"
+	<< "mar" << "apr" << "jun" << "jul" << "aug" << "sep" << "sept" << "oct"
+	<< "nov" << "dec";
+const QStringList SPELL_DAY_NAMES = QStringList() << "monday" << "tuesday"
+	<< "wednesday" << "thursday" << "friday" << "saturday" << "sunday";
+const QStringList SPELL_DAY_NAMES_SHORT = QStringList() << "mon" << "tue" << "tues"
+	<< "wed" << "thu" << "thur" << "fri" << "sat" << "sun";
+const QList<QStringList> SPELL_INCLUDE_LISTS = QList<QStringList>()
+	<< SPELL_NONWORD_COMMANDS << SPELL_MONTH_NAMES << SPELL_MONTH_NAMES_SHORT
+	<< SPELL_DAY_NAMES << SPELL_DAY_NAMES_SHORT;
+
+const QStringList FONT_LIST = QStringList() << ":/Fonts/fonts/Quicksand_Book.otf"
+	<< ":/Fonts/fonts/Quicksand_Book_Oblique.otf"
+	<< ":/Fonts/fonts/Quicksand_Light.otf"
+	<< ":/Fonts/fonts/Quicksand_Light_Oblique.otf"
+	<< ":/Fonts/fonts/Quicksand_Bold.otf"
+	<< ":/Fonts/fonts/Quicksand_Bold_Oblique.otf"
+	<< ":/Fonts/fonts/PrintClearly.otf"
+	<< ":/Fonts/fonts/PrintBold.otf";
+
 bool Tasuke::guiMode = true;
 
 // Constructor for the Tasuke singleton.
 Tasuke::Tasuke() : QObject(nullptr) {
-	LOG(INFO) << "Tasuke object created";
+	LOG(INFO) << MSG_TASUKE_CREATED;
 	
 	loadDictionary();
 	
@@ -39,7 +92,7 @@ Tasuke::Tasuke() : QObject(nullptr) {
 		initialize();
 	}
 
-	qRegisterMetaType<TRY_RESULT>("TRY_RESULT");
+	qRegisterMetaType<TRY_RESULT>(METATYPE_TRY_RESULT);
 	connect(this, SIGNAL(tryFinish(TRY_RESULT)), this, SLOT(handleTryFinish(TRY_RESULT)));
 
 	connect(&inputTimer, SIGNAL(timeout()), this, SLOT(handleInputTimeout()));
@@ -47,7 +100,7 @@ Tasuke::Tasuke() : QObject(nullptr) {
 
 // Destructor for the Tasuke singleton.
 Tasuke::~Tasuke() {
-	LOG(INFO) << "Tasuke object destroyed";
+	LOG(INFO) << MSG_TASUKE_DESTROYED;
 
 	if (hotKeyManager != nullptr) {
 		delete hotKeyManager;
@@ -83,82 +136,39 @@ Tasuke::~Tasuke() {
 }
 
 void Tasuke::loadDictionary() {
+	LOG(INFO) << MSG_LOADING_DICTIONARY;
+
 	spellCheckEnabled = true;
 
-	if (!QFile("en_GB.aff").exists() || !QFile("en_GB.dic").exists()) {
+	if (!QFile(SPELL_GB_AFFFILE).exists() || !QFile(SPELL_GB_DICFILE).exists()) {
 		spellCheckEnabled = false;
 		return;
 	}
 
 
 #ifndef Q_OS_MAC
-	spellObj = new Hunspell("en_GB.aff", "en_GB.dic");
-	spellObj->add_dic("en_US.dic");
+	spellObj = new Hunspell(SPELL_GB_AFFFILE, SPELL_GB_DICFILE);
+	spellObj->add_dic(SPELL_US_DICFILE);
 #else
 	QString path = QCoreApplication::applicationDirPath();
-	spellObj = new Hunspell((path + "/../Resources/en_GB.aff").toUtf8().constData(), (path + "/../Resources/en_GB.dic").toUtf8().constData());
-	spellObj->add_dic((path + "/../Resources/en_US.dic").toUtf8().constData());
+	spellObj = new Hunspell((path + MAC_RESOURCE_PATH + SPELL_GB_AFFFILE).toUtf8().constData(), (path + MAC_RESOURCE_PATH + SPELL_GB_DICFILE).toUtf8().constData());
+	spellObj->add_dic((path + MAC_RESOURCE_PATH + SPELL_US_DICFILE).toUtf8().constData());
 #endif
 
-	// commands
-	spellObj->add("rm");
-	spellObj->add("ls");
-	spellObj->add("nd");
-
-	// months
-	spellObj->add("jan");
-	spellObj->add("feb");
-	spellObj->add("mar");
-	spellObj->add("apr");
-	spellObj->add("may");
-	spellObj->add("jun");
-	spellObj->add("jul");
-	spellObj->add("aug");
-	spellObj->add("sep");
-	spellObj->add("oct");
-	spellObj->add("nov");
-	spellObj->add("dec");
-	spellObj->add("january");
-	spellObj->add("february");
-	spellObj->add("march");
-	spellObj->add("april");
-	spellObj->add("may");
-	spellObj->add("june");
-	spellObj->add("july");
-	spellObj->add("august");
-	spellObj->add("september");
-	spellObj->add("october");
-	spellObj->add("november");
-	spellObj->add("december");
-
-	// days
-	spellObj->add("mon");
-	spellObj->add("tue");
-	spellObj->add("wed");
-	spellObj->add("thu");
-	spellObj->add("thurs");
-	spellObj->add("fri");
-	spellObj->add("sat");
-	spellObj->add("monday");
-	spellObj->add("tueday");
-	spellObj->add("wednesday");
-	spellObj->add("thurday");
-	spellObj->add("friday");
-	spellObj->add("satday");
+	foreach(QStringList list, SPELL_INCLUDE_LISTS) {
+		foreach(QString word, list) {
+			spellObj->add(word.toLatin1());
+		}
+	}
 }
 
 void Tasuke::loadFonts(){
-	LOG(INFO) << "Loading fonts";
+	LOG(INFO) << MSG_LOADING_FONTS;
 
 	QFontDatabase fontDatabase; 
-	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book.otf");
-	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Book_Oblique.otf");
-	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light.otf");
-	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Light_Oblique.otf");
-	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Bold.otf");
-	fontDatabase.addApplicationFont(":/Fonts/fonts/Quicksand_Bold_Oblique.otf");
-	fontDatabase.addApplicationFont(":/Fonts/fonts/PrintClearly.otf");
-	fontDatabase.addApplicationFont(":/Fonts/fonts/PrintBold.otf");
+	foreach(QString font, FONT_LIST) {
+		fontDatabase.addApplicationFont(font);
+	}
 }
 
 void Tasuke::initialize(){
@@ -198,7 +208,7 @@ Tasuke& Tasuke::instance() {
 }
 
 void Tasuke::setStorage(IStorage* _storage) {
-	LOG(INFO) << "Storage changed";
+	LOG(INFO) << MSG_STORAGE_CHANGED;
 
 	storage = _storage;
 }
@@ -324,7 +334,7 @@ void Tasuke::showSettingsWindow() {
 }
 
 void Tasuke::showMessage(QString message) {
-	LOG(INFO) << "Showing message: " << message.toStdString();
+	LOG(INFO) << MSG_SHOWING_MESSAGE(message.toStdString());
 
 	if (!guiMode) {
 		return;
@@ -338,7 +348,7 @@ void Tasuke::updateTaskWindow(QList<Task> tasks, QString title) {
 		return;
 	}
 
-	LOG(INFO) << "Updating task window with " << QString::number(tasks.size()).toStdString() << " tasks";
+	LOG(INFO) << MSG_UPDATING_TASKWINDOW(QString::number(tasks.size()).toStdString());
 
 	taskWindow->showTasks(tasks, title);
 }
@@ -348,7 +358,7 @@ void Tasuke::highlightTask(int id) {
 		return;
 	}
 
-	LOG(INFO) << "Highlighting task with id  " << id;
+	LOG(INFO) << MSG_HIGHLIGHT_TASK(id);
 
 	taskWindow->highlightTask(id);
 }
@@ -390,15 +400,15 @@ void Tasuke::runCommand(QString commandString) {
 		}
 		command->run();
 
-		LOG(INFO) << "Pushing command to history stack";
+		LOG(INFO) << MSG_COMMAND_STACK_PUSH;
 		commandUndoHistory.push_back(command);
 		commandRedoHistory.clear();
 
 		storage->saveFile();
 	} catch (ExceptionBadCommand& exception) {
-		LOG(INFO) << "Error parsing command";
+		LOG(INFO) << MSG_ERROR_PARSING;
 		
-		showMessage("Error parsing command");
+		showMessage(MSG_ERROR_PARSING);
 
 		if (guiMode) {
 			inputWindow->showTooltipMessage(InputStatus::FAILURE);
@@ -507,11 +517,11 @@ void Tasuke::handleTryFinish(TRY_RESULT result) {
 
 void Tasuke::undoCommand() {
 	if (commandUndoHistory.size() == 0) {
-		showMessage("Nothing to undo");
+		showMessage(MSG_NO_UNDO);
 		return;
 	}
 
-	LOG(INFO) << "Undoing command";
+	LOG(INFO) << MSG_UNDO;
 	QSharedPointer<ICommand> command = commandUndoHistory.back();
 	commandUndoHistory.pop_back();
 	command->undo();
@@ -521,11 +531,11 @@ void Tasuke::undoCommand() {
 
 void Tasuke::redoCommand() {
 	if (commandRedoHistory.size() == 0) {
-		showMessage("Nothing to redo");
+		showMessage(MSG_NO_REDO);
 		return;
 	}
 
-	LOG(INFO) << "Redoing command";
+	LOG(INFO) << MSG_REDO;
 	QSharedPointer<ICommand> command = commandRedoHistory.back();
 	commandRedoHistory.pop_back();
 	command->run();

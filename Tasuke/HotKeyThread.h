@@ -5,6 +5,8 @@
 #include <QMetaType>
 #include <QThread>
 
+//@author A0096836M
+
 enum class KeyCombination {
 	CTRL_SPACE,
 	ALT_SPACE,

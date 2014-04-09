@@ -4,6 +4,8 @@
 #include <QObject>
 #include "HotKeyThread.h"
 
+//@author A0096836M
+
 class HotKeyManager : public QObject {
 	Q_OBJECT
 

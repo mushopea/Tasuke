@@ -2,6 +2,8 @@
 #include "Tasuke.h"
 #include "HotKeyManager.h"
 
+//@author A0096836M
+
 HotKeyManager::HotKeyManager(QObject *parent) : QObject(parent) {
 	hotKeyThread = new HotKeyThread(this);
 	connect(hotKeyThread, SIGNAL(hotKeyPress(KeyCombination)), this, SLOT(handleHotKeyPress(KeyCombination)), Qt::QueuedConnection);

@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QSystemTrayIcon>
 
+//@author A0096836M
+
 class SystemTrayWidget : public QWidget {
 	Q_OBJECT
 
