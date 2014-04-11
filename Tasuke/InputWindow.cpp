@@ -112,6 +112,7 @@ void InputWindow::hideEvent(QHideEvent* event) {
 //	SLOTS
 // ====================================================
 
+// Shows and moves the input window to center relative to task window
 void InputWindow::showAndCenter() {
 	LOG(INFO) << "Displaying input window";
 	initSettingsConnect();
@@ -133,17 +134,20 @@ void InputWindow::showAndCenter() {
 	animation.start();
 }
 
+// Shows the input window with an "Add " command 
 void InputWindow::showAndAdd() {
 	LOG(INFO) << "User has clicked \"add one\"";
 	showAndCenter();
-	ui.lineEdit->insertPlainText(QString("add "));
+	ui.lineEdit->insertPlainText("add ");
 }
 
+// Closes and clears the text box
 void InputWindow::closeAndClear() {
 	hide();
 	ui.lineEdit->clear();
 }
 
+// Reloads theme according to settings.
 void InputWindow::reloadTheme() {
 	LOG(INFO) << "Reloading theme in INPUTWINDOW";
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
@@ -176,6 +180,21 @@ void InputWindow::reloadTheme() {
 	}
 }
 
+// Enables or disables features such as highlighter, spellcheck & tooltip according to settings
+void InputWindow::reloadFeatures() {
+	LOG(INFO) << "Reloading highlighter in INPUTWINDOW";
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	
+	bool highlightCommandsEnabled = settings.value("HighlightCommandsEnabled", true).toBool();
+	highlighter->setCommandsEnabled(highlightCommandsEnabled);
+
+	bool highlightSpellcheckEnabled = settings.value("SpellcheckEnabled", true).toBool();
+	highlighter->setSpellcheckEnabled(highlightSpellcheckEnabled);
+
+	bool tooltipEnabled = settings.value("TooltipEnabled", true).toBool();
+	showTooltip = tooltipEnabled;
+}
+
 
 // ====================================================
 //	PRIVATE SLOTS
@@ -194,10 +213,12 @@ void InputWindow::handleReturnPressed() {
 void InputWindow::handleLineEditChanged() {
 	QString currText = ui.lineEdit->toPlainText();
 
-	if (currText.isEmpty()) {
-		hideTooltip();
-	} else {
-		emit inputChanged(currText);
+	if(showTooltip) {
+		if (currText.isEmpty()) {
+			hideTooltip();
+		} else {
+			emit inputChanged(currText);
+		}
 	}
 }
 
@@ -267,6 +288,7 @@ void InputWindow::initSettingsConnect() {
 	if (!connectedToSettings) {
 		connectedToSettings = true;
 		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(themeChanged()), this, SLOT(reloadTheme()));
+		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(featuresChanged()), this, SLOT(reloadFeatures()));
 		LOG(INFO) << "Connected InputWindow to SettingsWindow";
 	}
 }

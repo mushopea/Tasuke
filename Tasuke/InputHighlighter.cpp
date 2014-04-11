@@ -1,11 +1,80 @@
 #include "Tasuke.h"
 #include "InputHighlighter.h"
+#include <QSettings>
 
 //@author A0100189
 
-InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent){
+InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent), commandsEnabled(true), spellcheckEnabled(true) {
 	setRegex();
-	setupColorsFormatsRules(QColor(14, 158, 235), QColor(133, 76, 180), QColor(135, 180, 0));
+	setupColorsFormatsRules();
+}
+
+
+// ========================================
+// GETTERS & SETTERS
+// ========================================
+bool InputHighlighter::getCommandsEnabled() const {
+	return commandsEnabled;
+}
+
+void InputHighlighter::setCommandsEnabled(bool newEnabled) {
+	commandsEnabled = newEnabled;
+}
+
+bool InputHighlighter::getSpellcheckEnabled() const {
+	return spellcheckEnabled;
+}
+
+void InputHighlighter::setSpellcheckEnabled(bool newEnabled) {
+	spellcheckEnabled = newEnabled;
+}
+
+
+// ========================================
+// HANDLES HIGHLIGHTING
+// ========================================
+
+// For setting up of formats and rules
+void InputHighlighter::setupColorsFormatsRules() {
+	setFormats(QColor(14, 158, 235), QColor(133, 76, 180), QColor(135, 180, 0));
+	setRules();
+}
+
+// Goes through entire text and highlights anything that matches the rules.
+void InputHighlighter::highlightBlock(const QString &text) {
+	// Highlights keywords
+	if (commandsEnabled) {
+		foreach (const HighlightingRule &rule, highlightingRules) {
+			QRegularExpressionMatchIterator matchIter = rule.pattern.globalMatch(text);
+			while (matchIter.hasNext()) {
+				QRegularExpressionMatch match = matchIter.next();
+				for (int i = 1; i <= match.lastCapturedIndex(); ++i) {
+					setFormat(match.capturedStart(i), match.capturedLength(i), rule.format);
+				}
+			}
+		}
+	}
+
+	// Does spellcheck
+	if (spellcheckEnabled) {
+		QStringList words = text.simplified().split(" ", QString::SkipEmptyParts);
+		foreach(QString word, words) {
+			if (word.size() > 1) {
+				bool correct = Tasuke::instance().spellCheck(word);
+				if (!correct) {
+					int numOccurence = text.count(QRegExp("\\b"+word+"\\b"));
+					int index = -1;
+					// underline all occurences of misspelled word
+					for (int i=0; i<numOccurence; i++) {
+						index = text.indexOf(QRegExp("\\b"+word+"\\b"), index+1);
+						if (index >= 0) {
+							setFormat(index, word.length(), spellCheckFormat);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 // Define the regular expressions for different types of words
@@ -58,41 +127,4 @@ void InputHighlighter::setRules(){
 	tagRule.pattern = tagRegex;
 	tagRule.format = connectorFormat;
 	highlightingRules.append(tagRule);
-}
-
-// For setting up of formats and rules
-void InputHighlighter::setupColorsFormatsRules(QColor commandC, QColor keywordC, QColor connectorC) {
-	setFormats(commandC, keywordC, connectorC);
-	setRules();
-}
-
-// Goes through entire text and highlights anything that matches the rules.
-void InputHighlighter::highlightBlock(const QString &text) {
-    foreach (const HighlightingRule &rule, highlightingRules) {
-		QRegularExpressionMatchIterator matchIter = rule.pattern.globalMatch(text);
-        while (matchIter.hasNext()) {
-			QRegularExpressionMatch match = matchIter.next();
-			for (int i = 1; i <= match.lastCapturedIndex(); ++i) {
-				setFormat(match.capturedStart(i), match.capturedLength(i), rule.format);
-			}
-        }
-    }
-
-	QStringList words = text.simplified().split(" ", QString::SkipEmptyParts);
-	foreach(QString word, words) {
-		if (word.size() > 1) {
-			bool correct = Tasuke::instance().spellCheck(word);
-			if (!correct) {
-				int numOccurence = text.count(QRegExp("\\b"+word+"\\b"));
-				int index = -1;
-				// underline all occurences of misspelled word
-				for (int i=0; i<numOccurence; i++) {
-					index = text.indexOf(QRegExp("\\b"+word+"\\b"), index+1);
-					if (index >= 0) {
-						setFormat(index, word.length(), spellCheckFormat);
-					}
-				}
-			}
-		}
-	}
 }

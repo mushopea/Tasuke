@@ -21,10 +21,9 @@ SettingsWindow::~SettingsWindow() {
 	LOG(INFO) << "SettingsWindow instance destroyed";
 }
 
-void SettingsWindow::showEvent(QShowEvent *event) {
-	QWidget::showEvent(event);
-	loadCurrSettings();
-}
+// ============================================================
+// slots
+// ============================================================
 
 void SettingsWindow::showAndCenter() {
 	LOG(INFO) << "Displaying settings window";
@@ -36,7 +35,6 @@ void SettingsWindow::showAndCenter() {
 	show(); 
 	raise(); 
 	ui.tabWidget->setCurrentIndex(0);
-
 }
 
 // Switches tabs to the next tab
@@ -56,50 +54,21 @@ void SettingsWindow::changeTabs() {
 
 
 void SettingsWindow::handleApplyButton() {
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-
-	// features
-	//QString oldCommandColors = settings.a
-
-	// font change
-	QString oldFont = settings.value("Font", "Print Clearly").toString();
-	QString fontSelected = ui.fontSelect->currentFont().family();
-	if (fontSelected.compare(oldFont) != 0) {
-		settings.setValue("Font", fontSelected);
-		LOG(INFO) << "Font changed to " << fontSelected.toStdString() << " from " << oldFont.toStdString();
-		emit fontChanged();
-	}
-
-
-	// tooltip icons
-	IconSet oldIcons = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
-	for (int i = 0; i < (char)IconSet::ICONSET_LAST_ITEM; ++i) {
-		if (iconSelectButtons[i]->isChecked()) {
-			settings.setValue("Icon", i);
-			if (oldIcons != (IconSet)i) {
-				emit iconsChanged();
-			}
-			break;
-		}
-	}
-
-	// themes
-	Theme oldTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
-	for (int i=0; i< (char)Theme::THEME_LAST_ITEM - 1; ++i) {
-		if (themeSelectButtons[i]->isChecked()) {
-			settings.setValue("Theme", i);
-			if (oldTheme != (Theme)i) {
-				emit themeChanged();
-			}
-			break;
-		}
-	}
+	editFeatures();
+	editFont();
+	editIcons();
+	editRunOnStartup();
+	editTheme();
 }
 
 void SettingsWindow::handleOKButton() {
 	handleApplyButton();
 	close();
 }
+
+// ============================================================
+// Event handler
+// ============================================================
 
 bool SettingsWindow::eventFilter(QObject* object, QEvent* event) {
 	if (event->type() == QEvent::KeyPress) {
@@ -113,6 +82,14 @@ bool SettingsWindow::eventFilter(QObject* object, QEvent* event) {
 	return QObject::eventFilter(object, event);
 }
 
+void SettingsWindow::showEvent(QShowEvent *event) {
+	QWidget::showEvent(event);
+	loadCurrSettings();
+}
+
+// ============================================================
+// Initializers
+// ============================================================
 
 void SettingsWindow::initIconsArray() {
 	iconSelectButtons[(char)IconSet::MEME] = ui.optionMeme;
@@ -133,16 +110,115 @@ void SettingsWindow::initThemeArray() {
 	themeSelectButtons[(char)Theme::DOGE] = ui.selectDefault;
 }
 
+// ============================================================
+// Helper functions to load current settings
+// =============================================================
+
 // This function will initialize the options according to current settings.
 void SettingsWindow::loadCurrSettings() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	// icons
-	IconSet currIconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
-	iconSelectButtons[(char)currIconSet]->setChecked(true);
-	// font
+	loadCurrFeatures();
+	loadCurrFont();
+	loadCurrIcons();
+	loadCurrTheme();
+}
+
+// Load up feature selections
+void SettingsWindow::loadCurrFeatures() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+
+	bool currRunOnStartup = settings.value("RunOnStartup", true).toBool();
+	ui.runOnStartup->setChecked(currRunOnStartup);
+
+	bool currEnableCommandHighlight = settings.value("HighlightCommandsEnabled", true).toBool();
+	ui.commandColors->setChecked(currEnableCommandHighlight);
+
+	bool currEnableSpellcheck = settings.value("SpellcheckEnabled", true).toBool();
+	ui.spellcheck->setChecked(currEnableSpellcheck);
+
+	bool currEnableTooltip = settings.value("TooltipEnabled", true).toBool();
+	ui.commandTooltip->setChecked(currEnableTooltip);
+}
+
+// Load up current font selection
+void SettingsWindow::loadCurrFont() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	QString fontSelected = settings.value("Font", "Print Clearly").toString();
 	ui.fontSelect->setCurrentFont(QFont(fontSelected, ui.fontSelect->currentFont().pointSize()));
-	// theme
+}
+
+// Load up current iconset selection
+void SettingsWindow::loadCurrIcons() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	IconSet currIconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
+	iconSelectButtons[(char)currIconSet]->setChecked(true);
+}
+
+// Load up current theme selection
+void SettingsWindow::loadCurrTheme() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
 	themeSelectButtons[(char)currTheme]->setChecked(true);
+}
+
+// ============================================================
+// Handles settings change
+// ============================================================
+
+// Change run on startup
+void SettingsWindow::editRunOnStartup() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	bool oldRunOnStartup = settings.value("RunOnStartup", true).toBool();
+	bool newRunOnStartup = ui.runOnStartup->isChecked();
+}
+
+// Change features
+void SettingsWindow::editFeatures() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	settings.setValue("HighlightCommandsEnabled", ui.commandColors->isChecked());	
+	settings.setValue("SpellcheckEnabled", ui.spellcheck->isChecked());	
+	settings.setValue("TooltipEnabled", ui.commandTooltip->isChecked());
+	emit featuresChanged();
+}
+
+// Change font
+void SettingsWindow::editFont() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	QString oldFont = settings.value("Font", "Print Clearly").toString();
+	QString fontSelected = ui.fontSelect->currentFont().family();
+	if (fontSelected.compare(oldFont) != 0) {
+		settings.setValue("Font", fontSelected);
+		LOG(INFO) << "Font changed to " << fontSelected.toStdString() << " from " << oldFont.toStdString();
+		emit fontChanged();
+	}
+}
+
+// Change Icon Set
+void SettingsWindow::editIcons() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	IconSet oldIcons = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
+	for (int i = 0; i < (char)IconSet::ICONSET_LAST_ITEM; ++i) {
+		if (iconSelectButtons[i]->isChecked()) {
+			settings.setValue("Icon", i);
+			if (oldIcons != (IconSet)i) {
+				emit iconsChanged();
+			}
+			break;
+		}
+	}
+}
+
+// Change theme
+void SettingsWindow::editTheme() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	Theme oldTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+	for (int i=0; i< (char)Theme::THEME_LAST_ITEM - 1; ++i) {
+		if (themeSelectButtons[i]->isChecked()) {
+			settings.setValue("Theme", i);
+			if (oldTheme != (Theme)i) {
+				emit themeChanged();
+			}
+			break;
+		}
+	}
 }

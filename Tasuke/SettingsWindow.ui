@@ -183,34 +183,6 @@ background-color: white;
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="commandColors">
-          <property name="font">
-           <font>
-            <family>Print Clearly</family>
-            <pointsize>24</pointsize>
-           </font>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::StrongFocus</enum>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QCheckBox::indicator {
-width: 20px;
-height: 20px;
-}</string>
-          </property>
-          <property name="text">
-           <string>Command keyword colours</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <property name="tristate">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QCheckBox" name="runOnStartup">
           <property name="font">
            <font>
@@ -229,6 +201,34 @@ height: 20px;
           </property>
           <property name="text">
            <string>Run on startup</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="tristate">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="commandColors">
+          <property name="font">
+           <font>
+            <family>Print Clearly</family>
+            <pointsize>24</pointsize>
+           </font>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QCheckBox::indicator {
+width: 20px;
+height: 20px;
+}</string>
+          </property>
+          <property name="text">
+           <string>Command keyword colours</string>
           </property>
           <property name="checked">
            <bool>true</bool>

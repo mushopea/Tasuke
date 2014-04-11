@@ -33,6 +33,7 @@ public slots:
 	void showAndAdd();
 	void closeAndClear();
 	void reloadTheme();
+	void reloadFeatures();
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
@@ -57,6 +58,7 @@ private:
 	QPropertyAnimation errorAnimation;
 	qreal wOpacity;
 	bool connectedToSettings;
+	bool showTooltip;
 	
 	// ====================================================
 	//	Functions

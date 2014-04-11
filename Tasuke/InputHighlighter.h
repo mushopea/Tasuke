@@ -5,33 +5,44 @@
 //@author A0100189
 
 class InputHighlighter : public QSyntaxHighlighter {
-     Q_OBJECT
+	Q_OBJECT
 
- public:
-     InputHighlighter(QTextDocument *parent = 0);
-	 void setRegex();
-	 void setFormats(QColor commandC, QColor keywordC, QColor connectorC);
-	 void setRules();
-	 void setupColorsFormatsRules(QColor commandC, QColor keywordC, QColor connectorC);
+public:
+	InputHighlighter(QTextDocument *parent = 0);
+	bool getCommandsEnabled() const;
+	void setCommandsEnabled(bool newEnabled);
+	bool getSpellcheckEnabled() const;
+	void setSpellcheckEnabled(bool newEnabled);
 
- protected:
-     void highlightBlock(const QString &text);
 
- private:
-     QRegularExpression commandRegex;
-     QRegularExpression keywordRegex;
-	 QRegularExpression connectorRegex;
-	 QRegularExpression tagRegex;
+public slots:	
+	void setupColorsFormatsRules();
 
-	 QTextCharFormat commandFormat;
-     QTextCharFormat keywordFormat;
-     QTextCharFormat connectorFormat;
-	 QTextCharFormat spellCheckFormat;
+protected:
+	void highlightBlock(const QString &text) override;
 
-	 struct HighlightingRule {
-         QRegularExpression pattern;
-         QTextCharFormat format;
-     };
+private:
+	QRegularExpression commandRegex;
+	QRegularExpression keywordRegex;
+	QRegularExpression connectorRegex;
+	QRegularExpression tagRegex;
 
-     QVector<HighlightingRule> highlightingRules;
+	QTextCharFormat commandFormat;
+	QTextCharFormat keywordFormat;
+	QTextCharFormat connectorFormat;
+	QTextCharFormat spellCheckFormat;
+
+	struct HighlightingRule {
+		QRegularExpression pattern;
+		QTextCharFormat format;
+	};
+
+	QVector<HighlightingRule> highlightingRules;
+
+	bool commandsEnabled;
+	bool spellcheckEnabled;
+
+	void setRegex();
+	void setFormats(QColor commandC, QColor keywordC, QColor connectorC);
+	void setRules();
 };

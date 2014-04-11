@@ -37,10 +37,24 @@ private:
 	Ui::SettingsWindow ui;	
 	QRadioButton * iconSelectButtons[(char)IconSet::ICONSET_LAST_ITEM];
 	QRadioButton * themeSelectButtons[(char)Theme::THEME_LAST_ITEM];
-	void initImages();
+	
+	// Initializers
 	void initIconsArray();
 	void initThemeArray();
 	void loadCurrSettings();
+
+	// Helper functions to load current checked boxes
+	void loadCurrFeatures();
+	void loadCurrFont();
+	void loadCurrIcons();
+	void loadCurrTheme();
+
+	// Handle changed settings
+	void editRunOnStartup();
+	void editFeatures();
+	void editFont();
+	void editIcons();
+	void editTheme();
 };
 
 #endif // SETTINGSWINDOW_H
