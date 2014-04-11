@@ -15,7 +15,6 @@
 #include "SettingsWindow.h"
 #include "SystemTrayWidget.h"
 #include "HotKeyManager.h"
-#include "NotificationManager.h"
 
 //@author A0096836M
 
@@ -55,9 +54,9 @@ public:
 	void updateTaskWindow(QList<Task> tasks, QString title = "");
 	void highlightTask(int id);
 	bool spellCheck(QString word);
+	QString formatTooltipMessage(QString commandString, QString errorString = "", QString errorWhere = "");
 
 	void runCommand(QString commandString);
-	void tryCommand(QString commandString);
 	void undoCommand();
 	void redoCommand();
 	int undoSize() const;
