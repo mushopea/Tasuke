@@ -78,6 +78,14 @@
         <file>images/Tutorial/9.png</file>
         <file>images/Tutorial/10.png</file>
         <file>images/Tutorial/11.png</file>
+		
+		<file>images/thumbnails/1.png</file>
+		<file>images/thumbnails/2.png</file>
+		<file>images/thumbnails/3.png</file>
+		<file>images/thumbnails/4.png</file>
+		<file>images/thumbnails/5.png</file>
+		<file>images/thumbnails/6.png</file>
+		
     </qresource>
     <qresource prefix="/Fonts">
         <file>fonts/PrintClearly.otf</file>
