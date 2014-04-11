@@ -1,15 +1,18 @@
 #include "Tasuke.h"
 #include "InputWindow.h"
 #include "Interpreter.h"
+#include <QSettings>
 
 //@author A0100189
 
-InputWindow::InputWindow(QWidget* parent) : QWidget(parent), animation(this, "opacity"), errorAnimation(this, "pos") {
-	LOG(INFO) << "InputWindow instance created";
-	initUI();
-	initWidgets();
-	initAnimation();
-	initUIConnect();
+InputWindow::InputWindow(QWidget* parent) : QWidget(parent), animation(this, "opacity"), 
+	errorAnimation(this, "pos"), connectedToSettings(false) {
+		LOG(INFO) << "InputWindow instance created";
+		initUI();
+		initWidgets();
+		initAnimation();
+		initUIConnect();
+		reloadTheme();
 }
 
 InputWindow::~InputWindow() {
@@ -37,7 +40,7 @@ void InputWindow::doErrorAnimation() {
 // ====================================================
 
 bool InputWindow::eventFilter(QObject* object, QEvent* event) {
-    if(event->type() == QEvent::KeyPress) {
+	if(event->type() == QEvent::KeyPress) {
 		// enter key
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
 		if(eventKey->key() == Qt::Key_Return) {
@@ -48,24 +51,24 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 		if (Tasuke::instance().getTaskWindow().getScreen() == 0) { // On main view
 			// Scroll keys for tasks
 			switch (eventKey->key()) {
-				case Qt::Key::Key_Up:
-					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
-						Tasuke::instance().getTaskWindow().pageUp();
-					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
-						Tasuke::instance().getTaskWindow().gotoPreviousSection();
-					} else {
-						Tasuke::instance().getTaskWindow().scrollUp();
-					}
-					return true;
-				case Qt::Key::Key_Down:
-					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
-						Tasuke::instance().getTaskWindow().pageDown();
-					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
-						Tasuke::instance().getTaskWindow().gotoNextSection();
-					} else {
-						Tasuke::instance().getTaskWindow().scrollDown();
-					}
-					return true;
+			case Qt::Key::Key_Up:
+				if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+					Tasuke::instance().getTaskWindow().pageUp();
+				} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+					Tasuke::instance().getTaskWindow().gotoPreviousSection();
+				} else {
+					Tasuke::instance().getTaskWindow().scrollUp();
+				}
+				return true;
+			case Qt::Key::Key_Down:
+				if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+					Tasuke::instance().getTaskWindow().pageDown();
+				} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+					Tasuke::instance().getTaskWindow().gotoNextSection();
+				} else {
+					Tasuke::instance().getTaskWindow().scrollDown();
+				}
+				return true;
 			}
 
 			// undo keys
@@ -91,13 +94,13 @@ bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 				return true;
 			}
 		}
-    }
+	}
 
 	if(event->type() == QEvent::FocusOut) {
 		closeAndClear();
-    }
+	}
 
-    return QObject::eventFilter(object, event);
+	return QObject::eventFilter(object, event);
 }
 
 void InputWindow::hideEvent(QHideEvent* event) {
@@ -106,11 +109,12 @@ void InputWindow::hideEvent(QHideEvent* event) {
 }
 
 // ====================================================
-//	SHOWING AND HIDING INPUTWINDOW
+//	SLOTS
 // ====================================================
 
 void InputWindow::showAndCenter() {
 	LOG(INFO) << "Displaying input window";
+	initSettingsConnect();
 
 	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
 	if(Tasuke::instance().getTaskWindow().isVisible()){ // If taskWindow is open
@@ -138,6 +142,38 @@ void InputWindow::showAndAdd() {
 void InputWindow::closeAndClear() {
 	hide();
 	ui.lineEdit->clear();
+}
+
+void InputWindow::reloadTheme() {
+	LOG(INFO) << "Reloading theme in INPUTWINDOW";
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+
+	switch (currTheme) {
+	case Theme::DEFAULT:
+		applyDefaultTheme();
+		break;
+	case Theme::GREEN:
+		applyGreenTheme();
+		break;
+	case Theme::SPACE:
+		applySpaceTheme();
+		break;
+	case Theme::PINK:
+		applyPinkTheme();
+		break;
+	case Theme::PIKACHU:
+		applyPikaTheme();
+		break;
+	case Theme::BLUE:
+		applyBlueTheme();
+		break;
+	case Theme::DOGE:
+		applyDogeTheme();
+		break;
+	default:
+		break;
+	}
 }
 
 
@@ -227,36 +263,63 @@ void InputWindow::initErrorAnimation() {
 	errorAnimation.setEndValue(posAfter);
 }
 
+void InputWindow::initSettingsConnect() {
+	if (!connectedToSettings) {
+		connectedToSettings = true;
+		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(themeChanged()), this, SLOT(reloadTheme()));
+		LOG(INFO) << "Connected InputWindow to SettingsWindow";
+	}
+}
+
+
 //===================================
 // THEMING 
 //===================================
 void InputWindow::applyDefaultTheme() {
-
+	setStyleSheet("QLabel#bg{border-radius: 8px; background-color: white;}"
+		"QLabel#border{border-radius: 10px; background-color: rgb(74, 74, 74);}"
+		"QTextEdit{background-color: transparent;}"
+		"background:transparent;");
 }
 
 void InputWindow::applyGreenTheme() {
-
+	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme2/bg.png);}"
+		"QLabel#border{border-radius: 10px; background-color: rgb(84,117,17);}"
+		"QTextEdit{background-color: transparent; color: rgb(40,40,40);}"
+		"background:transparent;");
 }
 
 void InputWindow::applySpaceTheme() {
-
+	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme3/bg.png);}"
+		"QLabel#border{border-radius: 10px; background-color: black;}"
+		"QTextEdit{background-color: transparent; color: white;}"
+		"background:transparent;");
 }
 
 void InputWindow::applyPinkTheme() {
-
+	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme4/bg.png);}"
+		"QLabel#border{border-radius: 10px; background-color: rgb(236,169,177);}"
+		"QTextEdit{background-color: transparent; color: rgb(40,40,40);}"
+		"background:transparent;");
 }
 
 void InputWindow::applyPikaTheme() {
-
-
+	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme5/bg.png);}"
+		"QLabel#border{border-radius: 10px; background-color: rgb(192,150,100);}"
+		"QTextEdit{background-color: transparent; color: rgb(120,89,49);}"
+		"background:transparent;");
 }
 
 void InputWindow::applyBlueTheme() {
-
-
+	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme6/bg.png);}"
+		"QLabel#border{border-radius: 10px; background-color: rgb(132,174,215);}"
+		"QTextEdit{background-color: transparent;color: rgb(40,40,40);}"
+		"background:transparent;");
 }
 
 void InputWindow::applyDogeTheme() {
-
-
+	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme7/inputbg.png);}"
+		"QLabel#border{border-radius: 10px; background-color: rgb(255,0,222);}"
+		"QTextEdit{background-color: transparent; color: rgb(255,0,0);	font: 75 25pt \"Comic Sans MS\";}"
+		"background:transparent;");
 }

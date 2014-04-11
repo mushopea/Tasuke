@@ -18,9 +18,16 @@ public:
 	~SubheadingEntry();
 	void changeText(const QString& text);
 
+public slots:
+	void reloadTheme();
+
 private:
 	Ui::SubheadingEntry ui;
+	bool connectedToSettings;
+
+	// initialization
 	void initUI();
+	void initSettingsConnect();
 
 	// Functions that apply themes
 	void applyDefaultTheme();

@@ -198,7 +198,7 @@ void TaskWindow::displayTaskList() {
 
 // Reloads the theme
 void TaskWindow::reloadTheme() {
-	LOG(INFO) << "Reloading theme";
+	LOG(INFO) << "Reloading theme in TASKWINDOW";
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
 

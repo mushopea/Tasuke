@@ -56,13 +56,15 @@ private:
 	QPropertyAnimation animation;
 	QPropertyAnimation errorAnimation;
 	qreal wOpacity;
-
+	bool connectedToSettings;
 	
 	// ====================================================
 	//	Functions
 	// ====================================================
 	void setOpacity(qreal value);
 	qreal getOpacity() const;
+	
+	// For initialization
 	void initUI();
 	void initWidgets();
 	void initUIConnect();

@@ -5,9 +5,10 @@
 
 InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent){
 	setRegex();
-	setupColorsFormatsRules(QColor(51, 204, 255), Qt::darkCyan, QColor(145, 194, 0));
+	setupColorsFormatsRules(QColor(14, 158, 235), QColor(133, 76, 180), QColor(135, 180, 0));
 }
 
+// Define the regular expressions for different types of words
 void InputHighlighter::setRegex(){	
 	commandRegex = QRegularExpression("(^(((much)|(such)|(wow such)|(wow much)|(so)|(many)) )?"
 									  "((\\b(add)|(create)|(a)|(do)|"
@@ -27,6 +28,7 @@ void InputHighlighter::setRegex(){
 	tagRegex = QRegularExpression("\\s(#)\\S");
 }
 
+// Set the formatting of the text displayed
 void InputHighlighter::setFormats(QColor commandC, QColor keywordC, QColor connectorC){
 	commandFormat.setForeground(commandC);
 	keywordFormat.setForeground(keywordC);
@@ -35,6 +37,7 @@ void InputHighlighter::setFormats(QColor commandC, QColor keywordC, QColor conne
 	spellCheckFormat.setUnderlineStyle(QTextCharFormat::WaveUnderline);
 }
 
+// Adds to highlighting rules 
 void InputHighlighter::setRules(){
 	HighlightingRule commandRule;
 	commandRule.pattern = commandRegex;
@@ -57,12 +60,13 @@ void InputHighlighter::setRules(){
 	highlightingRules.append(tagRule);
 }
 
-
+// For setting up of formats and rules
 void InputHighlighter::setupColorsFormatsRules(QColor commandC, QColor keywordC, QColor connectorC) {
 	setFormats(commandC, keywordC, connectorC);
 	setRules();
 }
 
+// Goes through entire text and highlights anything that matches the rules.
 void InputHighlighter::highlightBlock(const QString &text) {
     foreach (const HighlightingRule &rule, highlightingRules) {
 		QRegularExpressionMatchIterator matchIter = rule.pattern.globalMatch(text);

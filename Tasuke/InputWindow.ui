@@ -180,8 +180,7 @@ background-color: rgb(74, 74, 74);
 }
 
 QTextEdit{
-background-color: transparent;
-}
+background-color: transparent;}
 
 background:transparent;</string>
   </property>

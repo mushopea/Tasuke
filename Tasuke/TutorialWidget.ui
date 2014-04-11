@@ -109,32 +109,11 @@ QTabBar::tab:selected{
       <number>0</number>
      </property>
      <widget class="QWidget" name="navPage1">
-      <widget class="QLabel" name="tonavigate">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>290</y>
-         <width>691</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Quicksand Book</family>
-         <pointsize>20</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>To navigate, use &lt;tab&gt; and left/right arrow keys.</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="welcomeImg">
        <property name="geometry">
         <rect>
-         <x>280</x>
-         <y>10</y>
+         <x>40</x>
+         <y>30</y>
          <width>231</width>
          <height>231</height>
         </rect>
@@ -152,9 +131,9 @@ QTabBar::tab:selected{
       <widget class="QLabel" name="welcome">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>240</y>
-         <width>761</width>
+         <x>40</x>
+         <y>270</y>
+         <width>231</width>
          <height>51</height>
         </rect>
        </property>
@@ -164,8 +143,86 @@ QTabBar::tab:selected{
          <pointsize>30</pointsize>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background: none;</string>
+       </property>
        <property name="text">
         <string>Welcome!</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="welcome_2">
+       <property name="geometry">
+        <rect>
+         <x>320</x>
+         <y>100</y>
+         <width>311</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Bold</family>
+         <pointsize>20</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: none;</string>
+       </property>
+       <property name="text">
+        <string>&lt;tab&gt;: Change tabs</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="welcome_3">
+       <property name="geometry">
+        <rect>
+         <x>320</x>
+         <y>150</y>
+         <width>411</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Bold</family>
+         <pointsize>20</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: none;</string>
+       </property>
+       <property name="text">
+        <string>&lt;left/right&gt;: Prev/Next slide</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="welcome_4">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>200</y>
+         <width>431</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Quicksand Bold</family>
+         <pointsize>20</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background: none;</string>
+       </property>
+       <property name="text">
+        <string>&lt;backspace&gt;: Back to tasks</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
