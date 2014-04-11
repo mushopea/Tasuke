@@ -663,7 +663,7 @@ void TaskWindow::applySpaceTheme() {
 					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme3/closeButtonHover.png);}\n"
 					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
 
-	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(4,8,50,200);}";
+	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(17,21,36,200);}";
 	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(17,25,61,200);}";
 }
 

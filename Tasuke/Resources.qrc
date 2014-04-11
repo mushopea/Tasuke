@@ -88,5 +88,6 @@
         <file>fonts/Quicksand_Light_Oblique.otf</file>
         <file>fonts/Quicksand_Book.otf</file>
         <file>fonts/Quicksand_Book_Oblique.otf</file>
+		<file>fonts/Consolas.ttf</file>
     </qresource>
 </RCC>
