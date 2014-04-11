@@ -2,6 +2,7 @@
 #define EXCEPTIONS_H
 
 #include <exception>
+#include <QString>
 
 //@author A0096836M
 
@@ -13,7 +14,13 @@ class ExceptionNullPtr : public std::exception {
 
 // This exception is thrown when an invalid command is input by the user
 class ExceptionBadCommand : public std::exception {
+private:
+	QString message;
+	QString part;
+public:
+	ExceptionBadCommand(QString _message, QString _part = "");
 	virtual const char *what() const throw();
+	QString where() const;
 };
 
 class ExceptionNotImplemented : public std::exception {

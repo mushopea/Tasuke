@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>53</height>
+    <height>63</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
      <x>0</x>
      <y>10</y>
      <width>841</width>
-     <height>41</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -55,10 +55,10 @@ color: white;</string>
   <widget class="QLabel" name="text">
    <property name="geometry">
     <rect>
-     <x>45</x>
+     <x>50</x>
      <y>10</y>
      <width>791</width>
-     <height>41</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
@@ -72,7 +72,7 @@ color: white;</string>
 color: white;</string>
    </property>
    <property name="text">
-    <string/>
+    <string>[forrmat]&lt;br&gt;[description]</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -84,8 +84,8 @@ color: white;</string>
   <widget class="QLabel" name="icon">
    <property name="geometry">
     <rect>
-     <x>5</x>
-     <y>12</y>
+     <x>10</x>
+     <y>15</y>
      <width>38</width>
      <height>38</height>
     </rect>

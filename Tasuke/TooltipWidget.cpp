@@ -79,7 +79,10 @@ void TooltipWidget::initIcons() {
 
 // Modifies width according to text width
 void TooltipWidget::fitWidthToTextLength(QString text) {
-	ui.bg->resize(fm.width(text) + WIDTH_DIFFERENCE, ui.bg->height()); 
+	QTextDocument document;
+	document.setDefaultFont(QFont("Consolas", 11));
+	document.setHtml(text);
+	ui.bg->resize(document.idealWidth() + WIDTH_DIFFERENCE, ui.bg->height()); 
 }
 
 // Sets the icon according to the status of the input

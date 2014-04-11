@@ -216,9 +216,8 @@ void InputWindow::handleLineEditChanged() {
 	if(showTooltip) {
 		if (currText.isEmpty()) {
 			hideTooltip();
-		} else {
-			emit inputChanged(currText);
-		}
+		} 
+		emit inputChanged(currText);
 	}
 }
 
