@@ -27,7 +27,7 @@ QString Task::getDescription() const {
 	return description;
 }
 
-// Adds a single _gtag QString to the list of tags that
+// Adds a single _tag QString to the list of tags that
 // this task has. This method will throw an ExceptionTooManyTags
 // if the incoming tag causes the number of tags to exceed
 // MAXIMUM_TAGS.

@@ -3,8 +3,10 @@
 
 #include <functional>
 #include <QString>
+#include <QTimer>
 #include <QList>
 #include "Task.h"
+#include "NotificationManager.h"
 
 //@author A0096863M
 // Interface class for Storage.
@@ -23,6 +25,7 @@ public:
 	Task getTask(int id);
 	void removeTask(int id);
 	void popTask();
+	Task getNextUpcomingTask();
 	QList<Task> getTasks(bool hideDone = true) const;
 	int totalTasks();
 
@@ -32,6 +35,8 @@ public:
 	QList<Task> searchByEndDate(QDateTime byThisDate);
 	QList<Task> searchByBeginDate(QDateTime fromThisDate);
 	QList<Task> searchByDateTimeInterval(QDateTime fromThisDate, QDateTime byThisDate);
+
+	QDateTime nextFreeTime();
 
 	bool isAllDone();
 

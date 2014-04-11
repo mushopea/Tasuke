@@ -66,6 +66,15 @@ void IStorage::popTask() {
 	renumber();
 }
 
+Task IStorage::getNextUpcomingTask() {
+	foreach (QSharedPointer<Task> task, tasks) {
+		if (task->getBegin() > QDateTime::currentDateTime()) {
+			return *task;
+		}
+	}
+	throw ExceptionNoMoreTasks();
+}
+
 // Read-only
 QList<Task> IStorage::getTasks(bool hideDone) const {
 	QList<Task> results;
@@ -191,6 +200,33 @@ QList<Task> IStorage::searchByDateTimeInterval(QDateTime fromThisDate, QDateTime
 	}
 
 	return results;
+}
+
+// Retrieves the next available free time.
+// Starts by assuming that the current time is free.
+// Then search through all tasks for ongoing events and take the ongoing event with the latest 
+// end time as the next available free time.
+// Then since tasks are sorted in order of earliest end time to latest end time,
+// overlapping tasks will be merged into one unit.
+QDateTime IStorage::nextFreeTime() {
+	QDateTime nextAvailableTime = QDateTime::currentDateTime();
+
+	foreach (const QSharedPointer<Task>& task, tasks) {
+
+		// Skip if we have reached the part of the list where tasks begin on the next day.
+		QDateTime breakCondition = QDateTime(QDate::currentDate().addDays(1), QTime(0, 0, 0));
+		if (task->getBegin() >= breakCondition) {
+			break;
+		}
+
+		if (task->getBegin() <= nextAvailableTime) {
+			nextAvailableTime = task->getEnd();
+		} else {
+			break;
+		}
+		
+	}
+	return nextAvailableTime;
 }
 
 // Returns true if every task in memory is done.
@@ -372,6 +408,7 @@ void Storage::loadFile() {
 	settings.endArray();
 
 	renumber();
+	NotificationManager::instance().init();
 
 	LOG(INFO) << "File loaded.";
 }
@@ -416,6 +453,8 @@ void Storage::saveFile() {
 	}
 	settings.endArray();
 	settings.sync();
+
+	NotificationManager::instance().init();
 
 	LOG(INFO) << "File saved.";
 }

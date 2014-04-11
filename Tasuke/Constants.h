@@ -14,6 +14,9 @@ static const int MINUTES_IN_HOUR = 60;
 static const int SECONDS_IN_MINUTE = 60;
 static const int MSECS_IN_SECOND = 1000;
 
+// The time interval in minutes used to calculate nextFreeTime
+static const int INTERVAL = 15;
+
 // Stacked widget page indexes
 static const int TASKS_PAGE = 0;
 static const int TUTORIAL_PAGE = 1;
