@@ -27,7 +27,7 @@ QString Task::getDescription() const {
 	return description;
 }
 
-// Adds a single _gtag QString to the list of tags that
+// Adds a single _tag QString to the list of tags that
 // this task has. This method will throw an ExceptionTooManyTags
 // if the incoming tag causes the number of tags to exceed
 // MAXIMUM_TAGS.
@@ -36,14 +36,20 @@ void Task::addTag(QString _tag) {
 		throw ExceptionTooManyTags();
 	}
 
-	tags.push_back(_tag);
+	if (!tags.contains(_tag)) {
+		tags.insert(_tag);
+	}
 }
 
-void Task::removeTag(QString _tag) {
-	tags.removeOne(_tag);
+bool Task::removeTag(QString _tag) {
+	return tags.remove(_tag);
 }
 
 QList<QString> Task::getTags() const {
+	return tags.toList();
+}
+
+QSet<QString> Task::getTagsSet() const {
 	return tags;
 }
 
@@ -391,7 +397,7 @@ bool Task::isEvent() const {
 // Returns true if this task is equal to the other task; otherwise returns false.
 bool Task::operator==(Task const& other) const {
 	bool isSameDescription = (description==other.getDescription());
-	bool isSameTags = (tags==other.getTags());
+	bool isSameTags = (tags==other.getTagsSet());
 	bool isSameBegin = (begin==other.getBegin());
 	bool isSameEnd = (end==other.getEnd());
 	bool isSameDone = (done==other.isDone());
@@ -402,7 +408,7 @@ bool Task::operator==(Task const& other) const {
 // Returns true if this task is different to the other task; otherwise returns false;
 bool Task::operator!=(Task const& other) const {
 	bool isSameDescription = (description==other.getDescription());
-	bool isSameTags = (tags==other.getTags());
+	bool isSameTags = (tags==other.getTagsSet());
 	bool isSameBegin = (begin==other.getBegin());
 	bool isSameEnd = (end==other.getEnd());
 	bool isSameDone = (done==other.isDone());
@@ -412,9 +418,9 @@ bool Task::operator!=(Task const& other) const {
 
 QDataStream& operator<<(QDataStream& out, const Task& task) {
 	out << task.description;
-	out << task.tags.size();
-	for (int i=0; i<task.tags.size(); i++) {
-		out << task.tags[i];
+	QSetIterator<QString> tags(task.tags);
+	while (tags.hasNext()) {
+		out << tags.next();
 	}
 	out << task.begin;
 	out << task.end;
@@ -430,7 +436,7 @@ QDataStream& operator>>(QDataStream& in, Task& task) {
 	for (int i=0; i<numTags; i++) {
 		QString tag;
 		in >> tag;
-		task.tags.push_back(tag);
+		task.tags.insert(tag);
 	}
 	in >> task.begin;
 	in >> task.end;

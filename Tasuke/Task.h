@@ -2,6 +2,7 @@
 #define TASK_H
 
 #include <QList>
+#include <QSet>
 #include <QString>
 #include <QDateTime>
 
@@ -9,7 +10,7 @@
 class Task {
 private:
 	QString description;
-	QList<QString> tags;
+	QSet<QString> tags;
 
 	QDateTime begin;
 	QDateTime end;
@@ -26,8 +27,9 @@ public:
 	QString getDescription() const;
 
 	void addTag(QString _tag);
-	void removeTag(QString _tag);
+	bool removeTag(QString _tag);
 	QList<QString> getTags() const;
+	QSet<QString> getTagsSet() const;
 
 	void setBegin(QDateTime _begin);
 	void setBeginDate(QDate _beginDate);

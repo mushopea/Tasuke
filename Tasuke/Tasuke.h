@@ -15,6 +15,7 @@
 #include "SettingsWindow.h"
 #include "SystemTrayWidget.h"
 #include "HotKeyManager.h"
+#include "NotificationManager.h"
 
 //@author A0096836M
 

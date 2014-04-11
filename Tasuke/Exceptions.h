@@ -7,25 +7,26 @@
 
 // This exception is thrown only during programming errors. If this happens,
 // then it indicates a bug in the code
-class ExceptionNullPtr : public std::exception
-{
+class ExceptionNullPtr : public std::exception {
 	virtual const char *what() const throw();
 };
 
 // This exception is thrown when an invalid command is input by the user
-class ExceptionBadCommand : public std::exception
-{
+class ExceptionBadCommand : public std::exception {
 	virtual const char *what() const throw();
 };
 
-class ExceptionNotImplemented : public std::exception
-{
+class ExceptionNotImplemented : public std::exception {
 	virtual const char *what() const throw();
 };
 
 // This exception is thrown when the user tries to add too many tags.
-class ExceptionTooManyTags : public std::exception
-{
+class ExceptionTooManyTags : public std::exception {
+	virtual const char *what() const throw();
+};
+
+// This exception is thrown when there are no upcoming tasks.
+class ExceptionNoMoreTasks : public std::exception {
 	virtual const char *what() const throw();
 };
 

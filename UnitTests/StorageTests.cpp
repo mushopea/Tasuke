@@ -3,6 +3,8 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
+//@author A0096863M
+
 namespace StorageTests {
 	QApplication *app;
 	StorageStub *storage;
@@ -27,7 +29,6 @@ namespace StorageTests {
 		delete app;
 	}
 
-	//@author A0096863M
 	TEST_CLASS(StorageTests) {
 
 	public:
