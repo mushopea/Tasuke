@@ -182,9 +182,8 @@ void InputWindow::handleLineEditChanged() {
 
 	if (currText.isEmpty()) {
 		hideTooltip();
-	} else {
-		emit inputChanged(currText);
-	}
+	} 
+	emit inputChanged(currText);
 }
 
 void InputWindow::setOpacity(qreal value) {

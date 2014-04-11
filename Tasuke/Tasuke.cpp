@@ -18,16 +18,17 @@ const char* const MSG_LOADING_DICTIONARY = "Loading dictionary";
 const char* const MSG_LOADING_FONTS = "Loading fonts";
 const char* const MSG_STORAGE_CHANGED = "Storage changed";
 const char* const MSG_COMMAND_STACK_PUSH =  "Pushing command to history stack";
-const char* const MSG_ERROR_PARSING = "Error parsing command";
 const char* const MSG_UNDO = "Undoing command";
 const char* const MSG_NO_UNDO ="Nothing to undo";
 const char* const MSG_REDO = "Redoing command";
 const char* const MSG_NO_REDO = "Nothing to redo";
 
+#define MSG_ERROR_PARSING(message) \
+	"Error parsing command" << QString(message).toStdString()
 #define MSG_SHOWING_MESSAGE(message) \
-	"Showing message: " << message
+	"Showing message: " << QString(message).toStdString()
 #define MSG_UPDATING_TASKWINDOW(tasks) \
-	"Updating task window with " << tasks << " tasks"
+	"Updating task window with " << QString(tasks).toStdString() << " tasks"
 #define MSG_HIGHLIGHT_TASK(id) \
 	"Highlighting task with id  " << id
 
@@ -145,7 +146,6 @@ void Tasuke::loadDictionary() {
 		return;
 	}
 
-
 #ifndef Q_OS_MAC
 	spellObj = new Hunspell(SPELL_GB_AFFFILE, SPELL_GB_DICFILE);
 	spellObj->add_dic(SPELL_US_DICFILE);
@@ -157,7 +157,7 @@ void Tasuke::loadDictionary() {
 
 	foreach(QStringList list, SPELL_INCLUDE_LISTS) {
 		foreach(QString word, list) {
-			spellObj->add(word.toLatin1());
+			spellObj->add(word.toStdString().c_str());
 		}
 	}
 }
@@ -214,22 +214,32 @@ void Tasuke::setStorage(IStorage* _storage) {
 }
 
 InputWindow& Tasuke::getInputWindow(){
+	assert(inputWindow != nullptr);
+
 	return *inputWindow;
 }
 
 AboutWindow& Tasuke::getAboutWindow(){
+	assert(aboutWindow != nullptr);
+	
 	return *aboutWindow;
 }
 
 SettingsWindow& Tasuke::getSettingsWindow(){
+	assert(settingsWindow != nullptr);
+
 	return *settingsWindow;
 }
 
 TaskWindow& Tasuke::getTaskWindow(){
+	assert(taskWindow != nullptr);
+
 	return *taskWindow;
 }
 
 HotKeyManager& Tasuke::getHotKeyManager() {
+	assert(hotKeyManager != nullptr);
+
     return *hotKeyManager;
 }
 
@@ -334,13 +344,13 @@ void Tasuke::showSettingsWindow() {
 }
 
 void Tasuke::showMessage(QString message) {
-	LOG(INFO) << MSG_SHOWING_MESSAGE(message.toStdString());
+	LOG(INFO) << MSG_SHOWING_MESSAGE(message);
 
 	if (!guiMode) {
 		return;
 	}
 
-	//systemTrayWidget->showMessage(message);
+	systemTrayWidget->showMessage(message);
 }
 
 void Tasuke::updateTaskWindow(QList<Task> tasks, QString title) {
@@ -348,7 +358,7 @@ void Tasuke::updateTaskWindow(QList<Task> tasks, QString title) {
 		return;
 	}
 
-	LOG(INFO) << MSG_UPDATING_TASKWINDOW(QString::number(tasks.size()).toStdString());
+	LOG(INFO) << MSG_UPDATING_TASKWINDOW(QString::number(tasks.size()));
 
 	taskWindow->showTasks(tasks, title);
 }
@@ -381,6 +391,84 @@ bool Tasuke::spellCheck(QString word) {
 	return false;
 }
 
+QString Tasuke::formatTooltipMessage(QString commandString, QString errorString, QString errorWhere) {
+	QString commandType = Interpreter::getType(commandString);
+
+	QString formatPart = "add | edit | done | undone | remove | show | undo | redo | settings | help | exit";
+	QString descriptionPart = "Use one of these keywords to begin";
+
+	if (commandType == "add") {
+		if (commandString.contains(QRegExp("\\bfrom\\b"))) { // period tasks
+			formatPart = "add {description}[my task]{/description} from {date}{start}[start]{/star} to {end}[end]{/end}{/date} #tag";
+			descriptionPart = "Adds a task with a time period.";
+		} else if (commandString.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
+			formatPart = "add {description}[my task]{/description} by/on/at {date}{end}[end]{/end}{/date} #tag";
+			descriptionPart = "Adds a task with a deadline.";
+		} else { // simple tasks
+			formatPart = "add {description}[my task]{/description} #tag";
+			descriptionPart = "Adds a simple task.";
+		}
+	} else if (commandType == "remove") {
+		formatPart = "remove {id}[task no]{/id} | remove [task no], [task no], ... | remove [task no] - [task no]";
+		descriptionPart = "Removes task(s) from the list.";
+	} else if (commandType == "edit") {
+		formatPart = "edit {id}[task no]{/id} {description}[thing to change] -[thing to remove]{/description}";
+		descriptionPart = "Edits existing task.";
+	} else if (commandType == "done") {
+		formatPart = "done {id}[task no]{/id} | done [task no], [task no], ... | done [task no] - [task no]";
+		descriptionPart = "Marks tasks as done.";
+	} else if (commandType == "undone") {
+		formatPart = "undone {id}[task no]{/id} | undone [task no], [task no], ... | undone [task no] - [task no]";
+		descriptionPart = "Marks tasks as undone.";
+	} else if (commandType == "show") {
+		formatPart = "show [keyword] | done | undone | overdue | ongoing | today | tomorrow";
+		descriptionPart = "Shows certain tasks.";
+	} else if (commandType == "hide") {
+		formatPart = "hide";		
+		descriptionPart = "Hides the task list.";
+	} else if (commandType == "undo") {
+		formatPart = "undo {times}[times]{/times} | max";	
+		descriptionPart = "Undos your last command(s).";
+	} else if (commandType == "redo") {
+		formatPart = "redo {times}[times]{/times} | max";
+		descriptionPart = "Redos your last command(s).";
+	} else if (commandType == "clear") {
+		formatPart = "clear";
+		descriptionPart = "Clears all tasks in your list.";
+	} else if (commandType == "help") {
+		formatPart = "help";
+		descriptionPart = "Shows the tutorial.";
+	} else if (commandType == "settings") {
+		formatPart = "settings";
+		descriptionPart = "Open the settings window.";
+	} else if (commandType == "about") {
+		formatPart = "about";
+		descriptionPart = "Shows about Tasuke.";
+	} else if (commandType == "exit") {
+		formatPart = "exit";
+		descriptionPart = "Exits the program.";
+	}
+
+	if (!errorWhere.isEmpty()) {
+		formatPart = formatPart.replace("{"+errorWhere+"}", "<font color='#FA7597'>");
+		formatPart = formatPart.replace("{/"+errorWhere+"}", "</font>");
+	}
+
+	QRegExp braceRegex = QRegExp("\\{(.*)\\}");
+	braceRegex.setMinimal(true);
+	formatPart = formatPart.remove(braceRegex);
+
+	if (!errorString.isEmpty()) {
+		descriptionPart = errorString;
+	}
+
+	QString message = QString("<font color='#999'>" + formatPart+ "</font>"
+		"<br<<font color='white'>"+descriptionPart + "</font>");
+
+
+	return message;
+}
+
 // This function runs a command in a string
 void Tasuke::runCommand(QString commandString) {
 	if (inputTimer.isActive()) {
@@ -406,67 +494,27 @@ void Tasuke::runCommand(QString commandString) {
 
 		storage->saveFile();
 	} catch (ExceptionBadCommand& exception) {
-		LOG(INFO) << MSG_ERROR_PARSING;
-		
-		showMessage(MSG_ERROR_PARSING);
+		QString errorString = exception.what();
+		QString errorWhere = exception.where();
+		LOG(INFO) << MSG_ERROR_PARSING(errorString);
 
 		if (guiMode) {
-			inputWindow->showTooltipMessage(InputStatus::FAILURE);
+			QString message = formatTooltipMessage(commandString, errorString, errorWhere);
+			inputWindow->showTooltipMessage(InputStatus::FAILURE), message;
 			inputWindow->doErrorAnimation();
 		}
 	}
 }
 
 void Tasuke::handleInputChanged(QString commandString) {
+	input = commandString;
+	
 	if (commandString.isEmpty()) {
 		inputWindow->hideTooltip();
 		return;
 	}
 
-	input = commandString;
-	QString commandType = Interpreter::getType(commandString);
-
-	QString message = "...";
-
-	// TODO!!
-	// TODO!! make this cleaner
-	// TODO!!
-
-	if (commandType == "add") {
-		if (commandString.contains(QRegExp("\\bfrom\\b"))) { // period tasks
-			message = "add <my task> from <start> to <end> #tag";
-		} else if (commandString.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
-			message = "add <my task> by/on/at <end> #tag";
-		} else { // simple tasks
-			message = "add <my task> #tag";
-		}
-	} else if (commandType == "remove") {
-		message = "remove <task no> | remove <task no>, <task no>, ... | remove <task no> - <task no>";
-	} else if (commandType == "edit") {
-		message = "edit <task no> <thing to change> <-thing to remove>";
-	} else if (commandType == "done") {
-		message = "done <task no> | done <task no>, <task no>, ... | done <task no> - <task no>";
-	} else if (commandType == "undone") {
-		message = "undone <task no> | undone <task no>, <task no>, ... | undone <task no> - <task no>";
-	} else if (commandType == "show") {
-		message = "show <keyword> | done | undone | overdue | ongoing | today | tomorrow";
-	} else if (commandType == "hide") {
-		message = "Hide the task window.";		
-	} else if (commandType == "undo") {
-		message = "Undo your last action. (CTRL+Z)";		
-	} else if (commandType == "redo") {
-		message = "Redo your last action (CTRL+Y)";		
-	} else if (commandType == "clear") {
-		message = "Clear all tasks";
-	} else if (commandType == "help") {
-		message = "View the tutorial";
-	} else if (commandType == "settings") {
-		message = "Access the settings";
-	} else if (commandType == "about") {
-		message = "See Tasuke's info";
-	} else if (commandType == "exit") {
-		message = "Exit the application";
-	}
+	QString message = formatTooltipMessage(commandString);
 
 	inputWindow->showTooltipMessage(InputStatus::NORMAL, message);
 
@@ -489,6 +537,12 @@ void Tasuke::handleInputTimeout() {
 		return;
 	}
 
+	if (input.isEmpty()) {
+		inputWindow->hideTooltip();
+		mutex.unlock();
+		return;
+	}
+
 	std::thread tryThread([&]() {
 		try {
 			ICommand* command = Interpreter::interpret(input, true);
@@ -500,8 +554,11 @@ void Tasuke::handleInputTimeout() {
 			result.status = InputStatus::SUCCESS;
 			emit tryFinish(result);
 		} catch (ExceptionBadCommand& exception) {
+			QString errorString = exception.what();
+			QString errorWhere = exception.where();
 			TRY_RESULT result;
 			result.status = InputStatus::NORMAL;
+			result.message = formatTooltipMessage(input, errorString, errorWhere);
 			emit tryFinish(result);
 		}
 	});
@@ -509,7 +566,7 @@ void Tasuke::handleInputTimeout() {
 }
 
 void Tasuke::handleTryFinish(TRY_RESULT result) {
-	if (inputWindow->isVisible()) {
+	if (inputWindow->isVisible() && !input.isEmpty()) {
 		inputWindow->showTooltipMessage(result.status, result.message);
 	}
 	mutex.unlock();
