@@ -36,7 +36,7 @@ color:#434343;
 
 QLabel#border {
 border-radius:11px;
-background-color:#4a4a4a;
+background-color: rgb(74, 74, 74);
 }
 
 QLabel#bg {
@@ -397,6 +397,9 @@ height:0;
       </property>
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background:transparent;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -857,7 +860,7 @@ height:0;
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>:/Images/images/yaynyansuke.png</pixmap>
+        <pixmap resource="Resources.qrc">:/Images/images/yaynyansuke.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>false</bool>

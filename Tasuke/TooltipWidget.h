@@ -26,6 +26,7 @@ public slots:
 	void initIcons();
 
 private:
+	static const int WIDTH_DIFFERENCE = 70;
 	Ui::TooltipWidget ui;
 	QPropertyAnimation animation;
 	QFont font;
@@ -33,11 +34,14 @@ private:
 	QPixmap normalIcon;
 	QPixmap successIcon;
 	QPixmap failureIcon;
+	bool connectedToSettings; 
 
 	void fitWidthToTextLength(QString text);
-	void initAnimation();
 	void setIconOnLabel(InputStatus status);
-	bool connectedToSettings; 
+	void initUI();
+	void initConnect();
+	void initAnimation();
+	void resetAnimation();
 };
 
 #endif //TOOLTIPWIDGET_H

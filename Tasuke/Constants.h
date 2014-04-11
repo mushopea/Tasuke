@@ -25,11 +25,12 @@ enum class InputStatus : char {
 };
 
 enum class Theme : char {
-	SIMPLE,
+	DEFAULT,
+	GREEN,
+	SPACE,
 	PINK,
-	BLUESKY,
-	DARK,
-	GALAXY,
+	PIKACHU,
+	BLUE,
 	DOGE,
 	THEME_LAST_ITEM
 };

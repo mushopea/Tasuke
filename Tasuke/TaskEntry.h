@@ -34,11 +34,11 @@ private:
 		TASKENTRYLABEL_LAST_ITEM
 	};
 
-	// attributes
+	// Attributes
 	const Task& task;
 	QLabel* labels[(char)TaskEntryLabel::TASKENTRYLABEL_LAST_ITEM];
 
-	// functions
+	// Functions
 	QString createTagString(const QList<QString>& tags) const;
 	void setID(int ID);
 	void setTooltip(const QString& description, const QDateTime& start, const QDateTime& end, 

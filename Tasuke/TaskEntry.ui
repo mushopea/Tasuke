@@ -38,7 +38,7 @@ background-color: rgb(203, 202, 202);
 
 background:transparent;</string>
   </property>
-  <widget class="QLabel" name="bg">
+  <widget class="QLabel" name="background">
    <property name="geometry">
     <rect>
      <x>0</x>

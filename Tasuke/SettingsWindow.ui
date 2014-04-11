@@ -803,7 +803,7 @@ background: transparent;</string>
            <property name="font">
             <font>
              <family>Quicksand Bold</family>
-             <pointsize>15</pointsize>
+             <pointsize>12</pointsize>
             </font>
            </property>
            <property name="text">
@@ -824,11 +824,11 @@ background: transparent;</string>
           <property name="font">
            <font>
             <family>Quicksand Bold</family>
-            <pointsize>15</pointsize>
+            <pointsize>12</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Pink</string>
+           <string>GreenPolka</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -844,11 +844,11 @@ background: transparent;</string>
           <property name="font">
            <font>
             <family>Quicksand Bold</family>
-            <pointsize>15</pointsize>
+            <pointsize>12</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Blue Sky</string>
+           <string>DarkSpace</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -864,11 +864,31 @@ background: transparent;</string>
           <property name="font">
            <font>
             <family>Quicksand Bold</family>
-            <pointsize>15</pointsize>
+            <pointsize>12</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Night</string>
+           <string>PinkFlora</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <family>Quicksand Bold</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Pika</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -884,11 +904,11 @@ background: transparent;</string>
           <property name="font">
            <font>
             <family>Quicksand Bold</family>
-            <pointsize>15</pointsize>
+            <pointsize>12</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Galaxies</string>
+           <string>BlueSky</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -902,7 +922,7 @@ background: transparent;</string>
     <widget class="QWidget" name="themeSelect" native="true">
      <property name="geometry">
       <rect>
-       <x>80</x>
+       <x>75</x>
        <y>253</y>
        <width>671</width>
        <height>41</height>
@@ -922,7 +942,24 @@ background: transparent;</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
-        <widget class="QRadioButton" name="selectSimple">
+        <widget class="QRadioButton" name="selectDefault">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="selectGreen">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="selectSpace">
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
@@ -942,7 +979,7 @@ background: transparent;</string>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="selectBlueSky">
+        <widget class="QRadioButton" name="selectPika">
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
@@ -952,17 +989,7 @@ background: transparent;</string>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="selectNight">
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="selectGalaxy">
+        <widget class="QRadioButton" name="selectBlue">
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>

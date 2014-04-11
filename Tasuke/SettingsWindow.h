@@ -22,7 +22,6 @@ signals:
 	void featuresChanged();
 	void themeChanged();
 	void iconsChanged();
-	void hotkeyChanged();
 	void fontChanged();
 
 public slots:
@@ -33,9 +32,6 @@ public slots:
 protected:
 	bool eventFilter(QObject* object, QEvent* event);
 	virtual void showEvent(QShowEvent *event) override;
-
-private slots:
-
 
 private:
 	Ui::SettingsWindow ui;	

@@ -54,6 +54,7 @@ public slots:
 	void handleAddTaskButton();
 	void handleBackButton();
 	void displayTaskList();
+	void reloadTheme();
 
 protected:
 	void closeEvent(QCloseEvent *event);
@@ -92,13 +93,18 @@ private:
 	int previousSize;
 	int subheadingRowIndexes[SubheadingType::SUBHEADING_TYPE_LAST_ITEM];
 
+	// For theming
+	QString taskEntrySelectStylesheet;
+	QString taskEntryNormalStylesheet;
+
 	//=========================================
 	// HELPER FUNCTIONS
 	//=========================================
 
 	// For initialization
 	void initUI();
-	void initConnect();
+	void initUIConnect();
+	void initSettingsConnect();
 	void initTutorial();
 	void initAnimation();
 	void initProgressBar();
@@ -129,6 +135,15 @@ private:
 	void updateCurrentlySelectedTo(int taskID);	
 	void jumpToCurrentlySelectedTask();
 	void highlightCurrentlySelectedTask(int prevsize);
+
+	// Functions that apply themes
+	void applyDefaultTheme();
+	void applyGreenTheme();
+	void applySpaceTheme();
+	void applyPinkTheme();
+	void applyPikaTheme();
+	void applyBlueTheme();
+	void applyDogeTheme();
 };
 
 #endif // TASKWINDOW_H

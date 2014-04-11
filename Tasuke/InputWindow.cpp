@@ -9,7 +9,7 @@ InputWindow::InputWindow(QWidget* parent) : QWidget(parent), animation(this, "op
 	initUI();
 	initWidgets();
 	initAnimation();
-	initConnect();
+	initUIConnect();
 }
 
 InputWindow::~InputWindow() {
@@ -130,6 +130,7 @@ void InputWindow::showAndCenter() {
 }
 
 void InputWindow::showAndAdd() {
+	LOG(INFO) << "User has clicked \"add one\"";
 	showAndCenter();
 	ui.lineEdit->insertPlainText(QString("add "));
 }
@@ -197,7 +198,7 @@ void InputWindow::initWidgets() {
 }
 
 // Initialise connection of slots and signals
-void InputWindow::initConnect() {
+void InputWindow::initUIConnect() {
 	connect(ui.lineEdit, SIGNAL(textChanged()), this, SLOT(handleLineEditChanged()));
 }
 
@@ -224,4 +225,38 @@ void InputWindow::initErrorAnimation() {
 
 	errorAnimation.setStartValue(posBefore); 
 	errorAnimation.setEndValue(posAfter);
+}
+
+//===================================
+// THEMING 
+//===================================
+void InputWindow::applyDefaultTheme() {
+
+}
+
+void InputWindow::applyGreenTheme() {
+
+}
+
+void InputWindow::applySpaceTheme() {
+
+}
+
+void InputWindow::applyPinkTheme() {
+
+}
+
+void InputWindow::applyPikaTheme() {
+
+
+}
+
+void InputWindow::applyBlueTheme() {
+
+
+}
+
+void InputWindow::applyDogeTheme() {
+
+
 }

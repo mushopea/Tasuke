@@ -14,7 +14,10 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background: transparent;</string>
+   <string notr="true">QLabel{
+color: rgb(99, 99, 99);
+}
+background: transparent;</string>
   </property>
   <widget class="QLabel" name="content">
    <property name="geometry">
@@ -32,9 +35,6 @@
      <stylestrategy>PreferAntialias</stylestrategy>
      <kerning>true</kerning>
     </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">color: rgb(99, 99, 99);</string>
    </property>
    <property name="text">
     <string>subheading</string>

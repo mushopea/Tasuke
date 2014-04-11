@@ -7,53 +7,37 @@
 TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas", 11), fm(font), 
 												animation(this, "pos"), connectedToSettings(false) {
 	LOG(INFO) << "TooltipWidget instance created";
-
-	ui.setupUi(this);
+	initUI();
 	initIcons();
 	initAnimation();
-
-	setAttribute(Qt::WA_TranslucentBackground);
-	setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::Tool);
 }
 
 TooltipWidget::~TooltipWidget() {
 }
 
+// Changes the text shown on the window then resizes it.
 void TooltipWidget::setText(InputStatus status, QString content) {
 	setIconOnLabel(status);
 
-	// only update text if provided
+	// Only update text if provided
 	if (!content.isEmpty()) {
 		ui.text->setText(content);
 		fitWidthToTextLength(content);
 	}
 }
 
+// Shows the widget with animation
 void TooltipWidget::showAndAlign() {
 	LOG(INFO) << "Displaying tooltip widget";
-
-	if (!connectedToSettings) {
-		LOG(INFO) << "Connecting settingswindow to tooltipwidget";
-		connectedToSettings = true;
-		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(iconsChanged()), this, SLOT(initIcons()));
-	}
-
-	QPoint posBefore;
-	posBefore.setY(Tasuke::instance().getInputWindow().y() + Tasuke::instance().getInputWindow().height() - 20);
-	posBefore.setX(Tasuke::instance().getInputWindow().x() + 8);
-
-	QPoint posAfter;
-	posAfter.setY(Tasuke::instance().getInputWindow().y() + Tasuke::instance().getInputWindow().height());
-	posAfter.setX(Tasuke::instance().getInputWindow().x() + 8);
-
-	animation.setStartValue(posBefore);
-	animation.setEndValue(posAfter);
+	initConnect();
+	resetAnimation();
 	show();
-
 	animation.start();
 }
 
+// Initialize icon set from settings
 void TooltipWidget::initIcons() {
+	LOG(INFO) << "Initialising tooltip widget icons";
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	IconSet iconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
 
@@ -93,15 +77,12 @@ void TooltipWidget::initIcons() {
 	}
 }
 
+// Modifies width according to text width
 void TooltipWidget::fitWidthToTextLength(QString text) {
-	ui.bg->resize(fm.width(text) + 70, ui.bg->height()); 
+	ui.bg->resize(fm.width(text) + WIDTH_DIFFERENCE, ui.bg->height()); 
 }
 
-void TooltipWidget::initAnimation() {
-	animation.setDuration(500);
-	animation.setEasingCurve(QEasingCurve::OutCubic);
-}
-
+// Sets the icon according to the status of the input
 void TooltipWidget::setIconOnLabel(InputStatus status) {
 	switch (status) {
 		case InputStatus::SUCCESS:
@@ -116,4 +97,44 @@ void TooltipWidget::setIconOnLabel(InputStatus status) {
 		default:
 			break;
 	}
+}
+
+// ===================================
+// initialization
+// ===================================
+
+void TooltipWidget::initUI() {
+	ui.setupUi(this);
+	setAttribute(Qt::WA_TranslucentBackground);
+	setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::Tool);
+}
+
+void TooltipWidget::initConnect() {
+	if (!connectedToSettings) {
+		LOG(INFO) << "Connecting Settingswindow to Tooltipwidget";
+		connectedToSettings = true;
+		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(iconsChanged()), this, SLOT(initIcons()));
+	}
+}
+
+// ===================================
+// animation
+// ===================================
+
+void TooltipWidget::initAnimation() {
+	animation.setDuration(500);
+	animation.setEasingCurve(QEasingCurve::OutCubic);
+}
+
+void TooltipWidget::resetAnimation() {
+	QPoint posBefore;
+	posBefore.setY(Tasuke::instance().getInputWindow().y() + Tasuke::instance().getInputWindow().height() - 20);
+	posBefore.setX(Tasuke::instance().getInputWindow().x() + 8);
+
+	QPoint posAfter;
+	posAfter.setY(Tasuke::instance().getInputWindow().y() + Tasuke::instance().getInputWindow().height());
+	posAfter.setX(Tasuke::instance().getInputWindow().x() + 8);
+
+	animation.setStartValue(posBefore);
+	animation.setEndValue(posAfter);
 }

@@ -18,10 +18,18 @@ public:
 	~SubheadingEntry();
 	void changeText(const QString& text);
 
-public slots:
-
 private:
 	Ui::SubheadingEntry ui;
+	void initUI();
+
+	// Functions that apply themes
+	void applyDefaultTheme();
+	void applyGreenTheme();
+	void applySpaceTheme();
+	void applyPinkTheme();
+	void applyPikaTheme();
+	void applyBlueTheme();
+	void applyDogeTheme();
 };
 
 #endif //SUBHEADINGENTRY_H

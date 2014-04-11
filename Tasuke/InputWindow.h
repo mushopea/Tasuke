@@ -32,6 +32,7 @@ public slots:
 	void showAndCenter();	
 	void showAndAdd();
 	void closeAndClear();
+	void reloadTheme();
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
@@ -64,9 +65,19 @@ private:
 	qreal getOpacity() const;
 	void initUI();
 	void initWidgets();
-	void initConnect();
+	void initUIConnect();
 	void initAnimation();
 	void initErrorAnimation();
+	void initSettingsConnect();
+
+	// Functions that apply themes
+	void applyDefaultTheme();
+	void applyGreenTheme();
+	void applySpaceTheme();
+	void applyPinkTheme();
+	void applyPikaTheme();
+	void applyBlueTheme();
+	void applyDogeTheme();
 };
 
 #endif // INPUTWINDOW_H

@@ -179,6 +179,10 @@ border-radius: 10px;
 background-color: rgb(74, 74, 74);
 }
 
+QTextEdit{
+background-color: transparent;
+}
+
 background:transparent;</string>
   </property>
   <widget class="QLabel" name="border">
@@ -361,9 +365,6 @@ background:transparent;</string>
    </property>
    <property name="focusPolicy">
     <enum>Qt::StrongFocus</enum>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: transparent;</string>
    </property>
    <property name="inputMethodHints">
     <set>Qt::ImhNone</set>

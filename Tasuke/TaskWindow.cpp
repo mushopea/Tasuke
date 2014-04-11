@@ -2,6 +2,7 @@
 #include "TaskWindow.h"
 #include "Constants.h"
 #include "SubheadingEntry.h"
+#include <QSettings>
 
 //@author A0100189
 
@@ -13,7 +14,8 @@ TaskWindow::TaskWindow(QWidget* parent) : connectedToSettings(false), currentlyS
 		initTutorial(); 
 		initAnimation();
 		initProgressBar();
-		initConnect();
+		initUIConnect();
+		reloadTheme();
 }
 
 TaskWindow::~TaskWindow() {
@@ -152,19 +154,13 @@ void TaskWindow::showAndMoveToSide() {
 	if (isVisible()) {
 		return;
 	}
-
-	if (!connectedToSettings) {
-		connectedToSettings = true;
-		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(fontChanged()), this, SLOT(displayTaskList()));
-		LOG(INFO) << "Connected TaskWindow to SettingsWindow";
-	}
-
+	initSettingsConnect();
 	showListWidget(); // Shows the task list
 
 	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
 	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
-
 	move(center);
+
 	animation.start();
 	raise();
 	activateWindow();
@@ -182,6 +178,59 @@ void TaskWindow::handleBackButton() {
 	showTasks(Tasuke::instance().getStorage().getTasks());	
 	changeTitle("");
 }
+
+// Displays current tasks
+void TaskWindow::displayTaskList() {
+	LOG(INFO) << "Displaying task list";
+	ui.taskList->clear(); // Clear previous list
+	resetSubheadingIndexes(); // Reset subheadings
+	if (currentTasks.size() != 0) {
+		for (int i = 0; i < currentTasks.size(); i++) {
+			displayAndUpdateSubheadings(i);
+			displayTask(currentTasks[i]);
+			progressBar.setValue((int)((i+1) * 100 / currentTasks.size()));	
+		}
+	} else {
+		progressBar.hide();
+	}
+	hideProgressBarWhenDone();
+}
+
+// Reloads the theme
+void TaskWindow::reloadTheme() {
+	LOG(INFO) << "Reloading theme";
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+
+	switch (currTheme) {
+		case Theme::DEFAULT:
+			applyDefaultTheme();
+			break;
+		case Theme::GREEN:
+			applyGreenTheme();
+			break;
+		case Theme::SPACE:
+			applySpaceTheme();
+			break;
+		case Theme::PINK:
+			applyPinkTheme();
+			break;
+		case Theme::PIKACHU:
+			applyPikaTheme();
+			break;
+		case Theme::BLUE:
+			applyBlueTheme();
+			break;
+		case Theme::DOGE:
+			applyDogeTheme();
+			break;
+		default:
+			break;
+	}
+
+	displayTaskList();
+}
+
 
 //========================================
 // EVENTS
@@ -296,10 +345,19 @@ void TaskWindow::initUI() {
 	setAttribute(Qt::WA_TranslucentBackground);
 }
 
-void TaskWindow::initConnect() {
+void TaskWindow::initUIConnect() {
 	connect(ui.emptyAddTaskButton, SIGNAL(pressed()), this, SLOT(handleAddTaskButton()));
 	connect(ui.doneAllAddButton, SIGNAL(pressed()), this, SLOT(handleAddTaskButton()));
 	connect(ui.backButton, SIGNAL(released()), this, SLOT(handleBackButton()));
+}
+
+void TaskWindow::initSettingsConnect() {
+	if (!connectedToSettings) {
+		connectedToSettings = true;
+		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(fontChanged()), this, SLOT(displayTaskList()));
+		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(themeChanged()), this, SLOT(reloadTheme()));
+		LOG(INFO) << "Connected TaskWindow to SettingsWindow";
+	}
 }
 
 void TaskWindow::initTutorial() {
@@ -336,26 +394,11 @@ qreal TaskWindow::getOpacity() const {
 // PRIVATE HELPER TASK DISPLAY FUNCTIONS
 //=========================================
 
-// Displays current tasks
-void TaskWindow::displayTaskList() {
-	LOG(INFO) << "Displaying task list";
-	ui.taskList->clear(); // Clear previous list
-	resetSubheadingIndexes(); // Reset subheadings
-	if (currentTasks.size() != 0) {
-		for (int i = 0; i < currentTasks.size(); i++) {
-			displayAndUpdateSubheadings(i);
-			displayTask(currentTasks[i]);
-			progressBar.setValue((int)((i+1) * 100 / currentTasks.size()));	
-		}
-	} else {
-		progressBar.hide();
-	}
-	hideProgressBarWhenDone();
-}
-
 // Creates and returns a new task entry.
 TaskEntry* TaskWindow::createEntry(const Task& t) {
 	TaskEntry* entry = new TaskEntry(t, this);
+
+	entry->setStyleSheet(taskEntryNormalStylesheet);
 
 	if (t.isOverdue()) {
 		entry->highlightOverdue();
@@ -370,11 +413,11 @@ TaskEntry* TaskWindow::createEntry(const Task& t) {
 // Add a QListWidgetItem in a specified row with a specified background.
 void TaskWindow::addListItemToRow(TaskEntry* entry, int row, const QString& type) {
 	if (type.compare("select") == 0) {
-		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(176, 175, 175);");
+		entry->ui.background->setStyleSheet(taskEntrySelectStylesheet);
 	} 
 
 	if (type.compare("deselect") == 0) {
-		entry->ui.bg->setStyleSheet("border-radius: 12px; background-color: rgb(203, 202, 202);");
+		entry->ui.background->setStyleSheet(taskEntryNormalStylesheet);
 	}
 
 	QListWidgetItem *listItem = new QListWidgetItem();
@@ -558,4 +601,152 @@ void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
 		addListItemToRow(entry, currSelectedRow, "select");
 		ui.taskList->takeItem(currSelectedRow + 1);
 	}
+}
+
+//================================================
+// PRIVATE THEMING FUNCTIONS
+//================================================
+void TaskWindow::applyDefaultTheme() {
+	setStyleSheet("QLabel,QPushButton { color:#666; } \n"
+					"QWidget { background-color:transparent; } \n"
+					"QPushButton {background-color:transparent;border:none;}\n"
+					"QLabel#taskScope { color:#434343; } \n"
+					"QLabel#border { border-radius:11px; background-color: rgb(74, 74, 74); }\n"
+					"QLabel#bg { background:#FFF; border-radius:9px; } QPushButton#minButton { background-image:url(:/Images/images/theme1/minButton.png);}\n"
+					"QPushButton#closeButton { background-image:url(:/Images/images/theme1/closeButton.png);}\n"
+					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+					"QScrollBar::handle:vertical {background:#ABABAB;border:none;width:7px;}\n"
+					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme1/minButtonHover.png);}\n"
+					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme1/closeButtonHover.png);}\n"
+					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
+
+	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(203, 202, 202);}";
+	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(176, 175, 175);}";
+}
+
+void TaskWindow::applyGreenTheme() {
+	setStyleSheet("QLabel,QPushButton { color:rgb(84,117,17); } \n"
+					"QPushButton {background-color:transparent;border:none;}\n"
+					"QLabel#taskScope { color:rgb(84,117,17); } \n"
+					"QLabel#border { border-radius:11px; background-color: rgb(84,117,17); }\n"
+					"QLabel#bg { background-image: url(:/Images/images/theme2/bg.png); border-radius:9px; } \n"
+					"QPushButton#minButton { background-image:url(:/Images/images/theme2/minButton.png);}\n"
+					"QPushButton#closeButton { background-image:url(:/Images/images/theme2/closeButton.png);}\n"
+					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+					"QScrollBar::handle:vertical {background:rgb(195,223,140);border:none;width:7px;}\n"
+					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme2/minButtonHover.png);}\n"
+					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme2/closeButtonHover.png);}\n"
+					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
+
+	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(195,223,140);}";
+	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(169,198,111);}";
+}
+
+void TaskWindow::applySpaceTheme() {
+	setStyleSheet("QLabel,QPushButton { color:white; } \n"
+					"QWidget { background-color:transparent; } \n"
+					"QPushButton {background-color:transparent;border:none;}\n"
+					"QLabel#taskScope { color:rgb(228,235,255); } \n"
+					"QLabel#border { border-radius:11px; background-color:black; }\n"
+					"QLabel#bg { background-image: url(:/Images/images/theme3/bg.png); border-radius:9px; } \n"
+					"QPushButton#minButton { background-image:url(:/Images/images/theme3/minButton.png);}\n"
+					"QPushButton#closeButton { background-image:url(:/Images/images/theme3/closeButton.png);}\n"
+					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+					"QScrollBar::handle:vertical {background:rgba(4,4,5,232);border:none;width:7px;}\n"
+					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme3/minButtonHover.png);}\n"
+					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme3/closeButtonHover.png);}\n"
+					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
+
+	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(4,8,50,200);}";
+	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(17,25,61,200);}";
+}
+
+void TaskWindow::applyPinkTheme() {
+	setStyleSheet("QLabel,QPushButton { color:rgb(60,60,60); } \n"
+					"QWidget { background-color:transparent; } \n"
+					"QPushButton {background-color:transparent;border:none;}\n"
+					"QLabel#taskScope { color:rgb(215,137,156); } \n"
+					"QLabel#border { border-radius:11px; background-color:rgb(236,169,177); }\n"
+					"QLabel#bg { background-image: url(:/Images/images/theme4/bg.png); border-radius:9px; } \n"
+					"QPushButton#minButton { background-image:url(:/Images/images/theme4/minButton.png);}\n"
+					"QPushButton#closeButton { background-image:url(:/Images/images/theme4/closeButton.png);}\n"
+					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+					"QScrollBar::handle:vertical {background:rgb(255,190,200);border:none;width:7px;}\n"
+					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme4/minButtonHover.png);}\n"
+					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme4/closeButtonHover.png);}\n"
+					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
+	
+	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(255,222,235,200);}";
+	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(255,190,204,200);}";
+}
+
+void TaskWindow::applyPikaTheme() {
+	setStyleSheet("QLabel,QPushButton { color:rgb(100,70,40); } \n"
+					"QWidget { background-color:transparent; } \n"
+					"QPushButton {background-color:transparent;border:none;}\n"
+					"QLabel#taskScope { color:rgb(120,89,49); } \n"
+					"QLabel#border { border-radius:11px; background-color:rgb(192,150,100); }\n"
+					"QLabel#bg { background-image: url(:/Images/images/theme5/bg.png); border-radius:9px; } \n"
+					"QPushButton#minButton { background-image:url(:/Images/images/theme5/minButton.png);}\n"
+					"QPushButton#closeButton { background-image:url(:/Images/images/theme5/closeButton.png);}\n"
+					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+					"QScrollBar::handle:vertical {background:rgba(220,187,135,201);border:none;width:7px;}\n"
+					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme5/minButtonHover.png);}\n"
+					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme5/closeButtonHover.png);}\n"
+					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
+	
+	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(255,249,202,113);}";
+	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(220,187,135,201);}";
+}
+
+void TaskWindow::applyBlueTheme() {
+	setStyleSheet("QLabel,QPushButton { color:rgb(72,122,164); } \n"
+					"QWidget { background-color:transparent; } \n"
+					"QPushButton {background-color:transparent;border:none;}\n"
+					"QLabel#taskScope { color:rgb(56,103,180); } \n"
+					"QLabel#border { border-radius:11px; background-color:rgb(132,174,215); }\n"
+					"QLabel#bg { background-image: url(:/Images/images/theme6/bg.png); border-radius:9px; } \n"
+					"QPushButton#minButton { background-image:url(:/Images/images/theme6/minButton.png);}\n"
+					"QPushButton#closeButton { background-image:url(:/Images/images/theme6/closeButton.png);}\n"
+					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+					"QScrollBar::handle:vertical {background:rgba(169,200,229,113);border:none;width:7px;}\n"
+					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme6/minButtonHover.png);}\n"
+					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme6/closeButtonHover.png);}\n"
+					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
+	
+	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(255,255,255,113);}";
+	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(169,200,229,130);}";
+}
+
+void TaskWindow::applyDogeTheme() {
+	setStyleSheet("QLabel,QPushButton { color:rgb(255,0,0); font:75 18pt \"Comic Sans MS\"; } \n"
+					"QWidget { background-color:transparent; } \n"
+					"QPushButton {background-color:transparent;border:none;}\n"
+					"QLabel#taskScope { color:rgb(0,255,255); font:75 25pt \"Comic Sans MS\";} \n"
+					"QLabel#border { border-radius:11px; background-color:rgb(255,0,0); }\n"
+					"QLabel#bg { background-image: url(:/Images/images/theme7/bg.png); border-radius:9px; } \n"
+					"QPushButton#minButton { background-image:url(:/Images/images/theme7/minButton.png);}\n"
+					"QPushButton#closeButton { background-image:url(:/Images/images/theme7/closeButton.png);}\n"
+					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+					"QScrollBar::handle:vertical {background:rgb(255,255,0);border:none;width:7px;}\n"
+					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme7/minButtonHover.png);}\n"
+					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme7/closeButtonHover.png);}\n"
+					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
+	
+	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(255,255,0);}";
+	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(255,0,222);}";
 }

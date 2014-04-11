@@ -6,8 +6,7 @@
 AboutWindow::AboutWindow(QDialog* parent) : QDialog(parent) {
 	ui.setupUi(this);
 	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
-	
-	ui.label_2->setText("V0.2");
+	ui.label_2->setText("V0.5"); // set version here.
 }
 
 AboutWindow::~AboutWindow() {
@@ -24,9 +23,3 @@ void AboutWindow::showAndCenter() {
 	raise();
 	activateWindow();
 }
-
-/*
-void AboutWindow::closeEvent(QCloseEvent* event) {
-
-} */
-

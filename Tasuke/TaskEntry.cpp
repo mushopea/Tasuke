@@ -6,7 +6,6 @@
 //@author A0100189
 
 TaskEntry::TaskEntry(const Task& t, QWidget* parent) : QWidget(parent), task(t)  {
-	// Initialize field elements
 	initUI();
 	initLabelsArray();
 	initFonts();
@@ -24,25 +23,25 @@ TaskEntry::~TaskEntry() {
 // Highlight ongoing task in green
 void TaskEntry::highlightOngoing() {
 	ui.ongoingLabel->show();	
-	ui.description->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
-	ui.startDate->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
-	ui.endDate->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
-	ui.startTime->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
-	ui.endTime->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
-	ui.tag->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
-	ui.ID->setStyleSheet("background:transparent; color: rgb(44, 115, 0); ");
+	ui.description->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.startDate->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.endDate->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.startTime->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.endTime->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.tag->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.ID->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
 }
 
 // Highlight overdue task in red
 void TaskEntry::highlightOverdue() {
 	ui.overdueLabel->show();	
-	ui.description->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
-	ui.startDate->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
-	ui.endDate->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
-	ui.startTime->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
-	ui.endTime->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
-	ui.tag->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
-	ui.ID->setStyleSheet("background:transparent; color: rgb(166, 0, 0); ");
+	ui.description->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.startDate->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.endDate->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.startTime->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.endTime->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.tag->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.ID->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
 }
 
 // ================================================
@@ -145,6 +144,7 @@ void TaskEntry::initLabelsArray() {
 	labels[(char)TaskEntryLabel::TAG] = ui.tag;
 }
 
+// Sets the font of the fields in task entry
 void TaskEntry::initFonts() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	QString fontFamily = settings.value("Font", "Print Clearly").toString();
@@ -164,14 +164,10 @@ void TaskEntry::initFonts() {
 // This function sets the respective fields in the TaskEntry widget
 void TaskEntry::makeWidget() {
 	setID(task.getId());
-
 	setDescription(task.getDescription());
-
 	setDateTimes(task.getBegin(), task.getEnd());
-
 	if (!task.getTags().isEmpty()) {
 		setTags(task.getTags());
 	}
-
 	setTooltip(task.getDescription(), task.getBegin(), task.getEnd(), task.getTags(), task.getTimeDifferenceString());
 }
