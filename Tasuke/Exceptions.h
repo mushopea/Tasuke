@@ -27,11 +27,6 @@ class ExceptionNotImplemented : public std::exception {
 	virtual const char *what() const throw();
 };
 
-// This exception is thrown when the user tries to add too many tags.
-class ExceptionTooManyTags : public std::exception {
-	virtual const char *what() const throw();
-};
-
 // This exception is thrown when there are no upcoming tasks.
 class ExceptionNoMoreTasks : public std::exception {
 	virtual const char *what() const throw();
