@@ -35,27 +35,27 @@ void Interpreter::setLast(int _last) {
 QString Interpreter::substitute(QString text) {
 	QString subbedText = text;
 	foreach(QRegExp regex, EQUIV_AT_REGEX) {
-		subbedText = subbedText.replace(regex, EQUIV_AT_REPLACE);
+		subbedText.replace(regex, EQUIV_AT_REPLACE);
 	}
 
 	foreach(QRegExp regex, EQUIV_ADD_REGEX) {
-		subbedText = subbedText.replace(regex, COMMAND_ADD);
+		subbedText.replace(regex, COMMAND_ADD);
 	}
 
 	foreach(QRegExp regex, EQUIV_EDIT_REGEX) {
-		subbedText = subbedText.replace(regex, COMMAND_EDIT);
+		subbedText.replace(regex, COMMAND_EDIT);
 	}
 
 	foreach(QRegExp regex, EQUIV_REMOVE_REGEX) {
-		subbedText = subbedText.replace(regex, COMMAND_REMOVE);
+		subbedText.replace(regex, COMMAND_REMOVE);
 	}
 
 	foreach(QRegExp regex, EQUIV_SHOW_REGEX) {
-		subbedText = subbedText.replace(regex, COMMAND_SHOW);
+		subbedText.replace(regex, COMMAND_SHOW);
 	}
 
 	foreach(QRegExp regex, EQUIV_EXIT_REGEX) {
-		subbedText = subbedText.replace(regex, COMMAND_EXIT);
+		subbedText.replace(regex, COMMAND_EXIT);
 	}
 
 	return subbedText;
@@ -63,15 +63,15 @@ QString Interpreter::substitute(QString text) {
 
 QString Interpreter::substituteForRange(QString text) {
 	QString subbedText = text;
-	subbedText = subbedText.replace(EQUIV_TO_REGEX, DELIMITER_DASH);
-	subbedText = subbedText.remove(KEYWORD_BACKSLASH);
+	subbedText.replace(EQUIV_TO_REGEX, DELIMITER_DASH);
+	subbedText.remove(KEYWORD_BACKSLASH);
 
 	return subbedText;
 }
 
 QString Interpreter::substituteForDescription(QString text) {
 	QString subbedText = text;
-	subbedText = subbedText.remove(KEYWORD_BACKSLASH);
+	subbedText.remove(KEYWORD_BACKSLASH);
 
 	return subbedText;
 }
@@ -91,39 +91,39 @@ QString Interpreter::substituteForDate(QString text) {
 
 	// strip commas
 	foreach(QRegExp regex, REMOVE_DATE_REGEX) {
-		subbedText = subbedText.remove(regex);
+		subbedText.remove(regex);
 	}
 
 	// expand out abbrev
-	subbedText = subbedText.replace(DAY_2DAY_REGEX, DAY_TODAY);
-	subbedText = subbedText.replace(DAY_TMR_REGEX, DAY_TOMORROW);
-	subbedText = subbedText.replace(DAY_TML_REGEX, DAY_TOMORROW);
-	subbedText = subbedText.replace(DAY_MON_REGEX, DAY_MONDAY);
-	subbedText = subbedText.replace(DAY_TUE_REGEX, DAY_TUESDAY);
-	subbedText = subbedText.replace(DAY_TUES_REGEX, DAY_TUESDAY);
-	subbedText = subbedText.replace(DAY_WED_REGEX, DAY_WEDNESDAY);
-	subbedText = subbedText.replace(DAY_THU_REGEX, DAY_THURSDAY);
-	subbedText = subbedText.replace(DAY_THUR_REGEX, DAY_THURSDAY);
-	subbedText = subbedText.replace(DAY_THURS_REGEX, DAY_THURSDAY);
-	subbedText = subbedText.replace(DAY_FRI_REGEX, DAY_FRIDAY);
-	subbedText = subbedText.replace(DAY_SAT_REGEX, DAY_SATURDAY);
-	subbedText = subbedText.replace(DAY_SUN_REGEX, DAY_SUNDAY);
+	subbedText.replace(DAY_2DAY_REGEX, DAY_TODAY);
+	subbedText.replace(DAY_TMR_REGEX, DAY_TOMORROW);
+	subbedText.replace(DAY_TML_REGEX, DAY_TOMORROW);
+	subbedText.replace(DAY_MON_REGEX, DAY_MONDAY);
+	subbedText.replace(DAY_TUE_REGEX, DAY_TUESDAY);
+	subbedText.replace(DAY_TUES_REGEX, DAY_TUESDAY);
+	subbedText.replace(DAY_WED_REGEX, DAY_WEDNESDAY);
+	subbedText.replace(DAY_THU_REGEX, DAY_THURSDAY);
+	subbedText.replace(DAY_THUR_REGEX, DAY_THURSDAY);
+	subbedText.replace(DAY_THURS_REGEX, DAY_THURSDAY);
+	subbedText.replace(DAY_FRI_REGEX, DAY_FRIDAY);
+	subbedText.replace(DAY_SAT_REGEX, DAY_SATURDAY);
+	subbedText.replace(DAY_SUN_REGEX, DAY_SUNDAY);
 
 	// today, tomorrow etc.
-	subbedText = subbedText.replace(DAY_YESTERDAY_REGEX, DATE_YESTERDAY);
-	subbedText = subbedText.replace(DAY_TODAY_REGEX, DATE_TODAY);
-	subbedText = subbedText.replace(DAY_TOMORROW_REGEX, DATE_TOMORROW);
-	subbedText = subbedText.replace(DAY_AFTER_TOMORROW_REGEX, DATE_AFTER_TOMORROW);
+	subbedText.replace(DAY_YESTERDAY_REGEX, DATE_YESTERDAY);
+	subbedText.replace(DAY_TODAY_REGEX, DATE_TODAY);
+	subbedText.replace(DAY_TOMORROW_REGEX, DATE_TOMORROW);
+	subbedText.replace(DAY_AFTER_TOMORROW_REGEX, DATE_AFTER_TOMORROW);
 
 	// weekdays
 	for (int i=0; i<DAY_NAMES.size(); i++) {
-		subbedText = subbedText.replace(DAY_NAMES[i],
+		subbedText.replace(DAY_NAMES[i],
 			nextWeekday(i+1).toString(DATE_FORMAT));
 	}
 
 	// time of days
 	for (int i=0; i<TIME_NAMED.size(); i++) {
-		subbedText = subbedText.replace(TIME_NAMES_REGEX[i], TIME_NAMED[i]);
+		subbedText.replace(TIME_NAMES_REGEX[i], TIME_NAMED[i]);
 	}
 
 	return subbedText;

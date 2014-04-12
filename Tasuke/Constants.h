@@ -128,6 +128,68 @@ const QStringList COMMANDS = QStringList() << COMMAND_ADD << COMMAND_EDIT
 	<< COMMAND_UNDONE << COMMAND_UNDO << COMMAND_REDO << COMMAND_CLEAR
 	<< COMMAND_HELP << COMMAND_ABOUT << COMMAND_SETTINGS << COMMAND_EXIT;
 
+const char* const FORMAT_ALL = "add | edit | done | undone | remove "
+	"| show | undo | redo | settings | help | exit";
+const char* const FORMAT_ADD =
+	"add {description}[my task]{/description} {tag}#tag{/tag}";
+const char* const FORMAT_ADD_PERIOD = 
+	"add {description}[my task]{/description} from {date}{start}[start]{/star}"
+	" to {end}[end]{/end}{/date} {tag}#tag{/tag}";
+const char* const FORMAT_ADD_DEADLINE =
+	"add {description}[my task]{/description} by/on/at {date}{end}[end]{/end}"
+	"{/date} {tag}#tag{/tag}";
+const char* const FORMAT_REMOVE = 
+	"remove {id}[task no]{/id} | remove [task no], [task no], ... | "
+	"remove [task no] - [task no]";
+const char* const FORMAT_EDIT = 
+	"edit {id}[task no]{/id} {description}[thing to change] "
+	"-[thing to remove]{/description}";
+const char* const FORMAT_DONE = 
+	"done {id}[task no]{/id} | done [task no], [task no], ... | "
+	"done [task no] - [task no]";
+const char* const FORMAT_UNDONE = 
+	"undone {id}[task no]{/id} | undone [task no], [task no], ... | "
+	"undone [task no] - [task no]";
+const char* const FORMAT_SHOW = 
+	"show [keyword] | done | undone | overdue | ongoing | today | tomorrow";
+const char* const FORMAT_HIDE = "hide";
+const char* const FORMAT_UNDO = "undo {times}[times]{/times} | max";
+const char* const FORMAT_REDO = "redo {times}[times]{/times} | max";
+const char* const FORMAT_CLEAR = "clear";
+const char* const FORMAT_HELP = "help";
+const char* const FORMAT_SETTINGS = "settings";
+const char* const FORMAT_ABOUT = "about";
+const char* const FORMAT_EXIT = "exit";
+
+const char* const DESCRIPTION_ALL = "Use one of these keywords to begin";
+const char* const DESCRIPTION_ADD = "Adds a simple task.";
+const char* const DESCRIPTION_ADD_PERIOD = "Adds a task with a time period.";
+const char* const DESCRIPTION_ADD_DEADLINE = "Adds a task with a deadline.";
+const char* const DESCRIPTION_REMOVE = "Removes task(s) from the list.";
+const char* const DESCRIPTION_EDIT = "Edits existing task.";
+const char* const DESCRIPTION_DONE = "Marks tasks as done.";
+const char* const DESCRIPTION_UNDONE = "Marks tasks as undone.";
+const char* const DESCRIPTION_SHOW = "Shows certain tasks.";
+const char* const DESCRIPTION_HIDE = "Hides the task list.";
+const char* const DESCRIPTION_UNDO = "Undos your last command(s).";
+const char* const DESCRIPTION_REDO = "Redos your last command(s).";
+const char* const DESCRIPTION_CLEAR = "Clears all tasks in your list.";
+const char* const DESCRIPTION_HELP = "Shows the tutorial.";
+const char* const DESCRIPTION_SETTINGS = "Open the settings window.";
+const char* const DESCRIPTION_ABOUT = "Shows about Tasuke.";
+const char* const DESCRIPTION_EXIT = "Exits the program.";
+
+const QRegExp ADD_DEADLINE_REGEX = QRegExp("\\b(by|at|on)\\b");
+const QRegExp ADD_PREIOD_REGEX = QRegExp("\\bfrom\\b");
+const QRegExp BRACE_REGEX = QRegExp("\\{(.*)\\}");
+
+const char* const HTML_ERROR_BEGIN = "<font color='#FA7597'>";
+const char* const HTML_ERROR_END = "</font>";
+const char* const HTML_FORMAT_BEGIN = "<font color='#999'>";
+const char* const HTML_FORMAT_END = "</font>";
+const char* const HTML_DESCRIPTION_BEGIN = "<br<<font color='white'>";
+const char* const HTML_DESCRIPTION_END = "</font>";
+
 const char* const DELIMITER_AT = "@";
 const char* const DELIMITER_HASH = "#";
 const char* const DELIMITER_DASH = "-";
@@ -271,6 +333,11 @@ const QList<QRegExp> EQUIV_SHOW_REGEX = QList<QRegExp>()
 const QList<QRegExp> EQUIV_EXIT_REGEX = QList<QRegExp>()
 	<< QRegExp("^quit\\b");
 const QRegExp EQUIV_TO_REGEX = QRegExp("\\bto\\b");
+
+#define PSEUDO_TAG_BEGIN(tag) \
+	"{"+QString(tag)+"}"
+#define PSEUDO_TAG_END(tag) \
+	"{/"+QString(tag)+"}"
 
 #define MSG_ERROR_PARSING(message) \
 	"Error parsing command" << QString(message).toStdString()
