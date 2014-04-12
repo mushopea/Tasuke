@@ -47,7 +47,7 @@ namespace StorageTests {
 
 		// Should throw an exception because exceed maximum tag count.
 		TEST_METHOD(TaskExceedMaximumTagCount) {
-			Assert::ExpectException<ExceptionTooManyTags>([] {
+			Assert::ExpectException<ExceptionBadCommand>([] {
 				Task task;
 				for (int i=0; i<MAXIMUM_TAGS+1; i++) {
 					task.addTag("tag" + QString::number(i));
