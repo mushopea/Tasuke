@@ -1,5 +1,7 @@
 #include "ThemeStylesheets.h"	
 
+//@author A0100189
+
 QStringList ThemeStylesheets::TASKWINDOW_STYLES = QStringList() << "QLabel,QPushButton { color:#666; } \n" // Theme 1: Default
 																	"QWidget { background-color:transparent; } \n"
 																	"QPushButton {background-color:transparent;border:none;}\n"

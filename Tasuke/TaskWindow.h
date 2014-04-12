@@ -84,7 +84,6 @@ private:
 	Ui::TaskWindowClass ui;	
 	QPoint mpos;
 	qreal wOpacity;
-	bool connectedToSettings;
 	QList<Task> currentTasks;
 	QPropertyAnimation animation;
     QProgressBar progressBar;
@@ -108,7 +107,6 @@ private:
 	// For initialization
 	void initUI();
 	void initUIConnect();
-	void initSettingsConnect();
 	void initTutorial();
 	void initAnimation();
 	void initProgressBar();

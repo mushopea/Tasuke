@@ -10,8 +10,8 @@
 // The task window is the main window.
 // It handles the task list, tutorial, scrolling and focusing on tasks.
 
-TaskWindow::TaskWindow(QWidget* parent) : connectedToSettings(false), currentlySelectedTask(-1),
-										  animation(this, "opacity"), progressBar(this), QMainWindow(parent) {
+TaskWindow::TaskWindow(QWidget* parent) : currentlySelectedTask(-1), animation(this, "opacity"),
+										  progressBar(this), QMainWindow(parent) {
 		LOG(INFO) << "TaskWindow instance created";
 		resetSubheadingIndexes();
 		initUI();
@@ -192,7 +192,6 @@ void TaskWindow::showAndMoveToSide() {
 	if (isVisible()) {
 		return;
 	}
-	initSettingsConnect(); // Connects to settings
 	showTutorialOrTaskList(); // Shows the task list, or tutorial if it's first run.
 	positionAndShow(); // Positions the window then shows it
 }
@@ -352,15 +351,6 @@ void TaskWindow::initUIConnect() {
 	connect(ui.emptyAddTaskButton, SIGNAL(pressed()), this, SLOT(handleAddTaskButton()));
 	connect(ui.doneAllAddButton, SIGNAL(pressed()), this, SLOT(handleAddTaskButton()));
 	connect(ui.backButton, SIGNAL(released()), this, SLOT(handleBackButton()));
-}
-
-void TaskWindow::initSettingsConnect() {
-	if (!connectedToSettings) {
-		connectedToSettings = true;
-		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(fontChanged()), this, SLOT(displayTaskList()));
-		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(themeChanged()), this, SLOT(reloadTheme()));
-		LOG(INFO) << "Connected TaskWindow to SettingsWindow";
-	}
 }
 
 void TaskWindow::initTutorial() {
