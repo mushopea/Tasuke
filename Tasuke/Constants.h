@@ -48,5 +48,25 @@ enum class IconSet : char {
 	ICONSET_LAST_ITEM
 };
 
+// Icon locations
+static const char* NYANSUKE_NORMAL = ":Images/images/icons/nyansukenormal.png";
+static const char* NYANSUKE_SUCCESS = ":Images/images/icons/nyansukesuccess.png";
+static const char* NYANSUKE_FAILURE = ":Images/images/icons/nyansukefailure.png";
+static const char* SYMBOL_NORMAL = ":Images/images/icons/symbolnormal.png";
+static const char* SYMBOL_SUCCESS = ":Images/images/icons/symbolsuccess.png";
+static const char* SYMBOL_FAILURE = ":Images/images/icons/symbolfailure.png";
+static const char* SYMBOL2_NORMAL = ":Images/images/icons/symbolnormal.png";
+static const char* SYMBOL2_SUCCESS = ":Images/images/icons/symbolwhitesuccess.png";
+static const char* SYMBOL2_FAILURE = ":Images/images/icons/symbolwhitefailure.png";
+static const char* NICCAGE_NORMAL = ":Images/images/icons/niccagenormal.png";
+static const char* NICCAGE_SUCCESS = ":Images/images/icons/niccagesuccess.png";
+static const char* NICCAGE_FAILURE = ":Images/images/icons/niccagefailure.png";
+static const char* MEME_NORMAL = ":Images/images/icons/memenormal.png";
+static const char* MEME_SUCCESS = ":Images/images/icons/memesuccess.png";
+static const char* MEME_FAILURE = ":Images/images/icons/memefailure.png";
+static const char* SHIBE_NORMAL = ":Images/images/icons/dogenormal.png";
+static const char* SHIBE_SUCCESS = ":Images/images/icons/dogesuccess.png";
+static const char* SHIBE_FAILURE = ":Images/images/icons/dogefailure.png";
+
 
 #endif

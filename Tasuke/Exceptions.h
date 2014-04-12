@@ -37,4 +37,14 @@ class ExceptionNoMoreTasks : public std::exception {
 	virtual const char *what() const throw();
 };
 
+// This exception is thrown when iconset loaded from settings is out of range
+class ExceptionIconsetOutOfRange : public std::exception {
+	virtual const char *what() const throw();
+};
+
+// This exception is thrown when theme loaded from settings is out of range
+class ExceptionThemeOutOfRange : public std::exception {
+	virtual const char *what() const throw();
+};
+
 #endif

@@ -99,7 +99,7 @@ void TaskEntry::setTooltip(const QString& description, const QDateTime& start, c
 void TaskEntry::setDescription(const QString& description) {
 	assert(!description.isEmpty());
 	ui.description->setText(ui.description->fontMetrics().elidedText(description, Qt::ElideRight, 
-							ui.description->contentsRect().width()));
+																	ui.description->contentsRect().width()));
 }
 
 // Set the date time in the specific format

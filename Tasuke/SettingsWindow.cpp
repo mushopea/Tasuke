@@ -1,4 +1,5 @@
 #include "Tasuke.h"
+#include "Exceptions.h"
 #include "SettingsWindow.h"
 #include <QSettings>
 
@@ -8,6 +9,7 @@
 
 SettingsWindow::SettingsWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "SettingsWindow instance created";
+
 	initUI();
 	initUIConnect();
 	initIconsArray();
@@ -124,6 +126,7 @@ void SettingsWindow::initThemeArray() {
 // This function will initialize the options according to current settings.
 void SettingsWindow::loadCurrSettings() {
 	LOG(INFO) << "Loading current settings into settings window.";
+
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	loadCurrFeatures();
 	loadCurrFont();
@@ -157,16 +160,38 @@ void SettingsWindow::loadCurrFont() {
 
 // Load up current iconset selection
 void SettingsWindow::loadCurrIcons() {
+
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	IconSet currIconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
-	iconSelectButtons[(char)currIconSet]->setChecked(true);
+
+	try {
+		if (currIconSet < (IconSet)0 && currIconSet >= IconSet::ICONSET_LAST_ITEM) {
+			throw ExceptionIconsetOutOfRange();
+		} else {
+			iconSelectButtons[(char)currIconSet]->setChecked(true); // check the option if valid icon enum
+		}
+	} catch (ExceptionIconsetOutOfRange *exception) {
+		// If the icon enum in the settings is out of range, set back to default
+		settings.setValue("Icon", (char)IconSet::NYANSUKE); 
+		loadCurrIcons();
+	}
 }
 
 // Load up current theme selection
 void SettingsWindow::loadCurrTheme() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
-	themeSelectButtons[(char)currTheme]->setChecked(true);
+	try {
+		if (currTheme < (Theme)0 && currTheme >= Theme::THEME_LAST_ITEM) {
+			throw ExceptionThemeOutOfRange();
+		} else {
+			themeSelectButtons[(char)currTheme]->setChecked(true); // check the option if valid icon enum
+		}
+	} catch (ExceptionThemeOutOfRange *exception) {
+		// If the icon enum in the settings is out of range, set back to default
+		settings.setValue("Theme", (char)Theme::DEFAULT); 
+		loadCurrTheme();
+	}
 }
 
 // ============================================================

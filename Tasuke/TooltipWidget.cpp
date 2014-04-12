@@ -1,5 +1,6 @@
 #include "Tasuke.h"
 #include "TooltipWidget.h"
+#include "Constants.h"
 #include <QSettings>
 
 //@author A0100189
@@ -12,12 +13,14 @@
 TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas", 11), fm(font), 
 												animation(this, "pos"), connectedToSettings(false) {
 	LOG(INFO) << "TooltipWidget instance created";
+
 	initUI();
 	initIcons();
 	initAnimation();
 }
 
 TooltipWidget::~TooltipWidget() {
+	LOG(INFO) << "TooltipWidget instance destroyed";
 }
 
 // Changes the text shown on the window then resizes it.
@@ -34,6 +37,7 @@ void TooltipWidget::setText(InputStatus status, QString content) {
 // Shows the widget with animation
 void TooltipWidget::showAndAlign() {
 	LOG(INFO) << "Displaying tooltip widget";
+
 	initConnect();
 	resetAnimation();
 	show();
@@ -43,39 +47,40 @@ void TooltipWidget::showAndAlign() {
 // Initialize icon set from settings
 void TooltipWidget::initIcons() {
 	LOG(INFO) << "Initialising tooltip widget icons";
+
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	IconSet iconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
 
 	switch (iconSet) {
 		case IconSet::NYANSUKE:
-			normalIcon = QPixmap(":Images/images/icons/nyansukenormal.png");
-			successIcon = QPixmap(":Images/images/icons/nyansukesuccess.png");
-			failureIcon = QPixmap(":Images/images/icons/nyansukefailure.png");
+			normalIcon = QPixmap(NYANSUKE_NORMAL);
+			successIcon = QPixmap(NYANSUKE_SUCCESS);
+			failureIcon = QPixmap(NYANSUKE_FAILURE);
 			break;
 		case IconSet::SYMBOLS:
-			normalIcon = QPixmap(":Images/images/icons/symbolnormal.png");
-			successIcon = QPixmap(":Images/images/icons/symbolsuccess.png");
-			failureIcon = QPixmap(":Images/images/icons/symbolfailure.png");
+			normalIcon = QPixmap(SYMBOL_NORMAL);
+			successIcon = QPixmap(SYMBOL_SUCCESS);
+			failureIcon = QPixmap(SYMBOL_FAILURE);
 			break;
 		case IconSet::SYMBOLS2:
-			normalIcon = QPixmap(":Images/images/icons/symbolnormal.png");
-			successIcon = QPixmap(":Images/images/icons/symbolwhitesuccess.png");
-			failureIcon = QPixmap(":Images/images/icons/symbolwhitefailure.png");
+			normalIcon = QPixmap(SYMBOL2_NORMAL);
+			successIcon = QPixmap(SYMBOL2_SUCCESS);
+			failureIcon = QPixmap(SYMBOL2_FAILURE);
 			break;
 		case IconSet::NICCAGE:
-			normalIcon = QPixmap(":Images/images/icons/niccagenormal.png");
-			successIcon = QPixmap(":Images/images/icons/niccagesuccess.png");
-			failureIcon = QPixmap(":Images/images/icons/niccagefailure.png");
+			normalIcon = QPixmap(NICCAGE_NORMAL);
+			successIcon = QPixmap(NICCAGE_SUCCESS);
+			failureIcon = QPixmap(NICCAGE_FAILURE);
 			break;
 		case IconSet::MEME:
-			normalIcon = QPixmap(":Images/images/icons/memenormal.png");
-			successIcon = QPixmap(":Images/images/icons/memesuccess.png");
-			failureIcon = QPixmap(":Images/images/icons/memefailure.png");
+			normalIcon = QPixmap(MEME_NORMAL);
+			successIcon = QPixmap(MEME_SUCCESS);
+			failureIcon = QPixmap(MEME_FAILURE);
 			break;
 		case IconSet::SHIBE:
-			normalIcon = QPixmap(":Images/images/icons/dogenormal.png");
-			successIcon = QPixmap(":Images/images/icons/dogesuccess.png");
-			failureIcon = QPixmap(":Images/images/icons/dogefailure.png");
+			normalIcon = QPixmap(SHIBE_NORMAL);
+			successIcon = QPixmap(SHIBE_SUCCESS);
+			failureIcon = QPixmap(SHIBE_FAILURE);
 			break;
 		default:
 			break;
@@ -120,6 +125,7 @@ void TooltipWidget::initUI() {
 void TooltipWidget::initConnect() {
 	if (!connectedToSettings) {
 		LOG(INFO) << "Connecting Settingswindow to Tooltipwidget";
+
 		connectedToSettings = true;
 		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(iconsChanged()), this, SLOT(initIcons()));
 	}

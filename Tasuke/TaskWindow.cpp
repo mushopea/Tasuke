@@ -1,6 +1,7 @@
 #include "Tasuke.h"
 #include "TaskWindow.h"
 #include "Constants.h"
+#include "Exceptions.h"
 #include "ThemeStylesheets.h"
 #include "SubheadingEntry.h"
 #include <QSettings>
@@ -11,8 +12,9 @@
 // It handles the task list, tutorial, scrolling and focusing on tasks.
 
 TaskWindow::TaskWindow(QWidget* parent) : connectedToSettings(false), currentlySelectedTask(-1),
-										  animation(this, "opacity"), progressBar(this), QMainWindow(parent) {
+	animation(this, "opacity"), progressBar(this), QMainWindow(parent) {
 		LOG(INFO) << "TaskWindow instance created";
+
 		resetSubheadingIndexes();
 		initUI();
 		initTutorial(); 
@@ -43,6 +45,7 @@ void TaskWindow::highlightTask(int taskID) {
 // This function is responsible for showing all the tasks entries and subheadings.
 void TaskWindow::showTasks(const QList<Task>& tasks, const QString& title) {
 	LOG(INFO) << "Displaying task list.";
+
 	previousSize = currentTasks.size(); // Size of previous list
 	currentTasks = tasks; // Update current tasks
 	changeTitle(title); // Change title scope	
@@ -175,7 +178,7 @@ void TaskWindow::positionAndShow() {
 void TaskWindow::showTutorialOrTaskList() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	bool isFirstRun = settings.value("isFirstRun", true).toBool(); // Check if first time running
-	
+
 	if (isFirstRun) {
 		settings.setValue("isFirstRun", false);
 		showTutorialWidget();
@@ -211,6 +214,7 @@ void TaskWindow::handleBackButton() {
 // Displays current tasks
 void TaskWindow::displayTaskList() {
 	LOG(INFO) << "Displaying task list";
+
 	ui.taskList->clear(); // Clear previous list
 	resetSubheadingIndexes(); // Reset subheadings
 	if (currentTasks.size() != 0) {
@@ -228,10 +232,33 @@ void TaskWindow::displayTaskList() {
 // Reloads the theme
 void TaskWindow::reloadTheme() {
 	LOG(INFO) << "Reloading theme in TaskWindow";
+
+	// get current theme ID
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	char currTheme = (char)settings.value("Theme", (char)Theme::DEFAULT).toInt();
-	applyTheme(ThemeStylesheets::TASKWINDOW_STYLES[currTheme], ThemeStylesheets::TASKENTRY_NORMAL_STYLES[currTheme], ThemeStylesheets::TASKENTRY_SELECT_STYLES[currTheme]);
-	displayTaskList();
+	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+
+	try {
+		if (currTheme < (Theme)0 && currTheme >= Theme::THEME_LAST_ITEM) {
+			throw ExceptionThemeOutOfRange();
+		} else {
+			// apply theme
+			applyTheme(
+				ThemeStylesheets::TASKWINDOW_STYLES[(char)currTheme], 
+				ThemeStylesheets::TASKENTRY_NORMAL_STYLES[(char)currTheme], 
+				ThemeStylesheets::TASKENTRY_SELECT_STYLES[(char)currTheme]);
+
+			// refresh the window, focus on first task
+			displayTaskList();
+			if (!currentTasks.isEmpty()) {
+				highlightTask(0);
+			}
+		}
+	} catch (ExceptionThemeOutOfRange *exception) {
+		// If the icon enum in the settings is out of range, set back to default
+		settings.setValue("Theme", (char)Theme::DEFAULT); 
+		reloadTheme();
+	}
+
 }
 
 
@@ -439,8 +466,8 @@ void TaskWindow::addListItem(TaskEntry* entry) {
 
 // Displays a task entry on the list.
 void TaskWindow::displayTask(const Task& t) {
-		TaskEntry * entry = createEntry(t);
-		addListItem(entry);
+	TaskEntry * entry = createEntry(t);
+	addListItem(entry);
 }
 
 int TaskWindow::getTaskEntryRow(int taskRow) const {

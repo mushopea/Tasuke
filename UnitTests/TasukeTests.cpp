@@ -195,6 +195,5 @@ namespace UnitTest {
 			Assert::IsTrue(Tasuke::instance().spellCheck("thursday"));
 			Assert::IsTrue(Tasuke::instance().spellCheck("sunday"));
 		}
-
 	};
 }

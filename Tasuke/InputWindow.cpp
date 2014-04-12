@@ -1,6 +1,7 @@
 #include "Tasuke.h"
 #include "InputWindow.h"
 #include "Interpreter.h"
+#include "Exceptions.h"
 #include "ThemeStylesheets.h"
 #include <QSettings>
 
@@ -157,9 +158,22 @@ void InputWindow::closeAndClear() {
 // Reloads theme according to settings.
 void InputWindow::reloadTheme() {
 	LOG(INFO) << "Reloading theme in InputWindow";
+
+	// Get current theme ID
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	char currTheme = (char)settings.value("Theme", (char)Theme::DEFAULT).toInt();
-	setStyleSheet(ThemeStylesheets::INPUTWINDOW_STYLES[currTheme]);
+	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+
+	try {
+		if (currTheme < (Theme)0 && currTheme >= Theme::THEME_LAST_ITEM) {
+			throw ExceptionThemeOutOfRange();
+		} else {
+			setStyleSheet(ThemeStylesheets::INPUTWINDOW_STYLES[(char)currTheme]); // Apply theme
+		}
+	} catch (ExceptionThemeOutOfRange *exception) {
+		// If the icon enum in the settings is out of range, set back to default
+		settings.setValue("Theme", (char)Theme::DEFAULT); 
+		reloadTheme();
+	}
 }
 
 // Enables or disables features such as highlighter, spellcheck & tooltip according to settings
