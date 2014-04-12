@@ -34,12 +34,10 @@ private:
 	QPixmap normalIcon;
 	QPixmap successIcon;
 	QPixmap failureIcon;
-	bool connectedToSettings; 
 
 	void fitWidthToTextLength(QString text);
 	void setIconOnLabel(InputStatus status);
 	void initUI();
-	void initConnect();
 	void initAnimation();
 	void resetAnimation();
 };

@@ -4,6 +4,8 @@
 #include "Constants.h"
 #include "Exceptions.h"
 
+//@author A0096863M
+
 NotificationManager::NotificationManager() {
 	connect(&timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
 
@@ -17,11 +19,7 @@ NotificationManager& NotificationManager::instance() {
 	static NotificationManager *instance = 0;
 
 	if (instance == 0) {
-		// Allocates memory *before* constructor, so Tasuke::instance() will work within a constructor-called method
-		instance = (NotificationManager *) ::operator new (sizeof(NotificationManager));
-		// Actually runs the constructor now
-		new (instance) NotificationManager;
-		//instance = new NotificationManager();
+		instance = new NotificationManager();
 		return *instance;
 	} else {
 		return *instance;

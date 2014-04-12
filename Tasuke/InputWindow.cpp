@@ -10,7 +10,7 @@
 // The input window handles text input, keyword highlighting and displaying of command tooltip.
 
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent), animation(this, "opacity"), 
-	errorAnimation(this, "pos"), connectedToSettings(false) {
+	errorAnimation(this, "pos") {
 		LOG(INFO) << "InputWindow instance created";
 		initUI();
 		initWidgets();
@@ -122,7 +122,6 @@ void InputWindow::hideEvent(QHideEvent* event) {
 // Shows and moves the input window to center relative to task window
 void InputWindow::showAndCenter() {
 	LOG(INFO) << "Displaying input window";
-	initSettingsConnect();
 
 	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
 	if(Tasuke::instance().getTaskWindow().isVisible()){ // If taskWindow is open
@@ -238,6 +237,7 @@ void InputWindow::initWidgets() {
 // Initialise connection of slots and signals
 void InputWindow::initUIConnect() {
 	connect(ui.lineEdit, SIGNAL(textChanged()), this, SLOT(handleLineEditChanged()));
+	connect(this, SIGNAL(reloadIcons()), tooltipWidget, SLOT(initIcons()));
 }
 
 // Initialize fade in animation of input window
@@ -264,13 +264,3 @@ void InputWindow::initErrorAnimation() {
 	errorAnimation.setStartValue(posBefore); 
 	errorAnimation.setEndValue(posAfter);
 }
-
-void InputWindow::initSettingsConnect() {
-	if (!connectedToSettings) {
-		connectedToSettings = true;
-		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(themeChanged()), this, SLOT(reloadTheme()));
-		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(featuresChanged()), this, SLOT(reloadFeatures()));
-		LOG(INFO) << "Connected InputWindow to SettingsWindow";
-	}
-}
-

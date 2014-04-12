@@ -132,6 +132,11 @@ void Tasuke::initialize(){
 	showTaskWindow();
 
 	connect(inputWindow, SIGNAL(inputChanged(QString)), this, SLOT(handleInputChanged(QString)));
+	connect(settingsWindow, SIGNAL(themeChanged()), inputWindow, SLOT(reloadTheme()));
+	connect(settingsWindow, SIGNAL(featuresChanged()), inputWindow, SLOT(reloadFeatures()));
+	connect(settingsWindow, SIGNAL(iconsChanged()), inputWindow, SIGNAL(reloadIcons()));
+	connect(settingsWindow, SIGNAL(fontChanged()), taskWindow, SLOT(displayTaskList()));
+	connect(settingsWindow, SIGNAL(themeChanged()), taskWindow, SLOT(reloadTheme()));
 }
 
 void Tasuke::setGuiMode(bool mode) {
