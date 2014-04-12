@@ -59,7 +59,7 @@ namespace StorageTests {
 		TEST_METHOD(TaskWithinMaximumTagCount) {
 			Task task;
 			for (int i=0; i<MAXIMUM_TAGS; i++) {
-				task.addTag("tag" + i);
+				task.addTag("tag" + QString::number(i));
 			}
 		}
 
