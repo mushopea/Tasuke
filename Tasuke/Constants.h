@@ -153,7 +153,7 @@ const char* const KEYWORD_ALL = "all";
 const char* const KEYWORD_EVERYTHING = "everything";
 const char* const KEYWORD_MAX = "max";
 const char* const KEYWORD_LAST = "last";
-const char* const KEYWORD_BACKSLASH = "//";
+const char* const KEYWORD_BACKSLASH = "\\";
 
 const char* const TITLE_DONE = "done tasks";
 const char* const TITLE_UNDONE = "undone tasks";
