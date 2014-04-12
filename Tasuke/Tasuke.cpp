@@ -12,60 +12,6 @@
 
 //@author A0096836M
 
-const char* const MSG_TASUKE_CREATED = "Tasuke object created";
-const char* const MSG_TASUKE_DESTROYED = "Tasuke object destroyed";
-const char* const MSG_LOADING_DICTIONARY = "Loading dictionary";
-const char* const MSG_LOADING_FONTS = "Loading fonts";
-const char* const MSG_STORAGE_CHANGED = "Storage changed";
-const char* const MSG_COMMAND_STACK_PUSH =  "Pushing command to history stack";
-const char* const MSG_UNDO = "Undoing command";
-const char* const MSG_NO_UNDO ="Nothing to undo";
-const char* const MSG_REDO = "Redoing command";
-const char* const MSG_NO_REDO = "Nothing to redo";
-
-#define MSG_ERROR_PARSING(message) \
-	"Error parsing command" << QString(message).toStdString()
-#define MSG_SHOWING_MESSAGE(message) \
-	"Showing message: " << QString(message).toStdString()
-#define MSG_UPDATING_TASKWINDOW(tasks) \
-	"Updating task window with " << QString(tasks).toStdString() << " tasks"
-#define MSG_HIGHLIGHT_TASK(id) \
-	"Highlighting task with id  " << id
-
-const char* const SPELL_GB_DICFILE = "en_GB.dic";
-const char* const SPELL_GB_AFFFILE = "en_GB.aff";
-const char* const SPELL_US_DICFILE = "en_US.dic";
-
-const char* const MAC_RESOURCE_PATH = "/../Resources/";
-
-const char* const METATYPE_TRY_RESULT = "TRY_RESULT";
-
-const QStringList SPELL_NONWORD_COMMANDS = QStringList() << "rm" << "ls"
-	<< "nd";
-const QStringList SPELL_MONTH_NAMES = QStringList() << "january" << "february"
-	<< "march" << "april" << "may" << "june" << "july" << "august"
-	<< "september" << "october" << "november" << "december";
-const QStringList SPELL_MONTH_NAMES_SHORT = QStringList() << "jan" << "feb"
-	<< "mar" << "apr" << "jun" << "jul" << "aug" << "sep" << "sept" << "oct"
-	<< "nov" << "dec";
-const QStringList SPELL_DAY_NAMES = QStringList() << "monday" << "tuesday"
-	<< "wednesday" << "thursday" << "friday" << "saturday" << "sunday";
-const QStringList SPELL_DAY_NAMES_SHORT = QStringList() << "mon" << "tue" << "tues"
-	<< "wed" << "thu" << "thur" << "fri" << "sat" << "sun";
-const QList<QStringList> SPELL_INCLUDE_LISTS = QList<QStringList>()
-	<< SPELL_NONWORD_COMMANDS << SPELL_MONTH_NAMES << SPELL_MONTH_NAMES_SHORT
-	<< SPELL_DAY_NAMES << SPELL_DAY_NAMES_SHORT;
-
-const QStringList FONT_LIST = QStringList() << ":/Fonts/fonts/Quicksand_Book.otf"
-	<< ":/Fonts/fonts/Quicksand_Book_Oblique.otf"
-	<< ":/Fonts/fonts/Quicksand_Light.otf"
-	<< ":/Fonts/fonts/Quicksand_Light_Oblique.otf"
-	<< ":/Fonts/fonts/Quicksand_Bold.otf"
-	<< ":/Fonts/fonts/Quicksand_Bold_Oblique.otf"
-	<< ":/Fonts/fonts/PrintClearly.otf"
-	<< ":/Fonts/fonts/PrintBold.otf"
-	<< ":/Fonts/fonts/Consolas.ttf";
-
 bool Tasuke::guiMode = true;
 
 // Constructor for the Tasuke singleton.
@@ -186,6 +132,11 @@ void Tasuke::initialize(){
 	showTaskWindow();
 
 	connect(inputWindow, SIGNAL(inputChanged(QString)), this, SLOT(handleInputChanged(QString)));
+	connect(settingsWindow, SIGNAL(themeChanged()), inputWindow, SLOT(reloadTheme()));
+	connect(settingsWindow, SIGNAL(featuresChanged()), inputWindow, SLOT(reloadFeatures()));
+	connect(settingsWindow, SIGNAL(iconsChanged()), inputWindow, SIGNAL(reloadIcons()));
+	connect(settingsWindow, SIGNAL(fontChanged()), taskWindow, SLOT(displayTaskList()));
+	connect(settingsWindow, SIGNAL(themeChanged()), taskWindow, SLOT(reloadTheme()));
 }
 
 void Tasuke::setGuiMode(bool mode) {
@@ -397,67 +348,70 @@ bool Tasuke::spellCheck(QString word) {
 QString Tasuke::formatTooltipMessage(QString commandString, QString errorString, QString errorWhere) {
 	QString commandType = Interpreter::getType(commandString);
 
-	QString formatPart = "add | edit | done | undone | remove | show | undo | redo | settings | help | exit";
-	QString descriptionPart = "Use one of these keywords to begin";
+	QString formatPart = FORMAT_ALL;
+	QString descriptionPart = DESCRIPTION_ALL;
 
-	if (commandType == "add") {
-		if (commandString.contains(QRegExp("\\bfrom\\b"))) { // period tasks
-			formatPart = "add {description}[my task]{/description} from {date}{start}[start]{/star} to {end}[end]{/end}{/date} {tag}#tag{/tag}";
-			descriptionPart = "Adds a task with a time period.";
-		} else if (commandString.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
-			formatPart = "add {description}[my task]{/description} by/on/at {date}{end}[end]{/end}{/date} {tag}#tag{/tag}";
-			descriptionPart = "Adds a task with a deadline.";
-		} else { // simple tasks
-			formatPart = "add {description}[my task]{/description} {tag}#tag{/tag}";
-			descriptionPart = "Adds a simple task.";
+	if (commandType == COMMAND_ADD) {
+		if (commandString.contains(ADD_PREIOD_REGEX)) {
+			// period tasks
+			formatPart = FORMAT_ADD_PERIOD;
+			descriptionPart = DESCRIPTION_ADD_PERIOD;
+		} else if (commandString.contains(ADD_DEADLINE_REGEX)) {
+			// deadline tasks
+			formatPart = FORMAT_ADD_DEADLINE;
+			descriptionPart = DESCRIPTION_ADD_DEADLINE;
+		} else {
+			// simple tasks
+			formatPart = FORMAT_ADD;
+			descriptionPart = DESCRIPTION_ADD;
 		}
-	} else if (commandType == "remove") {
-		formatPart = "remove {id}[task no]{/id} | remove [task no], [task no], ... | remove [task no] - [task no]";
-		descriptionPart = "Removes task(s) from the list.";
-	} else if (commandType == "edit") {
-		formatPart = "edit {id}[task no]{/id} {description}[thing to change] -[thing to remove]{/description}";
-		descriptionPart = "Edits existing task.";
-	} else if (commandType == "done") {
-		formatPart = "done {id}[task no]{/id} | done [task no], [task no], ... | done [task no] - [task no]";
-		descriptionPart = "Marks tasks as done.";
-	} else if (commandType == "undone") {
-		formatPart = "undone {id}[task no]{/id} | undone [task no], [task no], ... | undone [task no] - [task no]";
-		descriptionPart = "Marks tasks as undone.";
-	} else if (commandType == "show") {
-		formatPart = "show [keyword] | done | undone | overdue | ongoing | today | tomorrow";
-		descriptionPart = "Shows certain tasks.";
-	} else if (commandType == "hide") {
-		formatPart = "hide";		
-		descriptionPart = "Hides the task list.";
-	} else if (commandType == "undo") {
-		formatPart = "undo {times}[times]{/times} | max";	
-		descriptionPart = "Undos your last command(s).";
-	} else if (commandType == "redo") {
-		formatPart = "redo {times}[times]{/times} | max";
-		descriptionPart = "Redos your last command(s).";
-	} else if (commandType == "clear") {
-		formatPart = "clear";
-		descriptionPart = "Clears all tasks in your list.";
-	} else if (commandType == "help") {
-		formatPart = "help";
-		descriptionPart = "Shows the tutorial.";
-	} else if (commandType == "settings") {
-		formatPart = "settings";
-		descriptionPart = "Open the settings window.";
-	} else if (commandType == "about") {
-		formatPart = "about";
-		descriptionPart = "Shows about Tasuke.";
-	} else if (commandType == "exit") {
-		formatPart = "exit";
-		descriptionPart = "Exits the program.";
+	} else if (commandType == COMMAND_REMOVE) {
+		formatPart = FORMAT_REMOVE;
+		descriptionPart = DESCRIPTION_REMOVE;
+	} else if (commandType == COMMAND_EDIT) {
+		formatPart = FORMAT_EDIT;
+		descriptionPart = DESCRIPTION_EDIT;
+	} else if (commandType == COMMAND_DONE) {
+		formatPart = FORMAT_DONE;
+		descriptionPart = DESCRIPTION_DONE;
+	} else if (commandType == COMMAND_UNDONE) {
+		formatPart = FORMAT_UNDONE;
+		descriptionPart = DESCRIPTION_UNDONE;
+	} else if (commandType == COMMAND_SHOW) {
+		formatPart = FORMAT_SHOW;
+		descriptionPart = DESCRIPTION_SHOW;
+	} else if (commandType == COMMAND_HIDE) {
+		formatPart = FORMAT_HIDE;
+		descriptionPart = DESCRIPTION_HIDE;
+	} else if (commandType == COMMAND_UNDO) {
+		formatPart = FORMAT_UNDO;
+		descriptionPart = DESCRIPTION_UNDO;
+	} else if (commandType == COMMAND_REDO) {
+		formatPart = FORMAT_REDO;
+		descriptionPart = DESCRIPTION_REDO;
+	} else if (commandType == COMMAND_CLEAR) {
+		formatPart = FORMAT_CLEAR;
+		descriptionPart = DESCRIPTION_CLEAR;
+	} else if (commandType == COMMAND_HELP) {
+		formatPart = FORMAT_HELP;
+		descriptionPart = DESCRIPTION_HELP;
+	} else if (commandType == COMMAND_SETTINGS) {
+		formatPart = FORMAT_SETTINGS;
+		descriptionPart = DESCRIPTION_SETTINGS;
+	} else if (commandType == COMMAND_ABOUT) {
+		formatPart = FORMAT_ABOUT;
+		descriptionPart = DESCRIPTION_ABOUT;
+	} else if (commandType == COMMAND_EXIT) {
+		formatPart = FORMAT_EXIT;
+		descriptionPart = DESCRIPTION_EXIT;
 	}
 
 	if (!errorWhere.isEmpty()) {
-		formatPart = formatPart.replace("{"+errorWhere+"}", "<font color='#FA7597'>");
-		formatPart = formatPart.replace("{/"+errorWhere+"}", "</font>");
+		formatPart.replace(PSEUDO_TAG_BEGIN(errorWhere), HTML_ERROR_BEGIN);
+		formatPart.replace(PSEUDO_TAG_END(errorWhere), HTML_ERROR_END);
 	}
 
-	QRegExp braceRegex = QRegExp("\\{(.*)\\}");
+	QRegExp braceRegex = BRACE_REGEX;
 	braceRegex.setMinimal(true);
 	formatPart = formatPart.remove(braceRegex);
 
@@ -465,8 +419,8 @@ QString Tasuke::formatTooltipMessage(QString commandString, QString errorString,
 		descriptionPart = errorString;
 	}
 
-	QString message = QString("<font color='#999'>" + formatPart+ "</font>"
-		"<br<<font color='white'>"+descriptionPart + "</font>");
+	QString message = QString(HTML_FORMAT_BEGIN + formatPart + HTML_FORMAT_END
+		+ HTML_DESCRIPTION_BEGIN + descriptionPart + HTML_DESCRIPTION_END);
 
 
 	return message;

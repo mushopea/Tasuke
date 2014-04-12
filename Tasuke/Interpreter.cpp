@@ -12,45 +12,6 @@
 
 //@author A0096836M
 
-const char* const ERROR_MULTIPLE_DATES = "You can't have more than 2 time periods or deadlines in a task.";
-const char* const ERROR_TAG_NO_NAME = "Please give a name for your tag.";
-const char* const ERROR_DONT_UNDERSTAND = "I don't undesrtand this command.";
-const char* const ERROR_ADD_EMPTY = "You need to tell me what to add.";
-const char* const ERROR_NO_DESCRIPTION = "You need to give a description to your task.";
-const char* const ERROR_REMOVE_NO_ID = "You need to tell me which task(s) to remove.";
-const char* const ERROR_EDIT_NO_ID = "You need to tell me which task to edit.";
-const char* const ERROR_EDIT_EMPTY = "You need to tell me what you want to change for the task.";
-const char* const ERROR_DONE_NO_ID = "You need to tell me what to mark as done.";
-const char* const ERROR_UNDONE_NO_ID = "You need to tell me what to mark as undone.";
-const char* const ERROR_NO_LAST = "There is no last task.";
-const char* const ERROR_NO_ID = "You need to give me a task number.";
-const char* const ERROR_DATE_BEGIN = "Please give me a valid start time for this task.";
-const char* const ERROR_DATE_END = "Please give me a valid deadline for this task.";
-
-#define ERROR_DATE_INVALID_PERIOD(timePeriod) \
-	QString("Start time (%1) is after end time (%2).").arg(timePeriod.begin.toString(), timePeriod.end.toString())
-#define ERROR_DATE_NO_A_RANGE(range) \
-	QString("'%1' doesn't look like a valid date range.").arg(range)
-#define ERROR_ID_NO_A_RANGE(range) \
-	QString("'%1' doesn't look like a valid range.").arg(range)
-#define ERROR_ID_INVALID_RANGE(begin, end) \
-	QString("Start number (%1) is after end number (%2).").arg(begin, end)
-#define ERROR_ID_OUT_OF_RANGE(id, numTasks) \
-	QString("There is no task '%1'." \
-	"Please give a number between 1 and %2.").arg(QString::number(id), QString::number(numTasks))
-#define ERROR_NOT_A_NUMBER(number) \
-	QString("'%1' doesn't look like a number.").arg(number)
-#define ERROR_DONT_KNOW(what) \
-	QString("I don't know what to do for '%1'").arg(what)
-
-const char* const WHERE_DATE = "date";
-const char* const WHERE_TAG = "tag";
-const char* const WHERE_DESCRIPTION = "description";
-const char* const WHERE_ID = "id";
-const char* const WHERE_TIMES = "times";
-const char* const WHERE_BEGIN = "begin";
-const char* const WHERE_END = "end";
-
 int Interpreter::last = -1;
 
 bool Interpreter::formatsAlreadyInit = false;
@@ -73,35 +34,44 @@ void Interpreter::setLast(int _last) {
 
 QString Interpreter::substitute(QString text) {
 	QString subbedText = text;
-	subbedText = subbedText.replace(QRegExp("(?:\\s)by\\b"), " @");
-	subbedText = subbedText.replace(QRegExp("(?:\\s)at\\b"), " @");
-	subbedText = subbedText.replace(QRegExp("(?:\\s)from\\b"), " @");
-	subbedText = subbedText.replace(QRegExp("(?:\\s)on\\b"), " @");
+	foreach(QRegExp regex, EQUIV_AT_REGEX) {
+		subbedText.replace(regex, EQUIV_AT_REPLACE);
+	}
 
-	subbedText = subbedText.replace(QRegExp("^do\\b"), "add");
-	subbedText = subbedText.replace(QRegExp("^create\\b"), "add");
-	subbedText = subbedText.replace(QRegExp("^change\\b"), "edit");
-	subbedText = subbedText.replace(QRegExp("^rm\\b"), "remove");
-	subbedText = subbedText.replace(QRegExp("^delete\\b"), "remove");
-	subbedText = subbedText.replace(QRegExp("^ls\\b"), "show");
-	subbedText = subbedText.replace(QRegExp("^quit\\b"), "exit");
-	subbedText = subbedText.replace(QRegExp("^search\\b"), "show");
-	subbedText = subbedText.replace(QRegExp("^find\\b"), "show");
+	foreach(QRegExp regex, EQUIV_ADD_REGEX) {
+		subbedText.replace(regex, COMMAND_ADD);
+	}
+
+	foreach(QRegExp regex, EQUIV_EDIT_REGEX) {
+		subbedText.replace(regex, COMMAND_EDIT);
+	}
+
+	foreach(QRegExp regex, EQUIV_REMOVE_REGEX) {
+		subbedText.replace(regex, COMMAND_REMOVE);
+	}
+
+	foreach(QRegExp regex, EQUIV_SHOW_REGEX) {
+		subbedText.replace(regex, COMMAND_SHOW);
+	}
+
+	foreach(QRegExp regex, EQUIV_EXIT_REGEX) {
+		subbedText.replace(regex, COMMAND_EXIT);
+	}
 
 	return subbedText;
 }
 
-QString Interpreter::substituteForTimePeriod(QString text) {
+QString Interpreter::substituteForRange(QString text) {
 	QString subbedText = text;
-	subbedText = subbedText.replace(" to ", " - ");
-	subbedText = subbedText.replace(" \\to ", " to ");
+	subbedText.replace(EQUIV_TO_REGEX, DELIMITER_DASH);
+	subbedText.remove(KEYWORD_BACKSLASH);
 
 	return subbedText;
 }
 
 QString Interpreter::substituteForDescription(QString text) {
 	QString subbedText = text;
-	subbedText = subbedText.remove("\\");
+	subbedText.remove(KEYWORD_BACKSLASH);
 
 	return subbedText;
 }
@@ -120,59 +90,41 @@ QString Interpreter::substituteForDate(QString text) {
 	QString subbedText = text.toLower();
 
 	// strip commas
-	subbedText = subbedText.replace(QRegExp(",\\b"), "");
-
-	// strip this, next and the
-	subbedText = subbedText.replace(QRegExp("\\bthis\\b"), "");
-	subbedText = subbedText.replace(QRegExp("\\bnext\\b"), "");
-	subbedText = subbedText.replace(QRegExp("\\bnthe\\b"), "");
+	foreach(QRegExp regex, REMOVE_DATE_REGEX) {
+		subbedText.remove(regex);
+	}
 
 	// expand out abbrev
-	subbedText = subbedText.replace(QRegExp("\\b2day\\b"), "today");
-	subbedText = subbedText.replace(QRegExp("\\btmr\\b"), "tomorrow");
-	subbedText = subbedText.replace(QRegExp("\\btml\\b"), "tomorrow");
-	subbedText = subbedText.replace(QRegExp("\\bmon\\b"), "monday");
-	subbedText = subbedText.replace(QRegExp("\\btue\\b"), "tuesday");
-	subbedText = subbedText.replace(QRegExp("\\btues\\b"), "tuesday");
-	subbedText = subbedText.replace(QRegExp("\\bwed\\b"), "wednesday");
-	subbedText = subbedText.replace(QRegExp("\\bthu\\b"), "thursday");
-	subbedText = subbedText.replace(QRegExp("\\bthur\\b"), "thursday");
-	subbedText = subbedText.replace(QRegExp("\\bthurs\\b"), "thursday");
-	subbedText = subbedText.replace(QRegExp("\\bfri\\b"), "friday");
-	subbedText = subbedText.replace(QRegExp("\\bsat\\b"), "saturday");
-	subbedText = subbedText.replace(QRegExp("\\bsun\\b"), "sunday");
+	subbedText.replace(DAY_2DAY_REGEX, DAY_TODAY);
+	subbedText.replace(DAY_TMR_REGEX, DAY_TOMORROW);
+	subbedText.replace(DAY_TML_REGEX, DAY_TOMORROW);
+	subbedText.replace(DAY_MON_REGEX, DAY_MONDAY);
+	subbedText.replace(DAY_TUE_REGEX, DAY_TUESDAY);
+	subbedText.replace(DAY_TUES_REGEX, DAY_TUESDAY);
+	subbedText.replace(DAY_WED_REGEX, DAY_WEDNESDAY);
+	subbedText.replace(DAY_THU_REGEX, DAY_THURSDAY);
+	subbedText.replace(DAY_THUR_REGEX, DAY_THURSDAY);
+	subbedText.replace(DAY_THURS_REGEX, DAY_THURSDAY);
+	subbedText.replace(DAY_FRI_REGEX, DAY_FRIDAY);
+	subbedText.replace(DAY_SAT_REGEX, DAY_SATURDAY);
+	subbedText.replace(DAY_SUN_REGEX, DAY_SUNDAY);
 
 	// today, tomorrow etc.
-	subbedText = subbedText.replace(QRegExp("\\byesterday\\b"), QDate::currentDate().addDays(-1).toString("dd/MM/yyyy"));
-	subbedText = subbedText.replace(QRegExp("\\btoday\\b"), QDate::currentDate().toString("dd/MM/yyyy"));
-	subbedText = subbedText.replace(QRegExp("\\btomorrow\\b"), QDate::currentDate().addDays(1).toString("dd/MM/yyyy"));
-	subbedText = subbedText.replace(QRegExp("\\bday after tomorrow\\b"), QDate::currentDate().addDays(2).toString("dd/MM/yyyy"));
+	subbedText.replace(DAY_YESTERDAY_REGEX, DATE_YESTERDAY);
+	subbedText.replace(DAY_TODAY_REGEX, DATE_TODAY);
+	subbedText.replace(DAY_TOMORROW_REGEX, DATE_TOMORROW);
+	subbedText.replace(DAY_AFTER_TOMORROW_REGEX, DATE_AFTER_TOMORROW);
 
 	// weekdays
-	if (subbedText.contains("monday")) {
-		subbedText = subbedText.replace("monday", nextWeekday(1).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("tuesday")) {
-		subbedText = subbedText.replace("tuesday", nextWeekday(2).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("wednesday")) {
-		subbedText = subbedText.replace("wednesday", nextWeekday(3).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("thursday")) {
-		subbedText = subbedText.replace("thursday", nextWeekday(4).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("friday")) {
-		subbedText = subbedText.replace("friday", nextWeekday(5).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("saturday")) {
-		subbedText = subbedText.replace("saturday", nextWeekday(6).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("sunday")) {
-		subbedText = subbedText.replace("sunday", nextWeekday(7).toString("dd/MM/yyyy"));
+	for (int i=0; i<DAY_NAMES.size(); i++) {
+		subbedText.replace(DAY_NAMES[i],
+			nextWeekday(i+1).toString(DATE_FORMAT));
 	}
 
 	// time of days
-	subbedText = subbedText.replace(QRegExp("\\bdawn\\b"), QTime(6,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bmorning\\b"), QTime(10,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bnoon\\b"), QTime(12,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bafternoon\\b"), QTime(18,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bevening\\b"), QTime(20,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bnight\\b"), QTime(22,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bmidnight\\b"), QTime(23,59).toString("hh:mm ap"));
+	for (int i=0; i<TIME_NAMED.size(); i++) {
+		subbedText.replace(TIME_NAMES_REGEX[i], TIME_NAMED[i]);
+	}
 
 	return subbedText;
 }
@@ -184,30 +136,37 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 	QHash<QString, QString> retVal;
 
 	for (int i=0; i<tokens.size(); i++) {
-		if (tokens[i].size() > 0 && (tokens[i][0] == '@' || tokens[i][0] == '#' || tokens[i] == "-@" || tokens[i].startsWith("-#"))) {
+		if (tokens[i].size() > 0 && (tokens[i][0] == CHAR_DELIMITER_AT
+			|| tokens[i][0] == CHAR_DELIMITER_HASH
+			|| tokens[i] == DELIMITER_DASH_AT
+			|| tokens[i].startsWith(DELIMITER_DASH_HASH))) {
 			current = tokens[i];
 			expectNewDelimiter = false;
 
-			if (tokens[i][0] == '@') {
+			if (tokens[i][0] == CHAR_DELIMITER_AT) {
 				current = tokens[i][0];
 				tokens[i].remove(0,1);
 
 				if (retVal.contains(current) == true) {
 					throw ExceptionBadCommand(ERROR_MULTIPLE_DATES, WHERE_DATE);
 				}
-			} else if (tokens[i][0] == '#') {
+			} else if (tokens[i][0] == CHAR_DELIMITER_HASH) {
 				tokens[i].remove(0,1);
 				expectNewDelimiter = true;
 
 				if (tokens[i].isEmpty()) {
 					throw ExceptionBadCommand(ERROR_TAG_NO_NAME, WHERE_TAG);
 				}
-			} else if (tokens[i] == "-@") {
+			} else if (tokens[i] == DELIMITER_DASH_AT) {
 				tokens[i].remove(0,2);
 				expectNewDelimiter = true;
-			} else if (tokens[i].startsWith("-#")) {
+			} else if (tokens[i].startsWith(DELIMITER_DASH_HASH)) {
 				tokens[i].remove(0,2);
 				expectNewDelimiter = true;
+
+				if (tokens[i].isEmpty()) {
+					throw ExceptionBadCommand(ERROR_TAG_REMOVE_NO_NAME, WHERE_TAG);
+				}
 			}
 		} else {
 			if (expectNewDelimiter) {
@@ -241,72 +200,51 @@ QString Interpreter::getType(QString commandString, bool doSub) {
 	if (doSub) {
 		commandString = substitute(commandString);
 	}
-
-	QStringList delimiters;
-	QStringList typeKeywords;
-
-	delimiters << "@";
-	delimiters << "#";
-	delimiters << "-";
-
-	typeKeywords << "add";
-	typeKeywords << "edit";
-	typeKeywords << "remove";
-	typeKeywords << "show";
-	typeKeywords << "hide";
-	typeKeywords << "done";
-	typeKeywords << "undone";
-	typeKeywords << "undo";
-	typeKeywords << "redo";
-	typeKeywords << "clear";
-	typeKeywords << "help";
-	typeKeywords << "about";
-	typeKeywords << "settings";
-	typeKeywords << "exit";
 	
 	QString temp = commandString.trimmed();
-	
-	for (int i=0; i<delimiters.size(); i++) {
-		temp = temp.split(delimiters[i])[0];
+
+	foreach(QString delimiter, DELIMITERS) {
+		temp = temp.split(delimiter)[0];
 	}
+
 	QStringList tokens = temp.split(' ');
-	for (int i=0; i<tokens.size(); i++) {
-		for (int j=0; j<typeKeywords.size(); j++) {
-			if (tokens[i] == typeKeywords[j]) {
-				return typeKeywords[j];
+	foreach(QString token, tokens) {
+		foreach(QString keyword, COMMANDS) {
+			if (token == keyword) {
+				return keyword;
 			}
 		}
 	}
 
-	return "";
+	return COMMAND_NIL;
 }
 
 // This static helper function returns an instance of a ICommand that represents
 // the user's command. The caller must clean up using delete.
 ICommand* Interpreter::interpret(QString commandString, bool dry) {
-	LOG(INFO) << "Interpretting " << commandString.toStdString();
+	LOG(INFO) << MSG_INTERPRETTING(commandString);
 
 	commandString = substitute(commandString);
 
 	QString commandType = getType(commandString, false);
 
-	if (commandType == "") {
+	if (commandType == COMMAND_NIL) {
 		throw ExceptionBadCommand(ERROR_DONT_UNDERSTAND);
-	} else if (commandType == "add") {
+	} else if (commandType == COMMAND_ADD) {
 		return createAddCommand(commandString);
-	} else if (commandType == "remove") {
+	} else if (commandType == COMMAND_REMOVE) {
 		return createRemoveCommand(commandString);
-	} else if (commandType == "edit") {
+	} else if (commandType == COMMAND_EDIT) {
 		return createEditCommand(commandString);
-	} else if (commandType == "done") {
+	} else if (commandType == COMMAND_DONE) {
 		return createDoneCommand(commandString);
-	} else if (commandType == "undone") {
+	} else if (commandType == COMMAND_UNDONE) {
 		return createUndoneCommand(commandString);
-	} else if (commandType == "clear") {
+	} else if (commandType == COMMAND_CLEAR) {
 		return createClearCommand(commandString);
-	} else if (commandType == "undo") {
+	} else if (commandType == COMMAND_UNDO) {
 		doUndo(commandString, dry);
-	} else if (commandType == "redo") {
+	} else if (commandType == COMMAND_REDO) {
 		doRedo(commandString, dry);
 	}
 	
@@ -315,17 +253,17 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 		return nullptr;
 	}
 
-	if (commandType == "show") {
+	if (commandType == COMMAND_SHOW) {
 		doShow(commandString);
-	} else if (commandType == "hide") {
+	} else if (commandType == COMMAND_HIDE) {
 		doHide();
-	} else if (commandType == "help") {
+	} else if (commandType == COMMAND_HELP) {
 		doHelp();
-	} else if (commandType == "settings") {
+	} else if (commandType == COMMAND_SETTINGS) {
 		doSettings();
-	} else if (commandType == "about") {
+	} else if (commandType == COMMAND_ABOUT) {
 		doAbout();
-	} else if (commandType == "exit") {
+	} else if (commandType == COMMAND_EXIT) {
 		doExit();
 	}
 
@@ -333,7 +271,7 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 }
 
 ICommand* Interpreter::createAddCommand(QString commandString) {
-	commandString = removeBefore(commandString, "add");
+	commandString = removeBefore(commandString, COMMAND_ADD);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
@@ -355,9 +293,9 @@ ICommand* Interpreter::createAddCommand(QString commandString) {
 	foreach(const QString &key, parts.keys()) {
 		QString value = parts[key].trimmed();
 
-		if (key.startsWith('#')) {
+		if (key.startsWith(DELIMITER_HASH)) {
 			task.addTag(value);
-		} else if (key == "@") {
+		} else if (key == DELIMITER_AT) {
 			TIME_PERIOD period = parseTimePeriod(value);
 			task.setBegin(period.begin);
 			task.setEnd(period.end);
@@ -368,7 +306,7 @@ ICommand* Interpreter::createAddCommand(QString commandString) {
 }
 
 ICommand* Interpreter::createRemoveCommand(QString commandString) {
-	commandString = removeBefore(commandString, "remove");
+	commandString = removeBefore(commandString, COMMAND_REMOVE);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
@@ -389,7 +327,7 @@ ICommand* Interpreter::createRemoveCommand(QString commandString) {
 }
 
 ICommand* Interpreter::createEditCommand(QString commandString) {
-	commandString = removeBefore(commandString, "edit");
+	commandString = removeBefore(commandString, COMMAND_EDIT);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
@@ -414,15 +352,15 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 		if (key == "") {
 			value = substituteForDescription(value);
 			task.setDescription(value);
-		} else if (key.startsWith('#')) {
+		} else if (key.startsWith(DELIMITER_HASH)) {
 			task.addTag(value);
-		} else if (key == "@") {
+		} else if (key == DELIMITER_AT) {
 			TIME_PERIOD period = parseTimePeriod(value);
 			task.setBegin(period.begin);
 			task.setEnd(period.end);
-		} else if (key.startsWith("-#")) {
+		} else if (key.startsWith(DELIMITER_DASH_HASH)) {
 			task.removeTag(value);
-		} else if (key.startsWith("-@")) {
+		} else if (key.startsWith(DELIMITER_DASH_AT)) {
 			task.setBegin(QDateTime());
 			task.setEnd(QDateTime());
 		}
@@ -436,7 +374,7 @@ ICommand* Interpreter::createClearCommand(QString commandString) {
 }
 
 ICommand* Interpreter::createDoneCommand(QString commandString) {
-	commandString = removeBefore(commandString, "done");
+	commandString = removeBefore(commandString, COMMAND_DONE);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
@@ -457,7 +395,7 @@ ICommand* Interpreter::createDoneCommand(QString commandString) {
 }
 
 ICommand* Interpreter::createUndoneCommand(QString commandString) {
-	commandString = removeBefore(commandString, "undone");
+	commandString = removeBefore(commandString, COMMAND_UNDONE);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
@@ -478,45 +416,46 @@ ICommand* Interpreter::createUndoneCommand(QString commandString) {
 }
 
 void Interpreter::doShow(QString commandString) {
-	commandString = removeBefore(commandString, "show");
+	commandString = removeBefore(commandString, COMMAND_SHOW);
 	commandString = commandString.trimmed();
 
-	if (commandString == "done") {
+	if (commandString == KEYWORD_DONE) {
 		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return task.isDone();
 		});
-		Tasuke::instance().updateTaskWindow(results, "done");
-	} else if (commandString == "undone") {
+		Tasuke::instance().updateTaskWindow(results, TITLE_DONE);
+	} else if (commandString == KEYWORD_UNDONE) {
 		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDone();
+			return !task.isDone();
 		});
-		Tasuke::instance().updateTaskWindow(results, "undone");
-	} else if (commandString == "ongoing") {
+		Tasuke::instance().updateTaskWindow(results, TITLE_UNDONE);
+	} else if (commandString == KEYWORD_ONGOING) {
 		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return task.isOngoing();
 		});
-		Tasuke::instance().updateTaskWindow(results, "ongoing");
-	} else if (commandString == "overdue") {
+		Tasuke::instance().updateTaskWindow(results, TITLE_ONGOING);
+	} else if (commandString == KEYWORD_OVERDUE) {
 		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return task.isOverdue();
 		});
-		Tasuke::instance().updateTaskWindow(results, "overdue");
-	} else if (commandString == "today") {
+		Tasuke::instance().updateTaskWindow(results, TITLE_OVERDUE);
+	} else if (commandString == KEYWORD_TODAY) {
 		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return task.isDueToday();
 		});
-		Tasuke::instance().updateTaskWindow(results, "due today");
-	} else if (commandString == "tomorrow") {
+		Tasuke::instance().updateTaskWindow(results, TITLE_TODAY);
+	} else if (commandString == KEYWORD_TOMORROW) {
 		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return task.isDueTomorrow();
 		});
-		Tasuke::instance().updateTaskWindow(results, "due tomorrow");
-	} else  if (commandString == "" || commandString == "all" || commandString == "everything") {
+		Tasuke::instance().updateTaskWindow(results, TITLE_TOMORROW);
+	} else  if (commandString == KEYWORD_NIL || commandString == KEYWORD_ALL
+		|| commandString == KEYWORD_EVERYTHING) {
 		Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	} else if (commandString.startsWith("#") && !commandString.contains(" ")) {
+	} else if (commandString.startsWith(DELIMITER_HASH) && !commandString.contains(" ")) {
 		QString tag = commandString.remove(0,1);
 		QList<Task> results = Tasuke::instance().getStorage().searchByTag(tag);
-		Tasuke::instance().updateTaskWindow(results, "#" + tag);
+		Tasuke::instance().updateTaskWindow(results, DELIMITER_HASH + tag);
 	} else {
 		commandString = substituteForDescription(commandString);
 		QList<Task> results = Tasuke::instance().getStorage().searchByDescription(commandString);
@@ -532,12 +471,12 @@ void Interpreter::doHide() {
 	Tasuke::instance().hideTaskWindow();
 }
 void Interpreter::doUndo(QString commandString, bool dry) {
-	commandString = removeBefore(commandString, "undo");
+	commandString = removeBefore(commandString, COMMAND_UNDO);
 	commandString = commandString.trimmed();
 
 	int times = 1;
 
-	if (commandString == "max") {
+	if (commandString == KEYWORD_MAX) {
 		times = Tasuke::instance().undoSize();
 	} else if (!commandString.isEmpty()) {
 		bool ok = false;
@@ -557,12 +496,12 @@ void Interpreter::doUndo(QString commandString, bool dry) {
 	}
 }
 void Interpreter::doRedo(QString commandString, bool dry) {
-	commandString = removeBefore(commandString, "redo");
+	commandString = removeBefore(commandString, COMMAND_REDO);
 	commandString = commandString.trimmed();
 
 	int times = 1;
 
-	if (commandString == "max") {
+	if (commandString == KEYWORD_MAX) {
 		times = Tasuke::instance().redoSize();
 	} else if (!commandString.isEmpty()) {
 		bool ok = false;
@@ -594,7 +533,7 @@ void Interpreter::doExit() {
 int Interpreter::parseId(QString idString) {
 	idString = idString.trimmed();
 
-	if (idString == "last") {
+	if (idString == KEYWORD_LAST) {
 		if (last < 0) {
 			throw ExceptionBadCommand(ERROR_NO_LAST, WHERE_ID);
 		}
@@ -622,7 +561,7 @@ QList<int> Interpreter::parseIdList(QString idListString) {
 	
 	QList<int> results;
 	
-	if (idListString == "all") {
+	if (idListString == KEYWORD_ALL) {
 		int lastId = Tasuke::instance().getStorage().totalTasks();
 		for (int i=1; i<=lastId; i++) {
 			results.push_back(i);
@@ -630,7 +569,7 @@ QList<int> Interpreter::parseIdList(QString idListString) {
 		return results;
 	}
 
-	QStringList idListParts = idListString.split(",");
+	QStringList idListParts = idListString.split(DELIMITER_COMMA);
 	foreach(QString idListPart, idListParts) {
 		results.append(parseIdRange(idListPart));
 	}
@@ -639,23 +578,24 @@ QList<int> Interpreter::parseIdList(QString idListString) {
 }
 
 QList<int> Interpreter::parseIdRange(QString idRangeString) {
+	idRangeString = substituteForRange(idRangeString);
 	idRangeString = idRangeString.trimmed();
-
+	
 	QList<int> results;
 	QList<Task> special;
-	if (idRangeString == "done") {
+	if (idRangeString == KEYWORD_DONE) {
 		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return task.isDone();
 		});
-	} else if (idRangeString == "overdue") {
+	} else if (idRangeString == KEYWORD_OVERDUE) {
 		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return task.isOverdue();
 		});
-	} else if (idRangeString == "today") {
+	} else if (idRangeString == KEYWORD_TODAY) {
 		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return task.isDueToday();
 		});
-	} else if (idRangeString == "undone") {
+	} else if (idRangeString == KEYWORD_UNDONE) {
 		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return !task.isDone();
 		});
@@ -670,7 +610,7 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 		return results;
 	}
 
-	QStringList idRangeParts = idRangeString.split("-");
+	QStringList idRangeParts = idRangeString.split(DELIMITER_DASH);
 
 	if (idRangeParts.size() == 1) {
 		results.push_back(parseId(idRangeParts[0]));
@@ -693,9 +633,9 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 }
 
 Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) {
-	timePeriodString = substituteForTimePeriod(timePeriodString);
+	timePeriodString = substituteForRange(timePeriodString);
 
-	QStringList timePeriodParts = timePeriodString.split("-");
+	QStringList timePeriodParts = timePeriodString.split(DELIMITER_DASH);
 	TIME_PERIOD timePeriod;
 
 	if (timePeriodParts.size() > 2) {
@@ -727,11 +667,12 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) 
 QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 	dateString = substituteForDate(dateString);
 	dateString = dateString.trimmed();
+	dateString = dateString.toLower();
 
 	QDate currentDate = QDate::currentDate();
-	QTime timePart = QTime(23,59);
+	QTime timePart = TIME_BEFORE_MIDNIGHT;
 	if (!isEnd) {
-		timePart = QTime(0,0);
+		timePart = TIME_MIDNIGHT;
 	}
 
 	if (!formatsAlreadyInit) {
@@ -740,7 +681,7 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 
 	QDateTime retVal;
 
-	if (dateString.contains("am") || dateString.contains("pm") || dateString.contains("AM") || dateString.contains("PM")) {
+	if (dateString.contains(TIME_AM) || dateString.contains(TIME_PM)) {
 		// if the datetime contains am/pm means we can cut our search space
 
 		// these formats need the date added
@@ -817,9 +758,9 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		retVal = QDateTime::fromString(dateString, dateFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			if (date.year() < 2000) {
+			if (date.year() < YEARS_MILIENIUM) {
 				// add a century
-				date = date.addYears(100);
+				date = date.addYears(YEARS_CENTURY);
 				retVal.setDate(date);
 			}
 			retVal.setTime(timePart);
@@ -832,9 +773,9 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		retVal = QDateTime::fromString(dateString, dateTimeFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			if (date.year() < 2000) {
+			if (date.year() < YEARS_MILIENIUM) {
 				// add a century
-				date = date.addYears(100);
+				date = date.addYears(YEARS_CENTURY);
 				retVal.setDate(date);
 			}
 			return retVal;
@@ -871,7 +812,7 @@ void Interpreter::generateTimeFormats() {
 	
 	hourFormats << "h" << "hh";
 	minuteFomats << "mm";
-	amPmFormats << "ap" << "AP";
+	amPmFormats << "ap";
 	separators << " " << ":" << ".";
 	optionalSpaces << " " << "";
 

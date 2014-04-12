@@ -3,16 +3,9 @@
 #include <QMessageBox>
 #include <QSharedMemory>
 #include "Tasuke.h"
+#include "Constants.h"
 
 //@author A0096836M
-
-const char* const TASUKE = "Tasuke";
-const char* const NAME_ORGANIZATION = TASUKE;
-const char* const NAME_APPLICATION = TASUKE;
-const char* const SHARED_MEMORY_KEY = TASUKE;
-
-const char* const MSG_STARTING_UP = "Tasuke starting up!";
-const char* const MSG_ALREADY_RUNNING =  "Tasuke is already running! Open Tasuke using ctrl+space";
 
 void exitIfAlreadyRunning() {
 	QSharedMemory sharedMemory;

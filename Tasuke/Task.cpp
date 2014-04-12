@@ -407,6 +407,7 @@ bool Task::isEvent() const {
 }
 
 // Returns true if this task is equal to the other task; otherwise returns false.
+// The ID field is not considered because ID is unique for each object.
 bool Task::operator==(Task const& other) const {
 	bool isSameDescription = (description==other.getDescription());
 	bool isSameTags = (tags==other.getTagsSet());
@@ -417,7 +418,8 @@ bool Task::operator==(Task const& other) const {
 	return (isSameDescription && isSameTags && isSameBegin && isSameEnd && isSameDone);
 }
 
-// Returns true if this task is different to the other task; otherwise returns false;
+// Returns true if this task is different to the other task; otherwise returns false.
+// The ID field is not considered because ID is unique for each object.
 bool Task::operator!=(Task const& other) const {
 	bool isSameDescription = (description==other.getDescription());
 	bool isSameTags = (tags==other.getTagsSet());

@@ -32,7 +32,7 @@ private:
 	static QMutex mutex;
 	
 	static QString substitute(QString text);
-	static QString substituteForTimePeriod(QString text);
+	static QString substituteForRange(QString text);
 	static QString substituteForDate(QString text);
 	static QString substituteForDescription(QString text);
 

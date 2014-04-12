@@ -12,8 +12,7 @@
 // Interface class for Storage.
 class IStorage {
 protected:
-	//QList<Task> tasks;
-	QList<QSharedPointer<Task>> tasks;
+	QList< QSharedPointer<Task> > tasks;
 	QMutex mutex;
 
 public:
@@ -32,9 +31,6 @@ public:
 	QList<Task> search(std::function<bool(Task)> predicate) const;
 	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 	QList<Task> searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
-	QList<Task> searchByEndDate(QDateTime byThisDate);
-	QList<Task> searchByBeginDate(QDateTime fromThisDate);
-	QList<Task> searchByDateTimeInterval(QDateTime fromThisDate, QDateTime byThisDate);
 
 	QDateTime nextFreeTime();
 
@@ -67,8 +63,8 @@ private:
 public:
 	Storage();
 	Storage(QString path);
-	void loadFile();
-	void saveFile();
+	void loadFile() override;
+	void saveFile() override;
 };
 
 #endif

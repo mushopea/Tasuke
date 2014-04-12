@@ -11,7 +11,7 @@
 // Hence, tooltip widget's parent is the input window.
 
 TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas", 11), fm(font), 
-												animation(this, "pos"), connectedToSettings(false) {
+												animation(this, "pos") {
 	LOG(INFO) << "TooltipWidget instance created";
 
 	initUI();
@@ -38,7 +38,6 @@ void TooltipWidget::setText(InputStatus status, QString content) {
 void TooltipWidget::showAndAlign() {
 	LOG(INFO) << "Displaying tooltip widget";
 
-	initConnect();
 	resetAnimation();
 	show();
 	animation.start();
@@ -122,14 +121,6 @@ void TooltipWidget::initUI() {
 	setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::Tool);
 }
 
-void TooltipWidget::initConnect() {
-	if (!connectedToSettings) {
-		LOG(INFO) << "Connecting Settingswindow to Tooltipwidget";
-
-		connectedToSettings = true;
-		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(iconsChanged()), this, SLOT(initIcons()));
-	}
-}
 
 // ===================================
 // animation

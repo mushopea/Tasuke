@@ -41,6 +41,7 @@ protected:
 
 signals:
 	void inputChanged(QString text);
+	void reloadIcons();
 
 private slots:
 	void handleReturnPressed();
@@ -57,7 +58,6 @@ private:
 	QPropertyAnimation animation;
 	QPropertyAnimation errorAnimation;
 	qreal wOpacity;
-	bool connectedToSettings;
 	bool showTooltip;
 	
 	// ====================================================
@@ -72,7 +72,6 @@ private:
 	void initUIConnect();
 	void initAnimation();
 	void initErrorAnimation();
-	void initSettingsConnect();
 };
 
 #endif // INPUTWINDOW_H
