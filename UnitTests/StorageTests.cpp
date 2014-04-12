@@ -50,7 +50,7 @@ namespace StorageTests {
 			Assert::ExpectException<ExceptionTooManyTags>([] {
 				Task task;
 				for (int i=0; i<MAXIMUM_TAGS+1; i++) {
-					task.addTag("tag" + i);
+					task.addTag("tag" + QString::number(i));
 				}
 			});
 		}
