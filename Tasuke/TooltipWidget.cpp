@@ -4,6 +4,11 @@
 
 //@author A0100189
 
+// The tooltip guide displays when user is inputting a command. It aims to guide the user on formats.
+// It can be called by logic when it wants to send feedback.
+// The signals of the user inputting command is handled by the input window.
+// Hence, tooltip widget's parent is the input window.
+
 TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas", 11), fm(font), 
 												animation(this, "pos"), connectedToSettings(false) {
 	LOG(INFO) << "TooltipWidget instance created";

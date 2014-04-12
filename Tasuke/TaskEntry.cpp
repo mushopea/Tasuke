@@ -5,6 +5,9 @@
 
 //@author A0100189
 
+// Each TaskEntry object represents a Task with different ID, description, dates and tags.
+// They are entered into the listWidget in TaskWindow.
+
 TaskEntry::TaskEntry(const Task& t, QWidget* parent) : QWidget(parent), task(t)  {
 	initUI();
 	initLabelsArray();
@@ -54,6 +57,7 @@ QString TaskEntry::createTagString(const QList<QString>& tags) const {
 	strTags.prepend("#");
 	if (tags.size() > 1) {
 		for (int i = 1; i < tags.size(); i++) { // Iterate through the list to create a string of tags
+			assert(!tags[i].isEmpty());
 			strTags.append(", #");
 			strTags.append(tags[i]);
 		}

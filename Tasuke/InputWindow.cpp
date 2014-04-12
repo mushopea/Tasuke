@@ -1,9 +1,13 @@
 #include "Tasuke.h"
 #include "InputWindow.h"
 #include "Interpreter.h"
+#include "ThemeStylesheets.h"
 #include <QSettings>
 
 //@author A0100189
+
+// The input window is also the command box. 
+// The input window handles text input, keyword highlighting and displaying of command tooltip.
 
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent), animation(this, "opacity"), 
 	errorAnimation(this, "pos"), connectedToSettings(false) {
@@ -27,10 +31,12 @@ void InputWindow::showTooltipMessage(InputStatus status, QString message) {
 	tooltipWidget->setText(status, message);
 }
 
+// Hide tooltip
 void InputWindow::hideTooltip() {
 	tooltipWidget->hide();
 }
 
+// Starts error wiggle animation
 void InputWindow::doErrorAnimation() {
 	errorAnimation.start();
 }
@@ -39,6 +45,7 @@ void InputWindow::doErrorAnimation() {
 //	EVENTS
 // ====================================================
 
+// Handles keyboard events
 bool InputWindow::eventFilter(QObject* object, QEvent* event) {
 	if(event->type() == QEvent::KeyPress) {
 		// enter key
@@ -149,42 +156,17 @@ void InputWindow::closeAndClear() {
 
 // Reloads theme according to settings.
 void InputWindow::reloadTheme() {
-	LOG(INFO) << "Reloading theme in INPUTWINDOW";
+	LOG(INFO) << "Reloading theme in InputWindow";
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
-
-	switch (currTheme) {
-	case Theme::DEFAULT:
-		applyDefaultTheme();
-		break;
-	case Theme::GREEN:
-		applyGreenTheme();
-		break;
-	case Theme::SPACE:
-		applySpaceTheme();
-		break;
-	case Theme::PINK:
-		applyPinkTheme();
-		break;
-	case Theme::PIKACHU:
-		applyPikaTheme();
-		break;
-	case Theme::BLUE:
-		applyBlueTheme();
-		break;
-	case Theme::DOGE:
-		applyDogeTheme();
-		break;
-	default:
-		break;
-	}
+	char currTheme = (char)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+	setStyleSheet(ThemeStylesheets::INPUTWINDOW_STYLES[currTheme]);
 }
 
 // Enables or disables features such as highlighter, spellcheck & tooltip according to settings
 void InputWindow::reloadFeatures() {
-	LOG(INFO) << "Reloading highlighter in INPUTWINDOW";
+	LOG(INFO) << "Reloading highlighter in InputWindow";
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	
+
 	bool highlightCommandsEnabled = settings.value("HighlightCommandsEnabled", true).toBool();
 	highlighter->setCommandsEnabled(highlightCommandsEnabled);
 
@@ -292,55 +274,3 @@ void InputWindow::initSettingsConnect() {
 	}
 }
 
-
-//===================================
-// THEMING 
-//===================================
-void InputWindow::applyDefaultTheme() {
-	setStyleSheet("QLabel#bg{border-radius: 8px; background-color: white;}"
-		"QLabel#border{border-radius: 10px; background-color: rgb(74, 74, 74);}"
-		"QTextEdit{background-color: transparent;}"
-		"background:transparent;");
-}
-
-void InputWindow::applyGreenTheme() {
-	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme2/bg.png);}"
-		"QLabel#border{border-radius: 10px; background-color: rgb(84,117,17);}"
-		"QTextEdit{background-color: transparent; color: rgb(40,40,40);}"
-		"background:transparent;");
-}
-
-void InputWindow::applySpaceTheme() {
-	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme3/bg.png);}"
-		"QLabel#border{border-radius: 10px; background-color: black;}"
-		"QTextEdit{background-color: transparent; color: white;}"
-		"background:transparent;");
-}
-
-void InputWindow::applyPinkTheme() {
-	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme4/bg.png);}"
-		"QLabel#border{border-radius: 10px; background-color: rgb(236,169,177);}"
-		"QTextEdit{background-color: transparent; color: rgb(40,40,40);}"
-		"background:transparent;");
-}
-
-void InputWindow::applyPikaTheme() {
-	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme5/bg.png);}"
-		"QLabel#border{border-radius: 10px; background-color: rgb(192,150,100);}"
-		"QTextEdit{background-color: transparent; color: rgb(120,89,49);}"
-		"background:transparent;");
-}
-
-void InputWindow::applyBlueTheme() {
-	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme6/bg.png);}"
-		"QLabel#border{border-radius: 10px; background-color: rgb(132,174,215);}"
-		"QTextEdit{background-color: transparent;color: rgb(40,40,40);}"
-		"background:transparent;");
-}
-
-void InputWindow::applyDogeTheme() {
-	setStyleSheet("QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme7/inputbg.png);}"
-		"QLabel#border{border-radius: 10px; background-color: rgb(255,0,222);}"
-		"QTextEdit{background-color: transparent; color: rgb(255,0,0);	font: 75 25pt \"Comic Sans MS\";}"
-		"background:transparent;");
-}

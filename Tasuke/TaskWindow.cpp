@@ -1,10 +1,14 @@
 #include "Tasuke.h"
 #include "TaskWindow.h"
 #include "Constants.h"
+#include "ThemeStylesheets.h"
 #include "SubheadingEntry.h"
 #include <QSettings>
 
 //@author A0100189
+
+// The task window is the main window.
+// It handles the task list, tutorial, scrolling and focusing on tasks.
 
 TaskWindow::TaskWindow(QWidget* parent) : connectedToSettings(false), currentlySelectedTask(-1),
 										  animation(this, "opacity"), progressBar(this), QMainWindow(parent) {
@@ -128,22 +132,56 @@ void TaskWindow::gotoNextSection() {
 // STACKED WIDGET FUNCTIONS
 //=========================================
 
-// Returns 0 if task list is shown, 1 if tutorial is shown
+// Returns the page the window is currently at
 int TaskWindow::getScreen() const {
 	return ui.stackedWidget->currentIndex();
 }
 
+// Handles changing of categories (tabs) in tutorial window
 void TaskWindow::changeTutorialWidgetTabs(){
 	tutorial.changeTabs();
 }
 
+// Slides to the task list page
 void TaskWindow::showListWidget() {
+	LOG(INFO) << "Showing task list page";
 	ui.stackedWidget->slideInIdx(TASKS_PAGE);
 }
 
+// Slides to the tutorial page
 void TaskWindow::showTutorialWidget() {
+	LOG(INFO) << "Showing tutorial page";
 	ui.stackedWidget->slideInIdx(TUTORIAL_PAGE);
 	tutorial.reset();
+}
+//========================================
+// WINDOW DISPLAY FUNCTIONS
+//=========================================
+
+// Positions and shows window
+void TaskWindow::positionAndShow() {
+	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
+	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
+	move(center);
+
+	animation.start();
+	raise();
+	activateWindow();
+	show();
+	setWindowState(Qt::WindowActive);
+}
+
+// Shows the tutorial for first time users, or the task list if not.
+void TaskWindow::showTutorialOrTaskList() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	bool isFirstRun = settings.value("isFirstRun", true).toBool(); // Check if first time running
+	
+	if (isFirstRun) {
+		settings.setValue("isFirstRun", false);
+		showTutorialWidget();
+	} else {
+		showListWidget();
+	}
 }
 
 //========================================
@@ -154,18 +192,9 @@ void TaskWindow::showAndMoveToSide() {
 	if (isVisible()) {
 		return;
 	}
-	initSettingsConnect();
-	showListWidget(); // Shows the task list
-
-	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
-	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
-	move(center);
-
-	animation.start();
-	raise();
-	activateWindow();
-	show();
-	setWindowState(Qt::WindowActive);
+	initSettingsConnect(); // Connects to settings
+	showTutorialOrTaskList(); // Shows the task list, or tutorial if it's first run.
+	positionAndShow(); // Positions the window then shows it
 }
 
 // Shows message when task list is empty.
@@ -198,36 +227,10 @@ void TaskWindow::displayTaskList() {
 
 // Reloads the theme
 void TaskWindow::reloadTheme() {
-	LOG(INFO) << "Reloading theme in TASKWINDOW";
+	LOG(INFO) << "Reloading theme in TaskWindow";
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
-
-	switch (currTheme) {
-		case Theme::DEFAULT:
-			applyDefaultTheme();
-			break;
-		case Theme::GREEN:
-			applyGreenTheme();
-			break;
-		case Theme::SPACE:
-			applySpaceTheme();
-			break;
-		case Theme::PINK:
-			applyPinkTheme();
-			break;
-		case Theme::PIKACHU:
-			applyPikaTheme();
-			break;
-		case Theme::BLUE:
-			applyBlueTheme();
-			break;
-		case Theme::DOGE:
-			applyDogeTheme();
-			break;
-		default:
-			break;
-	}
-
+	char currTheme = (char)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+	applyTheme(ThemeStylesheets::TASKWINDOW_STYLES[currTheme], ThemeStylesheets::TASKENTRY_NORMAL_STYLES[currTheme], ThemeStylesheets::TASKENTRY_SELECT_STYLES[currTheme]);
 	displayTaskList();
 }
 
@@ -241,19 +244,21 @@ void TaskWindow::closeEvent(QCloseEvent *event) {
 	event->ignore();
 }
 
+// Detects user is trying to move TaskWindow.
 void TaskWindow::mousePressEvent(QMouseEvent *event) {
 	mpos = event->pos();
 }
 
+// Helps move the TaskWindow according to mouse pointer.
 void TaskWindow::mouseMoveEvent(QMouseEvent *event) {
 	if (event->buttons() && Qt::LeftButton) {
 		QPoint diff = event->pos() - mpos;
 		QPoint newpos = this->pos() + diff;
-
 		this->move(newpos);
 	}
 }
 
+// Handles keyboard events
 bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 	if (event->type() == QEvent::KeyPress) {	
 		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
@@ -326,10 +331,8 @@ bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
 				showListWidget();
 				return true;
 			}
-
 		}
 	}
-
 	return QObject::eventFilter(object, event);
 }
 
@@ -604,149 +607,11 @@ void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
 }
 
 //================================================
-// PRIVATE THEMING FUNCTIONS
+// PRIVATE THEMING FUNCTION
 //================================================
-void TaskWindow::applyDefaultTheme() {
-	setStyleSheet("QLabel,QPushButton { color:#666; } \n"
-					"QWidget { background-color:transparent; } \n"
-					"QPushButton {background-color:transparent;border:none;}\n"
-					"QLabel#taskScope { color:#434343; } \n"
-					"QLabel#border { border-radius:11px; background-color: rgb(74, 74, 74); }\n"
-					"QLabel#bg { background:#FFF; border-radius:9px; } QPushButton#minButton { background-image:url(:/Images/images/theme1/minButton.png);}\n"
-					"QPushButton#closeButton { background-image:url(:/Images/images/theme1/closeButton.png);}\n"
-					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
-					"QScrollBar::handle:vertical {background:#ABABAB;border:none;width:7px;}\n"
-					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
-					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
-					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme1/minButtonHover.png);}\n"
-					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme1/closeButtonHover.png);}\n"
-					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
 
-	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(203, 202, 202);}";
-	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(176, 175, 175);}";
-}
-
-void TaskWindow::applyGreenTheme() {
-	setStyleSheet("QLabel,QPushButton { color:rgb(84,117,17); } \n"
-					"QPushButton {background-color:transparent;border:none;}\n"
-					"QLabel#taskScope { color:rgb(84,117,17); } \n"
-					"QLabel#border { border-radius:11px; background-color: rgb(84,117,17); }\n"
-					"QLabel#bg { background-image: url(:/Images/images/theme2/bg.png); border-radius:9px; } \n"
-					"QPushButton#minButton { background-image:url(:/Images/images/theme2/minButton.png);}\n"
-					"QPushButton#closeButton { background-image:url(:/Images/images/theme2/closeButton.png);}\n"
-					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
-					"QScrollBar::handle:vertical {background:rgb(195,223,140);border:none;width:7px;}\n"
-					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
-					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
-					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme2/minButtonHover.png);}\n"
-					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme2/closeButtonHover.png);}\n"
-					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
-
-	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(195,223,140);}";
-	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(169,198,111);}";
-}
-
-void TaskWindow::applySpaceTheme() {
-	setStyleSheet("QLabel,QPushButton { color:white; } \n"
-					"QWidget { background-color:transparent; } \n"
-					"QPushButton {background-color:transparent;border:none;}\n"
-					"QLabel#taskScope { color:rgb(228,235,255); } \n"
-					"QLabel#border { border-radius:11px; background-color:black; }\n"
-					"QLabel#bg { background-image: url(:/Images/images/theme3/bg.png); border-radius:9px; } \n"
-					"QPushButton#minButton { background-image:url(:/Images/images/theme3/minButton.png);}\n"
-					"QPushButton#closeButton { background-image:url(:/Images/images/theme3/closeButton.png);}\n"
-					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
-					"QScrollBar::handle:vertical {background:rgba(4,4,5,232);border:none;width:7px;}\n"
-					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
-					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
-					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme3/minButtonHover.png);}\n"
-					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme3/closeButtonHover.png);}\n"
-					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
-
-	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(17,21,36,200);}";
-	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(17,25,61,200);}";
-}
-
-void TaskWindow::applyPinkTheme() {
-	setStyleSheet("QLabel,QPushButton { color:rgb(60,60,60); } \n"
-					"QWidget { background-color:transparent; } \n"
-					"QPushButton {background-color:transparent;border:none;}\n"
-					"QLabel#taskScope { color:rgb(215,137,156); } \n"
-					"QLabel#border { border-radius:11px; background-color:rgb(236,169,177); }\n"
-					"QLabel#bg { background-image: url(:/Images/images/theme4/bg.png); border-radius:9px; } \n"
-					"QPushButton#minButton { background-image:url(:/Images/images/theme4/minButton.png);}\n"
-					"QPushButton#closeButton { background-image:url(:/Images/images/theme4/closeButton.png);}\n"
-					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
-					"QScrollBar::handle:vertical {background:rgb(255,190,200);border:none;width:7px;}\n"
-					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
-					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
-					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme4/minButtonHover.png);}\n"
-					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme4/closeButtonHover.png);}\n"
-					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
-	
-	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(255,222,235,200);}";
-	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(255,190,204,200);}";
-}
-
-void TaskWindow::applyPikaTheme() {
-	setStyleSheet("QLabel,QPushButton { color:rgb(100,70,40); } \n"
-					"QWidget { background-color:transparent; } \n"
-					"QPushButton {background-color:transparent;border:none;}\n"
-					"QLabel#taskScope { color:rgb(120,89,49); } \n"
-					"QLabel#border { border-radius:11px; background-color:rgb(192,150,100); }\n"
-					"QLabel#bg { background-image: url(:/Images/images/theme5/bg.png); border-radius:9px; } \n"
-					"QPushButton#minButton { background-image:url(:/Images/images/theme5/minButton.png);}\n"
-					"QPushButton#closeButton { background-image:url(:/Images/images/theme5/closeButton.png);}\n"
-					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
-					"QScrollBar::handle:vertical {background:rgba(220,187,135,201);border:none;width:7px;}\n"
-					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
-					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
-					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme5/minButtonHover.png);}\n"
-					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme5/closeButtonHover.png);}\n"
-					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
-	
-	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(255,249,202,113);}";
-	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(220,187,135,201);}";
-}
-
-void TaskWindow::applyBlueTheme() {
-	setStyleSheet("QLabel,QPushButton { color:rgb(72,122,164); } \n"
-					"QWidget { background-color:transparent; } \n"
-					"QPushButton {background-color:transparent;border:none;}\n"
-					"QLabel#taskScope { color:rgb(56,103,180); } \n"
-					"QLabel#border { border-radius:11px; background-color:rgb(132,174,215); }\n"
-					"QLabel#bg { background-image: url(:/Images/images/theme6/bg.png); border-radius:9px; } \n"
-					"QPushButton#minButton { background-image:url(:/Images/images/theme6/minButton.png);}\n"
-					"QPushButton#closeButton { background-image:url(:/Images/images/theme6/closeButton.png);}\n"
-					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
-					"QScrollBar::handle:vertical {background:rgba(169,200,229,113);border:none;width:7px;}\n"
-					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
-					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
-					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme6/minButtonHover.png);}\n"
-					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme6/closeButtonHover.png);}\n"
-					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
-	
-	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(255,255,255,113);}";
-	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgba(169,200,229,130);}";
-}
-
-void TaskWindow::applyDogeTheme() {
-	setStyleSheet("QLabel,QPushButton { color:rgb(255,0,0); font:75 18pt \"Comic Sans MS\"; } \n"
-					"QWidget { background-color:transparent; } \n"
-					"QPushButton {background-color:transparent;border:none;}\n"
-					"QLabel#taskScope { color:rgb(0,255,255); font:75 25pt \"Comic Sans MS\";} \n"
-					"QLabel#border { border-radius:11px; background-color:rgb(255,0,0); }\n"
-					"QLabel#bg { background-image: url(:/Images/images/theme7/bg.png); border-radius:9px; } \n"
-					"QPushButton#minButton { background-image:url(:/Images/images/theme7/minButton.png);}\n"
-					"QPushButton#closeButton { background-image:url(:/Images/images/theme7/closeButton.png);}\n"
-					"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
-					"QScrollBar::handle:vertical {background:rgb(255,255,0);border:none;width:7px;}\n"
-					"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
-					"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
-					"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme7/minButtonHover.png);}\n"
-					"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme7/closeButtonHover.png);}\n"
-					"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n");
-	
-	taskEntryNormalStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(255,255,0);}";
-	taskEntrySelectStylesheet = "QLabel#background{border-radius: 12px; background-color: rgb(255,0,222);}";
+void TaskWindow::applyTheme(const QString mainStyle, const QString normalTaskEntryStyle, const QString selectedTaskEntryStyle) {
+	setStyleSheet(mainStyle);
+	taskEntryNormalStylesheet = normalTaskEntryStyle;
+	taskEntrySelectStylesheet = selectedTaskEntryStyle;
 }

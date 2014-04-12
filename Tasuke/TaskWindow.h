@@ -49,6 +49,10 @@ public:
 	void showListWidget();
 	void showTutorialWidget();
 
+	// Window display functions
+	void positionAndShow();
+	void showTutorialOrTaskList();
+
 public slots:
 	void showAndMoveToSide();
 	void handleAddTaskButton();
@@ -136,14 +140,8 @@ private:
 	void jumpToCurrentlySelectedTask();
 	void highlightCurrentlySelectedTask(int prevsize);
 
-	// Functions that apply themes
-	void applyDefaultTheme();
-	void applyGreenTheme();
-	void applySpaceTheme();
-	void applyPinkTheme();
-	void applyPikaTheme();
-	void applyBlueTheme();
-	void applyDogeTheme();
+	// Theming
+	void applyTheme(const QString mainStyle, const QString normalTaskEntryStyle, const QString selectedTaskEntryStyle);
 };
 
 #endif // TASKWINDOW_H

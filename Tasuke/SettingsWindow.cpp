@@ -4,15 +4,12 @@
 
 //@author A0100189
 
+// The settings window handles changing of settings inside the settings window.
+
 SettingsWindow::SettingsWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "SettingsWindow instance created";
-
-	ui.setupUi(this);
-	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
-
-	connect(ui.OK, SIGNAL(pressed()), this, SLOT(handleOKButton()));
-	connect(ui.apply, SIGNAL(pressed()), this, SLOT(handleApplyButton()));
-
+	initUI();
+	initUIConnect();
 	initIconsArray();
 	initThemeArray();
 }
@@ -91,6 +88,16 @@ void SettingsWindow::showEvent(QShowEvent *event) {
 // Initializers
 // ============================================================
 
+void SettingsWindow::initUI() {
+	ui.setupUi(this);
+	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
+}
+
+void SettingsWindow::initUIConnect() {
+	connect(ui.OK, SIGNAL(pressed()), this, SLOT(handleOKButton()));
+	connect(ui.apply, SIGNAL(pressed()), this, SLOT(handleApplyButton()));
+}
+
 void SettingsWindow::initIconsArray() {
 	iconSelectButtons[(char)IconSet::MEME] = ui.optionMeme;
 	iconSelectButtons[(char)IconSet::NICCAGE] = ui.optionNicCage;
@@ -116,6 +123,7 @@ void SettingsWindow::initThemeArray() {
 
 // This function will initialize the options according to current settings.
 void SettingsWindow::loadCurrSettings() {
+	LOG(INFO) << "Loading current settings into settings window.";
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	loadCurrFeatures();
 	loadCurrFont();
@@ -201,6 +209,7 @@ void SettingsWindow::editIcons() {
 		if (iconSelectButtons[i]->isChecked()) {
 			settings.setValue("Icon", i);
 			if (oldIcons != (IconSet)i) {
+				LOG(INFO) << "Tooltip feedback icon has changed.";
 				emit iconsChanged();
 			}
 			break;
@@ -216,6 +225,7 @@ void SettingsWindow::editTheme() {
 		if (themeSelectButtons[i]->isChecked()) {
 			settings.setValue("Theme", i);
 			if (oldTheme != (Theme)i) {
+				LOG(INFO) << "Theme has been changed.";
 				emit themeChanged();
 			}
 			break;

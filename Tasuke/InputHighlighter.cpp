@@ -4,6 +4,8 @@
 
 //@author A0100189
 
+// This class is a subclass of QSyntaxHighlighter.
+// It handles color highlighting of input window's text's commands keywords and spellcheck.
 InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent), commandsEnabled(true), spellcheckEnabled(true) {
 	setRegex();
 	setupColorsFormatsRules();
@@ -13,6 +15,7 @@ InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(p
 // ========================================
 // GETTERS & SETTERS
 // ========================================
+
 bool InputHighlighter::getCommandsEnabled() const {
 	return commandsEnabled;
 }

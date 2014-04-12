@@ -3,6 +3,7 @@
 
 //@author A0100189
 
+// Tutorial widget handles the tutorial slideshow. Hence, it has many Next and Prev buttons.
 TutorialWidget::TutorialWidget(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "Tutorialwidget instance created";
 	initUI();
