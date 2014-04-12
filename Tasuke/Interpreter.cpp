@@ -426,7 +426,7 @@ void Interpreter::doShow(QString commandString) {
 		Tasuke::instance().updateTaskWindow(results, TITLE_DONE);
 	} else if (commandString == KEYWORD_UNDONE) {
 		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDone();
+			return !task.isDone();
 		});
 		Tasuke::instance().updateTaskWindow(results, TITLE_UNDONE);
 	} else if (commandString == KEYWORD_ONGOING) {
@@ -439,7 +439,7 @@ void Interpreter::doShow(QString commandString) {
 			return task.isOverdue();
 		});
 		Tasuke::instance().updateTaskWindow(results, TITLE_OVERDUE);
-	} else if (commandString == KEYWORD_OVERDUE) {
+	} else if (commandString == KEYWORD_TODAY) {
 		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
 			return task.isDueToday();
 		});
