@@ -12,6 +12,45 @@
 
 //@author A0096836M
 
+const char* const ERROR_MULTIPLE_DATES = "You can't have more than 2 time periods or deadlines in a task.";
+const char* const ERROR_TAG_NO_NAME = "Please give a name for your tag.";
+const char* const ERROR_DONT_UNDERSTAND = "I don't undesrtand this command.";
+const char* const ERROR_ADD_EMPTY = "You need to tell me what to add.";
+const char* const ERROR_NO_DESCRIPTION = "You need to give a description to your task.";
+const char* const ERROR_REMOVE_NO_ID = "You need to tell me which task(s) to remove.";
+const char* const ERROR_EDIT_NO_ID = "You need to tell me which task to edit.";
+const char* const ERROR_EDIT_EMPTY = "You need to tell me what you want to change for the task.";
+const char* const ERROR_DONE_NO_ID = "You need to tell me what to mark as done.";
+const char* const ERROR_UNDONE_NO_ID = "You need to tell me what to mark as undone.";
+const char* const ERROR_NO_LAST = "There is no last task.";
+const char* const ERROR_NO_ID = "You need to give me a task number.";
+const char* const ERROR_DATE_BEGIN = "Please give me a valid start time for this task.";
+const char* const ERROR_DATE_END = "Please give me a valid deadline for this task.";
+
+#define ERROR_DATE_INVALID_PERIOD(timePeriod) \
+	QString("Start time (%1) is after end time (%2).").arg(timePeriod.begin.toString(), timePeriod.end.toString())
+#define ERROR_DATE_NO_A_RANGE(range) \
+	QString("'%1' doesn't look like a valid date range.").arg(range)
+#define ERROR_ID_NO_A_RANGE(range) \
+	QString("'%1' doesn't look like a valid range.").arg(range)
+#define ERROR_ID_INVALID_RANGE(begin, end) \
+	QString("Start number (%1) is after end number (%2).").arg(begin, end)
+#define ERROR_ID_OUT_OF_RANGE(id, numTasks) \
+	QString("There is no task '%1'." \
+	"Please give a number between 1 and %2.").arg(QString::number(id), QString::number(numTasks))
+#define ERROR_NOT_A_NUMBER(number) \
+	QString("'%1' doesn't look like a number.").arg(number)
+#define ERROR_DONT_KNOW(what) \
+	QString("I don't know what to do for '%1'").arg(what)
+
+const char* const WHERE_DATE = "date";
+const char* const WHERE_TAG = "tag";
+const char* const WHERE_DESCRIPTION = "description";
+const char* const WHERE_ID = "id";
+const char* const WHERE_TIMES = "times";
+const char* const WHERE_BEGIN = "begin";
+const char* const WHERE_END = "end";
+
 int Interpreter::last = -1;
 
 bool Interpreter::formatsAlreadyInit = false;
@@ -154,14 +193,14 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 				tokens[i].remove(0,1);
 
 				if (retVal.contains(current) == true) {
-					throw ExceptionBadCommand("You can't have more than 2 time periods or deadlines in a task.", "date");
+					throw ExceptionBadCommand(ERROR_MULTIPLE_DATES, WHERE_DATE);
 				}
 			} else if (tokens[i][0] == '#') {
 				tokens[i].remove(0,1);
 				expectNewDelimiter = true;
 
 				if (tokens[i].isEmpty()) {
-					throw ExceptionBadCommand("Please give a name for your tag.", "tag");
+					throw ExceptionBadCommand(ERROR_TAG_NO_NAME, WHERE_TAG);
 				}
 			} else if (tokens[i] == "-@") {
 				tokens[i].remove(0,2);
@@ -172,7 +211,7 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 			}
 		} else {
 			if (expectNewDelimiter) {
-				throw ExceptionBadCommand(QString("I don't know what to do for '%1'").arg(tokens[i]), "description");
+				throw ExceptionBadCommand(ERROR_DONT_KNOW(tokens[i]), WHERE_DESCRIPTION);
 			}
 		}
 
@@ -252,7 +291,7 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 	QString commandType = getType(commandString, false);
 
 	if (commandType == "") {
-		throw ExceptionBadCommand("I don't undesrtand this command.");
+		throw ExceptionBadCommand(ERROR_DONT_UNDERSTAND);
 	} else if (commandType == "add") {
 		return createAddCommand(commandString);
 	} else if (commandType == "remove") {
@@ -298,7 +337,7 @@ ICommand* Interpreter::createAddCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You need to tell me what to add.", "description");
+		throw ExceptionBadCommand(ERROR_ADD_EMPTY, WHERE_DESCRIPTION);
 	}
 
 	QHash<QString, QString> parts = decompose(commandString);
@@ -308,7 +347,7 @@ ICommand* Interpreter::createAddCommand(QString commandString) {
 	description = substituteForDescription(description);
 
 	if (description.isEmpty()) {
-		throw ExceptionBadCommand("You need to give a description to your task.", "description");
+		throw ExceptionBadCommand(ERROR_NO_DESCRIPTION, WHERE_DESCRIPTION);
 	}
 
 	task.setDescription(description);
@@ -333,7 +372,7 @@ ICommand* Interpreter::createRemoveCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You need to tell me which task(s) to remove.", "id");
+		throw ExceptionBadCommand(ERROR_REMOVE_NO_ID, WHERE_ID);
 	}
 
 	QList<int> ids = parseIdList(commandString);
@@ -354,7 +393,7 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You need to tell me which task to edit.", "id");
+		throw ExceptionBadCommand(ERROR_EDIT_NO_ID, WHERE_ID);
 	}
 
 	QString idString = commandString.split(' ')[0];
@@ -363,7 +402,7 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 	commandString = commandString.section(' ', 1);
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You need to tell me what you want to change for the task.", "description");
+		throw ExceptionBadCommand(ERROR_EDIT_EMPTY, WHERE_DESCRIPTION);
 	}
 
 	QHash<QString, QString> parts = decompose(commandString);
@@ -401,7 +440,7 @@ ICommand* Interpreter::createDoneCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You need to tell me what to mark as done.", "id");
+		throw ExceptionBadCommand(ERROR_DONE_NO_ID, WHERE_ID);
 	}
 
 	QList<int> ids = parseIdList(commandString);
@@ -422,7 +461,7 @@ ICommand* Interpreter::createUndoneCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You need to tell me what to mark as undone.", "id");
+		throw ExceptionBadCommand(ERROR_UNDONE_NO_ID, WHERE_ID);
 	}
 
 	QList<int> ids = parseIdList(commandString);
@@ -505,7 +544,7 @@ void Interpreter::doUndo(QString commandString, bool dry) {
 		times = commandString.toInt(&ok);
 
 		if (ok == false) {
-			throw ExceptionBadCommand(QString("'%1' doesn't look like a number.").arg(commandString), "times");
+			throw ExceptionBadCommand(ERROR_NOT_A_NUMBER(commandString), WHERE_TIMES);
 		}
 	}
 
@@ -530,7 +569,7 @@ void Interpreter::doRedo(QString commandString, bool dry) {
 		times = commandString.toInt(&ok);
 
 		if (ok == false) {
-			throw ExceptionBadCommand(QString("'%1' doesn't look like a number.").arg(commandString), "times");
+			throw ExceptionBadCommand(ERROR_NOT_A_NUMBER(commandString), WHERE_TIMES);
 		}
 	}
 
@@ -557,7 +596,7 @@ int Interpreter::parseId(QString idString) {
 
 	if (idString == "last") {
 		if (last < 0) {
-			throw ExceptionBadCommand("There is no last task.", "id");
+			throw ExceptionBadCommand(ERROR_NO_LAST, WHERE_ID);
 		}
 		return last;
 	}
@@ -566,13 +605,13 @@ int Interpreter::parseId(QString idString) {
 	int id = idString.toInt(&ok);
 
 	if (ok == false) {
-		throw ExceptionBadCommand(QString("You need to give me a task number.").arg(idString), "id");
+		throw ExceptionBadCommand(ERROR_NO_ID, WHERE_ID);
 	}
 
 	int numTasks = Tasuke::instance().getStorage().totalTasks();
 
 	if (id < 1 || id > numTasks) {
-		throw ExceptionBadCommand(QString("There is no task '%1'. Please give a number between 1 and %2.").arg(QString::number(id), QString::number(numTasks)), "id");
+		throw ExceptionBadCommand(ERROR_ID_OUT_OF_RANGE(id, numTasks), WHERE_ID);
 	}
 
 	return id;
@@ -640,14 +679,14 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 		int end = parseId(idRangeParts[1]);
 
 		if (end < begin) {
-			throw ExceptionBadCommand(QString("Start number (%1) is after end number (%2).").arg(begin, end), "id");
+			throw ExceptionBadCommand(ERROR_ID_INVALID_RANGE(begin, end), WHERE_ID);
 		}
 
 		for (int i=begin; i<=end; i++) {
 			results.push_back(i);
 		}
 	} else {
-		throw ExceptionBadCommand(QString("'%1' doesn't look like a valid range.").arg(idRangeString), "id");
+		throw ExceptionBadCommand(ERROR_ID_NO_A_RANGE(idRangeString), WHERE_ID);
 	}
 
 	return results;
@@ -660,7 +699,7 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) 
 	TIME_PERIOD timePeriod;
 
 	if (timePeriodParts.size() > 2) {
-		throw ExceptionBadCommand(QString("'%1' doesn't look like a valid date range.").arg(timePeriodString), "date");
+		throw ExceptionBadCommand(ERROR_DATE_NO_A_RANGE(timePeriodString), WHERE_DATE);
 	}
 
 	if (timePeriodParts.size() == 1) {
@@ -670,16 +709,16 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) 
 		timePeriod.end = parseDate(timePeriodParts[1]);
 
 		if (!timePeriod.begin.isValid()) {
-			throw ExceptionBadCommand("Please give me a valid start time for this task.", "begin");
+			throw ExceptionBadCommand(ERROR_DATE_BEGIN, WHERE_BEGIN);
 		}
 	}
 
 	if (!timePeriod.end.isValid()) {
-		throw ExceptionBadCommand("Please give me a valid deadline for this task.", "end");
+		throw ExceptionBadCommand(ERROR_DATE_END, WHERE_END);
 	}
 
 	if (timePeriod.begin.isValid() && timePeriod.end < timePeriod.begin) {
-		throw ExceptionBadCommand(QString("Start time (%1) is after end time (%2).").arg(timePeriod.begin.toString(), timePeriod.end.toString()), "date");
+		throw ExceptionBadCommand(ERROR_DATE_INVALID_PERIOD(timePeriod), WHERE_DATE);
 	}
 
 	return timePeriod;
