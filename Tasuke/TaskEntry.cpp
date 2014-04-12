@@ -57,6 +57,7 @@ QString TaskEntry::createTagString(const QList<QString>& tags) const {
 	strTags.prepend("#");
 	if (tags.size() > 1) {
 		for (int i = 1; i < tags.size(); i++) { // Iterate through the list to create a string of tags
+			assert(!tags[i].isEmpty());
 			strTags.append(", #");
 			strTags.append(tags[i]);
 		}

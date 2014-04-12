@@ -8,13 +8,8 @@
 
 SettingsWindow::SettingsWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "SettingsWindow instance created";
-
-	ui.setupUi(this);
-	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
-
-	connect(ui.OK, SIGNAL(pressed()), this, SLOT(handleOKButton()));
-	connect(ui.apply, SIGNAL(pressed()), this, SLOT(handleApplyButton()));
-
+	initUI();
+	initUIConnect();
 	initIconsArray();
 	initThemeArray();
 }
@@ -92,6 +87,16 @@ void SettingsWindow::showEvent(QShowEvent *event) {
 // ============================================================
 // Initializers
 // ============================================================
+
+void SettingsWindow::initUI() {
+	ui.setupUi(this);
+	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
+}
+
+void SettingsWindow::initUIConnect() {
+	connect(ui.OK, SIGNAL(pressed()), this, SLOT(handleOKButton()));
+	connect(ui.apply, SIGNAL(pressed()), this, SLOT(handleApplyButton()));
+}
 
 void SettingsWindow::initIconsArray() {
 	iconSelectButtons[(char)IconSet::MEME] = ui.optionMeme;
