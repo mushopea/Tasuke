@@ -150,58 +150,6 @@ QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensi
 	return results;
 }
 
-// Searches all tasks for those that ends by (end date is no later than)
-// specified date-time.
-QList<Task> IStorage::searchByEndDate(QDateTime byThisDate) {
-	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Searching by end date/time.";
-	QList<Task> results;
-
-	for (int i=0; i<tasks.size(); i++) {
-		if (tasks[i]->getEnd() <= byThisDate) {
-			results.push_back(*tasks[i]);
-		}
-	}
-
-	return results;
-}
-
-// Searches all tasks for those that begins from (start date is no earlier than)
-// specified date-time.
-QList<Task> IStorage::searchByBeginDate(QDateTime fromThisDate) {
-	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Searching by begin date/time.";
-	QList<Task> results;
-
-	for (int i=0; i<tasks.size(); i++) {
-		if (tasks[i]->getBegin() >= fromThisDate) {
-			results.push_back(*tasks[i]);
-		}
-	}
-
-	return results;
-}
-
-// Searches all tasks that exist within a specified date-time interval.
-// For a task to qualify, its start date must be no earlier than fromThisDate, and
-// its end date must be no later than byThisDate.
-QList<Task> IStorage::searchByDateTimeInterval(QDateTime fromThisDate, QDateTime byThisDate) {
-	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Searching by date/time interval.";
-	QList<Task> results;
-
-	for (int i=0; i<tasks.size(); i++) {
-		bool fromStart = tasks[i]->getBegin() >= fromThisDate;
-		bool byEnd = tasks[i]->getEnd() <= byThisDate;
-
-		if (fromStart && byEnd) {
-			results.push_back(*tasks[i]);
-		}
-	}
-
-	return results;
-}
-
 // Retrieves the next available free time.
 // Starts by assuming that the current time is free.
 // Then search through all tasks for ongoing events and take the ongoing event with the latest 
