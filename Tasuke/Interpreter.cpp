@@ -116,9 +116,9 @@ QString Interpreter::substituteForDate(QString text) {
 	subbedText = subbedText.replace(DAY_AFTER_TOMORROW_REGEX, DATE_AFTER_TOMORROW);
 
 	// weekdays
-	for (int i=1; i<=7; i++) {
+	for (int i=0; i<DAY_NAMES.size(); i++) {
 		subbedText = subbedText.replace(DAY_NAMES[i],
-			nextWeekday(i).toString(DATE_FORMAT));
+			nextWeekday(i+1).toString(DATE_FORMAT));
 	}
 
 	// time of days
