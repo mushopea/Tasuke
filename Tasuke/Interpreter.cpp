@@ -34,26 +34,20 @@ void Interpreter::setLast(int _last) {
 
 QString Interpreter::substitute(QString text) {
 	QString subbedText = text;
-	subbedText = subbedText.replace(" by ", " @ ");
-	subbedText = subbedText.replace(" at ", " @ ");
-	subbedText = subbedText.replace(" from ", " @ ");
-	subbedText = subbedText.replace(" on ", " @ ");
+	subbedText = subbedText.replace(QRegExp("(?:\\s)by\\b"), " @");
+	subbedText = subbedText.replace(QRegExp("(?:\\s)at\\b"), " @");
+	subbedText = subbedText.replace(QRegExp("(?:\\s)from\\b"), " @");
+	subbedText = subbedText.replace(QRegExp("(?:\\s)on\\b"), " @");
 
-	subbedText = subbedText.replace(" \\by ", " by ");
-	subbedText = subbedText.replace(" \\at ", " at ");
-	subbedText = subbedText.replace(" \\from ", " from ");
-	subbedText = subbedText.replace(" \\on ", " on ");
-	subbedText = subbedText.replace(" \\to ", " to ");
-
-	subbedText = subbedText.replace(QRegExp("^do "), "add ");
-	subbedText = subbedText.replace(QRegExp("^create"), "add");
-	subbedText = subbedText.replace(QRegExp("^change"), "edit");
-	subbedText = subbedText.replace(QRegExp("^rm"), "remove");
-	subbedText = subbedText.replace(QRegExp("^delete"), "remove");
-	subbedText = subbedText.replace(QRegExp("^ls"), "show");
-	subbedText = subbedText.replace(QRegExp("^quit"), "exit");
-	subbedText = subbedText.replace(QRegExp("^search"), "show");
-	subbedText = subbedText.replace(QRegExp("^find"), "show");
+	subbedText = subbedText.replace(QRegExp("^do\\b"), "add");
+	subbedText = subbedText.replace(QRegExp("^create\\b"), "add");
+	subbedText = subbedText.replace(QRegExp("^change\\b"), "edit");
+	subbedText = subbedText.replace(QRegExp("^rm\\b"), "remove");
+	subbedText = subbedText.replace(QRegExp("^delete\\b"), "remove");
+	subbedText = subbedText.replace(QRegExp("^ls\\b"), "show");
+	subbedText = subbedText.replace(QRegExp("^quit\\b"), "exit");
+	subbedText = subbedText.replace(QRegExp("^search\\b"), "show");
+	subbedText = subbedText.replace(QRegExp("^find\\b"), "show");
 
 	return subbedText;
 }
@@ -62,6 +56,13 @@ QString Interpreter::substituteForTimePeriod(QString text) {
 	QString subbedText = text;
 	subbedText = subbedText.replace(" to ", " - ");
 	subbedText = subbedText.replace(" \\to ", " to ");
+
+	return subbedText;
+}
+
+QString Interpreter::substituteForDescription(QString text) {
+	QString subbedText = text;
+	subbedText = subbedText.remove("\\");
 
 	return subbedText;
 }
@@ -158,6 +159,10 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 			} else if (tokens[i][0] == '#') {
 				tokens[i].remove(0,1);
 				expectNewDelimiter = true;
+
+				if (tokens[i].isEmpty()) {
+					throw ExceptionBadCommand("Please give a name for your tag.", "tag");
+				}
 			} else if (tokens[i] == "-@") {
 				tokens[i].remove(0,2);
 				expectNewDelimiter = true;
@@ -246,7 +251,9 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 
 	QString commandType = getType(commandString, false);
 
-	if (commandType == "add") {
+	if (commandType == "") {
+		throw ExceptionBadCommand("I don't undesrtand this command.");
+	} else if (commandType == "add") {
 		return createAddCommand(commandString);
 	} else if (commandType == "remove") {
 		return createRemoveCommand(commandString);
@@ -258,13 +265,7 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 		return createUndoneCommand(commandString);
 	} else if (commandType == "clear") {
 		return createClearCommand(commandString);
-	}
-
-	if (commandType == "") {
-		throw ExceptionBadCommand("I don't undesrtand this command.");
-	}
-
-	if (commandType == "undo") {
+	} else if (commandType == "undo") {
 		doUndo(commandString, dry);
 	} else if (commandType == "redo") {
 		doRedo(commandString, dry);
@@ -297,13 +298,20 @@ ICommand* Interpreter::createAddCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You need to give a description to your task.", "description");
+		throw ExceptionBadCommand("You need to tell me what to add.", "description");
 	}
 
 	QHash<QString, QString> parts = decompose(commandString);
 	Task task;
 
-	task.setDescription(parts[""]);
+	QString description = parts[""];
+	description = substituteForDescription(description);
+
+	if (description.isEmpty()) {
+		throw ExceptionBadCommand("You need to give a description to your task.", "description");
+	}
+
+	task.setDescription(description);
 
 	foreach(const QString &key, parts.keys()) {
 		QString value = parts[key].trimmed();
@@ -325,7 +333,7 @@ ICommand* Interpreter::createRemoveCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You must tell me which task(s) to remove.", "id");
+		throw ExceptionBadCommand("You need to tell me which task(s) to remove.", "id");
 	}
 
 	QList<int> ids = parseIdList(commandString);
@@ -346,7 +354,7 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You must tell me which task to edit.", "id");
+		throw ExceptionBadCommand("You need to tell me which task to edit.", "id");
 	}
 
 	QString idString = commandString.split(' ')[0];
@@ -355,7 +363,7 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 	commandString = commandString.section(' ', 1);
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You must tell me what you want to change for the task.", "description");
+		throw ExceptionBadCommand("You need to tell me what you want to change for the task.", "description");
 	}
 
 	QHash<QString, QString> parts = decompose(commandString);
@@ -365,6 +373,7 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 		QString value = parts[key].trimmed();
 
 		if (key == "") {
+			value = substituteForDescription(value);
 			task.setDescription(value);
 		} else if (key.startsWith('#')) {
 			task.addTag(value);
@@ -392,7 +401,7 @@ ICommand* Interpreter::createDoneCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You must tell me what to mark as done.", "id");
+		throw ExceptionBadCommand("You need to tell me what to mark as done.", "id");
 	}
 
 	QList<int> ids = parseIdList(commandString);
@@ -413,7 +422,7 @@ ICommand* Interpreter::createUndoneCommand(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand("You must tell me what to mark as undone.", "id");
+		throw ExceptionBadCommand("You need to tell me what to mark as undone.", "id");
 	}
 
 	QList<int> ids = parseIdList(commandString);
@@ -470,6 +479,7 @@ void Interpreter::doShow(QString commandString) {
 		QList<Task> results = Tasuke::instance().getStorage().searchByTag(tag);
 		Tasuke::instance().updateTaskWindow(results, "#" + tag);
 	} else {
+		commandString = substituteForDescription(commandString);
 		QList<Task> results = Tasuke::instance().getStorage().searchByDescription(commandString);
 		Tasuke::instance().updateTaskWindow(results, "\"" + commandString + "\"");
 	}
@@ -495,7 +505,7 @@ void Interpreter::doUndo(QString commandString, bool dry) {
 		times = commandString.toInt(&ok);
 
 		if (ok == false) {
-			throw ExceptionBadCommand(QString("'%1' doesn't look like a number").arg(commandString), "times");
+			throw ExceptionBadCommand(QString("'%1' doesn't look like a number.").arg(commandString), "times");
 		}
 	}
 
@@ -520,7 +530,7 @@ void Interpreter::doRedo(QString commandString, bool dry) {
 		times = commandString.toInt(&ok);
 
 		if (ok == false) {
-			throw ExceptionBadCommand(QString("'%1' doesn't look like a number").arg(commandString), "times");
+			throw ExceptionBadCommand(QString("'%1' doesn't look like a number.").arg(commandString), "times");
 		}
 	}
 
@@ -547,7 +557,7 @@ int Interpreter::parseId(QString idString) {
 
 	if (idString == "last") {
 		if (last < 0) {
-			throw ExceptionBadCommand("There is no last task", "id");
+			throw ExceptionBadCommand("There is no last task.", "id");
 		}
 		return last;
 	}
@@ -556,13 +566,13 @@ int Interpreter::parseId(QString idString) {
 	int id = idString.toInt(&ok);
 
 	if (ok == false) {
-		throw ExceptionBadCommand(QString("You need to give me a task number").arg(idString), "id");
+		throw ExceptionBadCommand(QString("You need to give me a task number.").arg(idString), "id");
 	}
 
 	int numTasks = Tasuke::instance().getStorage().totalTasks();
 
 	if (id < 1 || id > numTasks) {
-		throw ExceptionBadCommand(QString("There is no task '%1'. Please give a number between 1 and %2").arg(QString::number(id), QString::number(numTasks)), "id");
+		throw ExceptionBadCommand(QString("There is no task '%1'. Please give a number between 1 and %2.").arg(QString::number(id), QString::number(numTasks)), "id");
 	}
 
 	return id;
@@ -630,14 +640,14 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 		int end = parseId(idRangeParts[1]);
 
 		if (end < begin) {
-			throw ExceptionBadCommand(QString("Start number (%1) is after end number (%2)").arg(begin, end), "id");
+			throw ExceptionBadCommand(QString("Start number (%1) is after end number (%2).").arg(begin, end), "id");
 		}
 
 		for (int i=begin; i<=end; i++) {
 			results.push_back(i);
 		}
 	} else {
-		throw ExceptionBadCommand(QString("'%1' doesn't look like a valid range").arg(idRangeString), "id");
+		throw ExceptionBadCommand(QString("'%1' doesn't look like a valid range.").arg(idRangeString), "id");
 	}
 
 	return results;
@@ -650,7 +660,7 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) 
 	TIME_PERIOD timePeriod;
 
 	if (timePeriodParts.size() > 2) {
-		throw ExceptionBadCommand(QString("'%1' doesn't look like a valid date range").arg(timePeriodString), "date");
+		throw ExceptionBadCommand(QString("'%1' doesn't look like a valid date range.").arg(timePeriodString), "date");
 	}
 
 	if (timePeriodParts.size() == 1) {
@@ -660,16 +670,16 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) 
 		timePeriod.end = parseDate(timePeriodParts[1]);
 
 		if (!timePeriod.begin.isValid()) {
-			throw ExceptionBadCommand("The start time provided doesn't seem to be a date/time", "begin");
+			throw ExceptionBadCommand("Please give me a valid start time for this task.", "begin");
 		}
 	}
 
 	if (!timePeriod.end.isValid()) {
-		throw ExceptionBadCommand("The deadline provided doesn't seem to be a date/time", "end");
+		throw ExceptionBadCommand("Please give me a valid deadline for this task.", "end");
 	}
 
 	if (timePeriod.begin.isValid() && timePeriod.end < timePeriod.begin) {
-		throw ExceptionBadCommand(QString("Start time (%1) is after end time (%2)").arg(timePeriod.begin.toString(), timePeriod.end.toString()), "date");
+		throw ExceptionBadCommand(QString("Start time (%1) is after end time (%2).").arg(timePeriod.begin.toString(), timePeriod.end.toString()), "date");
 	}
 
 	return timePeriod;

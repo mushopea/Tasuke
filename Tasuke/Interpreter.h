@@ -34,6 +34,7 @@ private:
 	static QString substitute(QString text);
 	static QString substituteForTimePeriod(QString text);
 	static QString substituteForDate(QString text);
+	static QString substituteForDescription(QString text);
 
 	static QHash<QString, QString> decompose(QString text);
 	static QString removeBefore(QString text, QString before);

@@ -63,7 +63,8 @@ const QStringList FONT_LIST = QStringList() << ":/Fonts/fonts/Quicksand_Book.otf
 	<< ":/Fonts/fonts/Quicksand_Bold.otf"
 	<< ":/Fonts/fonts/Quicksand_Bold_Oblique.otf"
 	<< ":/Fonts/fonts/PrintClearly.otf"
-	<< ":/Fonts/fonts/PrintBold.otf";
+	<< ":/Fonts/fonts/PrintBold.otf"
+	<< ":/Fonts/fonts/Consolas.ttf";
 
 bool Tasuke::guiMode = true;
 
@@ -157,7 +158,7 @@ void Tasuke::loadDictionary() {
 
 	foreach(QStringList list, SPELL_INCLUDE_LISTS) {
 		foreach(QString word, list) {
-			spellObj->add(word.toStdString().c_str());
+			spellObj->add(word.toUtf8().data());
 		}
 	}
 }
@@ -382,6 +383,8 @@ bool Tasuke::spellCheck(QString word) {
 		return true;
 	} else if (!word[0].isLetter()) {
 		return true;
+	} else if (word[0].isUpper()) {
+		return true;
 	}
 
 	if (spellObj->spell(word.toUtf8().data())) {
@@ -399,13 +402,13 @@ QString Tasuke::formatTooltipMessage(QString commandString, QString errorString,
 
 	if (commandType == "add") {
 		if (commandString.contains(QRegExp("\\bfrom\\b"))) { // period tasks
-			formatPart = "add {description}[my task]{/description} from {date}{start}[start]{/star} to {end}[end]{/end}{/date} #tag";
+			formatPart = "add {description}[my task]{/description} from {date}{start}[start]{/star} to {end}[end]{/end}{/date} {tag}#tag{/tag}";
 			descriptionPart = "Adds a task with a time period.";
 		} else if (commandString.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
-			formatPart = "add {description}[my task]{/description} by/on/at {date}{end}[end]{/end}{/date} #tag";
+			formatPart = "add {description}[my task]{/description} by/on/at {date}{end}[end]{/end}{/date} {tag}#tag{/tag}";
 			descriptionPart = "Adds a task with a deadline.";
 		} else { // simple tasks
-			formatPart = "add {description}[my task]{/description} #tag";
+			formatPart = "add {description}[my task]{/description} {tag}#tag{/tag}";
 			descriptionPart = "Adds a simple task.";
 		}
 	} else if (commandType == "remove") {

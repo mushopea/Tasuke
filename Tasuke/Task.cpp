@@ -36,7 +36,7 @@ void Task::addTag(QString _tag) {
 	assert(!_tag.isEmpty());
 
 	if (tags.size() >= MAXIMUM_TAGS) {
-		throw ExceptionTooManyTags();
+		throw ExceptionBadCommand("You have too many tags in this task", "tag");
 	}
 	
 	if (!tags.contains(_tag)) {
