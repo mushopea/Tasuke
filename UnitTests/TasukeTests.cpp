@@ -151,7 +151,7 @@ namespace UnitTest {
 		
 		TEST_METHOD(SpellCapitalisedProperWords) {
 			Assert::IsTrue(Tasuke::instance().spellCheck("John")); // A proper name
-			Assert::IsFalse(Tasuke::instance().spellCheck("Asdfghjkl")); // A garbage capitalised word
+			Assert::IsTrue(Tasuke::instance().spellCheck("Asdfghjkl")); // A garbage capitalised word
 		}
 
 		TEST_METHOD(SpellNumberInitialWords) {
