@@ -144,6 +144,15 @@ QString Task::getTimeDifferenceString() const {
 		delta *= -1;
 	}
 
+	// Return immediately if task age is less than one minute.
+	if (delta <= MSECS_IN_SECOND * SECONDS_IN_MINUTE) {
+		if (isNegative) {
+			return "This task expired moments ago.";
+		} else {
+			return "This task will expire in less than one minute.";
+		}
+	}
+
 	delta /= MSECS_IN_SECOND;					// Get rid of milliseconds.
 
 	int seconds = delta % SECONDS_IN_MINUTE;	// Obtain number of seconds.
