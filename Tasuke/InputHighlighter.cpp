@@ -94,7 +94,7 @@ void InputHighlighter::setRegex(){
 	
 	connectorRegex = QRegularExpression("^(?:(?:wow\\s+)?(?:[ms]uch|so|many)\\s+)?" // doge prefixes
 										"(?:add|create|a|do|edit|update|modify|change|e)" // commands with connectors
-										"\\s+(?:\\S+\\s+)+" // item being added or edited
+										".+" // item being added or edited
 										"(from|by|at|on|@)\\b(?:\\s+(?:\\S+\\s+)+(to|-)\\b)?"); // connectors, with optional "to" connector
    
 	tagRegex = QRegularExpression("\\s(#)\\S");

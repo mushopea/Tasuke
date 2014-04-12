@@ -63,7 +63,8 @@ const QStringList FONT_LIST = QStringList() << ":/Fonts/fonts/Quicksand_Book.otf
 	<< ":/Fonts/fonts/Quicksand_Bold.otf"
 	<< ":/Fonts/fonts/Quicksand_Bold_Oblique.otf"
 	<< ":/Fonts/fonts/PrintClearly.otf"
-	<< ":/Fonts/fonts/PrintBold.otf";
+	<< ":/Fonts/fonts/PrintBold.otf"
+	<< ":/Fonts/fonts/Consolas.ttf";
 
 bool Tasuke::guiMode = true;
 
@@ -157,7 +158,7 @@ void Tasuke::loadDictionary() {
 
 	foreach(QStringList list, SPELL_INCLUDE_LISTS) {
 		foreach(QString word, list) {
-			spellObj->add(word.toStdString().c_str());
+			spellObj->add(word.toUtf8().data());
 		}
 	}
 }
@@ -381,6 +382,8 @@ bool Tasuke::spellCheck(QString word) {
 	if (word.size() == 0) {
 		return true;
 	} else if (!word[0].isLetter()) {
+		return true;
+	} else if (word[0].isUpper()) {
 		return true;
 	}
 
