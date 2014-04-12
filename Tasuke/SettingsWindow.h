@@ -39,6 +39,8 @@ private:
 	QRadioButton * themeSelectButtons[(char)Theme::THEME_LAST_ITEM];
 	
 	// Initializers
+	void initUI();
+	void initUIConnect();
 	void initIconsArray();
 	void initThemeArray();
 	void loadCurrSettings();
