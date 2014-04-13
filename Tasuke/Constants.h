@@ -97,6 +97,22 @@ const char* const MSG_UNDO = "Undoing command";
 const char* const MSG_NO_UNDO ="Nothing to undo";
 const char* const MSG_REDO = "Redoing command";
 const char* const MSG_NO_REDO = "Nothing to redo";
+const char* const MSG_HOTKEYMANAGER_CREATED = "HotKeyManager created";
+const char* const MSG_HOTKEYMANAGER_DESTROYED = "HotKeyManager destroyed";
+
+// Macros for log messages
+#define MSG_ERROR_PARSING(message) \
+	"Error parsing command" << QString(message).toStdString()
+#define MSG_SHOWING_MESSAGE(message) \
+	"Showing message: " << QString(message).toStdString()
+#define MSG_UPDATING_TASKWINDOW(tasks) \
+	"Updating task window with " << QString(tasks).toStdString() << " tasks"
+#define MSG_HIGHLIGHT_TASK(id) \
+	"Highlighting task with id  " << id
+#define MSG_INTERPRETTING(command) \
+	"Interpretting " << command.toStdString()
+#define MSG_HOTKEY_PRESSED(key) \
+	"Hot key pressed with keycode " << QString::number((int)key).toStdString()
 
 // Filenames of dictionary files
 const char* const SPELL_GB_DICFILE = "en_GB.dic";
@@ -291,6 +307,25 @@ const char* const ERROR_DATE_BEGIN =
 const char* const ERROR_DATE_END = 
 	"Please give me a valid deadline for this task.";
 
+// Macros for error messages
+#define ERROR_DATE_INVALID_PERIOD(timePeriod) \
+	QString("Start time (%1) is after end time (%2).")\
+	.arg(timePeriod.begin.toString(), timePeriod.end.toString())
+#define ERROR_DATE_NO_A_RANGE(range) \
+	QString("'%1' doesn't look like a valid date range.").arg(range)
+#define ERROR_ID_NO_A_RANGE(range) \
+	QString("'%1' doesn't look like a valid range.").arg(range)
+#define ERROR_ID_INVALID_RANGE(begin, end) \
+	QString("Start number (%1) is after end number (%2).").arg(begin, end)
+#define ERROR_ID_OUT_OF_RANGE(id, numTasks) \
+	QString("There is no task '%1'." \
+	"Please give a number between 1 and %2.")\
+	.arg(QString::number(id), QString::number(numTasks))
+#define ERROR_NOT_A_NUMBER(number) \
+	QString("'%1' doesn't look like a number.").arg(number)
+#define ERROR_DONT_KNOW(what) \
+	QString("I don't know what to do for '%1'").arg(what)
+
 const char* const EXCEPTION_NULL_PTR = "attempt to dereference null pointer";
 const char* const EXCEPTION_NOT_IMPLEMENTED = "not implemented";
 const char* const EXCEPTION_NO_MORE_TASKS = "no more tasks in the list";
@@ -341,6 +376,16 @@ const QRegExp DAY_YESTERDAY_REGEX = QRegExp("\\byesterday\\b");
 const QRegExp DAY_TODAY_REGEX = QRegExp("\\btoday\\b");
 const QRegExp DAY_TOMORROW_REGEX = QRegExp("\\btomorrow\\b");
 const QRegExp DAY_AFTER_TOMORROW_REGEX = QRegExp("\\bday after tomorrow\\b");
+
+// Macros for special days that relative to current time
+#define DATE_YESTERDAY \
+	QDate::currentDate().addDays(-1).toString(DATE_FORMAT)
+#define DATE_TODAY \
+	QDate::currentDate().toString(DATE_FORMAT)
+#define DATE_TOMORROW \
+	QDate::currentDate().addDays(1).toString(DATE_FORMAT)
+#define DATE_AFTER_TOMORROW \
+	QDate::currentDate().addDays(2).toString(DATE_FORMAT)
 
 // Names of days
 const char* const DAY_TODAY = "today";
@@ -397,46 +442,5 @@ const QRegExp EQUIV_TO_REGEX = QRegExp("\\bto\\b");
 	"{"+QString(tag)+"}"
 #define PSEUDO_TAG_END(tag) \
 	"{/"+QString(tag)+"}"
-
-// Macros for log messages
-#define MSG_ERROR_PARSING(message) \
-	"Error parsing command" << QString(message).toStdString()
-#define MSG_SHOWING_MESSAGE(message) \
-	"Showing message: " << QString(message).toStdString()
-#define MSG_UPDATING_TASKWINDOW(tasks) \
-	"Updating task window with " << QString(tasks).toStdString() << " tasks"
-#define MSG_HIGHLIGHT_TASK(id) \
-	"Highlighting task with id  " << id
-#define MSG_INTERPRETTING(command) \
-	"Interpretting " << command.toStdString()
-
-// Macros for error messages
-#define ERROR_DATE_INVALID_PERIOD(timePeriod) \
-	QString("Start time (%1) is after end time (%2).")\
-	.arg(timePeriod.begin.toString(), timePeriod.end.toString())
-#define ERROR_DATE_NO_A_RANGE(range) \
-	QString("'%1' doesn't look like a valid date range.").arg(range)
-#define ERROR_ID_NO_A_RANGE(range) \
-	QString("'%1' doesn't look like a valid range.").arg(range)
-#define ERROR_ID_INVALID_RANGE(begin, end) \
-	QString("Start number (%1) is after end number (%2).").arg(begin, end)
-#define ERROR_ID_OUT_OF_RANGE(id, numTasks) \
-	QString("There is no task '%1'." \
-	"Please give a number between 1 and %2.")\
-	.arg(QString::number(id), QString::number(numTasks))
-#define ERROR_NOT_A_NUMBER(number) \
-	QString("'%1' doesn't look like a number.").arg(number)
-#define ERROR_DONT_KNOW(what) \
-	QString("I don't know what to do for '%1'").arg(what)
-
-// Macros for special days that relative to current time
-#define DATE_YESTERDAY \
-	QDate::currentDate().addDays(-1).toString(DATE_FORMAT)
-#define DATE_TODAY \
-	QDate::currentDate().toString(DATE_FORMAT)
-#define DATE_TOMORROW \
-	QDate::currentDate().addDays(1).toString(DATE_FORMAT)
-#define DATE_AFTER_TOMORROW \
-	QDate::currentDate().addDays(2).toString(DATE_FORMAT)
 
 #endif

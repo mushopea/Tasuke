@@ -6,6 +6,7 @@
 
 //@author A0096836M
 
+// Manages the hotkey thread and signals Tasuke about user hotkeys.
 class HotKeyManager : public QObject {
 	Q_OBJECT
 
