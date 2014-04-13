@@ -18,6 +18,7 @@ public:
 	virtual void undo();
 };
 
+// This command adds a task to storage.
 class AddCommand : public ICommand {
 private:
 	Task task;
@@ -29,6 +30,7 @@ public:
 	void undo() override;
 };
 
+// This command removes a task from storage.
 class RemoveCommand : public ICommand {
 private:
 	int id;
@@ -41,6 +43,7 @@ public:
 	void undo() override;
 };
 
+// This command edits a task in storage.
 class EditCommand : public ICommand {
 private:
 	int id;
@@ -54,6 +57,7 @@ public:
 	void undo() override;
 };
 
+// This command clears a;; tasks in storage.
 class ClearCommand : public ICommand {
 private:
 	QList<Task> old;
@@ -65,6 +69,7 @@ public:
 	void undo() override;
 };
 
+// This command marks a task in storage as done/undone
 class DoneCommand : public ICommand {
 private:
 	int id;
@@ -77,6 +82,7 @@ public:
 	void undo() override;
 };
 
+// This command is made of other commands
 class CompositeCommand : public ICommand {
 private:
 	QList< QSharedPointer<ICommand> > commands;
