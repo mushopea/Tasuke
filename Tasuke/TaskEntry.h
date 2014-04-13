@@ -43,7 +43,7 @@ private:
 
 	// Functions
 	QString createTagString(const QList<QString>& tags) const;
-	void setID(int ID);
+	void setID(const int ID);
 	void setTooltip(
 		const QString& description,
 		const QDateTime& start, 

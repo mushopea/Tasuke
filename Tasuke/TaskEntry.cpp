@@ -63,31 +63,38 @@ QString TaskEntry::createTagString(const QList<QString>& tags) const {
 }
 
 // Sets task ID
-void TaskEntry::setID(int ID) {
-	assert(ID>=0);
+void TaskEntry::setID(const int ID) {
+	assert(ID >= 0);
 	ui.ID->setText(QString::number(task.getId() + 1));
 }
 
 // Set tooltip
-void TaskEntry::setTooltip(const QString& description, const QDateTime& start, const QDateTime& end, 
-						   const QList<QString>& tags, const QString& dueInMessage) {
+void TaskEntry::setTooltip(const QString& description, 
+						   const QDateTime& start, 
+						   const QDateTime& end, 
+						   const QList<QString>& tags, 
+						   const QString& dueInMessage) {
 	// description
 	QString tooltipText(description);
 	tooltipText.prepend("Task description: ");
+
 	// start datetime
 	if (!start.isNull()) {
 		tooltipText.append("\n\nStart: \n" + start.toString("dd MMMM yyyy (dddd)\nh:mm ap"));
 	}
+	
 	// end datetime
 	if (!end.isNull()) {
 		tooltipText.append("\n\nEnd: \n" + end.toString("dd MMMM yyyy (dddd)\nh:mm ap"));
 		tooltipText.append("\n\n" + dueInMessage);
 	}
+	
 	// tags
 	if (!tags.isEmpty()) {
 		tooltipText.append("\n\nTagged with: ");
 		tooltipText.append(createTagString(tags));
 	}
+	
 	// Set it!
 	this->setToolTip(tooltipText);
 }
