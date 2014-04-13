@@ -189,13 +189,6 @@ void IStorage::sortByEndDate() {
 		return t1->getEnd() < t2->getEnd();
 	});
 }
-/*
-void IStorage::sortByBeginDate() {
-	LOG(INFO) << MSG_STORAGE_SORT_BY_BEGIN_DATE;
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
-		return t1->getBegin() < t2->getBegin();
-	});
-}*/
 
 void IStorage::sortByDescription() {
 	LOG(INFO) << MSG_STORAGE_SORT_BY_DESCRIPTION;
