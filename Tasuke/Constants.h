@@ -99,6 +99,8 @@ const char* const MSG_REDO = "Redoing command";
 const char* const MSG_NO_REDO = "Nothing to redo";
 const char* const MSG_HOTKEYMANAGER_CREATED = "HotKeyManager created";
 const char* const MSG_HOTKEYMANAGER_DESTROYED = "HotKeyManager destroyed";
+const char* const MSG_SYSTEMTRAYWIDGET_CREATED = "SystemTrayWidget created";
+const char* const MSG_SYSTEMTRAYWIDGET_DESTROYED = "SystemTrayWidget destroyed";
 
 // Macros for log messages
 #define MSG_ERROR_PARSING(message) \
@@ -443,5 +445,13 @@ const QRegExp EQUIV_TO_REGEX = QRegExp("\\bto\\b");
 	"{"+QString(tag)+"}"
 #define PSEUDO_TAG_END(tag) \
 	"{/"+QString(tag)+"}"
+
+const char* const TRAY_ICON_PATH = ":/Images/images/Traysuke.png";
+const char* const TRAY_MENU_QUIT = "&Quit";
+const char* const TRAY_MENU_INPUT = "Show &Command Box";
+const char* const TRAY_MENU_TASK = "Show Task &Window";
+const char* const TRAY_MENU_SETTINGS = "&Settings";
+const char* const TRAY_MENU_TUTORIAL = "&Tutorial";
+const char* const TRAY_MENU_ABOUT = "&About Tasuke";
 
 #endif

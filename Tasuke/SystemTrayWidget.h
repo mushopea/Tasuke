@@ -6,6 +6,8 @@
 
 //@author A0096836M
 
+// Widget for tray icon in the system tray. It is used to display info and for
+// user menu
 class SystemTrayWidget : public QWidget {
 	Q_OBJECT
 
@@ -26,6 +28,8 @@ private slots:
 
 private:
 	QSystemTrayIcon* trayIcon;
+
+	void installTrayIcon();
 };
 
 #endif // SYSTEMTRAYWIDGET_H
