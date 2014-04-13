@@ -4,19 +4,16 @@
 
 //@author A0096836M
 
-const char* EXCEPTION_NULL_PTR = "attempt to dereference null pointer";
-const char* EXCEPTION_NOT_IMPLEMENTED = "not implemented";
-const char* EXCEPTION_NO_MORE_TASKS = "no more tasks in the list";
-const char* EXCEPTION_ICONSET_OUT_OF_RANGE = "out of range icon set was stored and attempted access in settings.";
-const char* EXCEPTION_THEME_OUT_OF_RANGE = "out of range theme was stored and attempted access in settings.";
-
-
 // This method returns a user readable error for the ExceptionNullPtr
 // exception
 const char* ExceptionNullPtr::what() const throw() {
 	return EXCEPTION_NULL_PTR;
 }
 
+// Constructor for ExceptionBadCommand. It takes in the error message as well as
+// the location in the command the error is referring to. If it is the whole
+// command the location should be empty string. The location defaults to empty
+// string
 ExceptionBadCommand::ExceptionBadCommand(QString _message, QString _part) : message(_message), part(_part) {
 
 }
@@ -27,22 +24,31 @@ const char* ExceptionBadCommand::what() const throw() {
 	return qstrdup(qPrintable(message));
 }
 
+// This methods returns the location 
 QString ExceptionBadCommand::where() const {
 	return part;
 }
 
+// This method returns a user readable error for the ExceptionNotImplemented
+// exception
 const char* ExceptionNotImplemented::what() const throw() {
 	return EXCEPTION_NOT_IMPLEMENTED;
 }
 
+// This method returns a user readable error for the ExceptionNoMoreTasks
+// exception
 const char* ExceptionNoMoreTasks::what() const throw() {
 	return EXCEPTION_NO_MORE_TASKS;
 }
 
+// This method returns a user readable error for the ExceptionIconsetOutOfRange
+// exception
 const char* ExceptionIconsetOutOfRange::what() const throw() {
 	return EXCEPTION_ICONSET_OUT_OF_RANGE;
 }
 
+// This method returns a user readable error for the ExceptionThemeOutOfRange
+// exception
 const char* ExceptionThemeOutOfRange::what() const throw() {
 	return EXCEPTION_THEME_OUT_OF_RANGE;
 }

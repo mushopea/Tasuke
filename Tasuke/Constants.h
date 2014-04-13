@@ -291,6 +291,12 @@ const char* const ERROR_DATE_BEGIN =
 const char* const ERROR_DATE_END = 
 	"Please give me a valid deadline for this task.";
 
+const char* const EXCEPTION_NULL_PTR = "attempt to dereference null pointer";
+const char* const EXCEPTION_NOT_IMPLEMENTED = "not implemented";
+const char* const EXCEPTION_NO_MORE_TASKS = "no more tasks in the list";
+const char* const EXCEPTION_ICONSET_OUT_OF_RANGE = "out of range icon set was stored and attempted access in settings.";
+const char* const EXCEPTION_THEME_OUT_OF_RANGE = "out of range theme was stored and attempted access in settings.";
+
 // Error location in format
 const char* const WHERE_DATE = "date";
 const char* const WHERE_TAG = "tag";

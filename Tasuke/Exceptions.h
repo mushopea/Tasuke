@@ -23,6 +23,7 @@ public:
 	QString where() const;
 };
 
+// This exception is only used in development for unimplemented features
 class ExceptionNotImplemented : public std::exception {
 	virtual const char *what() const throw();
 };
