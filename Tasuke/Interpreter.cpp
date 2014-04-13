@@ -81,7 +81,7 @@ QString Interpreter::substituteForDescription(QString text) {
 
 // gets the date of the upcomming weekday. 1 = Monday, 7 = Sunday
 QDate Interpreter::nextWeekday(int weekday) {
-	assert(weekday > 1 && weekday <= 7);
+	assert(weekday >= 1 && weekday <= 7);
 
 	QDate date = QDate::currentDate();
 	
