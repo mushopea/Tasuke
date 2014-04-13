@@ -3,6 +3,7 @@
 #include "Tasuke.h"
 #include "Constants.h"
 #include "Exceptions.h"
+#include "Storage.h"
 
 //@author A0096863M
 
@@ -26,12 +27,15 @@ NotificationManager& NotificationManager::instance() {
 	}
 }
 
-void NotificationManager::init() {
+void NotificationManager::init(void* storage) {
+	assert(storage != nullptr);
+
 	try {
-		Task next = Tasuke::instance().getStorage().getNextUpcomingTask();	
+		Task next = static_cast<IStorage*>(storage)->getNextUpcomingTask();	
 		scheduleNotification(next);
 	} catch (ExceptionNoMoreTasks &exception) {
-
+		// there's no upcoming task
+		// we don't have to do anything
 	}
 }
 
@@ -54,5 +58,5 @@ void NotificationManager::scheduleNotification(Task task) {
 
 void NotificationManager::handleTimeout() {
 	Tasuke::instance().showMessage("Next task: " + nextTask.getDescription() + " begins in 10 minutes.");
-	init();
+	init(&Tasuke::instance().getStorage());
 }

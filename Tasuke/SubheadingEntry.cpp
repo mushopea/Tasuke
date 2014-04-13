@@ -17,7 +17,7 @@ SubheadingEntry::SubheadingEntry(const QString& content, QWidget *parent): QWidg
 }
 
 SubheadingEntry::~SubheadingEntry() {
-
+	disconnect(this, SLOT(reloadTheme()));
 }
 
 void SubheadingEntry::changeText(const QString& text) {
@@ -53,7 +53,7 @@ void SubheadingEntry::initUI() {
 void SubheadingEntry::initSettingsConnect() {
 	if (!connectedToSettings) {
 		connectedToSettings = true;
-		connect(&Tasuke::instance().getSettingsWindow(), SIGNAL(themeChanged()), this, SLOT(reloadTheme()));
 		LOG(INFO) << "Connected SubheadingEntry to SettingsWindow";
+		connect(parentWidget(), SIGNAL(themeChanged()), this, SLOT(reloadTheme()));
 	}
 }
