@@ -1,10 +1,20 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+//@author A0096836M
+
 #include <QStringList>
 #include <QList>
 #include <QTime>
 #include <QDate>
+
+// General app metadata
+const char* const TASUKE = "Tasuke";
+const char* const NAME_ORGANIZATION = TASUKE;
+const char* const NAME_APPLICATION = TASUKE;
+const char* const SHARED_MEMORY_KEY = TASUKE;
+
+//@author A0096863M
 
 // Maximum number of tags a task can have
 static const int MAXIMUM_TAGS = 10;
@@ -18,6 +28,8 @@ static const int HOURS_IN_DAY = 24;
 static const int MINUTES_IN_HOUR = 60;
 static const int SECONDS_IN_MINUTE = 60;
 static const int MSECS_IN_SECOND = 1000;
+
+//@author A0100189
 
 // Stacked widget page indexes
 static const int TASKS_PAGE = 0;
@@ -70,14 +82,9 @@ static const char* SHIBE_NORMAL = ":Images/images/icons/dogenormal.png";
 static const char* SHIBE_SUCCESS = ":Images/images/icons/dogesuccess.png";
 static const char* SHIBE_FAILURE = ":Images/images/icons/dogefailure.png";
 
-
 //@author A0096836M
 
-const char* const TASUKE = "Tasuke";
-const char* const NAME_ORGANIZATION = TASUKE;
-const char* const NAME_APPLICATION = TASUKE;
-const char* const SHARED_MEMORY_KEY = TASUKE;
-
+// Log messages
 const char* const MSG_STARTING_UP = "Tasuke starting up!";
 const char* const MSG_ALREADY_RUNNING =  "Tasuke is already running! Open Tasuke using ctrl+space";
 const char* const MSG_TASUKE_CREATED = "Tasuke object created";
@@ -91,14 +98,18 @@ const char* const MSG_NO_UNDO ="Nothing to undo";
 const char* const MSG_REDO = "Redoing command";
 const char* const MSG_NO_REDO = "Nothing to redo";
 
+// Filenames of dictionary files
 const char* const SPELL_GB_DICFILE = "en_GB.dic";
 const char* const SPELL_GB_AFFFILE = "en_GB.aff";
 const char* const SPELL_US_DICFILE = "en_US.dic";
 
+// The relative resource path for a mac app bundle
 const char* const MAC_RESOURCE_PATH = "/../Resources/";
 
+// The string name of the TRY_RESULT metatype
 const char* const METATYPE_TRY_RESULT = "TRY_RESULT";
 
+// Lists of words to add into dictionary
 const QStringList SPELL_NONWORD_COMMANDS = QStringList() << "rm" << "ls"
 	<< "nd";
 const QStringList SPELL_MONTH_NAMES = QStringList() << "january" << "february"
@@ -115,6 +126,7 @@ const QList<QStringList> SPELL_INCLUDE_LISTS = QList<QStringList>()
 	<< SPELL_NONWORD_COMMANDS << SPELL_MONTH_NAMES << SPELL_MONTH_NAMES_SHORT
 	<< SPELL_DAY_NAMES << SPELL_DAY_NAMES_SHORT;
 
+// List of font locations
 const QStringList FONT_LIST = QStringList() << ":/Fonts/fonts/Quicksand_Book.otf"
 	<< ":/Fonts/fonts/Quicksand_Book_Oblique.otf"
 	<< ":/Fonts/fonts/Quicksand_Light.otf"
@@ -125,6 +137,7 @@ const QStringList FONT_LIST = QStringList() << ":/Fonts/fonts/Quicksand_Book.otf
 	<< ":/Fonts/fonts/PrintBold.otf"
 	<< ":/Fonts/fonts/Consolas.ttf";
 
+// Command keywords
 const char* const COMMAND_NIL = "";
 const char* const COMMAND_ADD = "add";
 const char* const COMMAND_EDIT = "edit";
@@ -141,11 +154,13 @@ const char* const COMMAND_ABOUT = "about";
 const char* const COMMAND_SETTINGS = "settings";
 const char* const COMMAND_EXIT = "exit";
 
+// List of command keywords
 const QStringList COMMANDS = QStringList() << COMMAND_ADD << COMMAND_EDIT
 	<< COMMAND_REMOVE << COMMAND_SHOW << COMMAND_HIDE << COMMAND_DONE
 	<< COMMAND_UNDONE << COMMAND_UNDO << COMMAND_REDO << COMMAND_CLEAR
 	<< COMMAND_HELP << COMMAND_ABOUT << COMMAND_SETTINGS << COMMAND_EXIT;
 
+// Command formats
 const char* const FORMAT_ALL = "add | edit | done | undone | remove "
 	"| show | undo | redo | settings | help | exit";
 const char* const FORMAT_ADD =
@@ -179,6 +194,7 @@ const char* const FORMAT_SETTINGS = "settings";
 const char* const FORMAT_ABOUT = "about";
 const char* const FORMAT_EXIT = "exit";
 
+// Command descriptions
 const char* const DESCRIPTION_ALL = "Use one of these keywords to begin";
 const char* const DESCRIPTION_ADD = "Adds a simple task.";
 const char* const DESCRIPTION_ADD_PERIOD = "Adds a task with a time period.";
@@ -197,10 +213,12 @@ const char* const DESCRIPTION_SETTINGS = "Open the settings window.";
 const char* const DESCRIPTION_ABOUT = "Shows about Tasuke.";
 const char* const DESCRIPTION_EXIT = "Exits the program.";
 
+// Some command regex
 const QRegExp ADD_DEADLINE_REGEX = QRegExp("\\b(by|at|on)\\b");
 const QRegExp ADD_PREIOD_REGEX = QRegExp("\\bfrom\\b");
 const QRegExp BRACE_REGEX = QRegExp("\\{(.*)\\}");
 
+// HTML markup for tooltip widget
 const char* const HTML_ERROR_BEGIN = "<font color='#FA7597'>";
 const char* const HTML_ERROR_END = "</font>";
 const char* const HTML_FORMAT_BEGIN = "<font color='#999'>";
@@ -208,6 +226,7 @@ const char* const HTML_FORMAT_END = "</font>";
 const char* const HTML_DESCRIPTION_BEGIN = "<br<<font color='white'>";
 const char* const HTML_DESCRIPTION_END = "</font>";
 
+// Delimiters for interpreter
 const char* const DELIMITER_AT = "@";
 const char* const DELIMITER_HASH = "#";
 const char* const DELIMITER_DASH = "-";
@@ -215,13 +234,16 @@ const char* const DELIMITER_DASH_AT = "-@";
 const char* const DELIMITER_DASH_HASH = "-#";
 const char* const DELIMITER_COMMA = ",";
 
+// Delimiters in char form
 const char CHAR_DELIMITER_AT = '@';
 const char CHAR_DELIMITER_HASH = '#';
 const char CHAR_DELIMITER_DASH = '-';
 
+// List of delimiters
 const QStringList DELIMITERS = QStringList() << DELIMITER_AT << DELIMITER_HASH
 	<< DELIMITER_DASH;
 
+// Keywords for interpreter
 const char* const KEYWORD_NIL = "";
 const char* const KEYWORD_DONE = "done";
 const char* const KEYWORD_UNDONE = "undone";
@@ -235,6 +257,7 @@ const char* const KEYWORD_MAX = "max";
 const char* const KEYWORD_LAST = "last";
 const char* const KEYWORD_BACKSLASH = "\\";
 
+// Titles for task view
 const char* const TITLE_DONE = "done tasks";
 const char* const TITLE_UNDONE = "undone tasks";
 const char* const TITLE_ONGOING = "ongoing tasks";
@@ -242,6 +265,7 @@ const char* const TITLE_OVERDUE = "overdue tasks";
 const char* const TITLE_TODAY = "tasks due today";
 const char* const TITLE_TOMORROW = "tasks due tomorrow";
 
+// Error descriptions
 const char* const ERROR_MULTIPLE_DATES =
 	"You can't have more than 2 time periods or deadlines in a task.";
 const char* const ERROR_TAG_NO_NAME = "Please give a name for your tag.";
@@ -267,6 +291,7 @@ const char* const ERROR_DATE_BEGIN =
 const char* const ERROR_DATE_END = 
 	"Please give me a valid deadline for this task.";
 
+// Error location in format
 const char* const WHERE_DATE = "date";
 const char* const WHERE_TAG = "tag";
 const char* const WHERE_DESCRIPTION = "description";
@@ -275,6 +300,7 @@ const char* const WHERE_TIMES = "times";
 const char* const WHERE_BEGIN = "begin";
 const char* const WHERE_END = "end";
 
+// Time constants
 const QTime TIME_BEFORE_MIDNIGHT = QTime(23,59);
 const QTime TIME_MIDNIGHT = QTime(0,0);
 const char* const TIME_AM = "am";
@@ -284,10 +310,12 @@ const int YEARS_MILIENIUM = 2000;
 const int YEARS_CENTURY = 100;
 const char* const DATE_FORMAT = "dd/MM/yyyy";
 
+// Regex for removing things when parsing dates
 const QList<QRegExp> REMOVE_DATE_REGEX = QList<QRegExp>() 
 	<< QRegExp(",\\b") << QRegExp("\\bthis\\b") << QRegExp("\\bnext\\b")
 	<< QRegExp("\\bnthe\\b");
 
+// Regex to match named days
 const QRegExp DAY_2DAY_REGEX = QRegExp("\\b2day\\b");
 const QRegExp DAY_TMR_REGEX = QRegExp("\\btmr\\b");
 const QRegExp DAY_TML_REGEX = QRegExp("\\btml\\b");
@@ -302,11 +330,13 @@ const QRegExp DAY_FRI_REGEX = QRegExp("\\bfri\\b");
 const QRegExp DAY_SAT_REGEX = QRegExp("\\bsat\\b");
 const QRegExp DAY_SUN_REGEX = QRegExp("\\bsun\\b");
 
+// Regex to match special days
 const QRegExp DAY_YESTERDAY_REGEX = QRegExp("\\byesterday\\b");
 const QRegExp DAY_TODAY_REGEX = QRegExp("\\btoday\\b");
 const QRegExp DAY_TOMORROW_REGEX = QRegExp("\\btomorrow\\b");
 const QRegExp DAY_AFTER_TOMORROW_REGEX = QRegExp("\\bday after tomorrow\\b");
 
+// Names of days
 const char* const DAY_TODAY = "today";
 const char* const DAY_TOMORROW = "tomorrow";
 const char* const DAY_MONDAY = "monday";
@@ -317,16 +347,19 @@ const char* const DAY_FRIDAY = "friday";
 const char* const DAY_SATURDAY = "saturday";
 const char* const DAY_SUNDAY = "sunday";
 
+// List of names of days
 const QStringList DAY_NAMES = QStringList() << DAY_MONDAY << DAY_TUESDAY
 	<< DAY_WEDNESDAY << DAY_THURSDAY << DAY_FRIDAY << DAY_SATURDAY
 	<< DAY_SUNDAY;
 
+// List of named times names
 const QList<QRegExp> TIME_NAMES_REGEX = QList<QRegExp>() 
 	<< QRegExp("\\bdawn\\b") << QRegExp("\\bmorning\\b")
 	<< QRegExp("\\bnoon\\b") << QRegExp("\\bafternoon\\b")
 	<< QRegExp("\\bevening\\b") << QRegExp("\\bnight\\b")
 	<< QRegExp("\\bmidnight\\b");
 
+// List of named times
 const QStringList TIME_NAMED = QStringList()
 	<< QTime(6,0).toString(TIME_FORMAT)
 	<< QTime(10,0).toString(TIME_FORMAT)
@@ -336,6 +369,7 @@ const QStringList TIME_NAMED = QStringList()
 	<< QTime(22,0).toString(TIME_FORMAT)
 	<< QTime(23,59).toString(TIME_FORMAT);
 
+// List of substitution regexes
 const char* const EQUIV_AT_REPLACE = " @";
 const QList<QRegExp> EQUIV_AT_REGEX = QList<QRegExp>()
 	<< QRegExp("(?:\\s)by\\b") << QRegExp("(?:\\s)at\\b")
@@ -352,11 +386,13 @@ const QList<QRegExp> EQUIV_EXIT_REGEX = QList<QRegExp>()
 	<< QRegExp("^quit\\b");
 const QRegExp EQUIV_TO_REGEX = QRegExp("\\bto\\b");
 
+// Special tag for format display
 #define PSEUDO_TAG_BEGIN(tag) \
 	"{"+QString(tag)+"}"
 #define PSEUDO_TAG_END(tag) \
 	"{/"+QString(tag)+"}"
 
+// Macros for log messages
 #define MSG_ERROR_PARSING(message) \
 	"Error parsing command" << QString(message).toStdString()
 #define MSG_SHOWING_MESSAGE(message) \
@@ -368,6 +404,7 @@ const QRegExp EQUIV_TO_REGEX = QRegExp("\\bto\\b");
 #define MSG_INTERPRETTING(command) \
 	"Interpretting " << command.toStdString()
 
+// Macros for error messages
 #define ERROR_DATE_INVALID_PERIOD(timePeriod) \
 	QString("Start time (%1) is after end time (%2).")\
 	.arg(timePeriod.begin.toString(), timePeriod.end.toString())
@@ -386,6 +423,7 @@ const QRegExp EQUIV_TO_REGEX = QRegExp("\\bto\\b");
 #define ERROR_DONT_KNOW(what) \
 	QString("I don't know what to do for '%1'").arg(what)
 
+// Macros for special days that relative to current time
 #define DATE_YESTERDAY \
 	QDate::currentDate().addDays(-1).toString(DATE_FORMAT)
 #define DATE_TODAY \
