@@ -33,17 +33,15 @@ Tasuke::Tasuke() : QObject(nullptr) {
 	std::thread dateFormatGeneratorThread([]() {
 		Interpreter::initFormats();
 	});
-
 	dateFormatGeneratorThread.detach();
-
-	if (guiMode) {
-		initialize();
-	}
 
 	qRegisterMetaType<TRY_RESULT>(METATYPE_TRY_RESULT);
 	connect(this, SIGNAL(tryFinish(TRY_RESULT)), this, SLOT(handleTryFinish(TRY_RESULT)));
-
 	connect(&inputTimer, SIGNAL(timeout()), this, SLOT(handleInputTimeout()));
+
+	if (guiMode) {
+		QTimer::singleShot(0, this, SLOT(initGui()));
+	}
 }
 
 // Destructor for the Tasuke singleton.
@@ -124,7 +122,7 @@ void Tasuke::loadFonts(){
 }
 
 // initialize the GUI if required
-void Tasuke::initialize(){
+void Tasuke::initGui(){
 	loadFonts();
 	
 	taskWindow = new TaskWindow();
@@ -143,6 +141,7 @@ void Tasuke::initialize(){
 	connect(settingsWindow, SIGNAL(iconsChanged()), inputWindow, SIGNAL(reloadIcons()));
 	connect(settingsWindow, SIGNAL(fontChanged()), taskWindow, SLOT(displayTaskList()));
 	connect(settingsWindow, SIGNAL(themeChanged()), taskWindow, SLOT(reloadTheme()));
+	connect(settingsWindow, SIGNAL(themeChanged()), taskWindow, SIGNAL(themeChanged()));
 }
 
 // enables/disables gui mode
@@ -153,13 +152,13 @@ void Tasuke::setGuiMode(bool mode) {
 // Static method that returns the sole instance of Tasuke.
 Tasuke& Tasuke::instance() {
 	static Tasuke *instance = 0;
+	static bool alreadyCreated = false;
 
 	if(instance == 0) {
-		// Allocates memory *before* constructor, so Tasuke::instance() will work within a constructor-called method
-		instance = (Tasuke *) ::operator new (sizeof(Tasuke));
-		// Actually runs the constructor now
-		new (instance) Tasuke;
-		//instance = new Tasuke();
+		assert(alreadyCreated == false);
+		alreadyCreated = true;
+
+		instance = new Tasuke();
 		return *instance;
 	} else {
 		return *instance;
@@ -168,6 +167,7 @@ Tasuke& Tasuke::instance() {
 
 // changes the storage instance used by tasuke
 void Tasuke::setStorage(IStorage* _storage) {
+	assert(_storage != nullptr);;
 	LOG(INFO) << MSG_STORAGE_CHANGED;
 
 	storage = _storage;
@@ -588,6 +588,7 @@ void Tasuke::handleTryFinish(TRY_RESULT result) {
 	if (inputWindow->isVisible() && !input.isEmpty()) {
 		inputWindow->showTooltipMessage(result.status, result.message);
 	}
+	assert(mutex.tryLock() == false);
 	mutex.unlock();
 }
 

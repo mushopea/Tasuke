@@ -4,7 +4,6 @@
 #include <QSettings>
 #include <QStandardPaths>
 #include <QDir>
-#include <iostream>
 #include "Constants.h"
 #include "Exceptions.h"
 #include "Storage.h"
@@ -348,7 +347,7 @@ void Storage::loadFile() {
 	settings.endArray();
 
 	renumber();
-	NotificationManager::instance().init();
+	NotificationManager::instance().init(this);
 
 	LOG(INFO) << "File loaded.";
 }
@@ -394,7 +393,7 @@ void Storage::saveFile() {
 	settings.endArray();
 	settings.sync();
 
-	NotificationManager::instance().init();
+	NotificationManager::instance().init(this);
 
 	LOG(INFO) << "File saved.";
 }

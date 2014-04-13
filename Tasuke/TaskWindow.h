@@ -60,6 +60,9 @@ public slots:
 	void displayTaskList();
 	void reloadTheme();
 
+signals:
+	void themeChanged();
+
 protected:
 	void closeEvent(QCloseEvent *event);
 	void mousePressEvent(QMouseEvent *event);

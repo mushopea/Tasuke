@@ -64,7 +64,6 @@ public:
 
 	void loadDictionary();
 	void loadFonts();
-	void initialize();
 
 	static void setGuiMode(bool mode);
 	static Tasuke &instance();
@@ -73,6 +72,7 @@ signals:
 	void tryFinish(TRY_RESULT result);
 
 private slots:
+	void initGui();
 	void handleInputChanged(QString text);
 	void handleInputTimeout();
 	void handleTryFinish(TRY_RESULT result);

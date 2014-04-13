@@ -1,8 +1,10 @@
 #ifndef NOTIFICATIONMANAGER_H
 #define NOTIFICATIONMANAGER_H
 
-#include <QTIMER>
-#include <task.h>
+//@author A0096863M
+
+#include <QTimer>
+#include "Task.h"
 
 // Class for the notification timer.
 class NotificationManager : public QObject {
@@ -18,7 +20,7 @@ private:
 
 public:
 	static NotificationManager &instance();
-	void init();
+	void init(void* storage);
 	void scheduleNotification(Task task);
 	
 public slots:
