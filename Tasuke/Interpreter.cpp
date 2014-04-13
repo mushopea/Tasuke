@@ -12,8 +12,9 @@
 
 //@author A0096836M
 
-int Interpreter::last = -1;
+QMutex Interpreter::mutex;
 
+int Interpreter::last = -1;
 bool Interpreter::formatsAlreadyInit = false;
 
 QStringList Interpreter::timeFormats;
@@ -26,12 +27,12 @@ QStringList Interpreter::timeFormatsAp;
 QStringList Interpreter::dateTimeFormatsAp;
 QStringList Interpreter::dateTimeFormatsWithoutYearAp;
 
-QMutex Interpreter::mutex;
-
+// sets the last task id
 void Interpreter::setLast(int _last) {
 	last = _last;
 }
 
+// substitutes parts of command with understandable equivalents
 QString Interpreter::substitute(QString text) {
 	QString subbedText = text;
 	foreach(QRegExp regex, EQUIV_AT_REGEX) {
@@ -61,6 +62,7 @@ QString Interpreter::substitute(QString text) {
 	return subbedText;
 }
 
+// substitute parts of ranges with undeertandable equivalents
 QString Interpreter::substituteForRange(QString text) {
 	QString subbedText = text;
 	subbedText.replace(EQUIV_TO_REGEX, DELIMITER_DASH);
@@ -69,6 +71,7 @@ QString Interpreter::substituteForRange(QString text) {
 	return subbedText;
 }
 
+// substitute parts of descriptions with understandable equivalents
 QString Interpreter::substituteForDescription(QString text) {
 	QString subbedText = text;
 	subbedText.remove(KEYWORD_BACKSLASH);
@@ -76,7 +79,10 @@ QString Interpreter::substituteForDescription(QString text) {
 	return subbedText;
 }
 
+// gets the date of the upcomming weekday. 1 = Monday, 7 = Sunday
 QDate Interpreter::nextWeekday(int weekday) {
+	assert(weekday > 1 && weekday <= 7);
+
 	QDate date = QDate::currentDate();
 	
 	while (date.dayOfWeek() != weekday) {
@@ -86,6 +92,7 @@ QDate Interpreter::nextWeekday(int weekday) {
 	return date;
 }
 
+// substitute parts of dates with understandable equivalents
 QString Interpreter::substituteForDate(QString text) {
 	QString subbedText = text.toLower();
 
@@ -129,6 +136,8 @@ QString Interpreter::substituteForDate(QString text) {
 	return subbedText;
 }
 
+// decompose a command so that it is easy to parse
+// throws ExceptionBadCommand if unable to parse
 QHash<QString, QString> Interpreter::decompose(QString text) {
 	QStringList tokens = text.split(" ");
 	QString current = "";
@@ -144,6 +153,7 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 			expectNewDelimiter = false;
 
 			if (tokens[i][0] == CHAR_DELIMITER_AT) {
+				// reach @ delimieter
 				current = tokens[i][0];
 				tokens[i].remove(0,1);
 
@@ -151,6 +161,7 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 					throw ExceptionBadCommand(ERROR_MULTIPLE_DATES, WHERE_DATE);
 				}
 			} else if (tokens[i][0] == CHAR_DELIMITER_HASH) {
+				// reach # delimiter
 				tokens[i].remove(0,1);
 				expectNewDelimiter = true;
 
@@ -158,9 +169,11 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 					throw ExceptionBadCommand(ERROR_TAG_NO_NAME, WHERE_TAG);
 				}
 			} else if (tokens[i] == DELIMITER_DASH_AT) {
+				// reach -@ delimiter
 				tokens[i].remove(0,2);
 				expectNewDelimiter = true;
 			} else if (tokens[i].startsWith(DELIMITER_DASH_HASH)) {
+				// reach -# delimiter
 				tokens[i].remove(0,2);
 				expectNewDelimiter = true;
 
@@ -169,11 +182,13 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 				}
 			}
 		} else {
+			// didn't expect this token here
 			if (expectNewDelimiter) {
 				throw ExceptionBadCommand(ERROR_DONT_KNOW(tokens[i]), WHERE_DESCRIPTION);
 			}
 		}
 
+		// add token to correct key
 		QString newVal =  tokens[i];
 		QString temp = retVal[current];
 		if (temp.isEmpty() == false) {
@@ -185,6 +200,7 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 	return retVal;
 }
 
+// removes anything before in the text
 QString Interpreter::removeBefore(QString text, QString before) {
 	QString retVal = text;
 	int pos = retVal.indexOf(before);
@@ -196,6 +212,9 @@ QString Interpreter::removeBefore(QString text, QString before) {
 	return retVal;
 }
 
+// Trys to guess the type of the command.
+// If the type is cannot be determined return COMMAND_NIL.
+// Defaults to perform substitutions but can be disabled
 QString Interpreter::getType(QString commandString, bool doSub) {
 	if (doSub) {
 		commandString = substitute(commandString);
@@ -220,7 +239,10 @@ QString Interpreter::getType(QString commandString, bool doSub) {
 }
 
 // This static helper function returns an instance of a ICommand that represents
-// the user's command. The caller must clean up using delete.
+// the user's command. The caller must clean up using delete. Takes in the
+// user input and a boolean dry. If dry is true, nothing is actually done.
+// defaults to false.
+// throws ExceptionBadCommand if unable to parse
 ICommand* Interpreter::interpret(QString commandString, bool dry) {
 	LOG(INFO) << MSG_INTERPRETTING(commandString);
 
@@ -228,6 +250,7 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 
 	QString commandType = getType(commandString, false);
 
+	// these commands need to be parsed if valid
 	if (commandType == COMMAND_NIL) {
 		throw ExceptionBadCommand(ERROR_DONT_UNDERSTAND);
 	} else if (commandType == COMMAND_ADD) {
@@ -253,6 +276,7 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 		return nullptr;
 	}
 
+	// these commands are always valid
 	if (commandType == COMMAND_SHOW) {
 		doShow(commandString);
 	} else if (commandType == COMMAND_HIDE) {
@@ -267,9 +291,12 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 		doExit();
 	}
 
+	// don't need to return a command object
 	return nullptr;
 }
 
+// creates an add command. takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
 ICommand* Interpreter::createAddCommand(QString commandString) {
 	commandString = removeBefore(commandString, COMMAND_ADD);
 	commandString = commandString.trimmed();
@@ -305,6 +332,8 @@ ICommand* Interpreter::createAddCommand(QString commandString) {
 	return new AddCommand(task);
 }
 
+// creates an remove command. takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
 ICommand* Interpreter::createRemoveCommand(QString commandString) {
 	commandString = removeBefore(commandString, COMMAND_REMOVE);
 	commandString = commandString.trimmed();
@@ -326,6 +355,8 @@ ICommand* Interpreter::createRemoveCommand(QString commandString) {
 	return new CompositeCommand(commands);
 }
 
+// creates an edit command. takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
 ICommand* Interpreter::createEditCommand(QString commandString) {
 	commandString = removeBefore(commandString, COMMAND_EDIT);
 	commandString = commandString.trimmed();
@@ -369,10 +400,14 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 	return new EditCommand(id-1, task);
 }
 
+// creates a clear command. takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
 ICommand* Interpreter::createClearCommand(QString commandString) {
 	return new ClearCommand();
 }
 
+// creates a done command. takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
 ICommand* Interpreter::createDoneCommand(QString commandString) {
 	commandString = removeBefore(commandString, COMMAND_DONE);
 	commandString = commandString.trimmed();
@@ -394,6 +429,8 @@ ICommand* Interpreter::createDoneCommand(QString commandString) {
 	return new CompositeCommand(commands);
 }
 
+// creates an undone command. takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
 ICommand* Interpreter::createUndoneCommand(QString commandString) {
 	commandString = removeBefore(commandString, COMMAND_UNDONE);
 	commandString = commandString.trimmed();
@@ -415,6 +452,7 @@ ICommand* Interpreter::createUndoneCommand(QString commandString) {
 	return new CompositeCommand(commands);
 }
 
+// does the show command. takes in a string from user input
 void Interpreter::doShow(QString commandString) {
 	commandString = removeBefore(commandString, COMMAND_SHOW);
 	commandString = commandString.trimmed();
@@ -464,12 +502,20 @@ void Interpreter::doShow(QString commandString) {
 
 	Tasuke::instance().showTaskWindow();
 }
+
+// does the about command.
 void Interpreter::doAbout() {
 	Tasuke::instance().showAboutWindow();
 }
+
+// does the hide command.
 void Interpreter::doHide() {
 	Tasuke::instance().hideTaskWindow();
 }
+
+// does the undo command. takes in a string from user input.
+// if dry is true, nothing is done. defaults to false
+// throws ExceptionBadCommand if unable to parse
 void Interpreter::doUndo(QString commandString, bool dry) {
 	commandString = removeBefore(commandString, COMMAND_UNDO);
 	commandString = commandString.trimmed();
@@ -495,6 +541,10 @@ void Interpreter::doUndo(QString commandString, bool dry) {
 		Tasuke::instance().undoCommand();
 	}
 }
+
+// does the redo command. takes in a string from user input.
+// if dry is true, nothing is done. defaults to false
+// throws ExceptionBadCommand if unable to parse
 void Interpreter::doRedo(QString commandString, bool dry) {
 	commandString = removeBefore(commandString, COMMAND_REDO);
 	commandString = commandString.trimmed();
@@ -520,16 +570,24 @@ void Interpreter::doRedo(QString commandString, bool dry) {
 		Tasuke::instance().redoCommand();
 	}
 }
+
+// does the settings command.
 void Interpreter::doSettings() {
 	Tasuke::instance().showSettingsWindow();
 }
+
+// does the help command.
 void Interpreter::doHelp() {
 	Tasuke::instance().showTutorial();
 }
+
+// does the exit command.
 void Interpreter::doExit() {
 	QApplication::quit();
 }
 
+// try to parse the id from a string input
+// throws ExceptionBadCommand if unable to parse
 int Interpreter::parseId(QString idString) {
 	idString = idString.trimmed();
 
@@ -556,6 +614,8 @@ int Interpreter::parseId(QString idString) {
 	return id;
 }
 
+// try to parse an id list from a string input
+// throws ExceptionBadCommand if unable to parse
 QList<int> Interpreter::parseIdList(QString idListString) {
 	idListString = idListString.trimmed();
 	
@@ -577,6 +637,8 @@ QList<int> Interpreter::parseIdList(QString idListString) {
 	return results;
 }
 
+// try to parse an id range from a string input
+// throws ExceptionBadCommand if unable to parse
 QList<int> Interpreter::parseIdRange(QString idRangeString) {
 	idRangeString = substituteForRange(idRangeString);
 	idRangeString = idRangeString.trimmed();
@@ -632,6 +694,8 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 	return results;
 }
 
+// try to parse the time period from a string input
+// throws ExceptionBadCommand if unable to parse
 Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) {
 	timePeriodString = substituteForRange(timePeriodString);
 
@@ -664,6 +728,8 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) 
 	return timePeriod;
 }
 
+// try to parse the date from a string input
+// throws ExceptionBadCommand if unable to parse
 QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 	dateString = substituteForDate(dateString);
 	dateString = dateString.trimmed();
@@ -785,6 +851,10 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 	return retVal;
 }
 
+// generate all date formats
+// WARNING: this method blocks for very long time.
+// run this method on another thread at start up
+// this method is threadsafe
 void Interpreter::initFormats() {
 	QMutexLocker locker(&mutex);
 
@@ -801,6 +871,8 @@ void Interpreter::initFormats() {
 	formatsAlreadyInit = true;
 }
 
+// generate formats for time only
+// do not call this directly. use initFormats() to run
 void Interpreter::generateTimeFormats() {
 	assert(formatsAlreadyInit == false);
 
@@ -844,6 +916,9 @@ void Interpreter::generateTimeFormats() {
 		}
 	}
 }
+
+// generates date formats without any year
+// do not call this directly. use initFormats() to run
 void Interpreter::generateDateFormatsWithoutYear() {
 	assert(formatsAlreadyInit == false);
 
@@ -874,6 +949,9 @@ void Interpreter::generateDateFormatsWithoutYear() {
 		}
 	}
 }
+
+// generates date formats with the years
+// do not call this directly. use initFormats() to run
 void Interpreter::generateDateFormats() {
 	assert(formatsAlreadyInit == false);
 
@@ -906,6 +984,8 @@ void Interpreter::generateDateFormats() {
 	}
 }
 
+// generates date + time formats without any year
+// do not call this directly. use initFormats() to run
 void Interpreter::generateDateTimeFormatsWithoutYear() {
 	assert(formatsAlreadyInit == false);
 
@@ -922,6 +1002,8 @@ void Interpreter::generateDateTimeFormatsWithoutYear() {
 	}
 }
 
+// generates date + time formats with the year
+// do not call this directly. use initFormats() to run
 void Interpreter::generateDateTimeFormats() {
 	assert(formatsAlreadyInit == false);
 
