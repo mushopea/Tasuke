@@ -37,7 +37,7 @@ public:
 	bool isAllDone();
 
 	void sortByEndDate();
-	void sortByBeginDate();
+	//void sortByBeginDate();
 	void sortByDescription();
 	void sortByOngoing();
 	void sortByIsDueToday();
