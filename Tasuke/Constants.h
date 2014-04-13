@@ -102,6 +102,33 @@ const char* const MSG_HOTKEYMANAGER_DESTROYED = "HotKeyManager destroyed";
 const char* const MSG_SYSTEMTRAYWIDGET_CREATED = "SystemTrayWidget created";
 const char* const MSG_SYSTEMTRAYWIDGET_DESTROYED = "SystemTrayWidget destroyed";
 
+// Log messages for Storage class
+const char* const MSG_STORAGE_ADDING_TASK = "Adding task ";
+const char* const MSG_STORAGE_REPLACING_TASK = "Replacing task ";
+const char* const MSG_STORAGE_REMOVING_TASK = "Removing task with ID ";
+const char* const MSG_STORAGE_POP_TASK = "Popping task from the back.";
+const char* const MSG_STORAGE_RETRIEVE_NEXT_TASK = "Retrieving the next upcoming task.";
+const char* const MSG_STORAGE_SEARCH = "Searching for tasks";
+const char* const MSG_STORAGE_SEARCH_BY_DESCRIPTION = "Searching for tasks in description for keyword ";
+const char* const MSG_STORAGE_SEARCH_BY_TAG = "Searching for tasks in tags for keyword ";
+const char* const MSG_STORAGE_NEXT_FREE_TIME = "Searching for the next free time.";
+const char* const MSG_STORAGE_SORT_BY_END_DATE = "Sorting by end date.";
+const char* const MSG_STORAGE_SORT_BY_BEGIN_DATE = "Sorting by begin date.";
+const char* const MSG_STORAGE_SORT_BY_DESCRIPTION = "Sorting by description.";
+const char* const MSG_STORAGE_SORT_BY_ONGOING_STATUS = "Sorting by ongoing status.";
+const char* const MSG_STORAGE_SORT_BY_DUE_TODAY = "Sorting by whether or not task is due today.";
+const char* const MSG_STORAGE_SORT_BY_OVERDUE = "Sorting by overdue status.";
+const char* const MSG_STORAGE_SORT_BY_DONE_STATUS = "Sorting by done status.";
+const char* const MSG_STORAGE_SORT_BY_HAS_END_DATE = "Sorting by existence of an end date.";
+const char* const MSG_STORAGE_CLEAR_ALL_DONE_TASKS = "Clearing all tasks marked as done.";
+const char* const MSG_STORAGE_CLEAR_ALL_TASKS = "Clearing all tasks without discrimination.";
+const char* const MSG_STORAGE_INSTANCE_CREATED = "Storage instance with default path created.";
+const char* const MSG_STORAGE_INSTANCE_CREATED_NONDEFAULT = "Storage instance with custom path created.";
+const char* const MSG_STORAGE_LOAD_FILE_START = "Loading file...";
+const char* const MSG_STORAGE_LOAD_FILE_END = "File loaded.";
+const char* const MSG_STORAGE_SAVE_FILE_START = "Saving file...";
+const char* const MSG_STORAGE_SAVE_FILE_END = "File saved.";
+
 // Macros for log messages
 #define MSG_ERROR_PARSING(message) \
 	"Error parsing command" << QString(message).toStdString()
