@@ -124,6 +124,7 @@ const char* const MAC_RESOURCE_PATH = "/../Resources/";
 
 // The string name of the TRY_RESULT metatype
 const char* const METATYPE_TRY_RESULT = "TRY_RESULT";
+const char* const METATYPE_KEYCOMIBNATION = "KeyCombination";
 
 // Lists of words to add into dictionary
 const QStringList SPELL_NONWORD_COMMANDS = QStringList() << "rm" << "ls"
