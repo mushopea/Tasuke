@@ -184,7 +184,9 @@ QString IStorage::nextFreeTime() {
 		if (task->isOverdue()) {
 			continue;
 		}
-
+		if (!task->isEvent()) {
+			continue;
+		}
 		if (task->getBegin() <= nextAvailable) {
 			nextAvailable = task->getEnd();
 		} else {

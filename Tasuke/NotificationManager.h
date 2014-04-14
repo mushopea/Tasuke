@@ -1,7 +1,6 @@
+//@author A0096863M
 #ifndef NOTIFICATIONMANAGER_H
 #define NOTIFICATIONMANAGER_H
-
-//@author A0096863M
 
 #include <QTimer>
 #include "Task.h"
