@@ -1,4 +1,3 @@
-//@author A0096863M
 #ifndef STORAGE_H
 #define STORAGE_H
 
@@ -9,6 +8,7 @@
 #include "Task.h"
 #include "NotificationManager.h"
 
+//@author A0096863M
 // Interface class for Storage.
 class IStorage {
 protected:

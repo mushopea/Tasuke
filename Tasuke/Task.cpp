@@ -1,10 +1,10 @@
-//@author A0096863M
 #include <QDataStream>
 #include <cassert>
 #include "Constants.h"
 #include "Exceptions.h"
 #include "Task.h"
 
+//@author A0096863M
 Task::Task() {
 	id = -1;
 	done = false;
@@ -23,7 +23,6 @@ Task::~Task() {
 
 // Sets the description of a task.
 void Task::setDescription(QString _description) {
-	assert(_description != nullptr);
 	description = _description;
 }
 
