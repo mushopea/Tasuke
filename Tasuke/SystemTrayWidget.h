@@ -1,10 +1,10 @@
+//@author A0096836M
+
 #ifndef SYSTEMTRAYWIDGET_H
 #define SYSTEMTRAYWIDGET_H
 
 #include <QWidget>
 #include <QSystemTrayIcon>
-
-//@author A0096836M
 
 // Widget for tray icon in the system tray. It is used to display info and for
 // user menu

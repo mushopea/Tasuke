@@ -1,3 +1,5 @@
+//@author A0096836M
+
 #include <cassert>
 #include <glog/logging.h>
 #include <QApplication>
@@ -9,8 +11,6 @@
 #include "Constants.h"
 #include "Exceptions.h"
 #include "Interpreter.h"
-
-//@author A0096836M
 
 QMutex Interpreter::mutex;
 

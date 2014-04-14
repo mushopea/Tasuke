@@ -1,10 +1,10 @@
+//@author A0096836M
+
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
 #include <QMutex>
 #include "Commands.h"
-
-//@author A0096836M
 
 // This class acts as an interpreter. It either returns an ICommand object
 // or a nullptr. If it returns an ICommand object the caller must manage

@@ -1,10 +1,10 @@
+//@author A0096836M
+
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
 #include <exception>
 #include <QString>
-
-//@author A0096836M
 
 // This exception is thrown only during programming errors. If this happens,
 // then it indicates a bug in the code
