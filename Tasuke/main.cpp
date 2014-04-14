@@ -9,8 +9,7 @@
 
 // Exits the program if another instance of Tasuke is already running
 // Run this right at the start so you can fail fast
-void exitIfAlreadyRunning() {
-	QSharedMemory sharedMemory;
+void exitIfAlreadyRunning(QSharedMemory& sharedMemory) {
 	sharedMemory.setKey(SHARED_MEMORY_KEY);
 	sharedMemory.attach();
 
@@ -40,8 +39,9 @@ void setOrganizationAndApplicationName() {
 // The entry point for the program.
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
-
-	exitIfAlreadyRunning();
+	QSharedMemory sharedMemory;
+	
+	exitIfAlreadyRunning(sharedMemory);
 	initLogging(argc, argv);
 	setOrganizationAndApplicationName();;
 
