@@ -1,8 +1,8 @@
+//@author A0096836M
+
 #include <QSysInfo>
 #include "HotKeyThread.h"
 #include "Constants.h"
-
-//@author A0096836M
 
 #ifdef Q_OS_WIN
 

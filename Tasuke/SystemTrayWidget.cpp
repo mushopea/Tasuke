@@ -1,11 +1,11 @@
+//@author A0096836M
+
 #include <glog/logging.h>
 #include <QMenu>
 #include <QAction>
 #include <QApplication>
 #include "Tasuke.h"
 #include "SystemTrayWidget.h"
-
-//@author A0096836M
 
 // Constructor for SystemTrayWidget. Takes in parent object for memory hierachy
 // Parent defaults to null

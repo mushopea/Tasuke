@@ -1,11 +1,11 @@
+//@author A0096836M
+
 #include <glog/logging.h>
 #include <QApplication>
 #include <QMessageBox>
 #include <QSharedMemory>
 #include "Tasuke.h"
 #include "Constants.h"
-
-//@author A0096836M
 
 // Exits the program if another instance of Tasuke is already running
 void exitIfAlreadyRunning() {

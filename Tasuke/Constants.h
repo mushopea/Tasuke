@@ -1,7 +1,7 @@
+//@author A0096836M
+
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
-
-//@author A0096836M
 
 #include <QStringList>
 #include <QList>

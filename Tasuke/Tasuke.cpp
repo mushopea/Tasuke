@@ -1,3 +1,5 @@
+//@author A0096836M
+
 #include <string>
 #include <iostream>
 #include <thread>
@@ -11,8 +13,6 @@
 #include "Interpreter.h"
 #include "Commands.h"
 #include "Tasuke.h"
-
-//@author A0096836M
 
 bool Tasuke::guiMode = true;
 

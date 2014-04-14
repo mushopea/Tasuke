@@ -1,11 +1,11 @@
+//@author A0096836M
+
 #ifndef HOTKEYTHREAD_H
 #define HOTKEYTHREAD_H
 
 #include <QtGlobal>
 #include <QMetaType>
 #include <QThread>
-
-//@author A0096836M
 
 // Describes the keycombination pressed
 enum class KeyCombination {
