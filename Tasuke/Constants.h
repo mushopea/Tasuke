@@ -491,6 +491,10 @@ const QList<QRegExp> EQUIV_EDIT_REGEX = QList<QRegExp>()
 	<< QRegExp("^modify\\b") << QRegExp("^e\\b");
 const QList<QRegExp> EQUIV_REMOVE_REGEX = QList<QRegExp>()
 	<< QRegExp("^rm\\b") << QRegExp("^delete\\b");
+const QList<QRegExp> EQUIV_SHOW_REGEX = QList<QRegExp>()
+	<< QRegExp("^ls\\b") << QRegExp("^search\\b") << QRegExp("^find\\b")
+	<< QRegExp("^list\\b") << QRegExp("^display\\b");
+const QList<QRegExp> EQUIV_HIDE_REGEX = QList<QRegExp>();
 const QList<QRegExp> EQUIV_DONE_REGEX = QList<QRegExp>()
 	<< QRegExp("^d\\b");
 const QList<QRegExp> EQUIV_UNDONE_REGEX = QList<QRegExp>()
@@ -499,17 +503,23 @@ const QList<QRegExp> EQUIV_UNDO_REGEX = QList<QRegExp>()
 	<< QRegExp("^u\\b");
 const QList<QRegExp> EQUIV_REDO_REGEX = QList<QRegExp>()
 	<< QRegExp("^r\\b");
-const QList<QRegExp> EQUIV_SHOW_REGEX = QList<QRegExp>()
-	<< QRegExp("^ls\\b") << QRegExp("^search\\b") << QRegExp("^find\\b")
-	<< QRegExp("^list\\b") << QRegExp("^display\\b");
+const QList<QRegExp> EQUIV_CLEAR_REGEX = QList<QRegExp>();
 const QList<QRegExp> EQUIV_HELP_REGEX = QList<QRegExp>()
 	<< QRegExp("^tutorial\\b") << QRegExp("^guide\\b")
 	<< QRegExp("^instructions\\b");
+const QList<QRegExp> EQUIV_ABOUT_REGEX = QList<QRegExp>();
 const QList<QRegExp> EQUIV_SETTINGS_REGEX = QList<QRegExp>()
 	<< QRegExp("^options\\b");
 const QList<QRegExp> EQUIV_EXIT_REGEX = QList<QRegExp>()
 	<< QRegExp("^quit\\b") << QRegExp("^q\\b");
 const QRegExp EQUIV_TO_REGEX = QRegExp("\\bto\\b");
+
+const QList< const QList<QRegExp> > EQUIV_COMMAND_REGEX = 
+	QList< const QList<QRegExp> >() << EQUIV_ADD_REGEX << EQUIV_EDIT_REGEX
+	<< EQUIV_REMOVE_REGEX << EQUIV_SHOW_REGEX << EQUIV_HIDE_REGEX
+	<< EQUIV_DONE_REGEX << EQUIV_UNDONE_REGEX << EQUIV_UNDO_REGEX
+	<< EQUIV_REDO_REGEX << EQUIV_CLEAR_REGEX << EQUIV_HELP_REGEX
+	<< EQUIV_ABOUT_REGEX << EQUIV_SETTINGS_REGEX << EQUIV_EXIT_REGEX;
 
 // Special tag for format display
 #define PSEUDO_TAG_BEGIN(tag) \
