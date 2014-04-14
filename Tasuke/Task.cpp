@@ -33,15 +33,14 @@ QString Task::getDescription() const {
 	return description;
 }
 
-// Adds a single _tag QString to the list of tags that
-// this task has. This method will throw an ExceptionTooManyTags
-// if the incoming tag causes the number of tags to exceed
-// MAXIMUM_TAGS.
+// Adds a single _tag QString to the list of tags that this task has. This 
+// method will throw an ExceptionTooManyTags if the incoming tag causes the 
+// number of tags to exceed MAXIMUM_TAGS.
 void Task::addTag(QString _tag) {
 	assert(!_tag.isEmpty());
 
 	if (tags.size() >= MAXIMUM_TAGS) {
-		throw ExceptionBadCommand("You have too many tags in this task", "tag");
+		throw ExceptionBadCommand("This task has too many tags", "tag");
 	}
 	
 	if (!tags.contains(_tag)) {
@@ -65,18 +64,18 @@ QSet<QString> Task::getTagsSet() const {
 }
 
 // Sets the begin date and time for this task.
-// It is the responsibility of the caller of this method
-// to pass in a QDateTime object that is complete,
-// as this method makes no assumptions about the date and time.
+// It is the responsibility of the caller of this method to pass in a QDateTime 
+// object that is complete, as this method makes no assumptions about the date 
+// and time.
 void Task::setBegin(QDateTime _begin) {
 	//assert(_begin.isValid());
 	begin = _begin;
 }
 
 // Changes only the date portion of the begin QDateTime field.
-// If the resulting begin QDateTime object is invalid because of
-// missing time field, this method will attempt to validate
-// by appending the time as 0000 hours.
+// If the resulting begin QDateTime object is invalid because of missing time 
+// field, this method will attempt to validate by appending the time as 0000 
+// hours.
 void Task::setBeginDate(QDate _beginDate) {
 	assert(_beginDate.isValid());
 	begin.setDate(_beginDate);
@@ -87,9 +86,9 @@ void Task::setBeginDate(QDate _beginDate) {
 }
 
 // Changes only the time portion of the begin QDateTime field.
-// If the resulting begin QDateTime object is invalid because of
-// missing date field, this method will attempt to validate
-// by prepending the date as the current day.
+// If the resulting begin QDateTime object is invalid because of missing date 
+// field, this method will attempt to validate by prepending the date as the 
+// current day.
 void Task::setBeginTime(QTime _beginTime) {
 	assert(_beginTime.isValid());
 	begin.setTime(_beginTime);
@@ -105,18 +104,18 @@ QDateTime Task::getBegin() const {
 }
 
 // Sets the end date and time for this task.
-// It is the responsibility of the caller of this method
-// to pass in a QDateTime object that is complete,
-// as this method makes no assumptions about the date and time.
+// It is the responsibility of the caller of this method to pass in a QDateTime
+// object that is complete, as this method makes no assumptions about the date 
+// and time.
 void Task::setEnd(QDateTime _end) {
 	//assert(_end.isValid());
 	end = _end;
 }
 
 // Changes only the date portion of the end QDateTime field.
-// If the resulting end QDateTime object is invalid because of
-// missing time field, this method will attempt to validate
-// by appending the time as 2359 hours.
+// If the resulting end QDateTime object is invalid because of missing time 
+// field, this method will attempt to validate by appending the time as 2359 
+// hours.
 void Task::setEndDate(QDate _endDate) {
 	end.setDate(_endDate);
 
@@ -126,9 +125,9 @@ void Task::setEndDate(QDate _endDate) {
 }
 
 // Changes only the time portion of the end QDateTime field.
-// If the resulting end QDateTime object is invalid because of
-// missing date field, this method will attempt to validate
-// by prepending the date as the current day.
+// If the resulting end QDateTime object is invalid because of missing date 
+// field, this method will attempt to validate by prepending the date as the 
+// current day.
 void Task::setEndTime(QTime _endTime) {
 	end.setTime(_endTime);
 
@@ -142,11 +141,11 @@ QDateTime Task::getEnd() const {
 	return end;
 }
 
-// Returns the QString representation of a countdown from now to the end of a task.
-// This method also returns a countup from the end of an overdue task to now.
-// This method does NOT guarantee accuracy of dates. This method assumes that
-// there are 12 identical months in a year, and there are exactly 4 weeks every month,
-// and each month has exactly 30 days.
+// Returns the QString representation of a countdown from now to the end of a 
+// task. This method also returns a countup from the end of an overdue task to
+// now. This method does NOT guarantee accuracy of dates. This method assumes
+// that there are 12 identical months in a year, and there are exactly 4 weeks 
+// every month, and each month has exactly 30 days.
 QString Task::getTimeDifferenceString() const {
 	qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
 	qint64 end = getEnd().toMSecsSinceEpoch();
@@ -257,8 +256,7 @@ void Task::setDone(bool _done) {
 	done = _done;
 }
 
-// Marks the status of a task as 'done' by setting the 'done'
-// field to TRUE.
+// Marks the status of a task as 'done' by setting the 'done' field to TRUE.
 void Task::markDone() {
 	done = true;
 }
@@ -284,9 +282,8 @@ int Task::getId() const {
 	return id;
 }
 
-// Returns TRUE if task has neither a valid begin date/time, 
-// nor a valid end date/time.
-// Returns FALSE for all other cases.
+// Returns TRUE if task has neither a valid begin date/time, nor a valid end 
+// date/time. Returns FALSE for all other cases.
 bool Task::isFloating() const {
 	if (!begin.isValid() && !end.isValid()) {
 		return true;
@@ -295,10 +292,8 @@ bool Task::isFloating() const {
 	}
 }
 
-// Returns FALSE if there is no end date/time for this task,
-// or it is not valid.
-// Returns FALSE if end date/time for this task is later
-// than current date/time.
+// Returns FALSE if there is no end date/time for this task, or it is not valid
+// Returns FALSE if end date/time for this task is later than current date/time
 // Returns TRUE if end date/time for this task is earlier
 // than current date/time.
 bool Task::isOverdue() const {
@@ -358,8 +353,8 @@ bool Task::isDueOn(QDate _date) const {
 // Returns FALSE if this task has no valid end date.
 // Returns FALSE if this task is already overdue.
 // Returns FALSE if this task has a due date that is not within the current day.
-// Returns TRUE if this task is already overdue but the due date is the current day.
-// Returns TRUE if this task has a due date that is within the current day.
+// Returns TRUE if this task is already overdue but the due date is the current
+// day. Returns TRUE if this task has a due date that is within the current day.
 bool Task::isDueToday() const {
 	QDateTime todayStart(QDateTime::currentDateTime().date(), BEGINNING_OF_DAY);
 	QDateTime todayEnd(QDateTime::currentDateTime().date(), END_OF_DAY);
@@ -388,8 +383,10 @@ bool Task::isDueToday() const {
 // Returns FALSE if this task has a due date that is not within the next day
 // Returns TRUE if this task has a due date that is within the next day.
 bool Task::isDueTomorrow() const {
-	QDateTime tomorrowStart(QDateTime::currentDateTime().date().addDays(1), BEGINNING_OF_DAY);
-	QDateTime tomorrowEnd(QDateTime::currentDateTime().date().addDays(1), END_OF_DAY);
+	QDateTime tomorrowStart(QDateTime::currentDateTime().date().addDays(1), 
+		BEGINNING_OF_DAY);
+	QDateTime tomorrowEnd(QDateTime::currentDateTime().date().addDays(1), 
+		END_OF_DAY);
 	//tomorrowEnd.addDays(1);
 	
 	if (!getEnd().isValid()) {
@@ -417,28 +414,28 @@ bool Task::isEvent() const {
 	}
 }
 
-// Returns true if this task is equal to the other task; otherwise returns false.
-// The ID field is not considered because ID is unique for each object.
+// Returns true if this task is equal to the other task; otherwise returns
+// false. The ID field is not considered because ID is unique for each object.
 bool Task::operator==(Task const& other) const {
-	bool isSameDescription = (description==other.getDescription());
-	bool isSameTags = (tags==other.getTagsSet());
-	bool isSameBegin = (begin==other.getBegin());
-	bool isSameEnd = (end==other.getEnd());
-	bool isSameDone = (done==other.isDone());
+	bool sameDescription = (description==other.getDescription());
+	bool sameTags = (tags==other.getTagsSet());
+	bool sameBegin = (begin==other.getBegin());
+	bool sameEnd = (end==other.getEnd());
+	bool sameDone = (done==other.isDone());
 
-	return (isSameDescription && isSameTags && isSameBegin && isSameEnd && isSameDone);
+	return (sameDescription && sameTags && sameBegin && sameEnd && sameDone);
 }
 
-// Returns true if this task is different to the other task; otherwise returns false.
-// The ID field is not considered because ID is unique for each object.
+// Returns true if this task is different to the other task; otherwise returns 
+// false. The ID field is not considered because ID is unique for each object.
 bool Task::operator!=(Task const& other) const {
-	bool isSameDescription = (description==other.getDescription());
-	bool isSameTags = (tags==other.getTagsSet());
-	bool isSameBegin = (begin==other.getBegin());
-	bool isSameEnd = (end==other.getEnd());
-	bool isSameDone = (done==other.isDone());
+	bool sameDescription = (description==other.getDescription());
+	bool sameTags = (tags==other.getTagsSet());
+	bool sameBegin = (begin==other.getBegin());
+	bool sameEnd = (end==other.getEnd());
+	bool sameDone = (done==other.isDone());
 
-	return !(isSameDescription && isSameTags && isSameBegin && isSameEnd && isSameDone);
+	return !(sameDescription && sameTags && sameBegin && sameEnd && sameDone);
 }
 
 QDataStream& operator<<(QDataStream& out, const Task& task) {

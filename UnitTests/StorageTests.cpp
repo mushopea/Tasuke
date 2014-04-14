@@ -131,7 +131,8 @@ namespace StorageTests {
 			Assert::IsTrue(dueToday.isDueToday());
 
 			Task dueTomorrow;
-			dueTomorrow.setEnd(QDateTime(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
+			dueTomorrow.setEnd(QDateTime(
+				QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
 			Assert::IsFalse(dueTomorrow.isDueToday());
 
 			Task alreadyOverdue;
@@ -148,7 +149,8 @@ namespace StorageTests {
 			Assert::IsFalse(dueToday.isDueTomorrow());
 
 			Task dueTomorrow;
-			dueTomorrow.setEnd(QDateTime(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
+			dueTomorrow.setEnd(QDateTime(
+				QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
 			Assert::IsTrue(dueTomorrow.isDueTomorrow());
 			
 			Task alreadyOverdue;
@@ -196,10 +198,12 @@ namespace StorageTests {
 
 			Assert::AreEqual(storage->searchByDescription("description").size(), 4);
 			Assert::AreEqual(storage->searchByDescription("DESCRIPTION").size(), 4);
-			Assert::AreEqual(storage->searchByDescription("description", Qt::CaseSensitive).size(), 2);
-			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByDescription("description", 
+				Qt::CaseSensitive).size(), 2);
+			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN", 
+				Qt::CaseSensitive).size(), 1);
 			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN").size(), 4);
-			Assert::AreEqual(storage->searchByDescription("nonexistent description").size(), 0);
+			Assert::AreEqual(storage->searchByDescription("nonexistent").size(), 0);
 		}
 		
 		TEST_METHOD(StorageSearchByTag) {
@@ -211,11 +215,15 @@ namespace StorageTests {
 			Tasuke::instance().runCommand("add task5 #tag4 #tag4 #tag4");
 
 			// Case sensitive tests
-			Assert::AreEqual(storage->searchByTag("tagcase", Qt::CaseSensitive).size(), 1);
-			Assert::AreEqual(storage->searchByTag("TAGCASE", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByTag("tagcase", 
+				Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByTag("TAGCASE", 
+				Qt::CaseSensitive).size(), 1);
 
-			Assert::AreEqual(storage->searchByTag("tag1", Qt::CaseSensitive).size(), 3);
-			Assert::AreEqual(storage->searchByTag("tag3", Qt::CaseSensitive).size(), 2);
+			Assert::AreEqual(storage->searchByTag("tag1", 
+				Qt::CaseSensitive).size(), 3);
+			Assert::AreEqual(storage->searchByTag("tag3", 
+				Qt::CaseSensitive).size(), 2);
 			Assert::AreEqual(storage->searchByTag("tag4").size(), 1);
 
 			// Case insensitive tests

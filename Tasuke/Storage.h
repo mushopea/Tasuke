@@ -29,8 +29,10 @@ public:
 	int totalTasks();
 
 	QList<Task> search(std::function<bool(Task)> predicate) const;
-	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
-	QList<Task> searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+	QList<Task> searchByDescription(QString keyword, 
+		Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+	QList<Task> searchByTag(QString keyword, 
+		Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 
 	QDateTime nextFreeTime();
 

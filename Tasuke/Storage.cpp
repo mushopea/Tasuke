@@ -40,7 +40,8 @@ Task IStorage::editTask(int id, Task& task) {
 
 	QSharedPointer<Task> taskPtr = QSharedPointer<Task>(new Task(task));
 
-	LOG(INFO) << MSG_STORAGE_REPLACING_TASK << task.getDescription().toStdString();
+	LOG(INFO) << MSG_STORAGE_REPLACING_TASK 
+		<< task.getDescription().toStdString();
 
 	tasks.replace(id, taskPtr);
 	renumber();
@@ -130,7 +131,8 @@ QList<Task> IStorage::search(std::function<bool(Task)> predicate) const {
 // Searches all descriptions of all tasks in memory for specified keyword(s).
 // Returns a list of all tasks that contain the keyword in its description.
 // Searches by any part of the description. Case insensitive is the default.
-QList<Task> IStorage::searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity) {
+QList<Task> IStorage::searchByDescription(QString keyword, 
+										  Qt::CaseSensitivity caseSensitivity) {
 	QMutexLocker lock(&mutex);
 	LOG(INFO) << MSG_STORAGE_SEARCH_BY_DESCRIPTION << keyword.toStdString();
 	QList<Task> results;
@@ -148,7 +150,8 @@ QList<Task> IStorage::searchByDescription(QString keyword, Qt::CaseSensitivity c
 // Returns a list of all tasks that contain that tag.
 // Will also return partial results (if tag contains the searched keyword)
 // Case insensitive is the default.
-QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity) {
+QList<Task> IStorage::searchByTag(QString keyword, 
+								  Qt::CaseSensitivity caseSensitivity) {
 	QMutexLocker lock(&mutex);
 	LOG(INFO) << MSG_STORAGE_SEARCH_BY_TAG << keyword.toStdString();
 	QList<Task> results;
@@ -169,10 +172,10 @@ QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensi
 
 // Retrieves the next available free time.
 // Starts by assuming that the current time is free.
-// Then search through all tasks for ongoing events and take the ongoing event with the latest 
-// end time as the next available free time.
-// Then since tasks are sorted in order of earliest end time to latest end time,
-// overlapping tasks will be merged into one unit.
+// Then search through all tasks for ongoing events and take the ongoing 
+// event with the latest end time as the next available free time.
+// Then since tasks are sorted in order of earliest end time to latest end 
+// time, overlapping tasks will be merged into one unit.
 QDateTime IStorage::nextFreeTime() {
 	LOG(INFO) << MSG_STORAGE_NEXT_FREE_TIME;
 	QDateTime nextAvailableTime = QDateTime::currentDateTime();
@@ -203,7 +206,8 @@ bool IStorage::isAllDone() {
 // Tasks that end earlier are sorted to the front of the list.
 void IStorage::sortByEndDate() {
 	LOG(INFO) << MSG_STORAGE_SORT_BY_END_DATE;
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->getEnd() < t2->getEnd();
 	});
 }
@@ -211,7 +215,8 @@ void IStorage::sortByEndDate() {
 // Sorts the list of tasks in memory by its description alphabetically.
 void IStorage::sortByDescription() {
 	LOG(INFO) << MSG_STORAGE_SORT_BY_DESCRIPTION;
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->getDescription().toLower() < t2->getDescription().toLower();
 	});
 }
@@ -220,7 +225,8 @@ void IStorage::sortByDescription() {
 // Ongoing tasks are sorted to the front of the list.
 void IStorage::sortByOngoing() {
 	LOG(INFO) << MSG_STORAGE_SORT_BY_ONGOING_STATUS;
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->isOngoing() > t2->isOngoing();
 	});
 }
@@ -229,7 +235,8 @@ void IStorage::sortByOngoing() {
 // the current day. Tasks that are due on the current day are sorted the front.
 void IStorage::sortByIsDueToday() {
 	LOG(INFO) << MSG_STORAGE_SORT_BY_DUE_TODAY;
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->isDueToday() > t2->isDueToday();
 	});
 }
@@ -238,7 +245,8 @@ void IStorage::sortByIsDueToday() {
 // Tasks that are overdue are sorted to the front of the list.
 void IStorage::sortByOverdue() {
 	LOG(INFO) << MSG_STORAGE_SORT_BY_OVERDUE;
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->isOverdue() > t2->isOverdue();
 	});
 }
@@ -247,7 +255,8 @@ void IStorage::sortByOverdue() {
 // Tasks that are done are sorted to the back of the list.
 void IStorage::sortByDone() {
 	LOG(INFO) << MSG_STORAGE_SORT_BY_DONE_STATUS;
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->isDone() < t2->isDone();
 	});
 }
@@ -257,7 +266,8 @@ void IStorage::sortByDone() {
 // of the list.
 void IStorage::sortByHasEndDate() {
 	LOG(INFO) << MSG_STORAGE_SORT_BY_HAS_END_DATE;
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		if (t1->getEnd().isValid() == t2->getEnd().isValid()) {
 			return false;
 		}
@@ -317,7 +327,8 @@ void IStorage::clearAllTasks() {
 Storage::Storage() {
 	LOG(INFO) << MSG_STORAGE_INSTANCE_CREATED;
 
-	QDir dir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
+	QDir dir = QDir(QStandardPaths::writableLocation(
+		QStandardPaths::DataLocation));
 
 	path = dir.absoluteFilePath("tasks.ini");
 
@@ -352,11 +363,13 @@ void Storage::loadFile() {
 		task->setDescription(settings.value("Description").toString());
 		uint beginTime = settings.value("BeginTimeUnix", 0).toUInt();
 		if (beginTime != 0) {
-			task->setBegin(QDateTime::fromTime_t(settings.value("BeginTimeUnix").toInt()));
+			task->setBegin(QDateTime::fromTime_t(
+				settings.value("BeginTimeUnix").toInt()));
 		}
 		uint endTime = settings.value("EndTimeUnix", 0).toUInt();
 		if (endTime != 0) {
-			task->setEnd(QDateTime::fromTime_t(settings.value("EndTimeUnix").toInt()));
+			task->setEnd(QDateTime::fromTime_t(
+				settings.value("EndTimeUnix").toInt()));
 		}
 
 		task->setDone(settings.value("Done").toBool());
@@ -380,8 +393,8 @@ void Storage::loadFile() {
 }
 
 // This function deserializes the data from memory and writes it to the text
-// file. It does so via QSettings.
-// If the file cannot be written, an ExceptionNotOpen is thrown.
+// file. It does so via QSettings. If the file cannot be written, an 
+// ExceptionNotOpen is thrown.
 void Storage::saveFile() {
 	LOG(INFO) << MSG_STORAGE_SAVE_FILE_START;
 
