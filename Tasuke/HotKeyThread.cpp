@@ -79,7 +79,7 @@ void HotKeyThread::run() {
 
 #endif
 
-//@author a0096836-unused
+//@author A0096836M-unused
 #ifdef Q_OS_MAC
 
 #include "MacWindowActivator.h"
