@@ -512,4 +512,6 @@ const char* const TRAY_MENU_ABOUT = "&About Tasuke";
 
 const char* const STARTUP_LNK_PATH = "Startup/Tasuke.lnk";
 
+const int UNDO_LIMIT = 10;
+
 #endif
