@@ -51,4 +51,4 @@ namespace Microsoft {
 // Headers for CppUnitTest
 #include "CppUnitTest.h"
 
-#define MAX_TASKS 20
+#define MAX_TASKS 10
