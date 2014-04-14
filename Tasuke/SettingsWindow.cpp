@@ -48,7 +48,7 @@ void SettingsWindow::changeTabs() {
 
 
 // ============================================================
-// slots
+// Slots
 // ============================================================
 
 // Handles the user pressing Apply - all the options they changed will be set.

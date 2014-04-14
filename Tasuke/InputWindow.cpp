@@ -21,6 +21,10 @@ InputWindow::~InputWindow() {
 	LOG(INFO) << "InputWindow instance destroyed";
 }
 
+// ===================================================
+//	TOOLTIP DISPLAY FUNCTIONS
+// ===================================================
+
 // Allows other classes to display a tooltip message relative to the status of the input.
 void InputWindow::showTooltipMessage(InputStatus status, QString message) {
 	if (!tooltipWidget->isVisible()) {
@@ -33,6 +37,10 @@ void InputWindow::showTooltipMessage(InputStatus status, QString message) {
 void InputWindow::hideTooltip() {
 	tooltipWidget->hide();
 }
+
+// ===================================================
+//	WINDOW DISPLAY FUNCTIONS
+// ===================================================
 
 // Starts error wiggle animation
 void InputWindow::doErrorAnimation() {
