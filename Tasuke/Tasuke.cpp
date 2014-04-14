@@ -503,6 +503,7 @@ void Tasuke::runCommand(QString commandString) {
 		LOG(INFO) << MSG_TASUKE_COMMAND_STACK_PUSH;
 		commandUndoHistory.push_back(command);
 		commandRedoHistory.clear();
+		limitUndoRedo();
 
 		// save the file after changes
 		storage->saveFile();
@@ -618,6 +619,8 @@ void Tasuke::undoCommand() {
 	command->undo();
 	commandRedoHistory.push_back(command);
 	storage->saveFile();
+
+	limitUndoRedo();
 }
 
 // redos the last command
@@ -634,6 +637,8 @@ void Tasuke::redoCommand() {
 	command->run();
 	commandUndoHistory.push_back(command);
 	storage->saveFile();
+
+	limitUndoRedo();
 }
 
 // returns the size of the undo history
@@ -644,4 +649,14 @@ int Tasuke::undoSize() const {
 // returns the size of the redo history
 int Tasuke::redoSize() const {
 	return commandRedoHistory.size();
+}
+
+// limits the undo/redo stack to prevent overflowing
+void Tasuke::limitUndoRedo() {
+	while (commandUndoHistory.size() > UNDO_LIMIT) {
+		commandUndoHistory.pop_front();	
+	}
+	while (commandRedoHistory.size() > UNDO_LIMIT) {
+		commandRedoHistory.pop_front();	
+	}
 }

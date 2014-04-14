@@ -62,6 +62,7 @@ public:
 	void redoCommand();
 	int undoSize() const;
 	int redoSize() const;
+	void limitUndoRedo();
 
 	void loadDictionary();
 	void loadFonts();
