@@ -244,7 +244,7 @@ QString Interpreter::getType(QString commandString, bool doSub) {
 // defaults to false.
 // throws ExceptionBadCommand if unable to parse
 ICommand* Interpreter::interpret(QString commandString, bool dry) {
-	LOG(INFO) << MSG_INTERPRETTING(commandString);
+	LOG(INFO) << MSG_INTERPRETER_INTERPRETTING(commandString);
 
 	commandString = substitute(commandString);
 

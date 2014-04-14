@@ -14,7 +14,7 @@ void exitIfAlreadyRunning() {
 	sharedMemory.attach();
 
 	if (!sharedMemory.create(1)) {
-		QMessageBox::information(nullptr, NAME_APPLICATION, MSG_ALREADY_RUNNING);
+		QMessageBox::information(nullptr, NAME_APPLICATION, MSG_TASUKE_ALREADY_RUNNING);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -24,7 +24,7 @@ void initLogging(int argc, char *argv[]) {
 	Q_UNUSED(argc);
 
 	google::InitGoogleLogging(argv[0]);
-	LOG(INFO) << MSG_STARTING_UP;
+	LOG(INFO) << MSG_TASUKE_STARTING_UP;
 }
 
 // Sets the globals for name and organization in Qt

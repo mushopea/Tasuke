@@ -87,7 +87,7 @@ Tasuke::~Tasuke() {
 // if the dictionaries cannot be found at the path, then spell checking 
 // is disabled for the program
 void Tasuke::loadDictionary() {
-	LOG(INFO) << MSG_LOADING_DICTIONARY;
+	LOG(INFO) << MSG_TASUKE_LOADING_DICTIONARY;
 
 	spellCheckEnabled = true;
 
@@ -109,7 +109,7 @@ void Tasuke::loadDictionary() {
 
 // loads all fonts in resources
 void Tasuke::loadFonts(){
-	LOG(INFO) << MSG_LOADING_FONTS;
+	LOG(INFO) << MSG_TASUKE_LOADING_FONTS;
 
 	QFontDatabase fontDatabase; 
 	foreach(QString font, FONT_LIST) {
@@ -164,7 +164,7 @@ Tasuke& Tasuke::instance() {
 // changes the storage instance used by tasuke
 void Tasuke::setStorage(IStorage* _storage) {
 	assert(_storage != nullptr);;
-	LOG(INFO) << MSG_STORAGE_CHANGED;
+	LOG(INFO) << MSG_TASUKE_STORAGE_CHANGED;
 
 	storage = _storage;
 }
@@ -317,7 +317,7 @@ void Tasuke::showSettingsWindow() {
 
 // shows the messaage in the system tray
 void Tasuke::showMessage(QString message) {
-	LOG(INFO) << MSG_SHOWING_MESSAGE(message);
+	LOG(INFO) << MSG_TASUKE_SHOWING_MESSAGE(message);
 
 	if (!guiMode) {
 		return;
@@ -333,7 +333,7 @@ void Tasuke::updateTaskWindow(QList<Task> tasks, QString title) {
 		return;
 	}
 
-	LOG(INFO) << MSG_UPDATING_TASKWINDOW(QString::number(tasks.size()));
+	LOG(INFO) << MSG_TASUKE_UPDATING_TASKWINDOW(QString::number(tasks.size()));
 
 	taskWindow->showTasks(tasks, title);
 }
@@ -344,7 +344,7 @@ void Tasuke::highlightTask(int id) {
 		return;
 	}
 
-	LOG(INFO) << MSG_HIGHLIGHT_TASK(id);
+	LOG(INFO) << MSG_TASUKE_HIGHLIGHT_TASK(id);
 
 	taskWindow->highlightTask(id);
 }
@@ -500,7 +500,7 @@ void Tasuke::runCommand(QString commandString) {
 		command->run();
 
 		// put object into command history
-		LOG(INFO) << MSG_COMMAND_STACK_PUSH;
+		LOG(INFO) << MSG_TASUKE_COMMAND_STACK_PUSH;
 		commandUndoHistory.push_back(command);
 		commandRedoHistory.clear();
 
@@ -510,7 +510,7 @@ void Tasuke::runCommand(QString commandString) {
 		// something went wrong, find out what and where
 		QString errorString = exception.what();
 		QString errorWhere = exception.where();
-		LOG(INFO) << MSG_ERROR_PARSING(errorString);
+		LOG(INFO) << MSG_TASUKE_ERROR_PARSING(errorString);
 
 		// if gui enabled, display the error in tooltip and shake the input box
 		if (guiMode) {
@@ -608,11 +608,11 @@ void Tasuke::handleTryFinish(TRY_RESULT result) {
 // if there was no last command, nothing happens
 void Tasuke::undoCommand() {
 	if (commandUndoHistory.size() == 0) {
-		showMessage(MSG_NO_UNDO);
+		showMessage(MSG_TASUKE_NO_UNDO);
 		return;
 	}
 
-	LOG(INFO) << MSG_UNDO;
+	LOG(INFO) << MSG_TASUKE_UNDO;
 	QSharedPointer<ICommand> command = commandUndoHistory.back();
 	commandUndoHistory.pop_back();
 	command->undo();
@@ -624,11 +624,11 @@ void Tasuke::undoCommand() {
 // if there was no command to redo, nothing happens
 void Tasuke::redoCommand() {
 	if (commandRedoHistory.size() == 0) {
-		showMessage(MSG_NO_REDO);
+		showMessage(MSG_TASUKE_NO_REDO);
 		return;
 	}
 
-	LOG(INFO) << MSG_REDO;
+	LOG(INFO) << MSG_TASUKE_REDO;
 	QSharedPointer<ICommand> command = commandRedoHistory.back();
 	commandRedoHistory.pop_back();
 	command->run();
