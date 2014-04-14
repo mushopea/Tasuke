@@ -1,8 +1,8 @@
+//@author A0096836M
+
 #include <QString>
 #include "Constants.h"
 #include "Exceptions.h"
-
-//@author A0096836M
 
 // This method returns a user readable error for the ExceptionNullPtr
 // exception
