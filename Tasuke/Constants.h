@@ -7,6 +7,7 @@
 #include <QList>
 #include <QTime>
 #include <QDate>
+#include "Task.h"
 
 // General app metadata
 const char* const TASUKE = "Tasuke";
