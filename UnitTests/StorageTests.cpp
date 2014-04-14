@@ -1,9 +1,8 @@
+//@author A0096863M
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
-//@author A0096863M
 
 namespace StorageTests {
 	QApplication *app;
@@ -224,7 +223,7 @@ namespace StorageTests {
 			Assert::AreEqual(storage->searchByTag("tagcase").size(), 2);
 		}
 		
-		TEST_METHOD(StorageSortByEndDescription) {
+		TEST_METHOD(StorageSortByDescription) {
 			QList<Task> correct;
 
 			Task task1("aaaa");
@@ -249,6 +248,17 @@ namespace StorageTests {
 			Assert::IsTrue(storage->getTasks() == correct);
 		}
 
+		TEST_METHOD(StorageSortByEndDate) {
+			QList<Task> correct;
 
+			Task task1, task2, task3, task4, task5;
+			task1.setEnd(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
+			task2.setEnd(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 1)));
+			task3.setEnd(QDateTime(QDate(2010, 1, 1), QTime(23, 59, 59)));
+			task4.setEnd(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
+			task5.setEnd(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 1)));
+
+
+		}
 	};
 }
