@@ -117,12 +117,30 @@ const char* const MSG_SYSTEMTRAYWIDGET_DESTROYED = "SystemTrayWidget destroyed";
 	"Hot key pressed with keycode " << QString::number((int)key).toStdString()
 
 // Filenames of dictionary files
-const char* const SPELL_GB_DICFILE = "en_GB.dic";
-const char* const SPELL_GB_AFFFILE = "en_GB.aff";
-const char* const SPELL_US_DICFILE = "en_US.dic";
+const char* const _SPELL_GB_DICFILE = "en_GB.dic";
+const char* const _SPELL_GB_AFFFILE = "en_GB.aff";
+const char* const _SPELL_US_DICFILE = "en_US.dic";
+
+#ifndef Q_OS_MAC
+
+// Filenames of dictionary files on windows
+const char* const SPELL_GB_DICFILE = _SPELL_GB_DICFILE;
+const char* const SPELL_GB_AFFFILE = _SPELL_GB_AFFFILE;
+const char* const SPELL_US_DICFILE = _SPELL_US_DICFILE;
+
+#else
 
 // The relative resource path for a mac app bundle
 const char* const MAC_RESOURCE_PATH = "/../Resources/";
+
+#define SPELL_GB_DICFILE \
+	(QCoreApplication::applicationDirPath() + MAC_RESOURCE_PATH + _SPELL_GB_AFFFILE).toUtf8().constData()
+#define SPELL_GB_AFFFILE \
+	(QCoreApplication::applicationDirPath() + MAC_RESOURCE_PATH + _SPELL_GB_DICFILE).toUtf8().constData()
+#define SPELL_US_DICFILE \
+	(QCoreApplication::applicationDirPath() + MAC_RESOURCE_PATH + _SPELL_US_DICFILE).toUtf8().constData()
+
+#endif
 
 // The string name of the TRY_RESULT metatype
 const char* const METATYPE_TRY_RESULT = "TRY_RESULT";
@@ -453,5 +471,7 @@ const char* const TRAY_MENU_TASK = "Show Task &Window";
 const char* const TRAY_MENU_SETTINGS = "&Settings";
 const char* const TRAY_MENU_TUTORIAL = "&Tutorial";
 const char* const TRAY_MENU_ABOUT = "&About Tasuke";
+
+const char* const STARTUP_LNK_PATH = "Startup/Tasuke.lnk";
 
 #endif
