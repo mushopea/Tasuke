@@ -29,6 +29,9 @@ static const int MINUTES_IN_HOUR = 60;
 static const int SECONDS_IN_MINUTE = 60;
 static const int MSECS_IN_SECOND = 1000;
 
+static const QTime BEGINNING_OF_DAY = QTime(0, 0, 0);
+static const QTime END_OF_DAY = QTime(23, 59, 59);
+
 //@author A0100189M
 
 // Stacked widget page indexes

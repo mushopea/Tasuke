@@ -82,7 +82,7 @@ void Task::setBeginDate(QDate _beginDate) {
 	begin.setDate(_beginDate);
 
 	if (!begin.isValid() || !begin.time().isValid()) {
-		begin.setTime(QTime(0, 0, 0));
+		begin.setTime(BEGINNING_OF_DAY);
 	}
 }
 
@@ -121,7 +121,7 @@ void Task::setEndDate(QDate _endDate) {
 	end.setDate(_endDate);
 
 	if (!end.isValid() || !end.time().isValid()) {
-		end.setTime(QTime(23, 59, 59));
+		end.setTime(END_OF_DAY);
 	}
 }
 
@@ -359,11 +359,11 @@ bool Task::isDueOn(QDate _date) const {
 
 // Returns FALSE if this task has no valid end date.
 // Returns FALSE if this task is already overdue.
-// Returns FALSE if this task has a due date that is not the current day, 2359hrs.
+// Returns FALSE if this task has a due date that is not within the current day.
 // Returns TRUE if this task is already overdue but the due date is the current day.
-// Returns TRUE if this task has a due date that is the current day, 2359hrs.
+// Returns TRUE if this task has a due date that is within the current day.
 bool Task::isDueToday() const {
-	QDateTime todayStart(QDateTime::currentDateTime().date(), QTime(0, 0, 0));
+	QDateTime todayStart(QDateTime::currentDateTime().date(), QTime(0, 0, 1));
 	QDateTime todayEnd(QDateTime::currentDateTime().date(), QTime(23, 59, 59));
 
 	if (!getEnd().isValid()) {
@@ -378,7 +378,7 @@ bool Task::isDueToday() const {
 		}
 	}
 
-	if (getEnd() <= todayEnd) {
+	if (getEnd() >= todayStart && getEnd() <= todayEnd) {
 		return true;
 	} else {
 		return false;
@@ -387,25 +387,22 @@ bool Task::isDueToday() const {
 
 // Returns FALSE if this task has no valid end date.
 // Returns FALSE if this task is already overdue.
-// Returns FALSE if this task has a due date that is not the next day, 2359hrs.
-// Returns TRUE if this task has a due date that is the next day, 2359hrs.
+// Returns FALSE if this task has a due date that is not within the next day
+// Returns TRUE if this task has a due date that is within the next day.
 bool Task::isDueTomorrow() const {
-	QDateTime tomorrowStart(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 0));
-	QDateTime tomorrowEnd(QDateTime::currentDateTime().date().addDays(1), QTime(23, 59, 59));
-
+	QDateTime tomorrowStart(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 1));
+	QDateTime tomorrowEnd(QDateTime::currentDateTime().date().addDays(1), QTime(23, 59, 58));
+	//tomorrowEnd.addDays(1);
+	
 	if (!getEnd().isValid()) {
 		return false;
 	}
 
 	if (isOverdue()) {
-		if (getEnd() >= tomorrowStart) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
-	if (getEnd() <= tomorrowEnd) {
+	if (getEnd() >= tomorrowStart && getEnd() <= tomorrowEnd) {
 		return true;
 	} else {
 		return false;

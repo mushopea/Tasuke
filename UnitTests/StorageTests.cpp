@@ -124,16 +124,33 @@ namespace StorageTests {
 			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(23, 59, 58)));
 			Assert::IsTrue(dueToday.isDueToday());
 
-			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 0)));
+			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 2)));
 			Assert::IsTrue(dueToday.isDueToday());
 
 			Task dueTomorrow;
-			dueTomorrow.setEnd(QDateTime(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 0)));
+			dueTomorrow.setEnd(QDateTime(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
 			Assert::IsFalse(dueTomorrow.isDueToday());
 
 			Task alreadyOverdue;
 			alreadyOverdue.setEnd(QDateTime(QDate(2010, 1, 1), QTime(1, 1, 1)));
 			Assert::IsFalse(alreadyOverdue.isDueToday());
+		}
+
+		TEST_METHOD(TaskIsDueTomorrow) {
+			Task dueToday;
+			dueToday.setEnd(QDateTime::currentDateTime());
+			Assert::IsFalse(dueToday.isDueTomorrow());
+			
+			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 2)));
+			Assert::IsFalse(dueToday.isDueTomorrow());
+
+			Task dueTomorrow;
+			dueTomorrow.setEnd(QDateTime(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
+			Assert::IsTrue(dueTomorrow.isDueTomorrow());
+			
+			Task alreadyOverdue;
+			alreadyOverdue.setEnd(QDateTime(QDate(2010, 1, 1), QTime(1, 1, 2)));
+			Assert::IsFalse(alreadyOverdue.isDueTomorrow());
 		}
 
 		TEST_METHOD(TaskIsAnEvent) {
@@ -164,16 +181,6 @@ namespace StorageTests {
 			task.setEndDate(QDate(2100, 12, 31));
 			Assert::IsFalse(task.isDueOn(QDate::currentDate()));
 		}
-		/*
-		TEST_METHOD(TaskReturnStringDateDifference) {
-			Task task;
-			QDateTime overdueLongAgo(QDate(1900, 1, 1), QTime(0, 0, 0));
-			QDateTime dueInFarFuture(QDate(2100, 1, 1), QTime(23, 59, 59));
-			QDateTime dueTomorrow(QDateTime::currentDateTime().addDays(1));
-			QDateTime overdueYesterday(QDateTime::currentDateTime().addDays(-1));
-
-			task.setEnd(overdueLongAgo);
-		}*/
 
 		/********** Tests for STORAGE class **********/
 		
@@ -212,18 +219,6 @@ namespace StorageTests {
 			Assert::AreEqual(storage->searchByTag("TAGCASE").size(), 2);
 			Assert::AreEqual(storage->searchByTag("tagcase").size(), 2);
 		}
-		/*
-		TEST_METHOD(StorageSearchByBeginDate) {
-		
-		}
-
-		TEST_METHOD(StorageSearchByEndDate) {
-		
-		}
-
-		TEST_METHOD(StorageSearchByTimeInterval) {
-
-		}*/
 		
 		TEST_METHOD(StorageSortByEndDescription) {
 			QList<Task> correct;
@@ -249,31 +244,7 @@ namespace StorageTests {
 
 			Assert::IsTrue(storage->getTasks() == correct);
 		}
-		/*
-		TEST_METHOD(StorageSortByDone) {
-			QList<Task> correct;
 
-			Task task4("task3");
-			task4.markDone();
-			correct.push_back(task4);
-			Task task3("task4");
-			task3.setDone(true);
-			correct.push_back(task3);
-			Task task1("task2");
-			task1.setDone(false);
-			Task task2("task1");
-			correct.push_back(task2);
 
-			Tasuke::instance().runCommand("add task4");
-			Tasuke::instance().runCommand("done 1");
-			Tasuke::instance().runCommand("add task3");
-			Tasuke::instance().runCommand("add task2");
-			Tasuke::instance().runCommand("done 1");
-			Tasuke::instance().runCommand("add task1");
-
-			storage->sortByDone();
-
-			Assert::IsTrue(storage->getTasks() == correct);
-		}*/
 	};
 }
