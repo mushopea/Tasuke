@@ -99,7 +99,6 @@ namespace UnitTest {
 			Assert::AreEqual(task.getTags()[0], QString("shopping"));
 		}
 
-		//@author A0100189M
 		// System testing for undo commands 
 		TEST_METHOD(TasukeUndoingTasks) {
 			for (int i=0; i<MAX_TASKS; i++) {
@@ -131,7 +130,9 @@ namespace UnitTest {
 			Assert::AreEqual(storage->totalTasks(), MAX_TASKS);
 		}
 
-		// Musho spelling tests
+		//@author A0100189M
+		// Spelling tests
+
 		// The correct spelling partition
 		TEST_METHOD(SpellCorrectSpelling) {
 			

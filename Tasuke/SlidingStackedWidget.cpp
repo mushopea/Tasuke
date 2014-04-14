@@ -1,6 +1,6 @@
 //@author A0100189M-reused
 
-// Code credits to: http://developer.nokia.com/community/wiki/ Code_Example_for_SlidingStackedWidget_class_in_Qt
+// Code credits to: http://developer.nokia.com/community/wiki/Code_Example_for_SlidingStackedWidget_class_in_Qt
 
 #include "SlidingStackedWidget.h"
 
@@ -24,7 +24,7 @@ SlidingStackedWidget::SlidingStackedWidget(QWidget *parent) : QStackedWidget(par
 }
 
 
-SlidingStackedWidget::~SlidingStackedWidget(){
+SlidingStackedWidget::~SlidingStackedWidget() {
 }
 
 void SlidingStackedWidget::setVerticalMode(bool vertical) {
