@@ -345,6 +345,25 @@ const char* const TITLE_OVERDUE = "overdue tasks";
 const char* const TITLE_TODAY = "tasks due today";
 const char* const TITLE_TOMORROW = "tasks due tomorrow";
 
+const auto PREDICATE_DONE = [](Task task) -> bool {
+	return task.isDone();
+};
+const auto PREDICATE_UNDONE = [](Task task) -> bool {
+	return !task.isDone();
+};
+const auto PREDICATE_ONGOING = [](Task task) -> bool {
+	return task.isOngoing();
+};
+const auto PREDICATE_OVERDUE = [](Task task) -> bool {
+	return task.isOverdue();
+};
+const auto PREDICATE_TODAY = [](Task task) -> bool {
+	return task.isDueToday();
+};
+const auto PREDICATE_TOMORROW = [](Task task) -> bool {
+	return task.isDueTomorrow();
+};
+
 // Error descriptions
 const char* const ERROR_MULTIPLE_DATES =
 	"You can't have more than 2 time periods or deadlines in a task.";

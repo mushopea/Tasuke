@@ -14,7 +14,8 @@ void exitIfAlreadyRunning() {
 	sharedMemory.attach();
 
 	if (!sharedMemory.create(1)) {
-		QMessageBox::information(nullptr, NAME_APPLICATION, MSG_TASUKE_ALREADY_RUNNING);
+		QMessageBox::information(nullptr, NAME_APPLICATION,
+			MSG_TASUKE_ALREADY_RUNNING);
 		exit(EXIT_FAILURE);
 	}
 }
