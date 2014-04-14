@@ -181,6 +181,10 @@ QDateTime IStorage::nextFreeTime() {
 	QDateTime nextAvailableTime = QDateTime::currentDateTime();
 
 	foreach (const QSharedPointer<Task>& task, tasks) {
+		if (task->isOverdue()) {
+			continue;
+		}
+
 		if (task->getBegin() <= nextAvailableTime) {
 			nextAvailableTime = task->getEnd();
 		} else {
