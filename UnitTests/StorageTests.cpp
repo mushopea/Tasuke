@@ -9,9 +9,11 @@ namespace StorageTests {
 	QApplication *app;
 	StorageStub *storage;
 
+	// Simulate running the main() function
+	// Sets up the logging facility and the Qt event loop
 	TEST_MODULE_INITIALIZE(ModuleInitialize) {
 		int argc = 1;
-		char *argv[] = { "Tasuke.exe" };
+		const char *argv[] = { TASUKE };
 		FLAGS_logtostderr = true;
 		google::InitGoogleLogging(argv[0]);
 		app = new QApplication(argc, argv);
@@ -20,6 +22,7 @@ namespace StorageTests {
 		storage = nullptr;
 	}
 
+	// Cleans up what we set up
 	TEST_MODULE_CLEANUP(ModuleCleanup) {
 		if (storage == nullptr) {
 			delete storage;
@@ -33,6 +36,7 @@ namespace StorageTests {
 
 	public:
 
+		// Create a new storage object before running any method
 		TEST_METHOD_INITIALIZE(init) {
 			storage = new StorageStub();
 			Tasuke::instance().setStorage(storage);

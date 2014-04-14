@@ -1,3 +1,5 @@
+//@author A0096863M
+
 #include "stdafx.h"
 #include <glog/logging.h>
 #include "StorageStub.h"
