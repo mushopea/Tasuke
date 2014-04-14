@@ -99,14 +99,16 @@ namespace UnitTest {
 			Assert::AreEqual(task.getTags()[0], QString("shopping"));
 		}
 
+		//@author A0100189M
+
 		// System testing for undo commands 
 		TEST_METHOD(TasukeUndoingTasks) {
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand(QString("add task %1").arg(i));
 			}
 			Assert::AreEqual(storage->totalTasks(), MAX_TASKS);
 
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand("undo");
 			}
 			Assert::AreEqual(storage->totalTasks(), 0);
@@ -114,23 +116,22 @@ namespace UnitTest {
 
 		// System testing for redo commands 
 		TEST_METHOD(TasukeRedoingTasks) {
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand(QString("add task %1").arg(i));
 			}
 			Assert::AreEqual(storage->totalTasks(), MAX_TASKS);
 
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand("undo");
 			}
 			Assert::AreEqual(storage->totalTasks(), 0);
 
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand("redo");
 			}
 			Assert::AreEqual(storage->totalTasks(), MAX_TASKS);
 		}
 
-		//@author A0100189M
 		// Spelling tests
 
 		// The correct spelling partition
