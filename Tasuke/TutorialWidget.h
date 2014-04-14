@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #ifndef TUTORIALWIDGET_H
 #define TUTORIALWIDGET_H
 
@@ -6,8 +8,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include "ui_TutorialWidget.h"
-
-//@author A0100189m
 
 // Tutorial widget handles the tutorial slideshow. 
 // Hence, it has many Next and Prev buttons to go through pages.

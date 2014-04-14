@@ -1,10 +1,10 @@
+//@author A0096836M
+
 #ifndef HOTKEYMANAGER_H
 #define HOTKEYMANAGER_H
 
 #include <QObject>
 #include "HotKeyThread.h"
-
-//@author A0096836M
 
 // Manages the hotkey thread and signals Tasuke about user hotkeys.
 class HotKeyManager : public QObject {

@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #ifndef TASKWINDOW_H
 #define TASKWINDOW_H
 
@@ -19,8 +21,6 @@
 #include "TaskEntry.h"
 #include "TutorialWidget.h"
 #include "ui_TaskWindow.h"
-
-//@author A0100189m
 
 // The task window is the main window.
 // It contains a stacked widget of two pages: The task list, and the tutorial widget.

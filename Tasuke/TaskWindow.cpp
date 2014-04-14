@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #include <QSettings>
 #include "Tasuke.h"
 #include "Constants.h"
@@ -5,8 +7,6 @@
 #include "ThemeStylesheets.h"
 #include "SubheadingEntry.h"
 #include "TaskWindow.h"
-
-//@author A0100189m
 
 TaskWindow::TaskWindow(QWidget* parent) : currentlySelectedTask(-1), animation(this, "opacity"),
 										  progressBar(this), QMainWindow(parent) {

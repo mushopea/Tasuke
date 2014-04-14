@@ -1,7 +1,7 @@
+//@author A0100189M
+
 #include "Tasuke.h"
 #include "AboutWindow.h"
-
-//@author A0100189m
 
 AboutWindow::AboutWindow(QDialog* parent) : QDialog(parent) {
 	ui.setupUi(this);

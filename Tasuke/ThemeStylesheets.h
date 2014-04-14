@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #include <QStringList>
 
 // Stores all the stylesheets for themeing. 

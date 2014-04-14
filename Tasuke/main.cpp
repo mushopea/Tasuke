@@ -1,11 +1,11 @@
+//@author A0096836M
+
 #include <glog/logging.h>
 #include <QApplication>
 #include <QMessageBox>
 #include <QSharedMemory>
 #include "Tasuke.h"
 #include "Constants.h"
-
-//@author A0096836M
 
 // Exits the program if another instance of Tasuke is already running
 void exitIfAlreadyRunning() {
@@ -14,7 +14,8 @@ void exitIfAlreadyRunning() {
 	sharedMemory.attach();
 
 	if (!sharedMemory.create(1)) {
-		QMessageBox::information(nullptr, NAME_APPLICATION, MSG_TASUKE_ALREADY_RUNNING);
+		QMessageBox::information(nullptr, NAME_APPLICATION,
+			MSG_TASUKE_ALREADY_RUNNING);
 		exit(EXIT_FAILURE);
 	}
 }

@@ -1,9 +1,9 @@
+//@author A0100189M
+
 #include <QSettings>
 #include "Tasuke.h"
 #include "Constants.h"
 #include "TooltipWidget.h"
-
-//@author A0100189m
 
 TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas", 11), fm(font), 
 												animation(this, "pos") {

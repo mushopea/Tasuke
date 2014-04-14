@@ -1,3 +1,4 @@
+//@author A0096863M
 #ifndef STORAGE_H
 #define STORAGE_H
 
@@ -8,7 +9,6 @@
 #include "Task.h"
 #include "NotificationManager.h"
 
-//@author A0096863M
 // Interface class for Storage.
 class IStorage {
 protected:
@@ -29,8 +29,10 @@ public:
 	int totalTasks();
 
 	QList<Task> search(std::function<bool(Task)> predicate) const;
-	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
-	QList<Task> searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+	QList<Task> searchByDescription(QString keyword, 
+		Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+	QList<Task> searchByTag(QString keyword, 
+		Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 
 	QDateTime nextFreeTime();
 

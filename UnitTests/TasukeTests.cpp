@@ -1,14 +1,16 @@
+//@author A0096836M
+
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-//@author A0096836M
-
 namespace UnitTest {
 	QApplication *app;
 	StorageStub *storage;
 
+	// Simulate running the main() function
+	// Sets up the logging facility and the Qt event loop
 	TEST_MODULE_INITIALIZE(ModuleInitialize) {
 		int argc = 1;
 		char *argv[] = { "Tasuke.exe" };
@@ -20,6 +22,7 @@ namespace UnitTest {
 		storage = nullptr;
 	}
 
+	// Cleans up what we set up// Cleans up what we set up
 	TEST_MODULE_CLEANUP(ModuleCleanup) {
 		if (storage == nullptr) {
 			delete storage;
@@ -33,16 +36,19 @@ namespace UnitTest {
 
 	public:
 
+		// Create a new storage object before running any method
 		TEST_METHOD_INITIALIZE(init) {
 			storage = new StorageStub();
 			Tasuke::instance().setStorage(storage);
 		}
 
+		// Cleans up after running any method
 		TEST_METHOD_CLEANUP(deinit) {
 			delete storage;
 			storage = nullptr;
 		}
 		
+		// Intergration testing Tasuke<->Storage for bad commands
 		TEST_METHOD(TasukeBadInput) {
 			Assert::ExpectException<ExceptionBadCommand>([] {
 				ICommand* command = Interpreter::interpret("bad command blah blah");
@@ -52,6 +58,7 @@ namespace UnitTest {
 			Assert::AreEqual(storage->totalTasks(), 0);
 		}
 
+		// System testing for add commands 
 		TEST_METHOD(TasukeAddingTasks) {
 			Tasuke::instance().runCommand("add do homework");
 			Assert::AreEqual(storage->totalTasks(), 1);
@@ -63,6 +70,7 @@ namespace UnitTest {
 			Assert::AreEqual(task.getTags().size(), 0);
 		}
 
+		// System testing for remove commands 
 		TEST_METHOD(TasukeRemovingTasks) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -71,6 +79,7 @@ namespace UnitTest {
 			Assert::AreEqual(storage->totalTasks(), 2);
 		}
 
+		// System testing for editing commands 
 		TEST_METHOD(TasukeEditingTasks) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -90,6 +99,7 @@ namespace UnitTest {
 			Assert::AreEqual(task.getTags()[0], QString("shopping"));
 		}
 
+		// System testing for undo commands 
 		TEST_METHOD(TasukeUndoingTasks) {
 			for (int i=0; i<MAX_TASKS; i++) {
 				Tasuke::instance().runCommand(QString("add task %1").arg(i));
@@ -102,6 +112,7 @@ namespace UnitTest {
 			Assert::AreEqual(storage->totalTasks(), 0);
 		}
 
+		// System testing for redo commands 
 		TEST_METHOD(TasukeRedoingTasks) {
 			for (int i=0; i<MAX_TASKS; i++) {
 				Tasuke::instance().runCommand(QString("add task %1").arg(i));
@@ -147,11 +158,13 @@ namespace UnitTest {
 			Assert::IsFalse(Tasuke::instance().spellCheck("asdfghjkl")); // A completely mispelled word
 		}
 		
+		// Words that stat with uppercase
 		TEST_METHOD(SpellCapitalisedProperWords) {
 			Assert::IsTrue(Tasuke::instance().spellCheck("John")); // A proper name
 			Assert::IsTrue(Tasuke::instance().spellCheck("Asdfghjkl")); // A garbage capitalised word
 		}
 
+		// "Words" that start with numbers
 		TEST_METHOD(SpellNumberInitialWords) {
 			Assert::IsTrue(Tasuke::instance().spellCheck("9pm")); // Time
 		}

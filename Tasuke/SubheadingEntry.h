@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #ifndef SUBHEADINGENTRY_H
 #define SUBHEADINGENTRY_H
 
@@ -7,8 +9,6 @@
 #include <QPropertyAnimation>
 #include <glog/logging.h>
 #include "ui_SubheadingEntry.h"
-
-//@author A0100189m
 
 // Subheading entry is entered inside the listWidget inside Task Window.
 // It is used to sort and organize the tasks visually for the user.

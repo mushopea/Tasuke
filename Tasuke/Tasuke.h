@@ -1,3 +1,5 @@
+//@author A0096836M
+
 #ifndef TASUKE_H
 #define TASUKE_H
 
@@ -15,8 +17,6 @@
 #include "SettingsWindow.h"
 #include "SystemTrayWidget.h"
 #include "HotKeyManager.h"
-
-//@author A0096836M
 
 // This class handles the control flow of the entire program. This class is a
 // singleton; it cannot be created anywhere else because its constructor and
@@ -55,7 +55,8 @@ public:
 	void highlightTask(int id);
 	bool spellCheck(QString word);
 	bool setRunOnStartup(bool yes);
-	QString formatTooltipMessage(QString commandString, QString errorString = "", QString errorWhere = "");
+	QString formatTooltipMessage(QString commandString, 
+		QString errorString = "", QString errorWhere = "");
 
 	void runCommand(QString commandString);
 	void undoCommand();

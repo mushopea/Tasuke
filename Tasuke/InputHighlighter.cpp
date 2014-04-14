@@ -1,8 +1,8 @@
+//@author A0100189M
+
 #include <QSettings>
 #include "Tasuke.h"
 #include "InputHighlighter.h"
-
-//@author A0100189m
 
 InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent), commandsEnabled(true), spellcheckEnabled(true) {
 	setRegex();

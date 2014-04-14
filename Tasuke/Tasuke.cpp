@@ -1,3 +1,5 @@
+//@author A0096836M
+
 #include <string>
 #include <iostream>
 #include <thread>
@@ -11,8 +13,6 @@
 #include "Interpreter.h"
 #include "Commands.h"
 #include "Tasuke.h"
-
-//@author A0096836M
 
 bool Tasuke::guiMode = true;
 
@@ -38,7 +38,8 @@ Tasuke::Tasuke() : QObject(nullptr) {
 	dateFormatGeneratorThread.detach();
 
 	qRegisterMetaType<TRY_RESULT>(METATYPE_TRY_RESULT);
-	connect(this, SIGNAL(tryFinish(TRY_RESULT)), this, SLOT(handleTryFinish(TRY_RESULT)));
+	connect(this, SIGNAL(tryFinish(TRY_RESULT)), 
+		this, SLOT(handleTryFinish(TRY_RESULT)));
 	connect(&inputTimer, SIGNAL(timeout()), this, SLOT(handleInputTimeout()));
 	
 	if (guiMode) {
@@ -91,7 +92,8 @@ void Tasuke::loadDictionary() {
 
 	spellCheckEnabled = true;
 
-	if (!QFile(SPELL_GB_AFFFILE).exists() || !QFile(SPELL_GB_DICFILE).exists()) {
+	if (!QFile(SPELL_GB_AFFFILE).exists() 
+		|| !QFile(SPELL_GB_DICFILE).exists()) {
 		spellCheckEnabled = false;
 		return;
 	}
@@ -131,13 +133,20 @@ void Tasuke::initGui(){
 	updateTaskWindow(storage->getTasks());
 	showTaskWindow();
 
-	connect(inputWindow, SIGNAL(inputChanged(QString)), this, SLOT(handleInputChanged(QString)));
-	connect(settingsWindow, SIGNAL(themeChanged()), inputWindow, SLOT(handleReloadTheme()));
-	connect(settingsWindow, SIGNAL(featuresChanged()), inputWindow, SLOT(handleReloadFeatures()));
-	connect(settingsWindow, SIGNAL(iconsChanged()), inputWindow, SIGNAL(reloadIcons()));
-	connect(settingsWindow, SIGNAL(fontChanged()), taskWindow, SLOT(displayTaskList()));
-	connect(settingsWindow, SIGNAL(themeChanged()), taskWindow, SLOT(handleReloadTheme()));
-	connect(settingsWindow, SIGNAL(themeChanged()), taskWindow, SIGNAL(themeChanged()));
+	connect(inputWindow, SIGNAL(inputChanged(QString)), 
+		this, SLOT(handleInputChanged(QString)));
+	connect(settingsWindow, SIGNAL(themeChanged()), 
+		inputWindow, SLOT(handleReloadTheme()));
+	connect(settingsWindow, SIGNAL(featuresChanged()), 
+		inputWindow, SLOT(handleReloadFeatures()));
+	connect(settingsWindow, SIGNAL(iconsChanged()), 
+		inputWindow, SIGNAL(reloadIcons()));
+	connect(settingsWindow, SIGNAL(fontChanged()), 
+		taskWindow, SLOT(displayTaskList()));
+	connect(settingsWindow, SIGNAL(themeChanged()), 
+		taskWindow, SLOT(handleReloadTheme()));
+	connect(settingsWindow, SIGNAL(themeChanged()), 
+		taskWindow, SIGNAL(themeChanged()));
 }
 
 // enables/disables gui mode
@@ -372,7 +381,8 @@ bool Tasuke::spellCheck(QString word) {
 
 bool Tasuke::setRunOnStartup(bool yes) {
 #ifdef Q_OS_WIN
-	QDir dir = QDir(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation));
+	QDir dir = QDir(QStandardPaths::writableLocation(
+		QStandardPaths::ApplicationsLocation));
 	QString lnkPath = dir.absoluteFilePath(STARTUP_LNK_PATH);
 
 	if (yes) {
@@ -387,7 +397,9 @@ bool Tasuke::setRunOnStartup(bool yes) {
 }
 
 // formats the message displayed in tooltip feedback in rich text
-QString Tasuke::formatTooltipMessage(QString commandString, QString errorString, QString errorWhere) {
+QString Tasuke::formatTooltipMessage(QString commandString, 
+									 QString errorString, 
+									 QString errorWhere) {
 	QString commandType = Interpreter::getType(commandString);
 
 	// default display
@@ -483,7 +495,8 @@ void Tasuke::runCommand(QString commandString) {
 
 	try {
 		// interpret the command
-		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(Interpreter::interpret(commandString));
+		QSharedPointer<ICommand> command = 
+			QSharedPointer<ICommand>(Interpreter::interpret(commandString));
 
 		// if gui enabled update ui
 		if (guiMode) {
@@ -515,7 +528,8 @@ void Tasuke::runCommand(QString commandString) {
 
 		// if gui enabled, display the error in tooltip and shake the input box
 		if (guiMode) {
-			QString message = formatTooltipMessage(commandString, errorString, errorWhere);
+			QString message = 
+				formatTooltipMessage(commandString, errorString, errorWhere);
 			inputWindow->showTooltipMessage(InputStatus::FAILURE), message;
 			inputWindow->doErrorAnimation();
 		}
@@ -587,7 +601,8 @@ void Tasuke::handleInputTimeout() {
 			// capture the errors
 			TRY_RESULT result;
 			result.status = InputStatus::NORMAL;
-			result.message = formatTooltipMessage(input, errorString, errorWhere);
+			result.message = 
+				formatTooltipMessage(input, errorString, errorWhere);
 			emit tryFinish(result);
 		}
 	});

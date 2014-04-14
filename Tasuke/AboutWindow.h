@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #ifndef ABOUTWINDOW_H
 #define ABOUTWINDOW_H
 
@@ -5,8 +7,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include "ui_AboutWindow.h"
-
-//@author A0100189m
 
 // This is a simple window that displays brief info about Tasuke
 // And credits any resources used.

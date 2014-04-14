@@ -1,9 +1,9 @@
+//@author A0100189M
+
 #include <QSettings>
 #include "Tasuke.h"
 #include "Exceptions.h"
 #include "SettingsWindow.h"
-
-//@author A0100189m
 
 SettingsWindow::SettingsWindow(QWidget* parent) : QWidget(parent) {
 	LOG(INFO) << "SettingsWindow instance created";

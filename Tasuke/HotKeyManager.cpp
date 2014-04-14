@@ -1,9 +1,9 @@
+//@author A0096836M
+
 #include <glog/logging.h>
 #include "Constants.h"
 #include "Tasuke.h"
 #include "HotKeyManager.h"
-
-//@author A0096836M
 
 // Constructor for HotKeyManager. Takes in a parent object for
 // memory hierachy. Defaults to null.

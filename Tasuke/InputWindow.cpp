@@ -1,11 +1,11 @@
+//@author A0100189M
+
 #include <QSettings>
 #include "Tasuke.h"
 #include "Interpreter.h"
 #include "Exceptions.h"
 #include "ThemeStylesheets.h"
 #include "InputWindow.h"
-
-//@author A0100189m
 
 InputWindow::InputWindow(QWidget* parent) : QWidget(parent), animation(this, "opacity"), 
 	errorAnimation(this, "pos") {

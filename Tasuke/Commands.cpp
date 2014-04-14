@@ -1,10 +1,10 @@
+//@author A0096836M
+
 #include <cassert>
 #include "Tasuke.h"
 #include "Constants.h"
 #include "Commands.h"
 #include "Interpreter.h"
-
-//@author A0096836M
 
 // Constructor for ICommand
 ICommand::ICommand() {

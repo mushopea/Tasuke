@@ -1,14 +1,15 @@
+//@author A0096863M
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-//@author A0096863M
-
 namespace StorageTests {
 	QApplication *app;
 	StorageStub *storage;
 
+	// Simulate running the main() function
+	// Sets up the logging facility and the Qt event loop
 	TEST_MODULE_INITIALIZE(ModuleInitialize) {
 		int argc = 1;
 		char *argv[] = { "Tasuke.exe" };
@@ -20,6 +21,7 @@ namespace StorageTests {
 		storage = nullptr;
 	}
 
+	// Cleans up what we set up
 	TEST_MODULE_CLEANUP(ModuleCleanup) {
 		if (storage == nullptr) {
 			delete storage;
@@ -33,6 +35,7 @@ namespace StorageTests {
 
 	public:
 
+		// Create a new storage object before running any method
 		TEST_METHOD_INITIALIZE(init) {
 			storage = new StorageStub();
 			Tasuke::instance().setStorage(storage);
@@ -128,7 +131,8 @@ namespace StorageTests {
 			Assert::IsTrue(dueToday.isDueToday());
 
 			Task dueTomorrow;
-			dueTomorrow.setEnd(QDateTime(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
+			dueTomorrow.setEnd(QDateTime(
+				QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
 			Assert::IsFalse(dueTomorrow.isDueToday());
 
 			Task alreadyOverdue;
@@ -145,7 +149,8 @@ namespace StorageTests {
 			Assert::IsFalse(dueToday.isDueTomorrow());
 
 			Task dueTomorrow;
-			dueTomorrow.setEnd(QDateTime(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
+			dueTomorrow.setEnd(QDateTime(
+				QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
 			Assert::IsTrue(dueTomorrow.isDueTomorrow());
 			
 			Task alreadyOverdue;
@@ -193,10 +198,12 @@ namespace StorageTests {
 
 			Assert::AreEqual(storage->searchByDescription("description").size(), 4);
 			Assert::AreEqual(storage->searchByDescription("DESCRIPTION").size(), 4);
-			Assert::AreEqual(storage->searchByDescription("description", Qt::CaseSensitive).size(), 2);
-			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByDescription("description", 
+				Qt::CaseSensitive).size(), 2);
+			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN", 
+				Qt::CaseSensitive).size(), 1);
 			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN").size(), 4);
-			Assert::AreEqual(storage->searchByDescription("nonexistent description").size(), 0);
+			Assert::AreEqual(storage->searchByDescription("nonexistent").size(), 0);
 		}
 		
 		TEST_METHOD(StorageSearchByTag) {
@@ -208,11 +215,15 @@ namespace StorageTests {
 			Tasuke::instance().runCommand("add task5 #tag4 #tag4 #tag4");
 
 			// Case sensitive tests
-			Assert::AreEqual(storage->searchByTag("tagcase", Qt::CaseSensitive).size(), 1);
-			Assert::AreEqual(storage->searchByTag("TAGCASE", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByTag("tagcase", 
+				Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByTag("TAGCASE", 
+				Qt::CaseSensitive).size(), 1);
 
-			Assert::AreEqual(storage->searchByTag("tag1", Qt::CaseSensitive).size(), 3);
-			Assert::AreEqual(storage->searchByTag("tag3", Qt::CaseSensitive).size(), 2);
+			Assert::AreEqual(storage->searchByTag("tag1", 
+				Qt::CaseSensitive).size(), 3);
+			Assert::AreEqual(storage->searchByTag("tag3", 
+				Qt::CaseSensitive).size(), 2);
 			Assert::AreEqual(storage->searchByTag("tag4").size(), 1);
 
 			// Case insensitive tests
@@ -220,7 +231,7 @@ namespace StorageTests {
 			Assert::AreEqual(storage->searchByTag("tagcase").size(), 2);
 		}
 		
-		TEST_METHOD(StorageSortByEndDescription) {
+		TEST_METHOD(StorageSortByDescription) {
 			QList<Task> correct;
 
 			Task task1("aaaa");
@@ -245,6 +256,30 @@ namespace StorageTests {
 			Assert::IsTrue(storage->getTasks() == correct);
 		}
 
+		TEST_METHOD(StorageSortByEndDate) {
+			QList<Task> correct;
 
+			Task task1("task1"), task2("task2"), task3("task3"), task4("task4"), task5("task5");
+			task1.setEnd(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
+			task2.setEnd(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 1)));
+			task3.setEnd(QDateTime(QDate(2010, 1, 1), QTime(23, 59, 59)));
+			task4.setEnd(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
+			task5.setEnd(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 1)));
+
+			correct.push_back(task1);
+			correct.push_back(task2);
+			correct.push_back(task3);
+			correct.push_back(task4);
+			correct.push_back(task5);
+
+			storage->addTask(task5);
+			storage->addTask(task4);
+			storage->addTask(task3);
+			storage->addTask(task2);
+			storage->addTask(task1);
+			storage->sortByEndDate();
+
+			Assert::IsTrue(storage->getTasks() == correct);
+		}
 	};
 }
