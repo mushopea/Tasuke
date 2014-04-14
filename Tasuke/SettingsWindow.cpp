@@ -202,8 +202,13 @@ void SettingsWindow::loadCurrTheme() {
 // Change run on startup
 void SettingsWindow::editRunOnStartup() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
-	bool oldRunOnStartup = settings.value("RunOnStartup", true).toBool();
 	bool newRunOnStartup = ui.runOnStartup->isChecked();
+	bool success = Tasuke::instance().setRunOnStartup(newRunOnStartup);
+	if (success) {
+		settings.setValue("RunOnStartup", newRunOnStartup);
+	} else {
+		settings.setValue("RunOnStartup", false);
+	}
 }
 
 // Change features in settings

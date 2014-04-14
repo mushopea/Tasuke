@@ -4,6 +4,8 @@
 #include <glog/logging.h>
 #include <QMessageBox>
 #include <QFontDatabase>
+#include <QStandardPaths>
+#include <QDir>
 #include "Constants.h"
 #include "Exceptions.h"
 #include "Interpreter.h"
@@ -38,7 +40,7 @@ Tasuke::Tasuke() : QObject(nullptr) {
 	qRegisterMetaType<TRY_RESULT>(METATYPE_TRY_RESULT);
 	connect(this, SIGNAL(tryFinish(TRY_RESULT)), this, SLOT(handleTryFinish(TRY_RESULT)));
 	connect(&inputTimer, SIGNAL(timeout()), this, SLOT(handleInputTimeout()));
-
+	setRunOnStartup(true);
 	if (guiMode) {
 		QTimer::singleShot(0, this, SLOT(initGui()));
 	}
@@ -89,7 +91,6 @@ void Tasuke::loadDictionary() {
 
 	spellCheckEnabled = true;
 
-#ifndef Q_OS_MAC
 	if (!QFile(SPELL_GB_AFFFILE).exists() || !QFile(SPELL_GB_DICFILE).exists()) {
 		spellCheckEnabled = false;
 		return;
@@ -97,11 +98,6 @@ void Tasuke::loadDictionary() {
 
 	spellObj = new Hunspell(SPELL_GB_AFFFILE, SPELL_GB_DICFILE);
 	spellObj->add_dic(SPELL_US_DICFILE);
-#else
-	QString path = QCoreApplication::applicationDirPath();
-	spellObj = new Hunspell((path + MAC_RESOURCE_PATH + SPELL_GB_AFFFILE).toUtf8().constData(), (path + MAC_RESOURCE_PATH + SPELL_GB_DICFILE).toUtf8().constData());
-	spellObj->add_dic((path + MAC_RESOURCE_PATH + SPELL_US_DICFILE).toUtf8().constData());
-#endif
 
 	// adds additional words and non-words to dictionary
 	foreach(QStringList list, SPELL_INCLUDE_LISTS) {
@@ -372,6 +368,22 @@ bool Tasuke::spellCheck(QString word) {
 	}
 
 	return false;
+}
+
+bool Tasuke::setRunOnStartup(bool yes) {
+#ifdef Q_OS_WIN
+	QDir dir = QDir(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation));
+	QString lnkPath = dir.absoluteFilePath(STARTUP_LNK_PATH);
+
+	if (yes) {
+		QString exePath = QCoreApplication::applicationFilePath();
+		return QFile::link(exePath, lnkPath);
+	} else {
+		return QFile::remove(lnkPath);
+	}
+#else
+	return false;
+#endif
 }
 
 // formats the message displayed in tooltip feedback in rich text

@@ -54,6 +54,7 @@ public:
 	void updateTaskWindow(QList<Task> tasks, QString title = "");
 	void highlightTask(int id);
 	bool spellCheck(QString word);
+	bool setRunOnStartup(bool yes);
 	QString formatTooltipMessage(QString commandString, QString errorString = "", QString errorWhere = "");
 
 	void runCommand(QString commandString);
