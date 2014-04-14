@@ -363,8 +363,8 @@ bool Task::isDueOn(QDate _date) const {
 // Returns TRUE if this task is already overdue but the due date is the current day.
 // Returns TRUE if this task has a due date that is within the current day.
 bool Task::isDueToday() const {
-	QDateTime todayStart(QDateTime::currentDateTime().date(), QTime(0, 0, 1));
-	QDateTime todayEnd(QDateTime::currentDateTime().date(), QTime(23, 59, 59));
+	QDateTime todayStart(QDateTime::currentDateTime().date(), BEGINNING_OF_DAY);
+	QDateTime todayEnd(QDateTime::currentDateTime().date(), END_OF_DAY);
 
 	if (!getEnd().isValid()) {
 		return false;
@@ -390,8 +390,8 @@ bool Task::isDueToday() const {
 // Returns FALSE if this task has a due date that is not within the next day
 // Returns TRUE if this task has a due date that is within the next day.
 bool Task::isDueTomorrow() const {
-	QDateTime tomorrowStart(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 1));
-	QDateTime tomorrowEnd(QDateTime::currentDateTime().date().addDays(1), QTime(23, 59, 58));
+	QDateTime tomorrowStart(QDateTime::currentDateTime().date().addDays(1), BEGINNING_OF_DAY);
+	QDateTime tomorrowEnd(QDateTime::currentDateTime().date().addDays(1), END_OF_DAY);
 	//tomorrowEnd.addDays(1);
 	
 	if (!getEnd().isValid()) {
