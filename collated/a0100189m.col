@@ -3,39 +3,2990 @@
 
 
 	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\AboutWindow.cpp
+	 */
+
+
+#include "Tasuke.h"
+#include "AboutWindow.h"
+
+AboutWindow::AboutWindow(QDialog* parent) : QDialog(parent) {
+	ui.setupUi(this);
+	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
+	ui.label_2->setText("V0.5"); // set version here.
+}
+
+AboutWindow::~AboutWindow() {
+	
+}
+
+void AboutWindow::showAndCenter() {
+	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
+	center.setY(QApplication::desktop()->screen()->rect().height() / 4);
+
+	move(center);
+
+	show();
+	raise();
+	activateWindow();
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\AboutWindow.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\AboutWindow.h
+	 */
+
+
+#ifndef ABOUTWINDOW_H
+#define ABOUTWINDOW_H
+
+#include <QWidget>
+#include <QApplication>
+#include <QDesktopWidget>
+#include "ui_AboutWindow.h"
+
+// This is a simple window that displays brief info about Tasuke
+// And credits any resources used.
+// It can be accessed in the tray icon context menu.
+
+class AboutWindow : public QDialog {
+	Q_OBJECT
+
+public:
+	AboutWindow(QDialog *parent = 0);
+	~AboutWindow();
+
+public slots:
+	void showAndCenter();
+
+
+private:
+	Ui::AboutWindow ui;
+};
+
+#endif // ABOUTWINDOW_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\AboutWindow.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+	 */
+
+
+// Stacked widget page indexes
+static const int TASKS_PAGE = 0;
+static const int TUTORIAL_PAGE = 1;
+
+enum class InputStatus : char {
+	SUCCESS, 
+	FAILURE,
+	NORMAL
+};
+
+enum class Theme : char {
+	DEFAULT,
+	GREEN,
+	SPACE,
+	PINK,
+	PIKACHU,
+	BLUE,
+	DOGE,
+	THEME_LAST_ITEM
+};
+
+enum class IconSet : char {
+	NYANSUKE,
+	SYMBOLS,
+	SYMBOLS2,
+	NICCAGE,
+	MEME,
+	SHIBE,
+	ICONSET_LAST_ITEM
+};
+
+// Icon locations
+static const char* NYANSUKE_NORMAL = ":Images/images/icons/nyansukenormal.png";
+static const char* NYANSUKE_SUCCESS = ":Images/images/icons/nyansukesuccess.png";
+static const char* NYANSUKE_FAILURE = ":Images/images/icons/nyansukefailure.png";
+static const char* SYMBOL_NORMAL = ":Images/images/icons/symbolnormal.png";
+static const char* SYMBOL_SUCCESS = ":Images/images/icons/symbolsuccess.png";
+static const char* SYMBOL_FAILURE = ":Images/images/icons/symbolfailure.png";
+static const char* SYMBOL2_NORMAL = ":Images/images/icons/symbolnormal.png";
+static const char* SYMBOL2_SUCCESS = ":Images/images/icons/symbolwhitesuccess.png";
+static const char* SYMBOL2_FAILURE = ":Images/images/icons/symbolwhitefailure.png";
+static const char* NICCAGE_NORMAL = ":Images/images/icons/niccagenormal.png";
+static const char* NICCAGE_SUCCESS = ":Images/images/icons/niccagesuccess.png";
+static const char* NICCAGE_FAILURE = ":Images/images/icons/niccagefailure.png";
+static const char* MEME_NORMAL = ":Images/images/icons/memenormal.png";
+static const char* MEME_SUCCESS = ":Images/images/icons/memesuccess.png";
+static const char* MEME_FAILURE = ":Images/images/icons/memefailure.png";
+static const char* SHIBE_NORMAL = ":Images/images/icons/dogenormal.png";
+static const char* SHIBE_SUCCESS = ":Images/images/icons/dogesuccess.png";
+static const char* SHIBE_FAILURE = ":Images/images/icons/dogefailure.png";
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\InputHighlighter.cpp
+	 */
+
+
+#include <QSettings>
+#include "Tasuke.h"
+#include "InputHighlighter.h"
+
+InputHighlighter::InputHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent), commandsEnabled(true), spellcheckEnabled(true) {
+	setRegex();
+	setupColorsFormatsRules();
+}
+
+
+// ========================================
+// GETTERS & SETTERS
+// ========================================
+
+bool InputHighlighter::getCommandsEnabled() const {
+	return commandsEnabled;
+}
+
+void InputHighlighter::setCommandsEnabled(bool newEnabled) {
+	commandsEnabled = newEnabled;
+}
+
+bool InputHighlighter::getSpellcheckEnabled() const {
+	return spellcheckEnabled;
+}
+
+void InputHighlighter::setSpellcheckEnabled(bool newEnabled) {
+	spellcheckEnabled = newEnabled;
+}
+
+
+// ========================================
+// HANDLES HIGHLIGHTING
+// ========================================
+
+// For setting up of formats and rules
+void InputHighlighter::setupColorsFormatsRules() {
+	setFormats(QColor(14, 158, 235), QColor(133, 76, 180), QColor(135, 180, 0));
+	setRules();
+}
+
+// Goes through entire text and highlights anything that matches the rules.
+void InputHighlighter::highlightBlock(const QString &text) {
+	// Highlights keywords
+	if (commandsEnabled) {
+		foreach (const HighlightingRule &rule, highlightingRules) {
+			QRegularExpressionMatchIterator matchIter = rule.pattern.globalMatch(text);
+			while (matchIter.hasNext()) {
+				QRegularExpressionMatch match = matchIter.next();
+				for (int i = 1; i <= match.lastCapturedIndex(); ++i) {
+					setFormat(match.capturedStart(i), match.capturedLength(i), rule.format);
+				}
+			}
+		}
+	}
+
+	// Does spellcheck
+	if (spellcheckEnabled) {
+		QStringList words = text.simplified().split(" ", QString::SkipEmptyParts);
+		foreach(QString word, words) {
+			if (word.size() > 1) {
+				bool correct = Tasuke::instance().spellCheck(word);
+				if (!correct) {
+					int numOccurence = text.count(QRegExp("\\b"+word+"\\b"));
+					int index = -1;
+					// underline all occurences of misspelled word
+					for (int i=0; i<numOccurence; i++) {
+						index = text.indexOf(QRegExp("\\b"+word+"\\b"), index+1);
+						if (index >= 0) {
+							setFormat(index, word.length(), spellCheckFormat);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// Define the regular expressions for different types of words
+void InputHighlighter::setRegex(){	
+	commandRegex = QRegularExpression("(^(((much)|(such)|(wow such)|(wow much)|(so)|(many)) )?"
+									  "((\\b(add)|(create)|(a)|(do)|"
+									  "(remove)|(delete)|(clear)|(rm)|"
+									  "(edit)|(update)|(modify)|(change)|(e)|"
+									  "(show)|(display)|(list)|(find)|(search)|(ls)|"
+									  "(undo)|(redo)|(r)|(u)|(done)|(undone)|(d)|(nd))\\b)+)");
+
+	keywordRegex = QRegularExpression("(^\\b((much|such|wow such|wow much|so|many) )?"
+									  "((\\b(exit)|(quit)|(q)|(options)|(settings)|(help)|(tutorial)|(guide)|(instructions)|(about))\\b)+)");
+	
+	connectorRegex = QRegularExpression("^(?:(?:wow\\s+)?(?:[ms]uch|so|many)\\s+)?" // doge prefixes
+										"(?:add|create|a|do|edit|update|modify|change|e)" // commands with connectors
+										".+" // item being added or edited
+										"\\b(from|by|at|on|@)\\b(?:\\s+(?:\\S+\\s+)+(to|-)\\b)?"); // connectors, with optional "to" connector
+   
+	tagRegex = QRegularExpression("\\s(#)\\S");
+}
+
+// Set the formatting of the text displayed
+void InputHighlighter::setFormats(QColor commandC, QColor keywordC, QColor connectorC){
+	commandFormat.setForeground(commandC);
+	keywordFormat.setForeground(keywordC);
+	connectorFormat.setForeground(connectorC);
+	spellCheckFormat.setUnderlineColor(QColor(Qt::red));
+	spellCheckFormat.setUnderlineStyle(QTextCharFormat::WaveUnderline);
+}
+
+// Adds to highlighting rules 
+void InputHighlighter::setRules(){
+	HighlightingRule commandRule;
+	commandRule.pattern = commandRegex;
+	commandRule.format = commandFormat;
+	highlightingRules.append(commandRule);
+
+	HighlightingRule keywordRule;
+	keywordRule.pattern = keywordRegex;
+	keywordRule.format = keywordFormat;
+	highlightingRules.append(keywordRule);
+
+	HighlightingRule connectorRule;
+	connectorRule.pattern = connectorRegex;
+	connectorRule.format = connectorFormat;
+	highlightingRules.append(connectorRule);
+
+	HighlightingRule tagRule;
+	tagRule.pattern = tagRegex;
+	tagRule.format = connectorFormat;
+	highlightingRules.append(tagRule);
+}
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\InputHighlighter.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\InputHighlighter.h
+	 */
+
+
+#pragma once
+#include <QSyntaxHighlighter>
+#include <QRegularExpression>
+
+// This class is a subclass of QSyntaxHighlighter.
+// It handles color highlighting of input window's text's commands keywords and spellcheck.
+// To add new keywords, simply edit the regular expressions in setRegex().
+// To add new colors and styles, add a new format and rule in setRules().
+
+class InputHighlighter : public QSyntaxHighlighter {
+	Q_OBJECT
+
+public:
+	InputHighlighter(QTextDocument *parent = 0);
+	bool getCommandsEnabled() const;
+	void setCommandsEnabled(bool newEnabled);
+	bool getSpellcheckEnabled() const;
+	void setSpellcheckEnabled(bool newEnabled);
+
+public slots:	
+	void setupColorsFormatsRules();
+
+protected:
+	void highlightBlock(const QString &text) override;
+
+private:
+	// regular expressions that define keywords
+	QRegularExpression commandRegex;
+	QRegularExpression keywordRegex;
+	QRegularExpression connectorRegex;
+	QRegularExpression tagRegex;
+
+	// style of the keyword group
+	QTextCharFormat commandFormat;
+	QTextCharFormat keywordFormat;
+	QTextCharFormat connectorFormat;
+	QTextCharFormat spellCheckFormat;
+
+	struct HighlightingRule {
+		QRegularExpression pattern;
+		QTextCharFormat format;
+	};
+	QVector<HighlightingRule> highlightingRules;
+
+	bool commandsEnabled;
+	bool spellcheckEnabled;
+
+	void setRegex();
+	void setFormats(QColor commandC, QColor keywordC, QColor connectorC);
+	void setRules();
+};
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\InputHighlighter.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\InputWindow.cpp
+	 */
+
+
+#include <QSettings>
+#include "Tasuke.h"
+#include "Interpreter.h"
+#include "Exceptions.h"
+#include "ThemeStylesheets.h"
+#include "InputWindow.h"
+
+InputWindow::InputWindow(QWidget* parent) : QWidget(parent), animation(this, "opacity"), 
+	errorAnimation(this, "pos") {
+		LOG(INFO) << "InputWindow instance created";
+		initUI();
+		initWidgets();
+		initAnimation();
+		initUIConnect();
+		handleReloadTheme();
+}
+
+InputWindow::~InputWindow() {
+	LOG(INFO) << "InputWindow instance destroyed";
+}
+
+// ===================================================
+//	TOOLTIP DISPLAY FUNCTIONS
+// ===================================================
+
+// Allows other classes to display a tooltip message relative to the status of the input.
+void InputWindow::showTooltipMessage(InputStatus status, QString message) {
+	if (!tooltipWidget->isVisible()) {
+		tooltipWidget->showAndAlign();
+	}
+	tooltipWidget->setText(status, message);
+}
+
+// Hide tooltip
+void InputWindow::hideTooltip() {
+	tooltipWidget->hide();
+}
+
+// ===================================================
+//	WINDOW DISPLAY FUNCTIONS
+// ===================================================
+
+// Starts error wiggle animation
+void InputWindow::doErrorAnimation() {
+	errorAnimation.start();
+}
+
+// Shows and moves the input window to center relative to task window
+void InputWindow::showAndCenter() {
+	LOG(INFO) << "Displaying input window";
+
+	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
+	if(Tasuke::instance().getTaskWindow().isVisible()){ // If taskWindow is open
+		pos.setY(Tasuke::instance().getTaskWindow().y() + Tasuke::instance().getTaskWindow().height() + 3); //set commandbox below taskWindow
+		pos.setX(Tasuke::instance().getTaskWindow().x());
+	} else {
+		pos.setY(QApplication::desktop()->screen()->rect().height() / 4);
+	}
+
+	move(pos);
+	initErrorAnimation();
+
+	show(); 
+	raise(); 
+	activateWindow();
+	animation.start();
+}
+
+// Shows the input window with an "Add " command 
+void InputWindow::showAndAdd() {
+	LOG(INFO) << "User has clicked \"add one\"";
+	showAndCenter();
+	ui.lineEdit->insertPlainText("add ");
+}
+
+// Closes and clears the text box
+void InputWindow::closeAndClear() {
+	hide();
+	ui.lineEdit->clear();
+}
+
+// ====================================================
+//	PUBLIC SLOTS
+// ====================================================
+
+// Reloads theme according to settings.
+void InputWindow::handleReloadTheme() {
+	LOG(INFO) << "Reloading theme in InputWindow";
+
+	// Get current theme ID
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+
+	try {
+		if (currTheme < (Theme)0 && currTheme >= Theme::THEME_LAST_ITEM) {
+			throw ExceptionThemeOutOfRange();
+		} else {
+			setStyleSheet(ThemeStylesheets::INPUTWINDOW_STYLES[(char)currTheme]); // Apply theme
+		}
+	} catch (ExceptionThemeOutOfRange *exception) {
+		// If the icon enum in the settings is out of range, set back to default
+		settings.setValue("Theme", (char)Theme::DEFAULT); 
+		handleReloadTheme();
+	}
+}
+
+// Enables or disables features such as highlighter, spellcheck & tooltip according to settings
+void InputWindow::handleReloadFeatures() {
+	LOG(INFO) << "Reloading highlighter in InputWindow";
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+
+	bool highlightCommandsEnabled = settings.value("HighlightCommandsEnabled", true).toBool();
+	highlighter->setCommandsEnabled(highlightCommandsEnabled);
+
+	bool highlightSpellcheckEnabled = settings.value("SpellcheckEnabled", true).toBool();
+	highlighter->setSpellcheckEnabled(highlightSpellcheckEnabled);
+
+	bool tooltipEnabled = settings.value("TooltipEnabled", true).toBool();
+	showTooltip = tooltipEnabled;
+}
+
+// ====================================================
+//	EVENTS
+// ====================================================
+
+// Handles keyboard events
+bool InputWindow::eventFilter(QObject* object, QEvent* event) {
+	if(event->type() == QEvent::KeyPress) {
+		// enter key
+		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
+		if(eventKey->key() == Qt::Key_Return) {
+			handleReturnPressed();
+			return true;
+		}
+
+		if (Tasuke::instance().getTaskWindow().getScreen() == 0) { // On main view
+			// Scroll keys for tasks
+			switch (eventKey->key()) {
+			case Qt::Key::Key_Up:
+				if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+					Tasuke::instance().getTaskWindow().pageUp();
+				} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+					Tasuke::instance().getTaskWindow().gotoPreviousSection();
+				} else {
+					Tasuke::instance().getTaskWindow().scrollUp();
+				}
+				return true;
+			case Qt::Key::Key_Down:
+				if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+					Tasuke::instance().getTaskWindow().pageDown();
+				} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+					Tasuke::instance().getTaskWindow().gotoNextSection();
+				} else {
+					Tasuke::instance().getTaskWindow().scrollDown();
+				}
+				return true;
+			}
+
+			// undo keys
+			if (eventKey->matches(QKeySequence::Undo)) {
+				Tasuke::instance().runCommand(QString("undo"));
+			}
+
+			if (eventKey->matches(QKeySequence::Redo)) {
+				Tasuke::instance().runCommand(QString("redo"));
+			}
+
+			// paste shortcut
+			if (eventKey->matches(QKeySequence::Paste)) {
+				if(ui.lineEdit->toPlainText().trimmed().isEmpty()) {
+					ui.lineEdit->insertPlainText(QString("add "));
+				}
+			}
+		}
+
+		if (Tasuke::instance().getTaskWindow().getScreen() == 1) { // On tutorial window
+			if (eventKey->key() == Qt::Key_Tab){
+				Tasuke::instance().getTaskWindow().changeTutorialWidgetTabs();
+				return true;
+			}
+		}
+	}
+
+	if(event->type() == QEvent::FocusOut) {
+		closeAndClear();
+	}
+
+	return QObject::eventFilter(object, event);
+}
+
+void InputWindow::hideEvent(QHideEvent* event) {
+	Q_UNUSED(event);
+	hideTooltip();
+}
+
+// ====================================================
+//	PRIVATE SLOTS
+// ====================================================
+
+// Handles the enter button being pressed
+void InputWindow::handleReturnPressed() {
+	QString command = ui.lineEdit->toPlainText();
+	if (command.isEmpty()) {
+		return;
+	}
+	Tasuke::instance().runCommand(command);
+}
+
+// Handles the event when line edit changes
+void InputWindow::handleLineEditChanged() {
+	QString currText = ui.lineEdit->toPlainText();
+
+	if(showTooltip) {
+		if (currText.isEmpty()) {
+			hideTooltip();
+		} 
+		emit inputChanged(currText);
+	}
+}
+
+// ====================================================
+//	GETTER & SETTER
+// ====================================================
+
+void InputWindow::setOpacity(qreal value) {
+	wOpacity = value;
+	setWindowOpacity(value);
+	update();
+}
+
+qreal InputWindow::getOpacity() const {
+	return wOpacity;
+}
+
+// ====================================================
+//	INITIALIZATIONS
+// ====================================================
+
+// Initialise user interface
+void InputWindow::initUI() {
+	ui.setupUi(this);
+	ui.lineEdit->installEventFilter(this);
+	setAttribute(Qt::WA_TranslucentBackground);
+	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
+}
+
+// Initialise widgets
+void InputWindow::initWidgets() {
+	highlighter = new InputHighlighter(ui.lineEdit->document());
+	tooltipWidget = new TooltipWidget(this);
+}
+
+// Initialise connection of slots and signals
+void InputWindow::initUIConnect() {
+	connect(ui.lineEdit, SIGNAL(textChanged()), this, SLOT(handleLineEditChanged()));
+	connect(this, SIGNAL(reloadIcons()), tooltipWidget, SLOT(handleReloadIcons()));
+}
+
+// Initialize fade in animation of input window
+void InputWindow::initAnimation() {
+	animation.setEasingCurve(QEasingCurve::OutCubic); 
+	animation.setDuration(700); 
+	animation.setStartValue(0.0); 
+	animation.setEndValue(1.0); 
+}
+
+// Initialize error wiggle animation of input window
+void InputWindow::initErrorAnimation() {
+	errorAnimation.setEasingCurve(QEasingCurve::OutElastic); 
+	errorAnimation.setDuration(500);
+
+	QPoint posBefore;
+	posBefore.setY(y());
+	posBefore.setX(x() - 20);
+
+	QPoint posAfter;
+	posAfter.setY(y());
+	posAfter.setX(x());
+
+	errorAnimation.setStartValue(posBefore); 
+	errorAnimation.setEndValue(posAfter);
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\InputWindow.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\InputWindow.h
+	 */
+
+
+#ifndef INPUTWINDOW_H
+#define INPUTWINDOW_H
+
+#include <QWidget>
+#include <glog/logging.h>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QKeyEvent>
+#include <QFocusEvent>
+#include <QPropertyAnimation>
+#include "HotKeyThread.h"
+#include "InputHighlighter.h"
+#include "TooltipWidget.h"
+#include "Constants.h"
+#include "ui_InputWindow.h"
+
+// The input window is also the command box. 
+// The input window handles text input, keyword highlighting and displaying of command tooltip guide.
+
+class InputWindow : public QWidget {
+	Q_OBJECT
+	Q_PROPERTY(qreal opacity READ getOpacity WRITE setOpacity)
+
+public:
+	InputWindow(QWidget *parent = 0);
+	~InputWindow();
+
+	void showTooltipMessage(InputStatus status, QString message = "");
+	void hideTooltip();
+	void doErrorAnimation();
+	void showAndCenter();	
+	void showAndAdd();
+	void closeAndClear();
+
+public slots:
+	void handleReloadTheme();
+	void handleReloadFeatures();
+
+protected:
+	bool eventFilter(QObject *object, QEvent *event) override;
+	void hideEvent(QHideEvent *event) override;
+
+signals:
+	void inputChanged(QString text);
+	void reloadIcons();
+
+private slots:
+	void handleReturnPressed();
+	void handleLineEditChanged();
+
+private:
+	
+	// ====================================================
+	//	Attributes
+	// ====================================================
+	Ui::InputWindow ui;
+    InputHighlighter *highlighter;
+	TooltipWidget *tooltipWidget;
+	QPropertyAnimation animation;
+	QPropertyAnimation errorAnimation;
+	qreal wOpacity;
+	bool showTooltip;
+	
+	// ====================================================
+	//	Functions
+	// ====================================================
+	void setOpacity(qreal value);
+	qreal getOpacity() const;
+	
+	// For initialization
+	void initUI();
+	void initWidgets();
+	void initUIConnect();
+	void initAnimation();
+	void initErrorAnimation();
+};
+
+#endif // INPUTWINDOW_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\InputWindow.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SettingsWindow.cpp
+	 */
+
+
+#include <QSettings>
+#include "Tasuke.h"
+#include "Exceptions.h"
+#include "SettingsWindow.h"
+
+SettingsWindow::SettingsWindow(QWidget* parent) : QWidget(parent) {
+	LOG(INFO) << "SettingsWindow instance created";
+
+	initUI();
+	initUIConnect();
+	initIconsArray();
+	initThemeArray();
+}
+
+SettingsWindow::~SettingsWindow() {
+	LOG(INFO) << "SettingsWindow instance destroyed";
+}
+
+// Shows and centers the Settings Window, then resets the tab to the first one.
+void SettingsWindow::showAndCenter() {
+	LOG(INFO) << "Displaying settings window";
+
+	QPoint pos = QApplication::desktop()->screen()->rect().center() - rect().center();
+	pos.setY(QApplication::desktop()->screen()->rect().height() / 4);
+
+	move(pos);
+	show(); 
+	raise(); 
+	ui.tabWidget->setCurrentIndex(0);
+}
+
+// Switches tabs to the next tab
+void SettingsWindow::changeTabs() {
+
+	int nextTab;
+	int currTab = ui.tabWidget->currentIndex();
+
+	if (currTab == ui.tabWidget->count()-1) {
+		nextTab = 0;
+	} else { 
+		nextTab = currTab + 1;
+	}
+
+	ui.tabWidget->setCurrentIndex(nextTab);
+}
+
+
+// ============================================================
+// Slots
+// ============================================================
+
+// Handles the user pressing Apply - all the options they changed will be set.
+void SettingsWindow::handleApplyButton() {
+	editFeatures();
+	editFont();
+	editIcons();
+	editRunOnStartup();
+	editTheme();
+}
+
+// Like apply, but also closes the Settings Window.
+void SettingsWindow::handleOKButton() {
+	handleApplyButton();
+	close();
+}
+
+// ============================================================
+// Event handler
+// ============================================================
+
+bool SettingsWindow::eventFilter(QObject* object, QEvent* event) {
+	if (event->type() == QEvent::KeyPress) {
+		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
+		if (eventKey->key() == Qt::Key_Tab) {
+			LOG(INFO) << "Settings Key_Tab pressed";
+			changeTabs();
+			return true;
+		}
+	}
+	return QObject::eventFilter(object, event);
+}
+
+void SettingsWindow::showEvent(QShowEvent *event) {
+	QWidget::showEvent(event);
+	loadCurrSettings();
+}
+
+// ============================================================
+// Initializers
+// ============================================================
+
+void SettingsWindow::initUI() {
+	ui.setupUi(this);
+	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::Tool);
+}
+
+void SettingsWindow::initUIConnect() {
+	connect(ui.OK, SIGNAL(pressed()), this, SLOT(handleOKButton()));
+	connect(ui.apply, SIGNAL(pressed()), this, SLOT(handleApplyButton()));
+}
+
+void SettingsWindow::initIconsArray() {
+	iconSelectButtons[(char)IconSet::MEME] = ui.optionMeme;
+	iconSelectButtons[(char)IconSet::NICCAGE] = ui.optionNicCage;
+	iconSelectButtons[(char)IconSet::NYANSUKE] = ui.optionNyansuke;
+	iconSelectButtons[(char)IconSet::SHIBE] = ui.optionShibe;
+	iconSelectButtons[(char)IconSet::SYMBOLS] = ui.optionSymbols;
+	iconSelectButtons[(char)IconSet::SYMBOLS2] = ui.optionSymbols2;
+}
+
+void SettingsWindow::initThemeArray() {
+	themeSelectButtons[(char)Theme::DEFAULT] = ui.selectDefault;
+	themeSelectButtons[(char)Theme::GREEN] = ui.selectGreen;
+	themeSelectButtons[(char)Theme::SPACE] = ui.selectSpace;
+	themeSelectButtons[(char)Theme::PINK] = ui.selectPink;
+	themeSelectButtons[(char)Theme::PIKACHU] = ui.selectPika;
+	themeSelectButtons[(char)Theme::BLUE] = ui.selectBlue;
+	themeSelectButtons[(char)Theme::DOGE] = ui.selectDefault;
+}
+
+// ============================================================
+// Helper functions to load current settings
+// =============================================================
+
+// This function will initialize the options according to current settings.
+void SettingsWindow::loadCurrSettings() {
+	LOG(INFO) << "Loading current settings into settings window.";
+
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	loadCurrFeatures();
+	loadCurrFont();
+	loadCurrIcons();
+	loadCurrTheme();
+}
+
+// Load up feature selections
+void SettingsWindow::loadCurrFeatures() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+
+	bool currRunOnStartup = settings.value("RunOnStartup", true).toBool();
+	ui.runOnStartup->setChecked(currRunOnStartup);
+
+	bool currEnableCommandHighlight = settings.value("HighlightCommandsEnabled", true).toBool();
+	ui.commandColors->setChecked(currEnableCommandHighlight);
+
+	bool currEnableSpellcheck = settings.value("SpellcheckEnabled", true).toBool();
+	ui.spellcheck->setChecked(currEnableSpellcheck);
+
+	bool currEnableTooltip = settings.value("TooltipEnabled", true).toBool();
+	ui.commandTooltip->setChecked(currEnableTooltip);
+}
+
+// Load up current font selection
+void SettingsWindow::loadCurrFont() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	QString fontSelected = settings.value("Font", "Print Clearly").toString();
+	ui.fontSelect->setCurrentFont(QFont(fontSelected, ui.fontSelect->currentFont().pointSize()));
+}
+
+// Load up current iconset selection
+void SettingsWindow::loadCurrIcons() {
+
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	IconSet currIconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
+
+	try {
+		if (currIconSet < (IconSet)0 && currIconSet >= IconSet::ICONSET_LAST_ITEM) {
+			throw ExceptionIconsetOutOfRange();
+		} else {
+			iconSelectButtons[(char)currIconSet]->setChecked(true); // check the option if valid icon enum
+		}
+	} catch (ExceptionIconsetOutOfRange *exception) {
+		// If the icon enum in the settings is out of range, set back to default
+		settings.setValue("Icon", (char)IconSet::NYANSUKE); 
+		loadCurrIcons();
+	}
+}
+
+// Load up current theme selection
+void SettingsWindow::loadCurrTheme() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+	try {
+		if (currTheme < (Theme)0 && currTheme >= Theme::THEME_LAST_ITEM) {
+			throw ExceptionThemeOutOfRange();
+		} else {
+			themeSelectButtons[(char)currTheme]->setChecked(true); // check the option if valid icon enum
+		}
+	} catch (ExceptionThemeOutOfRange *exception) {
+		// If the icon enum in the settings is out of range, set back to default
+		settings.setValue("Theme", (char)Theme::DEFAULT); 
+		loadCurrTheme();
+	}
+}
+
+// ============================================================
+// Handles settings change
+// ============================================================
+
+// Change run on startup
+void SettingsWindow::editRunOnStartup() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	bool newRunOnStartup = ui.runOnStartup->isChecked();
+	bool success = Tasuke::instance().setRunOnStartup(newRunOnStartup);
+	if (success) {
+		settings.setValue("RunOnStartup", newRunOnStartup);
+	} else {
+		settings.setValue("RunOnStartup", false);
+	}
+}
+
+// Change features in settings
+void SettingsWindow::editFeatures() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	settings.setValue("HighlightCommandsEnabled", ui.commandColors->isChecked());	
+	settings.setValue("SpellcheckEnabled", ui.spellcheck->isChecked());	
+	settings.setValue("TooltipEnabled", ui.commandTooltip->isChecked());
+	emit featuresChanged();
+}
+
+// Change font in settings
+void SettingsWindow::editFont() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	QString oldFont = settings.value("Font", "Print Clearly").toString();
+	QString fontSelected = ui.fontSelect->currentFont().family();
+	if (fontSelected.compare(oldFont) != 0) {
+		settings.setValue("Font", fontSelected);
+		LOG(INFO) << "Font changed to " << fontSelected.toStdString() << " from " << oldFont.toStdString();
+		emit fontChanged();
+	}
+}
+
+// Change Icon Set in settings
+void SettingsWindow::editIcons() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	IconSet oldIcons = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
+	for (int i = 0; i < (char)IconSet::ICONSET_LAST_ITEM; ++i) {
+		if (iconSelectButtons[i]->isChecked()) {
+			settings.setValue("Icon", i);
+			if (oldIcons != (IconSet)i) {
+				LOG(INFO) << "Tooltip feedback icon has changed.";
+				emit iconsChanged();
+			}
+			break;
+		}
+	}
+}
+
+// Change theme in settings. It will emit the signal to TaskWindow, InputWindow and SubheadingEntry to change theme.
+void SettingsWindow::editTheme() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	Theme oldTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+	for (int i=0; i< (char)Theme::THEME_LAST_ITEM - 1; ++i) {
+		if (themeSelectButtons[i]->isChecked()) {
+			settings.setValue("Theme", i);
+			if (oldTheme != (Theme)i) {
+				LOG(INFO) << "Theme has been changed.";
+				emit themeChanged();
+			}
+			break;
+		}
+	}
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SettingsWindow.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SettingsWindow.h
+	 */
+
+
+#ifndef SETTINGSWINDOW_H
+#define SETTINGSWINDOW_H
+
+#include <glog/logging.h>
+#include <QWidget>
+#include <QApplication>
+#include <QDesktopWidget>
+#include "Constants.h"
+#include "ui_SettingsWindow.h"
+
+// The settings window handles changing of settings inside the settings window.
+// Users can enable/disable features, change icon set, change font and change the theme.
+
+class SettingsWindow : public QWidget {
+	Q_OBJECT
+
+public:
+	SettingsWindow(QWidget *parent = 0);
+	~SettingsWindow();
+
+	void showAndCenter();
+	void changeTabs();
+
+signals:
+	void featuresChanged();
+	void themeChanged();
+	void iconsChanged();
+	void fontChanged();
+
+public slots:
+	void handleApplyButton();
+	void handleOKButton();
+
+protected:
+	bool eventFilter(QObject* object, QEvent* event) override;
+	virtual void showEvent(QShowEvent *event) override;
+
+private:
+	Ui::SettingsWindow ui;	
+	QRadioButton * iconSelectButtons[(char)IconSet::ICONSET_LAST_ITEM];
+	QRadioButton * themeSelectButtons[(char)Theme::THEME_LAST_ITEM];
+	
+	// Initializers
+	void initUI();
+	void initUIConnect();
+	void initIconsArray();
+	void initThemeArray();
+
+	// Helper functions to load current checked boxes
+	void loadCurrSettings();
+	void loadCurrFeatures();
+	void loadCurrFont();
+	void loadCurrIcons();
+	void loadCurrTheme();
+
+	// Handle changing of settings
+	void editRunOnStartup();
+	void editFeatures();
+	void editFont();
+	void editIcons();
+	void editTheme();
+};
+
+#endif // SETTINGSWINDOW_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SettingsWindow.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SubheadingEntry.cpp
+	 */
+
+
+#include <QSettings>
+#include "Tasuke.h"
+#include "Exceptions.h"
+#include "ThemeStylesheets.h"
+#include "SubheadingEntry.h"
+
+SubheadingEntry::SubheadingEntry(const QString& content, QWidget *parent): QWidget(parent), connectedToSettings(false) {
+	initUI();
+	initSettingsConnect();
+	handleReloadTheme();
+	changeText(content);
+}
+
+SubheadingEntry::~SubheadingEntry() {
+	disconnect(this, SLOT(handleReloadTheme()));
+}
+
+void SubheadingEntry::changeText(const QString& text) {
+	ui.content->setText(text);
+}
+
+// Essentially reloads the theme's font color
+void SubheadingEntry::handleReloadTheme() {
+	LOG(INFO) << "Reloading theme in SubheadingEntry";
+
+	// Get current theme ID
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+	try {
+		if (currTheme < (Theme)0 && currTheme >= Theme::THEME_LAST_ITEM) {
+			throw ExceptionThemeOutOfRange();
+		} else {
+			setStyleSheet(ThemeStylesheets::SUBHEADING_STYLES[(char)currTheme]); // Apply theme
+		}
+	} catch (ExceptionThemeOutOfRange *exception) {
+		// If the icon enum in the settings is out of range, set back to default
+		settings.setValue("Theme", (char)Theme::DEFAULT); 
+		handleReloadTheme();
+	}
+}
+
+void SubheadingEntry::initUI() {
+	ui.setupUi(this);
+	setAttribute(Qt::WA_TranslucentBackground);
+	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
+}
+
+void SubheadingEntry::initSettingsConnect() {
+	if (!connectedToSettings) {
+		connectedToSettings = true;
+		LOG(INFO) << "Connected SubheadingEntry to SettingsWindow";
+		connect(parentWidget(), SIGNAL(themeChanged()), this, SLOT(handleReloadTheme()));
+	}
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SubheadingEntry.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SubheadingEntry.h
+	 */
+
+
+#ifndef SUBHEADINGENTRY_H
+#define SUBHEADINGENTRY_H
+
+#include <QWidget>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QPropertyAnimation>
+#include <glog/logging.h>
+#include "ui_SubheadingEntry.h"
+
+// Subheading entry is entered inside the listWidget inside Task Window.
+// It is used to sort and organize the tasks visually for the user.
+
+class SubheadingEntry : public QWidget {
+	Q_OBJECT
+
+public:
+	SubheadingEntry(const QString& content, QWidget *parent = 0);
+	~SubheadingEntry();
+	void changeText(const QString& text);
+
+public slots:
+	void handleReloadTheme();
+
+private:
+	Ui::SubheadingEntry ui;
+	bool connectedToSettings;
+	void initUI();
+	void initSettingsConnect();
+};
+
+#endif //SUBHEADINGENTRY_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SubheadingEntry.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TaskEntry.cpp
+	 */
+
+
+#include <QSettings>
+#include "Tasuke.h"
+#include "Constants.h"
+#include "TaskEntry.h"
+
+TaskEntry::TaskEntry(const Task& t, QWidget* parent) : QWidget(parent), task(t)  {
+	initUI();
+	initLabelsArray();
+	initFonts();
+	makeWidget();
+}
+
+TaskEntry::~TaskEntry() {
+
+}
+
+// ================================================
+// FUNCTIONS THAT SET LOOK OF TASK ENTRY
+// ================================================
+
+// Highlight ongoing task in green
+void TaskEntry::highlightOngoing() {
+	ui.ongoingLabel->show();	
+	ui.description->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.startDate->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.endDate->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.startTime->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.endTime->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.tag->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+	ui.ID->setStyleSheet("background:transparent; color: rgb(40, 155, 36); ");
+}
+
+// Highlight overdue task in red
+void TaskEntry::highlightOverdue() {
+	ui.overdueLabel->show();	
+	ui.description->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.startDate->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.endDate->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.startTime->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.endTime->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.tag->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+	ui.ID->setStyleSheet("background:transparent; color: rgb(210, 44, 44); ");
+}
+
+// ================================================
+// FUNCTIONS TO SET FIELD CONTENT OF TASK ENTRY
+// ================================================
+
+// Generates a string of #tags
+QString TaskEntry::createTagString(const QList<QString>& tags) const {
+	QString strTags = tags[0];
+	strTags.prepend("#");
+	if (tags.size() > 1) {
+		for (int i = 1; i < tags.size(); i++) { // Iterate through the list to create a string of tags
+			assert(!tags[i].isEmpty());
+			strTags.append(", #");
+			strTags.append(tags[i]);
+		}
+	}
+	return strTags;
+}
+
+// Sets task ID
+void TaskEntry::setID(const int ID) {
+	assert(ID >= 0);
+	ui.ID->setText(QString::number(task.getId() + 1));
+}
+
+// Set tooltip
+void TaskEntry::setTooltip(const QString& description, 
+						   const QDateTime& start, 
+						   const QDateTime& end, 
+						   const QList<QString>& tags, 
+						   const QString& dueInMessage) {
+	// description
+	QString tooltipText(description);
+	tooltipText.prepend("Task description: ");
+
+	// start datetime
+	if (!start.isNull()) {
+		tooltipText.append("\n\nStart: \n" + start.toString("dd MMMM yyyy (dddd)\nh:mm ap"));
+	}
+	
+	// end datetime
+	if (!end.isNull()) {
+		tooltipText.append("\n\nEnd: \n" + end.toString("dd MMMM yyyy (dddd)\nh:mm ap"));
+		tooltipText.append("\n\n" + dueInMessage);
+	}
+	
+	// tags
+	if (!tags.isEmpty()) {
+		tooltipText.append("\n\nTagged with: ");
+		tooltipText.append(createTagString(tags));
+	}
+	
+	// Set it!
+	this->setToolTip(tooltipText);
+}
+
+// Set description that cannot be empty
+void TaskEntry::setDescription(const QString& description) {
+	assert(!description.isEmpty());
+	ui.description->setText(ui.description->fontMetrics().elidedText(description, Qt::ElideRight, 
+																	ui.description->contentsRect().width()));
+}
+
+// Set the date time in the specific format
+void TaskEntry::setDateTimes(const QDateTime& start, const QDateTime& end) {
+	if (!start.isNull()) {
+		QString strStartDate = start.toString("dd MMM (ddd)");
+		QString strStartTime = start.toString("h:mm ap");
+		ui.startDate->setText(strStartDate);
+		ui.startTime->setText(strStartTime);
+	}
+	if (!end.isNull()) {
+		QString strEndDate = end.toString("dd MMM (ddd)");
+		QString strEndTime = end.toString("h:mm ap");
+		ui.endDate->setText(strEndDate);
+		ui.endTime->setText(strEndTime);
+	}
+}
+
+// Set the string of tags
+void TaskEntry::setTags(const QList<QString>& tags) {
+	assert(!task.getTags().isEmpty());
+
+	QString strTags = createTagString(tags);
+	ui.tag->setText(ui.tag->fontMetrics().elidedText(strTags, Qt::ElideRight, ui.tag->width()));
+}
+
+// ================================================
+// INITIALIZATIONS
+// ================================================
+
+void TaskEntry::initUI() {
+	ui.setupUi(this);
+	setAttribute(Qt::WA_TranslucentBackground);
+	setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
+	ui.overdueLabel->hide();
+	ui.ongoingLabel->hide();
+}
+
+void TaskEntry::initLabelsArray() {
+	labels[(char)TaskEntryLabel::DESCRIPTION] = ui.description;
+	labels[(char)TaskEntryLabel::END_DATE] = ui.endDate;
+	labels[(char)TaskEntryLabel::END_TIME] = ui.endTime;
+	labels[(char)TaskEntryLabel::ID] = ui.ID;
+	labels[(char)TaskEntryLabel::START_DATE] = ui.startDate;
+	labels[(char)TaskEntryLabel::START_TIME] = ui.startTime;
+	labels[(char)TaskEntryLabel::TAG] = ui.tag;
+}
+
+// Sets the font of the fields in task entry
+void TaskEntry::initFonts() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	QString fontFamily = settings.value("Font", "Print Clearly").toString();
+
+	for (int i = 0; i < (char)TaskEntryLabel::TASKENTRYLABEL_LAST_ITEM; ++i) {
+		QFont font = labels[i]->font();
+		font.setFamily(fontFamily);
+		if (font.family().compare("Print Clearly") != 0) {
+			if ((i == (char)TaskEntryLabel::DESCRIPTION) || (i == (char)TaskEntryLabel::ID) || (i == (char)TaskEntryLabel::TAG)) {
+				font.setPointSize(font.pointSize() - FONT_SIZE_DIFF);
+			}
+		}
+		labels[i]->setFont(font);
+	}
+}
+
+// This function sets the respective fields in the TaskEntry widget
+void TaskEntry::makeWidget() {
+	setID(task.getId());
+	setDescription(task.getDescription());
+	setDateTimes(task.getBegin(), task.getEnd());
+	if (!task.getTags().isEmpty()) {
+		setTags(task.getTags());
+	}
+	setTooltip(task.getDescription(), task.getBegin(), task.getEnd(), task.getTags(), task.getTimeDifferenceString());
+}
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TaskEntry.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TaskEntry.h
+	 */
+
+
+#ifndef TASKENTRY_H
+#define TASKENTRY_H
+
+#include <QWidget>
+#include <QFontMetrics>
+#include <QDateTime>
+#include <QToolTip>
+#include "ui_TaskEntry.h"
+#include "Task.h"
+
+// Each TaskEntry object represents a Task with different ID, description, dates and tags.
+// They are entered into the listWidget in TaskWindow.
+
+class TaskEntry : public QWidget {
+	Q_OBJECT
+
+public:
+	TaskEntry(const Task& t, QWidget *parent = 0);
+	~TaskEntry();
+
+	Ui::TaskEntry ui;
+	void highlightOngoing();
+	void highlightOverdue();
+
+private:
+	// Attributes
+	static const int FONT_SIZE_DIFF = 4;
+	enum class TaskEntryLabel : char {
+		ID,
+		DESCRIPTION,
+		START_DATE,
+		START_TIME,
+		END_DATE,
+		END_TIME,
+		TAG,
+		TASKENTRYLABEL_LAST_ITEM
+	};
+
+	const Task& task;
+	QLabel* labels[(char)TaskEntryLabel::TASKENTRYLABEL_LAST_ITEM];
+
+	// Functions
+	QString createTagString(const QList<QString>& tags) const;
+	void setID(const int ID);
+	void setTooltip(
+		const QString& description,
+		const QDateTime& start, 
+		const QDateTime& end, 
+		const QList<QString>& tags, 
+		const QString& dueInMessage);
+	void setDescription(const QString& description);
+	void setDateTimes(const QDateTime& start, const QDateTime& end);
+	void setTags(const QList<QString>& tags);
+
+	// For initialization
+	void initLabelsArray();
+	void initFonts();
+	void initUI();
+	void makeWidget();
+};
+
+#endif // TASKENTRY_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TaskEntry.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TaskWindow.cpp
+	 */
+
+
+#include <QSettings>
+#include "Tasuke.h"
+#include "Constants.h"
+#include "Exceptions.h"
+#include "ThemeStylesheets.h"
+#include "SubheadingEntry.h"
+#include "TaskWindow.h"
+
+TaskWindow::TaskWindow(QWidget* parent) : currentlySelectedTask(-1), animation(this, "opacity"),
+										  progressBar(this), QMainWindow(parent) {
+	LOG(INFO) << "TaskWindow instance created";
+
+	resetSubheadingIndexes();
+	initUI();
+	initTutorial(); 
+	initAnimation();
+	initProgressBar();
+	initUIConnect();
+	handleReloadTheme();
+}
+
+TaskWindow::~TaskWindow() {
+	LOG(INFO) << "TaskWindow instance destroyed";
+}
+
+//========================================
+// TASK DISPLAY AND SELECTION
+//=========================================
+
+// This function is for Tasuke to get TaskWindow to highlight a particular task.
+void TaskWindow::highlightTask(int taskID) {
+	if (isInRange(taskID)) {	
+		updateCurrentlySelectedTo(taskID);
+		jumpToCurrentlySelectedTask();
+	} else {
+		LOG(INFO) << "highlightTask's not-in-range ID was called";
+	}
+}
+
+// This function is responsible for showing all the tasks entries and subheadings.
+void TaskWindow::showTasks(const QList<Task>& tasks, const QString& title) {
+	LOG(INFO) << "Displaying task list.";
+
+	previousSize = currentTasks.size(); // Size of previous list
+	currentTasks = tasks; // Update current tasks
+
+	changeTitle(title); // Change title scope	
+	decideContent(title); // Show column label or 'no tasks' message.
+	showBackButtonIfSearching(title);
+
+	displayTaskList();
+}
+
+
+//========================================
+// SCROLLING
+//=========================================
+
+// Scroll up one taskentry
+void TaskWindow::scrollUp() {
+	if (currentlySelectedTask > 0) {
+		updateCurrentlySelectedTo(currentlySelectedTask - 1);
+		jumpToCurrentlySelectedTask();
+	}
+}
+
+// Scroll down one taskentry
+void TaskWindow::scrollDown() {
+	if(currentlySelectedTask < currentTasks.size() - 1) {
+		updateCurrentlySelectedTo(currentlySelectedTask + 1);
+		jumpToCurrentlySelectedTask();
+	}
+}
+
+// Scrolls up TASKS_PER_PAGE number of tasks. Right now, it's about 5.
+void TaskWindow::pageUp() {
+	if (currentlySelectedTask < 1){
+		return;
+	}
+
+	if (currentlySelectedTask > TASKS_PER_PAGE - 1) {
+		updateCurrentlySelectedTo(currentlySelectedTask - TASKS_PER_PAGE);
+	} else {
+		updateCurrentlySelectedTo(0);
+	}
+
+	jumpToCurrentlySelectedTask();
+}
+
+// Scrolls down TASKS_PER_PAGE number of tasks. Right now, it's about 5.
+void TaskWindow::pageDown() {
+	if (currentlySelectedTask == currentTasks.size() - 1) {
+		return;
+	}
+
+	if (currentlySelectedTask < currentTasks.size() - TASKS_PER_PAGE - 1) {
+		updateCurrentlySelectedTo(currentlySelectedTask + TASKS_PER_PAGE);
+	} else {
+		updateCurrentlySelectedTo(currentTasks.size() - 1);
+	}
+
+	jumpToCurrentlySelectedTask();
+}
+
+// Jump to next subsection of tasks
+void TaskWindow::gotoPreviousSection() {
+	char thisSection = -1, prevSection = -1;
+	for (char i = (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM - 1; i >= 0; --i) {
+		if (subheadingRowIndexes[i] != -1 && subheadingRowIndexes[i] <= currentlySelectedTask) {
+			if (thisSection == -1) {
+				thisSection = i;
+			} else if (prevSection == -1) {
+				prevSection = i;
+				break;
+			}
+		}
+	}
+	highlightTask(prevSection == -1 ? 0 : subheadingRowIndexes[prevSection]);
+	ui.taskList->scrollToItem(ui.taskList->item(getTaskEntryRow(currentlySelectedTask) - 1));
+}
+
+// Jump to prev subsection of tasks
+void TaskWindow::gotoNextSection() {
+	char nextSection = -1;
+	for (char i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
+		if (subheadingRowIndexes[i] != -1 && subheadingRowIndexes[i] > currentlySelectedTask) {
+			if (nextSection == -1) {
+				nextSection = i;
+				break;
+			}
+		}
+	}
+	highlightTask(nextSection == -1 ? currentTasks.count() - 1 : subheadingRowIndexes[nextSection]);
+	ui.taskList->scrollToItem(ui.taskList->item(getTaskEntryRow(currentlySelectedTask) - 1));
+}
+
+//========================================
+// STACKED WIDGET FUNCTIONS
+//=========================================
+
+// Returns the page the window is currently at
+int TaskWindow::getScreen() const {
+	return ui.stackedWidget->currentIndex();
+}
+
+// Handles changing of categories (tabs) in tutorial window
+void TaskWindow::changeTutorialWidgetTabs(){
+	tutorial.changeTabs();
+}
+
+// Slides to the task list page
+void TaskWindow::showListWidget() {
+	LOG(INFO) << "Showing task list page";
+	ui.stackedWidget->slideInIdx(TASKS_PAGE);
+}
+
+// Slides to the tutorial page
+void TaskWindow::showTutorialWidget() {
+	LOG(INFO) << "Showing tutorial page";
+	ui.stackedWidget->slideInIdx(TUTORIAL_PAGE);
+	tutorial.reset();
+}
+//========================================
+// WINDOW DISPLAY FUNCTIONS
+//=========================================
+
+// Positions and shows window
+void TaskWindow::positionAndShow() {
+	QPoint center = QApplication::desktop()->screen()->rect().center() - rect().center();
+	center.setY(QApplication::desktop()->screen()->rect().height() / 9);
+	move(center);
+
+	animation.start();
+	raise();
+	activateWindow();
+	show();
+	setWindowState(Qt::WindowActive);
+}
+
+// Shows the tutorial for first time users, or the task list if not.
+void TaskWindow::showTutorialOrTaskList() {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	bool isFirstRun = settings.value("isFirstRun", true).toBool(); // Check if first time running
+
+	if (isFirstRun) {
+		settings.setValue("isFirstRun", false);
+		showTutorialWidget();
+	} else {
+		showListWidget();
+	}
+}
+
+// Shows and moves the task window and decides if the screen should be the task list or the tutorial.
+void TaskWindow::showAndMoveToSide() {
+	if (isVisible()) {
+		return;
+	}
+	showTutorialOrTaskList(); // Shows the task list, or tutorial if it's first run.
+	positionAndShow(); // Positions the window then shows it
+}
+
+//========================================
+// SLOTS
+//=========================================
+
+// Shows message when task list is empty.
+void TaskWindow::handleAddTaskButton() {
+	Tasuke::instance().getInputWindow().showAndAdd();
+}
+
+// Goes back to default view
+void TaskWindow::handleBackButton() {
+	showTasks(Tasuke::instance().getStorage().getTasks());	
+	changeTitle("");
+}
+
+// Reloads the theme
+void TaskWindow::handleReloadTheme() {
+	LOG(INFO) << "Reloading theme in TaskWindow";
+
+	// get current theme ID
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	Theme currTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
+
+	try {
+		if (currTheme < (Theme)0 && currTheme >= Theme::THEME_LAST_ITEM) {
+			throw ExceptionThemeOutOfRange();
+		} else {
+			// apply theme
+			applyTheme(
+				ThemeStylesheets::TASKWINDOW_STYLES[(char)currTheme], 
+				ThemeStylesheets::TASKENTRY_NORMAL_STYLES[(char)currTheme], 
+				ThemeStylesheets::TASKENTRY_SELECT_STYLES[(char)currTheme]);
+
+			// refresh the window, focus on first task
+			displayTaskList();
+			if (!currentTasks.isEmpty()) {
+				highlightTask(0);
+			}
+		}
+	} catch (ExceptionThemeOutOfRange *exception) {
+		// If the icon enum in the settings is out of range, set back to default
+		settings.setValue("Theme", (char)Theme::DEFAULT); 
+		handleReloadTheme();
+	}
+
+}
+
+// Displays current tasks
+void TaskWindow::displayTaskList() {
+	LOG(INFO) << "Displaying task list";
+
+	ui.taskList->clear(); // Clear previous list
+	resetSubheadingIndexes(); // Reset subheadings
+	if (currentTasks.size() != 0) {
+		for (int i = 0; i < currentTasks.size(); i++) {
+			displayAndUpdateSubheadings(i);
+			displayTask(currentTasks[i]);
+			progressBar.setValue((int)((i+1) * 100 / currentTasks.size()));	
+		}
+	} else {
+		progressBar.hide();
+	}
+	hideProgressBarWhenDone();
+}
+
+
+//========================================
+// EVENTS
+//=========================================
+
+void TaskWindow::closeEvent(QCloseEvent *event) {
+	hide();
+	event->ignore();
+}
+
+// Detects user is trying to move TaskWindow.
+void TaskWindow::mousePressEvent(QMouseEvent *event) {
+	mpos = event->pos();
+}
+
+// Helps move the TaskWindow according to mouse pointer.
+void TaskWindow::mouseMoveEvent(QMouseEvent *event) {
+	if (event->buttons() == Qt::LeftButton) {
+		QPoint diff = event->pos() - mpos;
+		QPoint newpos = this->pos() + diff;
+		this->move(newpos);
+	}
+}
+
+// Handles keyboard events
+bool TaskWindow::eventFilter(QObject* object, QEvent* event) {
+	if (event->type() == QEvent::KeyPress) {	
+		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
+
+		// Scroll task list
+		if (ui.stackedWidget->currentIndex() == 0) { // Is on task list
+			switch (eventKey->key()) {
+				case Qt::Key::Key_Up:
+					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+						pageUp();
+					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+						gotoPreviousSection();
+					} else {
+						scrollUp();
+					}
+					return true;
+
+				case Qt::Key::Key_Down:
+					if (eventKey->modifiers() & Qt::Modifier::CTRL) {
+						pageDown();
+					} else if (eventKey->modifiers() & Qt::Modifier::SHIFT) {
+						gotoNextSection();
+					} else {
+						scrollDown();
+					}
+					return true;
+					// Search backspace to go back
+
+				case Qt::Key::Key_Backspace:
+					handleBackButton();
+					return true;
+				}
+
+			// Undo and redo shortcuts
+			if (eventKey->matches(QKeySequence::Undo)) {
+				Tasuke::instance().runCommand(QString("undo"));
+				return true;
+			}
+
+			if (eventKey->matches(QKeySequence::Redo)) {
+				Tasuke::instance().runCommand(QString("redo"));
+				return true;
+			}
+
+		} else {
+			// Tutorial shortcuts start here
+
+			if (ui.stackedWidget->currentIndex() == 1) { // Is on tutorial
+				if (eventKey->key() == Qt::Key_Tab){
+					changeTutorialWidgetTabs();
+					return true;
+				}
+			}
+
+			// Navigate tutorial pages.
+			if (eventKey->key() == Qt::Key_Right) {
+				tutorial.goNextPage();
+				return true;
+			}
+
+			//delete after op2
+			if (eventKey->key() == Qt::Key_F9) {
+				tutorial.goNextPage();
+				return true;
+			}
+
+			if (eventKey->key() == Qt::Key_Left) {
+				tutorial.goPrevPage();
+				return true;
+			}
+
+			if (eventKey->key() == Qt::Key_Backspace) {
+				showListWidget();
+				return true;
+			}
+		}
+	}
+	return QObject::eventFilter(object, event);
+}
+
+//========================================
+// INITIALIZATION
+//=========================================
+
+void TaskWindow::initUI() {
+	ui.setupUi(this);
+	ui.backButton->hide();
+	this->installEventFilter(this);
+	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+	setAttribute(Qt::WA_TranslucentBackground);
+}
+
+void TaskWindow::initUIConnect() {
+	connect(ui.emptyAddTaskButton, SIGNAL(pressed()), this, SLOT(handleAddTaskButton()));
+	connect(ui.doneAllAddButton, SIGNAL(pressed()), this, SLOT(handleAddTaskButton()));
+	connect(ui.backButton, SIGNAL(released()), this, SLOT(handleBackButton()));
+}
+
+void TaskWindow::initTutorial() {
+	ui.stackedWidget->addWidget(&tutorial);
+	tutorial.goToFirstPage();
+}
+
+void TaskWindow::initAnimation() {
+	animation.setEasingCurve(QEasingCurve::Linear); 
+	animation.setDuration(400); 
+	animation.setStartValue(0.0); 
+	animation.setEndValue(1.0); 
+}
+
+void TaskWindow::initProgressBar() {
+	progressBar.setObjectName("progressBar");
+	progressBar.setGeometry(QRect(260, 230, 331, 23));
+	progressBar.setMinimum(0);
+	progressBar.setMaximum(100);
+}
+
+void TaskWindow::setOpacity(qreal value) {
+	wOpacity = value;
+	setWindowOpacity(value);
+	update();
+}
+
+qreal TaskWindow::getOpacity() const {
+	return wOpacity;
+}
+
+
+//========================================
+// PRIVATE HELPER TASK DISPLAY FUNCTIONS
+//=========================================
+
+// Creates and returns a new task entry.
+TaskEntry* TaskWindow::createEntry(const Task& t) {
+	TaskEntry* entry = new TaskEntry(t, this);
+
+	entry->setStyleSheet(taskEntryNormalStylesheet);
+
+	if (t.isOverdue()) {
+		entry->highlightOverdue();
+	}
+
+	if (t.isOngoing()) {
+		entry->highlightOngoing();
+	}
+	return entry;
+}
+
+// Add a QListWidgetItem in a specified row with a specified background.
+void TaskWindow::addListItemToRow(TaskEntry* entry, int row, const QString& type) {
+	if (type.compare("select") == 0) {
+		entry->ui.background->setStyleSheet(taskEntrySelectStylesheet);
+	} 
+
+	if (type.compare("deselect") == 0) {
+		entry->ui.background->setStyleSheet(taskEntryNormalStylesheet);
+	}
+
+	QListWidgetItem *listItem = new QListWidgetItem();
+	listItem->setSizeHint(entry->size());
+	ui.taskList->insertItem(row, listItem);
+	ui.taskList->setItemWidget(listItem, entry);
+}
+
+// Adds a new QListWidgetItem
+void TaskWindow::addListItem(TaskEntry* entry) {
+	QListWidgetItem *listItem = new QListWidgetItem();
+	listItem->setSizeHint(entry->size());
+	ui.taskList->addItem(listItem);
+	ui.taskList->setItemWidget(listItem, entry);
+}
+
+// Displays a task entry on the list.
+void TaskWindow::displayTask(const Task& t) {
+	TaskEntry * entry = createEntry(t);
+	addListItem(entry);
+}
+
+int TaskWindow::getTaskEntryRow(int taskRow) const {
+	int result = taskRow;
+	for (int i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
+		if (subheadingRowIndexes[i] != -1 && subheadingRowIndexes[i] <= taskRow) {
+			++result;
+		}
+	}
+	return result;
+}
+
+//============================================
+// PRIVATE HELPER SUBHEADING DISPLAY FUNCTIONS
+//============================================
+
+// When a new list of tasks is displayed, subheading indexes are reset.
+void TaskWindow::resetSubheadingIndexes() {
+	for (int i = 0; i < (char)SubheadingType::SUBHEADING_TYPE_LAST_ITEM; ++i) {
+		subheadingRowIndexes[i] = -1;
+	}
+}
+
+// For every new list of tasks, subheadings are slotted above differnt sections of tasks.
+void TaskWindow::displayAndUpdateSubheadings(int index) {
+	if (currentTasks[index].isOverdue()) {
+		if (subheadingRowIndexes[(char)SubheadingType::OVERDUE] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::OVERDUE] = index;
+			displaySubheading("Overdue tasks");
+		}
+	} else if (currentTasks[index].isDueToday()) {
+		if (subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::DUE_TODAY] = index;
+			displaySubheading("Today's tasks");
+		}
+	} else if (!currentTasks[index].getBegin().isNull() || !currentTasks[index].getEnd().isNull()) {
+		if (subheadingRowIndexes[(char)SubheadingType::TIMED] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::TIMED] = index;
+			displaySubheading("Timed tasks");
+		}
+	} else {
+		if (subheadingRowIndexes[(char)SubheadingType::FLOATING] == -1) {
+			subheadingRowIndexes[(char)SubheadingType::FLOATING] = index;
+			displaySubheading("Untimed tasks");
+		}
+	}
+}
+
+// Enters a subheading entry with QString content as the title.
+void TaskWindow::displaySubheading(const QString& content) {
+	SubheadingEntry * subheading = new SubheadingEntry(content, this);
+	QListWidgetItem *listItem = new QListWidgetItem();
+	listItem->setSizeHint(subheading->size());
+	ui.taskList->addItem(listItem);
+	ui.taskList->setItemWidget(listItem, subheading);
+}
+
+//================================================
+// PRIVATE HELPER WINDOW CONTENT DISPLAY FUNCTIONS
+//================================================
+
+// This function hides the task window content.
+void TaskWindow::hideContent() {
+	ui.columnLabels->hide();
+	ui.emptyTaskMessage->hide();
+	ui.emptySearchMessage->hide();
+	ui.allDoneMessage->hide();
+}
+
+// This function decides the content to show on the TaskWindow
+void TaskWindow::decideContent(QString title) {
+	hideContent();
+	bool allDone = Tasuke::instance().getStorage().isAllDone();
+	int totalTasks = Tasuke::instance().getStorage().totalTasks();
+
+	if (currentTasks.isEmpty()) {
+		if (!title.isEmpty()) { // searching
+			if (currentTasks.isEmpty()) {
+				ui.emptySearchMessage->show(); // no search result to display
+				return;
+			}
+		} else { // default display
+			if (allDone && totalTasks != 0) {
+				ui.allDoneMessage->show(); // There are tasks, which are all done.
+				return;
+			} 
+			if (totalTasks == 0) {
+				ui.emptyTaskMessage->show(); // There are no tasks at all.
+				return;
+			}
+		}
+	} else {
+		ui.columnLabels->show();
+		return;
+	}
+}
+
+// Displays the back button during search to allow user to go back to default view in a click.
+void TaskWindow::showBackButtonIfSearching(const QString& title) {
+	if (!title.isEmpty()) {
+		ui.backButton->show();
+	} else {
+		ui.backButton->hide();
+	}
+}
+
+// Changes title text on top
+void TaskWindow::changeTitle(const QString& title) {
+	LOG(INFO) << "Changing title";
+	if (!title.isEmpty()) {
+		ui.taskScope->setText("Viewing " + title);
+	} else {
+		ui.taskScope->setText("Viewing all tasks");
+	}
+}
+
+// Hides progress bar and displays the task list when all tasks are loaded.
+void TaskWindow::hideProgressBarWhenDone() {
+	if (progressBar.value() != progressBar.maximum()) {
+		ui.taskList->hide();
+	} else { 
+		ui.taskList->show();
+		progressBar.hide();
+	}
+}
+
+//=============================================
+// PRIVATE HELPER SCROLLING/HIGHLIGHT FUNCTIONS
+//=============================================
+
+// Checks if a given index is in range of the task list.
+bool TaskWindow::isInRange(int taskID) const {
+	return (taskID >= 0) && (taskID < currentTasks.size());
+}
+
+// This function updates the latest selected task.
+void TaskWindow::updateCurrentlySelectedTo(int taskID) {
+	previouslySelectedTask = currentlySelectedTask;
+	currentlySelectedTask = taskID;
+}
+
+// This function will scroll to, and highlight, the currently selected task.
+void TaskWindow::jumpToCurrentlySelectedTask() {
+	ui.taskList->scrollToItem(ui.taskList->item(currentlySelectedTask == 0 ? 0 : getTaskEntryRow(currentlySelectedTask)));
+	highlightCurrentlySelectedTask(currentTasks.size());
+}
+
+// This function highlights the selected row and dehighlights the previously highlighted.
+void TaskWindow::highlightCurrentlySelectedTask(int prevSize) {
+	// Dehighlight if previous state is not empty
+	if ((isInRange(previouslySelectedTask)) && (prevSize!=0)) { 
+		Task t2 = currentTasks[previouslySelectedTask];
+		TaskEntry * entry2 = createEntry(t2);
+		int prevSelectedRow = getTaskEntryRow(previouslySelectedTask);
+		addListItemToRow(entry2, prevSelectedRow, "deselect");
+		ui.taskList->takeItem(prevSelectedRow + 1);
+	}
+
+	// Highlight currently selected
+	if(isInRange(currentlySelectedTask)) {
+		Task t = currentTasks[currentlySelectedTask];
+		TaskEntry * entry = createEntry(t);
+		int currSelectedRow = getTaskEntryRow(currentlySelectedTask);
+		addListItemToRow(entry, currSelectedRow, "select");
+		ui.taskList->takeItem(currSelectedRow + 1);
+	}
+}
+
+//================================================
+// PRIVATE THEMING FUNCTION
+//================================================
+
+// Applies the stylesheets when the theme is changed.
+void TaskWindow::applyTheme(const QString mainStyle, const QString normalTaskEntryStyle, const QString selectedTaskEntryStyle) {
+	setStyleSheet(mainStyle);
+	taskEntryNormalStylesheet = normalTaskEntryStyle;
+	taskEntrySelectStylesheet = selectedTaskEntryStyle;
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TaskWindow.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TaskWindow.h
+	 */
+
+
+#ifndef TASKWINDOW_H
+#define TASKWINDOW_H
+
+#include <glog/logging.h>
+#include <assert.h>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QMenu>
+#include <QCloseEvent>
+#include <QMouseEvent>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QProgressBar>
+#include <QListView>
+#include <QKeySequence>
+#include <QPoint>
+#include <QPropertyAnimation>
+#include "Task.h"
+#include "HotKeyThread.h"
+#include "TaskEntry.h"
+#include "TutorialWidget.h"
+#include "ui_TaskWindow.h"
+
+// The task window is the main window.
+// It contains a stacked widget of two pages: The task list, and the tutorial widget.
+// It handles the scrolling and focusing of tasks as well.
+
+class TaskWindow : public QMainWindow {
+	Q_OBJECT
+	Q_PROPERTY(qreal opacity READ getOpacity WRITE setOpacity)
+
+public:
+	TaskWindow(QWidget *parent = 0);
+	virtual ~TaskWindow();
+
+	// Handles task list display
+	void highlightTask(int taskID);
+	void showTasks(const QList<Task>& tasks, const QString& title = "");
+
+	// Handles scrolling (public because InputWindow accesses)
+	void scrollUp();
+	void scrollDown();
+	void pageUp();
+	void pageDown();
+	void gotoPreviousSection();
+	void gotoNextSection();
+
+	// Stacked widget functions
+	int getScreen() const; // Helps decide which key press events to execute
+	void changeTutorialWidgetTabs(); // Handles key press "tab"
+	void showListWidget();
+	void showTutorialWidget();
+
+	// Window display functions
+	void positionAndShow();
+	void showTutorialOrTaskList();
+	void showAndMoveToSide();
+
+
+public slots:
+	void handleAddTaskButton();
+	void handleBackButton();
+	void handleReloadTheme();
+	void displayTaskList();
+
+signals:
+	void themeChanged();
+
+protected:
+	void closeEvent(QCloseEvent *event) override;
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
+	bool eventFilter(QObject* object, QEvent* event) override;
+
+
+private:
+
+	//=========================================
+	// ATTRIBUTES
+	//=========================================
+
+	static const int TASKS_PER_PAGE = 5;
+	enum class SubheadingType : char {
+		OVERDUE,
+		DUE_TODAY,
+		TIMED,
+		FLOATING,
+		SUBHEADING_TYPE_LAST_ITEM
+	};
+	Ui::TaskWindowClass ui;	
+	QPoint mpos;
+	qreal wOpacity;
+	QList<Task> currentTasks;
+	QPropertyAnimation animation;
+    QProgressBar progressBar;
+	TutorialWidget tutorial;
+	HotKeyThread *hotKeyThread;
+
+	// For selection of tasks
+	int currentlySelectedTask;
+	int previouslySelectedTask;
+	int previousSize;
+	int subheadingRowIndexes[SubheadingType::SUBHEADING_TYPE_LAST_ITEM];
+
+	// For theming
+	QString taskEntrySelectStylesheet;
+	QString taskEntryNormalStylesheet;
+
+	//=========================================
+	// HELPER FUNCTIONS
+	//=========================================
+
+	// For initialization
+	void initUI();
+	void initUIConnect();
+	void initTutorial();
+	void initAnimation();
+	void initProgressBar();
+	void setOpacity(qreal value);
+	qreal getOpacity() const;
+
+	//  Private helper functions for task display
+	TaskEntry* createEntry(const Task& t);
+	void addListItemToRow(TaskEntry* entry, int row, const QString& type);
+	void addListItem(TaskEntry* entry);
+	void displayTask(const Task& t);
+	int getTaskEntryRow(int taskID) const;
+
+	// Private helper functions for subheadings display
+	void displayAndUpdateSubheadings(int index);	
+	void resetSubheadingIndexes();
+	void displaySubheading(const QString& content);
+
+	// Private helper functions for window content display
+	void hideContent();
+	void decideContent(QString title);
+	void showBackButtonIfSearching(const QString& title);
+	void changeTitle(const QString& title);
+	void hideProgressBarWhenDone();
+
+	// Private helper functions for scrolling and highlighting of tasks
+	bool isInRange(int taskID) const;
+	void updateCurrentlySelectedTo(int taskID);	
+	void jumpToCurrentlySelectedTask();
+	void highlightCurrentlySelectedTask(int prevsize);
+
+	// Theming
+	void applyTheme(const QString mainStyle, const QString normalTaskEntryStyle, const QString selectedTaskEntryStyle);
+};
+
+#endif // TASKWINDOW_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TaskWindow.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\ThemeStylesheets.cpp
+	 */
+
+
+#include "ThemeStylesheets.h"	
+
+QStringList ThemeStylesheets::TASKWINDOW_STYLES = QStringList() 
+	<< "QLabel,QPushButton { color:#666; } \n" // Theme 1: Default
+	"QWidget { background-color:transparent; } \n"
+	"QPushButton {background-color:transparent;border:none;}\n"
+	"QLabel#taskScope { color:#434343; } \n"
+	"QLabel#border { border-radius:11px; background-color: rgb(74, 74, 74); }\n"
+	"QLabel#bg { background:#FFF; border-radius:9px; } QPushButton#minButton { background-image:url(:/Images/images/theme1/minButton.png);}\n"
+	"QPushButton#closeButton { background-image:url(:/Images/images/theme1/closeButton.png);}\n"
+	"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+	"QScrollBar::handle:vertical {background:#ABABAB;border:none;width:7px;}\n"
+	"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+	"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+	"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme1/minButtonHover.png);}\n"
+	"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme1/closeButtonHover.png);}\n"
+	"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n"
+
+	<< "QLabel,QPushButton { color:rgb(84,117,17); } \n" // Theme 2: Green
+	"QPushButton {background-color:transparent;border:none;}\n"
+	"QLabel#taskScope { color:rgb(84,117,17); } \n"
+	"QLabel#border { border-radius:11px; background-color: rgb(84,117,17); }\n"
+	"QLabel#bg { background-image: url(:/Images/images/theme2/bg.png); border-radius:9px; } \n"
+	"QPushButton#minButton { background-image:url(:/Images/images/theme2/minButton.png);}\n"
+	"QPushButton#closeButton { background-image:url(:/Images/images/theme2/closeButton.png);}\n"
+	"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+	"QScrollBar::handle:vertical {background:rgb(195,223,140);border:none;width:7px;}\n"
+	"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+	"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+	"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme2/minButtonHover.png);}\n"
+	"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme2/closeButtonHover.png);}\n"
+	"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n" 
+
+	<< "QLabel,QPushButton { color:white; } \n" // Theme 3: Space
+	"QWidget { background-color:transparent; } \n"
+	"QPushButton {background-color:transparent;border:none;}\n"
+	"QLabel#taskScope { color:rgb(228,235,255); } \n"
+	"QLabel#border { border-radius:11px; background-color:black; }\n"
+	"QLabel#bg { background-image: url(:/Images/images/theme3/bg.png); border-radius:9px; } \n"
+	"QPushButton#minButton { background-image:url(:/Images/images/theme3/minButton.png);}\n"
+	"QPushButton#closeButton { background-image:url(:/Images/images/theme3/closeButton.png);}\n"
+	"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+	"QScrollBar::handle:vertical {background:rgba(4,4,5,232);border:none;width:7px;}\n"
+	"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+	"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+	"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme3/minButtonHover.png);}\n"
+	"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme3/closeButtonHover.png);}\n"
+	"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n" 
+
+	<< "QLabel,QPushButton { color:rgb(60,60,60); } \n" // Theme 4: Pink
+	"QWidget { background-color:transparent; } \n"
+	"QPushButton {background-color:transparent;border:none;}\n"
+	"QLabel#taskScope { color:rgb(215,137,156); } \n"
+	"QLabel#border { border-radius:11px; background-color:rgb(236,169,177); }\n"
+	"QLabel#bg { background-image: url(:/Images/images/theme4/bg.png); border-radius:9px; } \n"
+	"QPushButton#minButton { background-image:url(:/Images/images/theme4/minButton.png);}\n"
+	"QPushButton#closeButton { background-image:url(:/Images/images/theme4/closeButton.png);}\n"
+	"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+	"QScrollBar::handle:vertical {background:rgb(255,190,200);border:none;width:7px;}\n"
+	"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+	"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+	"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme4/minButtonHover.png);}\n"
+	"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme4/closeButtonHover.png);}\n"
+	"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n" 
+
+	<< "QLabel,QPushButton { color:rgb(100,70,40); } \n" // Theme 5: Pika
+	"QWidget { background-color:transparent; } \n"
+	"QPushButton {background-color:transparent;border:none;}\n"
+	"QLabel#taskScope { color:rgb(120,89,49); } \n"
+	"QLabel#border { border-radius:11px; background-color:rgb(192,150,100); }\n"
+	"QLabel#bg { background-image: url(:/Images/images/theme5/bg.png); border-radius:9px; } \n"
+	"QPushButton#minButton { background-image:url(:/Images/images/theme5/minButton.png);}\n"
+	"QPushButton#closeButton { background-image:url(:/Images/images/theme5/closeButton.png);}\n"
+	"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+	"QScrollBar::handle:vertical {background:rgba(220,187,135,201);border:none;width:7px;}\n"
+	"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+	"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+	"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme5/minButtonHover.png);}\n"
+	"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme5/closeButtonHover.png);}\n"
+	"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n" 
+
+	<< "QLabel,QPushButton { color:rgb(72,122,164); } \n" // Theme 6: Bluesky
+	"QWidget { background-color:transparent; } \n"
+	"QPushButton {background-color:transparent;border:none;}\n"
+	"QLabel#taskScope { color:rgb(56,103,180); } \n"
+	"QLabel#border { border-radius:11px; background-color:rgb(132,174,215); }\n"
+	"QLabel#bg { background-image: url(:/Images/images/theme6/bg.png); border-radius:9px; } \n"
+	"QPushButton#minButton { background-image:url(:/Images/images/theme6/minButton.png);}\n"
+	"QPushButton#closeButton { background-image:url(:/Images/images/theme6/closeButton.png);}\n"
+	"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+	"QScrollBar::handle:vertical {background:rgba(169,200,229,113);border:none;width:7px;}\n"
+	"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+	"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+	"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme6/minButtonHover.png);}\n"
+	"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme6/closeButtonHover.png);}\n"
+	"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n" 
+
+	<< "QLabel,QPushButton { color:rgb(255,0,0); font:75 18pt \"Comic Sans MS\"; } \n" // Theme 7: doge
+	"QWidget { background-color:transparent; } \n"
+	"QPushButton {background-color:transparent;border:none;}\n"
+	"QLabel#taskScope { color:rgb(0,255,255); font:75 25pt \"Comic Sans MS\";} \n"
+	"QLabel#border { border-radius:11px; background-color:rgb(255,0,0); }\n"
+	"QLabel#bg { background-image: url(:/Images/images/theme7/bg.png); border-radius:9px; } \n"
+	"QPushButton#minButton { background-image:url(:/Images/images/theme7/minButton.png);}\n"
+	"QPushButton#closeButton { background-image:url(:/Images/images/theme7/closeButton.png);}\n"
+	"QScrollBar:vertical { border:none;background:transparent;width:7px;}\n"
+	"QScrollBar::handle:vertical {background:rgb(255,255,0);border:none;width:7px;}\n"
+	"QScrollBar::up-arrow:vertical,QScrollBar::down-arrow:vertical {border:none;background:none;width:0;height:0;}\n"
+	"QToolTip {border:none; font:9pt Consolas; border-radius:2px; color:#FFF; background-color:gray; padding:2px;}\n"
+	"QPushButton#minButton:hover,QPushButton#minButton:pressed {background-image:url(:/Images/images/theme7/minButtonHover.png);}\n"
+	"QPushButton#closeButton:hover,QPushButton#closeButton:pressed {background-image:url(:/Images/images/theme7/closeButtonHover.png);}\n"
+	"QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {width:0;height:0;}\n";
+
+QStringList ThemeStylesheets::TASKENTRY_NORMAL_STYLES = QStringList() 
+	<< "QLabel#background{border-radius: 12px; background-color: rgb(203, 202, 202);}" // theme 1: default
+	<< "QLabel#background{border-radius: 12px; background-color: rgb(195,223,140);}" // theme 2: green
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(17,21,36,200);}" // theme 3: space
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,222,235,200);}" // theme 4: pink
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,249,202,113);}" // theme 5: pika
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,255,255,113);}"  // theme 6: blue
+	<< "QLabel#background{border-radius: 12px; background-color: rgb(255,255,0);}"; // theme 7: doge
+
+
+QStringList ThemeStylesheets::TASKENTRY_SELECT_STYLES = QStringList() 
+	<< "QLabel#background{border-radius: 12px; background-color: rgb(176, 175, 175);}" // theme 1: default
+	<< "QLabel#background{border-radius: 12px; background-color: rgb(169,198,111);}" // theme 2: green
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(17,25,61,200);}" // theme 3: space
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,190,204,200);}" // theme 4: pink
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(220,187,135,201);}" // theme 5: pika
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(169,200,229,130);}"  // theme 6: blue
+	<< "QLabel#background{border-radius: 12px; background-color: rgb(255,0,222);}"; // theme 7: doge
+
+QStringList ThemeStylesheets::INPUTWINDOW_STYLES = QStringList() 
+	<< "QLabel#bg{border-radius: 8px; background-color: white;}" // theme 1: default
+	"QLabel#border{border-radius: 10px; background-color: rgb(74, 74, 74);}"
+	"QTextEdit{background-color: transparent;}"
+	"background:transparent;" 
+
+	<< "QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme2/bg.png);}" // theme 2: green
+	"QLabel#border{border-radius: 10px; background-color: rgb(84,117,17);}"
+	"QTextEdit{background-color: transparent; color: rgb(40,40,40);}"
+	"background:transparent;" 
+
+	<< "QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme3/bg.png);}" // theme 3: space
+	"QLabel#border{border-radius: 10px; background-color: black;}"
+	"QTextEdit{background-color: transparent; color: white;}"
+	"background:transparent;"
+
+	<< "QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme4/bg.png);}" // theme 4: pink
+	"QLabel#border{border-radius: 10px; background-color: rgb(236,169,177);}"
+	"QTextEdit{background-color: transparent; color: rgb(40,40,40);}"
+	"background:transparent;"
+
+	<< "QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme5/bg.png);}" // theme 5: pika
+	"QLabel#border{border-radius: 10px; background-color: rgb(192,150,100);}"
+	"QTextEdit{background-color: transparent; color: rgb(120,89,49);}"
+	"background:transparent;"
+
+	<< "QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme6/bg.png);}" // theme 6: blue
+	"QLabel#border{border-radius: 10px; background-color: rgb(132,174,215);}"
+	"QTextEdit{background-color: transparent;color: rgb(40,40,40);}"
+	"background:transparent;"
+
+	<< "QLabel#bg{border-radius: 8px; background-image:url(:/Images/images/theme7/inputbg.png);}" // theme 7: doge
+	"QLabel#border{border-radius: 10px; background-color: rgb(255,0,222);}"
+	"QTextEdit{background-color: transparent; color: rgb(255,0,0);	font: 75 25pt \"Comic Sans MS\";}"
+	"background:transparent;";
+
+QStringList ThemeStylesheets::SUBHEADING_STYLES = QStringList() 
+	<< "QLabel{\n" // theme 1: default
+	"color: rgb(99, 99, 99);\n"
+	"}\n"
+	"background: transparent;"
+
+	<< "QLabel{\n" // theme 2: green
+	"color: rgb(84,117,17);\n"
+	"}\n"
+	"background: transparent;"
+
+	<< "QLabel{\n" // theme 3: space
+	"color: rgb(228,235,255);\n"
+	"}\n"
+	"background: transparent;"
+
+	<< "QLabel{\n" // theme 4: pink
+	"color: rgb(215,137,156);\n"
+	"}\n"
+	"background: transparent;"
+
+	<<"QLabel{\n" // theme 5: pika
+	"color: rgb(120,89,49);\n"
+	"}\n"
+	"background: transparent;" 
+
+	<< "QLabel{\n" // theme 6: blue
+	"color: rgb(77,124,169);\n"
+	"}\n"
+	"background: transparent;"
+
+	<< "QLabel{\n" // theme 7: doge
+	"color: rgb(0,255,255);\n"
+	"}\n"
+	"background: transparent;"
+	"font: 75 16pt \"Comic Sans MS\";";
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\ThemeStylesheets.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\ThemeStylesheets.h
+	 */
+
+
+#include <QStringList>
+
+// Stores all the stylesheets for themeing. 
+// To add a new stylesheet, simply insert the stylesheet into each QStringList.
+// Each theme stylesheet has the same index across all QStringLists.
+
+class ThemeStylesheets {
+public:
+	static QStringList TASKWINDOW_STYLES;
+	static QStringList TASKENTRY_NORMAL_STYLES;
+	static QStringList TASKENTRY_SELECT_STYLES;
+	static QStringList INPUTWINDOW_STYLES;
+	static QStringList SUBHEADING_STYLES;
+
+	ThemeStylesheets();
+	~ThemeStylesheets();
+};
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\ThemeStylesheets.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TooltipWidget.cpp
+	 */
+
+
+#include <QSettings>
+#include "Tasuke.h"
+#include "Constants.h"
+#include "TooltipWidget.h"
+
+TooltipWidget::TooltipWidget(QWidget *parent) : QWidget(parent), font("Consolas", 11), fm(font), 
+												animation(this, "pos") {
+	LOG(INFO) << "TooltipWidget instance created";
+
+	initUI();
+	handleReloadIcons();
+	initAnimation();
+}
+
+TooltipWidget::~TooltipWidget() {
+	LOG(INFO) << "TooltipWidget instance destroyed";
+}
+
+// Changes the text shown on the window then resizes it.
+void TooltipWidget::setText(InputStatus status, QString content) {
+	setIconOnLabel(status);
+
+	// Only update text if provided
+	if (!content.isEmpty()) {
+		ui.text->setText(content);
+		fitWidthToTextLength(content);
+	}
+}
+
+// Shows the widget with animation
+void TooltipWidget::showAndAlign() {
+	LOG(INFO) << "Displaying tooltip widget";
+
+	resetAnimation();
+	show();
+	animation.start();
+}
+
+// Initialize icon set from settings
+void TooltipWidget::handleReloadIcons() {
+	LOG(INFO) << "Initialising tooltip widget icons";
+
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
+	IconSet iconSet = (IconSet)settings.value("Icon", (char)IconSet::NYANSUKE).toInt();
+
+	switch (iconSet) {
+		case IconSet::NYANSUKE:
+			normalIcon = QPixmap(NYANSUKE_NORMAL);
+			successIcon = QPixmap(NYANSUKE_SUCCESS);
+			failureIcon = QPixmap(NYANSUKE_FAILURE);
+			break;
+		case IconSet::SYMBOLS:
+			normalIcon = QPixmap(SYMBOL_NORMAL);
+			successIcon = QPixmap(SYMBOL_SUCCESS);
+			failureIcon = QPixmap(SYMBOL_FAILURE);
+			break;
+		case IconSet::SYMBOLS2:
+			normalIcon = QPixmap(SYMBOL2_NORMAL);
+			successIcon = QPixmap(SYMBOL2_SUCCESS);
+			failureIcon = QPixmap(SYMBOL2_FAILURE);
+			break;
+		case IconSet::NICCAGE:
+			normalIcon = QPixmap(NICCAGE_NORMAL);
+			successIcon = QPixmap(NICCAGE_SUCCESS);
+			failureIcon = QPixmap(NICCAGE_FAILURE);
+			break;
+		case IconSet::MEME:
+			normalIcon = QPixmap(MEME_NORMAL);
+			successIcon = QPixmap(MEME_SUCCESS);
+			failureIcon = QPixmap(MEME_FAILURE);
+			break;
+		case IconSet::SHIBE:
+			normalIcon = QPixmap(SHIBE_NORMAL);
+			successIcon = QPixmap(SHIBE_SUCCESS);
+			failureIcon = QPixmap(SHIBE_FAILURE);
+			break;
+		default:
+			break;
+	}
+}
+
+// Modifies width according to text width
+void TooltipWidget::fitWidthToTextLength(QString text) {
+	QTextDocument document;
+	document.setDefaultFont(QFont("Consolas", 11));
+	document.setHtml(text);
+	ui.bg->resize(document.idealWidth() + WIDTH_DIFFERENCE, ui.bg->height()); 
+}
+
+// Sets the icon according to the status of the input
+void TooltipWidget::setIconOnLabel(InputStatus status) {
+	switch (status) {
+		case InputStatus::SUCCESS:
+			ui.icon->setPixmap(successIcon);
+			break;
+		case InputStatus::FAILURE:
+			ui.icon->setPixmap(failureIcon);
+			break;
+		case InputStatus::NORMAL:
+			ui.icon->setPixmap(normalIcon);
+			break;
+		default:
+			break;
+	}
+}
+
+// ===================================
+// initialization
+// ===================================
+
+void TooltipWidget::initUI() {
+	ui.setupUi(this);
+	setAttribute(Qt::WA_TranslucentBackground);
+	setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::Tool);
+}
+
+
+// ===================================
+// animation
+// ===================================
+
+void TooltipWidget::initAnimation() {
+	animation.setDuration(500);
+	animation.setEasingCurve(QEasingCurve::OutCubic);
+}
+
+void TooltipWidget::resetAnimation() {
+	QPoint posBefore;
+	posBefore.setY(Tasuke::instance().getInputWindow().y() + Tasuke::instance().getInputWindow().height() - 20);
+	posBefore.setX(Tasuke::instance().getInputWindow().x() + 8);
+
+	QPoint posAfter;
+	posAfter.setY(Tasuke::instance().getInputWindow().y() + Tasuke::instance().getInputWindow().height());
+	posAfter.setX(Tasuke::instance().getInputWindow().x() + 8);
+
+	animation.setStartValue(posBefore);
+	animation.setEndValue(posAfter);
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TooltipWidget.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TooltipWidget.h
+	 */
+
+
+#ifndef TOOLTIPWIDGET_H
+#define TOOLTIPWIDGET_H
+
+#include <QWidget>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QPropertyAnimation>
+#include <QFontMetrics>
+#include <QFont>
+#include <glog/logging.h>
+#include "Constants.h"
+#include "ui_TooltipWidget.h"
+
+// The tooltip guide displays when user is inputting a command. It aims to guide the user on formats.
+// It can be called by logic when it wants to send feedback.
+// The signals of the user inputting command is handled by the input window.
+// Hence, tooltip widget's parent is the input window.
+
+class TooltipWidget : public QWidget {
+	Q_OBJECT
+
+public:
+	TooltipWidget(QWidget *parent = 0);
+	~TooltipWidget();
+
+	void setText(InputStatus status, QString content = "");
+	void showAndAlign();
+
+public slots:
+	void handleReloadIcons();
+
+private:
+	static const int WIDTH_DIFFERENCE = 70;
+	Ui::TooltipWidget ui;
+	QPropertyAnimation animation;
+	QFont font;
+	QFontMetrics fm;
+	QPixmap normalIcon;
+	QPixmap successIcon;
+	QPixmap failureIcon;
+
+	void fitWidthToTextLength(QString text);
+	void setIconOnLabel(InputStatus status);
+	void initUI();
+	void initAnimation();
+	void resetAnimation();
+};
+
+#endif //TOOLTIPWIDGET_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TooltipWidget.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TutorialWidget.cpp
+	 */
+
+
+#include "Tasuke.h"
+#include "TutorialWidget.h"
+
+TutorialWidget::TutorialWidget(QWidget* parent) : QWidget(parent) {
+	LOG(INFO) << "Tutorialwidget instance created";
+
+	initUI();
+	initConnect();
+}
+
+TutorialWidget::~TutorialWidget() {
+	LOG(INFO) << "TutorialWidget instance destroyed";
+}
+
+// Makes all slideshows go back to first page
+void TutorialWidget::reset() {
+	ui.tabWidget->setCurrentIndex(0);
+	ui.navSlideshow->setCurrentIndex(0);
+	ui.commandsSlideshow->setCurrentIndex(0);
+	ui.featuresSlideshow->setCurrentIndex(0);
+}
+
+// Goes to the next page of the current tutorial
+void TutorialWidget::goNextPage() {
+	int tabNumber = ui.tabWidget->currentIndex();
+	if (tabNumber == NAV_PAGE) {
+		handleNavNext();
+	} else if (tabNumber == COMMANDS_PAGE) {
+		handleCommandsNext();
+	} else if (tabNumber == FEATURES_PAGE) {
+		handleFeaturesNext();
+	}
+}
+
+// Goes to the previous page of the current tutorial
+void TutorialWidget::goPrevPage() {
+	int tabNumber = ui.tabWidget->currentIndex();
+	if (tabNumber == NAV_PAGE) {
+		handleNavPrev();
+	} else if (tabNumber == COMMANDS_PAGE) {
+		handleCommandsPrev();
+	} else if (tabNumber == FEATURES_PAGE) {
+		handleFeaturesPrev();
+	}
+}
+
+void TutorialWidget::goToFirstPage() {
+	ui.tabWidget->setCurrentIndex(0);
+}
+
+// Switches tabs to the next tab (slideshow).
+void TutorialWidget::changeTabs() {
+
+	int nextTab;
+	int currTab = ui.tabWidget->currentIndex();
+
+	if (currTab == ui.tabWidget->count()-1) {
+		nextTab = 0;
+	} else { 
+		nextTab = currTab + 1;
+	}
+
+	ui.tabWidget->setCurrentIndex(nextTab);
+}
+
+// Goes back to the task list
+void TutorialWidget::handleBackButton() {
+	Tasuke::instance().getTaskWindow().showListWidget();
+}
+
+void TutorialWidget::handleNavNext() {
+	ui.navSlideshow->slideInIdx(getNextIndex(ui.navSlideshow->currentIndex(), ui.navSlideshow->count()));
+}
+
+void TutorialWidget::handleNavPrev() {
+	ui.navSlideshow->slideInIdx(getPrevIndex(ui.navSlideshow->currentIndex(), ui.navSlideshow->count()));
+}
+
+void TutorialWidget::handleCommandsNext() {
+	ui.commandsSlideshow->slideInIdx(getNextIndex(ui.commandsSlideshow->currentIndex(), ui.commandsSlideshow->count()));
+}
+
+void TutorialWidget::handleCommandsPrev() {
+	ui.commandsSlideshow->slideInIdx(getPrevIndex(ui.commandsSlideshow->currentIndex(), ui.commandsSlideshow->count()));
+}
+
+void TutorialWidget::handleFeaturesNext() {
+	ui.featuresSlideshow->slideInIdx(getNextIndex(ui.featuresSlideshow->currentIndex(), ui.featuresSlideshow->count()));
+}
+
+void TutorialWidget::handleFeaturesPrev() {
+	ui.featuresSlideshow->slideInIdx(getPrevIndex(ui.featuresSlideshow->currentIndex(), ui.featuresSlideshow->count()));
+}
+
+// ================================================
+//	EVENTS
+// ================================================
+
+bool TutorialWidget::eventFilter(QObject* object, QEvent* event) {
+	if (event->type() == QEvent::KeyPress) {
+		QKeyEvent* eventKey = static_cast<QKeyEvent*>(event);
+		if (eventKey->key() == Qt::Key_Tab) {
+			changeTabs();
+			return true;
+		}
+	}
+	return QObject::eventFilter(object, event);
+}
+
+// ================================================
+//	INITIALISATION
+// ================================================
+
+void TutorialWidget::initUI() {
+	ui.setupUi(this);
+	setAttribute(Qt::WA_TranslucentBackground);
+	setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::Tool);
+}
+
+// Connects all the buttons in tutorial widget.
+void TutorialWidget::initConnect() {
+	connect(ui.pushButton, SIGNAL(pressed()), this, SLOT(handleBackButton()));
+	connect(ui.navPrev, SIGNAL(pressed()), this, SLOT(handleNavPrev()));
+	connect(ui.navNext, SIGNAL(pressed()), this, SLOT(handleNavNext()));
+	connect(ui.featuresPrev, SIGNAL(pressed()), this, SLOT(handleFeaturesPrev()));
+	connect(ui.featuresNext, SIGNAL(pressed()), this, SLOT(handleFeaturesNext()));
+	connect(ui.commandsPrev, SIGNAL(pressed()), this, SLOT(handleCommandsPrev()));
+	connect(ui.commandsNext, SIGNAL(pressed()), this, SLOT(handleCommandsNext())); 
+}
+
+
+// ================================================
+//	PAGE INDEX GETTERS
+// ================================================
+
+// Returns the next page number of the stacked widget
+int TutorialWidget::getNextIndex(int currIndex, int max) {
+	if (currIndex == max-1) {
+		return 0;
+	} else {
+		return currIndex + 1;
+	}
+}
+
+// Returns the previous page number of the stacked widget
+int TutorialWidget::getPrevIndex(int currIndex, int max) {
+	if (currIndex == 0) {
+		return max - 1;
+	} else {
+		return currIndex - 1;
+	}
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TutorialWidget.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TutorialWidget.h
+	 */
+
+
+#ifndef TUTORIALWIDGET_H
+#define TUTORIALWIDGET_H
+
+#include <glog/logging.h>
+#include <QWidget>
+#include <QApplication>
+#include <QDesktopWidget>
+#include "ui_TutorialWidget.h"
+
+// Tutorial widget handles the tutorial slideshow. 
+// Hence, it has many Next and Prev buttons to go through pages.
+
+class TutorialWidget : public QWidget {
+	Q_OBJECT
+
+public:
+	TutorialWidget(QWidget *parent = 0);
+	~TutorialWidget();
+
+	void reset();
+	void goNextPage();
+	void goPrevPage();
+	void goToFirstPage();
+	void changeTabs();
+
+public slots:
+	void handleBackButton();
+	void handleNavNext();
+	void handleNavPrev();
+	void handleCommandsNext();
+	void handleCommandsPrev();
+	void handleFeaturesNext();
+	void handleFeaturesPrev();
+
+protected:
+	bool eventFilter(QObject* object, QEvent* event) override;
+
+private:
+	Ui::TutorialWidget ui;
+
+	// page constants
+	static const int NAV_PAGE = 0;
+	static const int COMMANDS_PAGE = 1;
+	static const int FEATURES_PAGE = 2;
+
+	// initializations
+	void initUI();
+	void initConnect();
+	
+	// index getter
+	int getNextIndex(int currIndex, int max);
+	int getPrevIndex(int currIndex, int max);
+};
+
+#endif // TUTORIALWIDGET_H
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\TutorialWidget.h
+
+
+
+
+
+	/**
 	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\UnitTests\TasukeTests.cpp
 	 */
 
+
+		// System testing for undo commands 
 		TEST_METHOD(TasukeUndoingTasks) {
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand(QString("add task %1").arg(i));
 			}
 			Assert::AreEqual(storage->totalTasks(), MAX_TASKS);
 
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand("undo");
 			}
 			Assert::AreEqual(storage->totalTasks(), 0);
 		}
 
+		// System testing for redo commands 
 		TEST_METHOD(TasukeRedoingTasks) {
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand(QString("add task %1").arg(i));
 			}
 			Assert::AreEqual(storage->totalTasks(), MAX_TASKS);
 
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand("undo");
 			}
 			Assert::AreEqual(storage->totalTasks(), 0);
 
-			for (int i=0; i<MAX_TASKS; i++) {
+			for (int i = 0; i < MAX_TASKS; i++) {
 				Tasuke::instance().runCommand("redo");
 			}
 			Assert::AreEqual(storage->totalTasks(), MAX_TASKS);
 		}
 
-		// Musho spelling tests
+		// Spelling tests
+
 		// The correct spelling partition
 		TEST_METHOD(SpellCorrectSpelling) {
 			
@@ -53,9 +3004,6 @@
 			// punctuation
 			Assert::IsFalse(Tasuke::instance().spellCheck("youre")); // A phrase that needs punctuation
 			Assert::IsTrue(Tasuke::instance().spellCheck("you're")); // A phrase that needs punctuation
-
-			// popular words
-			Assert::IsTrue(Tasuke::instance().spellCheck("fuck")); // A popular swear word
 		}
 
 		// The incorrect spelling partition
@@ -64,11 +3012,13 @@
 			Assert::IsFalse(Tasuke::instance().spellCheck("asdfghjkl")); // A completely mispelled word
 		}
 		
+		// Words that stat with uppercase
 		TEST_METHOD(SpellCapitalisedProperWords) {
 			Assert::IsTrue(Tasuke::instance().spellCheck("John")); // A proper name
-			Assert::IsFalse(Tasuke::instance().spellCheck("Asdfghjkl")); // A garbage capitalised word
+			Assert::IsTrue(Tasuke::instance().spellCheck("Asdfghjkl")); // A garbage capitalised word
 		}
 
+		// "Words" that start with numbers
 		TEST_METHOD(SpellNumberInitialWords) {
 			Assert::IsTrue(Tasuke::instance().spellCheck("9pm")); // Time
 		}
@@ -86,6 +3036,33 @@
 			Assert::IsTrue(Tasuke::instance().spellCheck("add"));
 		}
 
+		// To ensure date month words are considered correct.
+		TEST_METHOD(SpellTasukeMonths) {
+
+			// MMM months
+			Assert::IsTrue(Tasuke::instance().spellCheck("jan"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("jul"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("dec"));
+
+			// MMMM months
+			Assert::IsTrue(Tasuke::instance().spellCheck("january"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("july"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("december"));
+		}
+
+		// To ensure date days words are considered correct
+		TEST_METHOD(SpellTasukeDays) {
+
+			// DDD days
+			Assert::IsTrue(Tasuke::instance().spellCheck("mon"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("tue"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("fri"));
+
+			// DDDD days
+			Assert::IsTrue(Tasuke::instance().spellCheck("wednesday"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("thursday"));
+			Assert::IsTrue(Tasuke::instance().spellCheck("sunday"));
+		}
 	};
 }
 	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\UnitTests\TasukeTests.cpp

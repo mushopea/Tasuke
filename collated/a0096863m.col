@@ -3,8 +3,634 @@
 
 
 	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+	 */
+
+
+// Maximum number of tags a task can have
+static const int MAXIMUM_TAGS = 10;
+
+// These are magic numbers that are used in the modular
+// arithmetic in Task::getTimeDifferenceString().
+static const int MONTHS_IN_YEAR = 12;
+static const int WEEKS_IN_MONTH = 4;
+static const int DAYS_IN_WEEK = 7;
+static const int HOURS_IN_DAY = 24;
+static const int MINUTES_IN_HOUR = 60;
+static const int SECONDS_IN_MINUTE = 60;
+static const int MSECS_IN_SECOND = 1000;
+
+static const QTime BEGINNING_OF_DAY = QTime(0, 0, 0);
+static const QTime END_OF_DAY = QTime(23, 59, 59);
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+	 */
+
+// Log messages for Storage class
+const char* const MSG_STORAGE_ADDING_TASK = "Adding task ";
+const char* const MSG_STORAGE_REPLACING_TASK = "Replacing task ";
+const char* const MSG_STORAGE_REMOVING_TASK = "Removing task with ID ";
+const char* const MSG_STORAGE_POP_TASK = "Popping task from the back.";
+const char* const MSG_STORAGE_RETRIEVE_NEXT_TASK = 
+	"Retrieving the next upcoming task.";
+const char* const MSG_STORAGE_SEARCH = "Searching for tasks";
+const char* const MSG_STORAGE_SEARCH_BY_DESCRIPTION = 
+	"Searching for tasks in description for keyword ";
+const char* const MSG_STORAGE_SEARCH_BY_TAG = 
+	"Searching for tasks in tags for keyword ";
+const char* const MSG_STORAGE_NEXT_FREE_TIME = 
+	"Searching for the next free time.";
+const char* const MSG_STORAGE_SORT_BY_END_DATE = "Sorting by end date.";
+const char* const MSG_STORAGE_SORT_BY_BEGIN_DATE = "Sorting by begin date.";
+const char* const MSG_STORAGE_SORT_BY_DESCRIPTION = "Sorting by description.";
+const char* const MSG_STORAGE_SORT_BY_ONGOING_STATUS = 
+	"Sorting by ongoing status.";
+const char* const MSG_STORAGE_SORT_BY_DUE_TODAY = 
+	"Sorting by whether or not task is due today.";
+const char* const MSG_STORAGE_SORT_BY_OVERDUE = "Sorting by overdue status.";
+const char* const MSG_STORAGE_SORT_BY_DONE_STATUS = "Sorting by done status.";
+const char* const MSG_STORAGE_SORT_BY_HAS_END_DATE = 
+	"Sorting by existence of an end date.";
+const char* const MSG_STORAGE_CLEAR_ALL_DONE_TASKS = 
+	"Clearing all tasks marked as done.";
+const char* const MSG_STORAGE_CLEAR_ALL_TASKS = 
+	"Clearing all tasks without discrimination.";
+const char* const MSG_STORAGE_INSTANCE_CREATED = 
+	"Storage instance with default path created.";
+const char* const MSG_STORAGE_INSTANCE_CREATED_NONDEFAULT = 
+	"Storage instance with custom path created.";
+const char* const MSG_STORAGE_LOAD_FILE_START = "Loading file...";
+const char* const MSG_STORAGE_LOAD_FILE_END = "File loaded.";
+const char* const MSG_STORAGE_SAVE_FILE_START = "Saving file...";
+const char* const MSG_STORAGE_SAVE_FILE_END = "File saved.";
+const char* const MSG_STORAGE_FREE_NOW = "You have no ongoing events at the moment.";
+const char* const MSG_STORAGE_FREE_IN = "You will be free in ";
+
+const char* const MSG_STORAGESTUB_INSTANCE_CREATED = 
+	"StorageStub created destroyed";
+const char* const MSG_STORAGESTUB_INSTANCE_DESTROYED = 
+	"StorageStub instance destroyed";
+const char* const MSG_STORAGESTUB_SAVING_FILE = "Stub saving file";
+const char* const MSG_STORAGESTUB_LOADING_FILE = "Stub loading file";
+
+// Filenames of dictionary files
+const char* const _SPELL_GB_DICFILE = "en_GB.dic";
+const char* const _SPELL_GB_AFFFILE = "en_GB.aff";
+const char* const _SPELL_US_DICFILE = "en_US.dic";
+
+#ifndef Q_OS_MAC
+
+// Filenames of dictionary files on windows
+const char* const SPELL_GB_DICFILE = _SPELL_GB_DICFILE;
+const char* const SPELL_GB_AFFFILE = _SPELL_GB_AFFFILE;
+const char* const SPELL_US_DICFILE = _SPELL_US_DICFILE;
+
+#else
+
+// The relative resource path for a mac app bundle
+const char* const MAC_RESOURCE_PATH = "/../Resources/";
+
+#define SPELL_GB_DICFILE \
+	(QCoreApplication::applicationDirPath() + MAC_RESOURCE_PATH + _SPELL_GB_AFFFILE).toUtf8().constData()
+#define SPELL_GB_AFFFILE \
+	(QCoreApplication::applicationDirPath() + MAC_RESOURCE_PATH + _SPELL_GB_DICFILE).toUtf8().constData()
+#define SPELL_US_DICFILE \
+	(QCoreApplication::applicationDirPath() + MAC_RESOURCE_PATH + _SPELL_US_DICFILE).toUtf8().constData()
+
+#endif
+
+// The string name of the TRY_RESULT metatype
+const char* const METATYPE_TRY_RESULT = "TRY_RESULT";
+const char* const METATYPE_KEYCOMIBNATION = "KeyCombination";
+
+// Lists of words to add into dictionary
+const QStringList SPELL_NONWORD_COMMANDS = QStringList() << "rm" << "ls"
+	<< "nd" << "tmr";
+const QStringList SPELL_MONTH_NAMES = QStringList() << "january" << "february"
+	<< "march" << "april" << "may" << "june" << "july" << "august"
+	<< "september" << "october" << "november" << "december";
+const QStringList SPELL_MONTH_NAMES_SHORT = QStringList() << "jan" << "feb"
+	<< "mar" << "apr" << "jun" << "jul" << "aug" << "sep" << "sept" << "oct"
+	<< "nov" << "dec";
+const QStringList SPELL_DAY_NAMES = QStringList() << "monday" << "tuesday"
+	<< "wednesday" << "thursday" << "friday" << "saturday" << "sunday";
+const QStringList SPELL_DAY_NAMES_SHORT = QStringList() << "mon" << "tue" << "tues"
+	<< "wed" << "thu" << "thur" << "fri" << "sat" << "sun";
+const QList<QStringList> SPELL_INCLUDE_LISTS = QList<QStringList>()
+	<< SPELL_NONWORD_COMMANDS << SPELL_MONTH_NAMES << SPELL_MONTH_NAMES_SHORT
+	<< SPELL_DAY_NAMES << SPELL_DAY_NAMES_SHORT;
+
+// List of font locations
+const QStringList FONT_LIST = QStringList() << ":/Fonts/fonts/Quicksand_Book.otf"
+	<< ":/Fonts/fonts/Quicksand_Book_Oblique.otf"
+	<< ":/Fonts/fonts/Quicksand_Light.otf"
+	<< ":/Fonts/fonts/Quicksand_Light_Oblique.otf"
+	<< ":/Fonts/fonts/Quicksand_Bold.otf"
+	<< ":/Fonts/fonts/Quicksand_Bold_Oblique.otf"
+	<< ":/Fonts/fonts/PrintClearly.otf"
+	<< ":/Fonts/fonts/PrintBold.otf"
+	<< ":/Fonts/fonts/Consolas.ttf";
+
+// Command keywords
+const char* const COMMAND_NIL = "";
+const char* const COMMAND_ADD = "add";
+const char* const COMMAND_EDIT = "edit";
+const char* const COMMAND_REMOVE = "remove";
+const char* const COMMAND_SHOW = "show";
+const char* const COMMAND_HIDE = "hide";
+const char* const COMMAND_DONE = "done";
+const char* const COMMAND_UNDONE = "undone";
+const char* const COMMAND_UNDO = "undo";
+const char* const COMMAND_REDO = "redo";
+const char* const COMMAND_CLEAR = "clear";
+const char* const COMMAND_HELP = "help";
+const char* const COMMAND_ABOUT = "about";
+const char* const COMMAND_NEXT = "next";
+const char* const COMMAND_SETTINGS = "settings";
+const char* const COMMAND_EXIT = "exit";
+
+// List of command keywords
+const QStringList COMMANDS = QStringList() << COMMAND_ADD << COMMAND_EDIT
+	<< COMMAND_REMOVE << COMMAND_SHOW << COMMAND_HIDE << COMMAND_DONE
+	<< COMMAND_UNDONE << COMMAND_UNDO << COMMAND_REDO << COMMAND_CLEAR
+	<< COMMAND_HELP << COMMAND_ABOUT << COMMAND_NEXT << COMMAND_SETTINGS
+	<< COMMAND_EXIT;
+
+// Command formats
+const char* const FORMAT_ALL = "add | edit | done | undone | remove "
+	"| show | undo | redo | settings | help | exit";
+const char* const FORMAT_ADD =
+	"add {description}[my task]{/description} {tag}#tag{/tag}";
+const char* const FORMAT_ADD_PERIOD = 
+	"add {description}[my task]{/description} from {date}{start}[start]{/star}"
+	" to {end}[end]{/end}{/date} {tag}#tag{/tag}";
+const char* const FORMAT_ADD_DEADLINE =
+	"add {description}[my task]{/description} by/on/at {date}{end}[end]{/end}"
+	"{/date} {tag}#tag{/tag}";
+const char* const FORMAT_REMOVE = 
+	"remove {id}[task no]{/id} | remove [task no], [task no], ... | "
+	"remove [task no] - [task no]";
+const char* const FORMAT_EDIT = 
+	"edit {id}[task no]{/id} {description}[thing to change] "
+	"-[thing to remove]{/description}";
+const char* const FORMAT_DONE = 
+	"done {id}[task no]{/id} | done [task no], [task no], ... | "
+	"done [task no] - [task no]";
+const char* const FORMAT_UNDONE = 
+	"undone {id}[task no]{/id} | undone [task no], [task no], ... | "
+	"undone [task no] - [task no]";
+const char* const FORMAT_SHOW = 
+	"show [keyword] | done | undone | overdue | ongoing | today | tomorrow";
+const char* const FORMAT_HIDE = "hide";
+const char* const FORMAT_UNDO = "undo {times}[times]{/times} | max";
+const char* const FORMAT_REDO = "redo {times}[times]{/times} | max";
+const char* const FORMAT_CLEAR = "clear";
+const char* const FORMAT_HELP = "help";
+const char* const FORMAT_NEXT = "next";
+const char* const FORMAT_SETTINGS = "settings";
+const char* const FORMAT_ABOUT = "about";
+const char* const FORMAT_EXIT = "exit";
+
+// Command descriptions
+const char* const DESCRIPTION_ALL = "Use one of these keywords to begin";
+const char* const DESCRIPTION_ADD = "Adds a simple task.";
+const char* const DESCRIPTION_ADD_PERIOD = "Adds a task with a time period.";
+const char* const DESCRIPTION_ADD_DEADLINE = "Adds a task with a deadline.";
+const char* const DESCRIPTION_REMOVE = "Removes task(s) from the list.";
+const char* const DESCRIPTION_EDIT = "Edits existing task.";
+const char* const DESCRIPTION_DONE = "Marks tasks as done.";
+const char* const DESCRIPTION_UNDONE = "Marks tasks as undone.";
+const char* const DESCRIPTION_SHOW = "Shows certain tasks.";
+const char* const DESCRIPTION_HIDE = "Hides the task list.";
+const char* const DESCRIPTION_UNDO = "Undos your last command(s).";
+const char* const DESCRIPTION_REDO = "Redos your last command(s).";
+const char* const DESCRIPTION_CLEAR = "Clears all tasks in your list.";
+const char* const DESCRIPTION_HELP = "Shows the tutorial.";
+const char* const DESCRIPTION_NEXT = "Shows the next free time.";
+const char* const DESCRIPTION_SETTINGS = "Open the settings window.";
+const char* const DESCRIPTION_ABOUT = "Shows about Tasuke.";
+const char* const DESCRIPTION_EXIT = "Exits the program.";
+
+// Some command regex
+const QRegExp ADD_DEADLINE_REGEX = QRegExp("\\b(by|at|on)\\b");
+const QRegExp ADD_PREIOD_REGEX = QRegExp("\\bfrom\\b");
+const QRegExp BRACE_REGEX = QRegExp("\\{(.*)\\}");
+
+// HTML markup for tooltip widget
+const char* const HTML_ERROR_BEGIN = "<font color='#FA7597'>";
+const char* const HTML_ERROR_END = "</font>";
+const char* const HTML_FORMAT_BEGIN = "<font color='#999'>";
+const char* const HTML_FORMAT_END = "</font>";
+const char* const HTML_DESCRIPTION_BEGIN = "<br<<font color='white'>";
+const char* const HTML_DESCRIPTION_END = "</font>";
+
+// Delimiters for interpreter
+const char* const DELIMITER_AT = "@";
+const char* const DELIMITER_HASH = "#";
+const char* const DELIMITER_DASH = "-";
+const char* const DELIMITER_DASH_AT = "-@";
+const char* const DELIMITER_DASH_HASH = "-#";
+const char* const DELIMITER_COMMA = ",";
+
+// Delimiters in char form
+const char CHAR_DELIMITER_AT = '@';
+const char CHAR_DELIMITER_HASH = '#';
+const char CHAR_DELIMITER_DASH = '-';
+
+// List of delimiters
+const QStringList DELIMITERS = QStringList() << DELIMITER_AT << DELIMITER_HASH
+	<< DELIMITER_DASH;
+
+// Keywords for interpreter
+const char* const KEYWORD_NIL = "";
+const char* const KEYWORD_DONE = "done";
+const char* const KEYWORD_UNDONE = "undone";
+const char* const KEYWORD_ONGOING = "ongoing";
+const char* const KEYWORD_OVERDUE = "overdue";
+const char* const KEYWORD_TODAY = "today";
+const char* const KEYWORD_TOMORROW = "tomorrow";
+const char* const KEYWORD_ALL = "all";
+const char* const KEYWORD_EVERYTHING = "everything";
+const char* const KEYWORD_MAX = "max";
+const char* const KEYWORD_LAST = "last";
+const char* const KEYWORD_BACKSLASH = "\\";
+
+// Titles for task view
+const char* const TITLE_DONE = "done tasks";
+const char* const TITLE_UNDONE = "undone tasks";
+const char* const TITLE_ONGOING = "ongoing tasks";
+const char* const TITLE_OVERDUE = "overdue tasks";
+const char* const TITLE_TODAY = "tasks due today";
+const char* const TITLE_TOMORROW = "tasks due tomorrow";
+
+const auto PREDICATE_DONE = [](Task task) -> bool {
+	return task.isDone();
+};
+const auto PREDICATE_UNDONE = [](Task task) -> bool {
+	return !task.isDone();
+};
+const auto PREDICATE_ONGOING = [](Task task) -> bool {
+	return task.isOngoing();
+};
+const auto PREDICATE_OVERDUE = [](Task task) -> bool {
+	return task.isOverdue();
+};
+const auto PREDICATE_TODAY = [](Task task) -> bool {
+	return task.isDueToday();
+};
+const auto PREDICATE_TOMORROW = [](Task task) -> bool {
+	return task.isDueTomorrow();
+};
+
+// Error descriptions
+const char* const ERROR_MULTIPLE_DATES =
+	"You can't have more than 2 time periods or deadlines in a task.";
+const char* const ERROR_TAG_NO_NAME = "Please give a name for your tag.";
+const char* const ERROR_TAG_REMOVE_NO_NAME =
+	"You need to tell me what tag you want to remove";
+const char* const ERROR_DONT_UNDERSTAND = "I don't undesrtand this command.";
+const char* const ERROR_ADD_EMPTY = "You need to tell me what to add.";
+const char* const ERROR_NO_DESCRIPTION = 
+	"You need to give a description to your task.";
+const char* const ERROR_REMOVE_NO_ID = 
+	"You need to tell me which task(s) to remove.";
+const char* const ERROR_EDIT_NO_ID = "You need to tell me which task to edit.";
+const char* const ERROR_EDIT_EMPTY = 
+	"You need to tell me what you want to change for the task.";
+const char* const ERROR_DONE_NO_ID = 
+	"You need to tell me what to mark as done.";
+const char* const ERROR_UNDONE_NO_ID = 
+	"You need to tell me what to mark as undone.";
+const char* const ERROR_NO_LAST = "There is no last task.";
+const char* const ERROR_NO_ID = "You need to give me a task number.";
+const char* const ERROR_DATE_BEGIN =
+	"Please give me a valid start time for this task.";
+const char* const ERROR_DATE_END = 
+	"Please give me a valid deadline for this task.";
+
+// Macros for error messages
+#define ERROR_DATE_INVALID_PERIOD(timePeriod) \
+	QString("Start time (%1) is after end time (%2).")\
+	.arg(timePeriod.begin.toString(), timePeriod.end.toString())
+#define ERROR_DATE_NO_A_RANGE(range) \
+	QString("'%1' doesn't look like a valid date range.").arg(range)
+#define ERROR_ID_NO_A_RANGE(range) \
+	QString("'%1' doesn't look like a valid range.").arg(range)
+#define ERROR_ID_INVALID_RANGE(begin, end) \
+	QString("Start number (%1) is after end number (%2).").arg(begin, end)
+#define ERROR_ID_OUT_OF_RANGE(id, numTasks) \
+	QString("There is no task '%1'." \
+	"Please give a number between 1 and %2.")\
+	.arg(QString::number(id), QString::number(numTasks))
+#define ERROR_NOT_A_NUMBER(number) \
+	QString("'%1' doesn't look like a number.").arg(number)
+#define ERROR_DONT_KNOW(what) \
+	QString("I don't know what to do for '%1'").arg(what)
+
+const char* const EXCEPTION_NULL_PTR = "attempt to dereference null pointer";
+const char* const EXCEPTION_NOT_IMPLEMENTED = "not implemented";
+const char* const EXCEPTION_NO_MORE_TASKS = "no more tasks in the list";
+const char* const EXCEPTION_ICONSET_OUT_OF_RANGE = "out of range icon set was stored and attempted access in settings.";
+const char* const EXCEPTION_THEME_OUT_OF_RANGE = "out of range theme was stored and attempted access in settings.";
+
+// Error location in format
+const char* const WHERE_DATE = "date";
+const char* const WHERE_TAG = "tag";
+const char* const WHERE_DESCRIPTION = "description";
+const char* const WHERE_ID = "id";
+const char* const WHERE_TIMES = "times";
+const char* const WHERE_BEGIN = "begin";
+const char* const WHERE_END = "end";
+
+// Time constants
+const QTime TIME_BEFORE_MIDNIGHT = QTime(23,59);
+const QTime TIME_MIDNIGHT = QTime(0,0);
+const char* const TIME_AM = "am";
+const char* const TIME_PM = "pm";
+const char* const TIME_FORMAT = "hh:mm ap";
+const int YEARS_MILIENIUM = 2000;
+const int YEARS_CENTURY = 100;
+const char* const DATE_FORMAT = "dd/MM/yyyy";
+
+// Regex for removing things when parsing dates
+const QList<QRegExp> REMOVE_DATE_REGEX = QList<QRegExp>() 
+	<< QRegExp(",\\b") << QRegExp("\\bthis\\b") << QRegExp("\\bnext\\b")
+	<< QRegExp("\\bnthe\\b");
+
+// Regex to match named days
+const QRegExp DAY_2DAY_REGEX = QRegExp("\\b2day\\b");
+const QRegExp DAY_TMR_REGEX = QRegExp("\\btmr\\b");
+const QRegExp DAY_TML_REGEX = QRegExp("\\btml\\b");
+const QRegExp DAY_MON_REGEX = QRegExp("\\bmon\\b");
+const QRegExp DAY_TUE_REGEX = QRegExp("\\btue\\b");
+const QRegExp DAY_TUES_REGEX = QRegExp("\\btues\\b");
+const QRegExp DAY_WED_REGEX = QRegExp("\\bwed\\b");
+const QRegExp DAY_THU_REGEX = QRegExp("\\bthu\\b");
+const QRegExp DAY_THUR_REGEX = QRegExp("\\bthur\\b");
+const QRegExp DAY_THURS_REGEX = QRegExp("\\bthurs\\b");
+const QRegExp DAY_FRI_REGEX = QRegExp("\\bfri\\b");
+const QRegExp DAY_SAT_REGEX = QRegExp("\\bsat\\b");
+const QRegExp DAY_SUN_REGEX = QRegExp("\\bsun\\b");
+
+// Regex to match special days
+const QRegExp DAY_YESTERDAY_REGEX = QRegExp("\\byesterday\\b");
+const QRegExp DAY_TODAY_REGEX = QRegExp("\\btoday\\b");
+const QRegExp DAY_TOMORROW_REGEX = QRegExp("\\btomorrow\\b");
+const QRegExp DAY_AFTER_TOMORROW_REGEX = QRegExp("\\bday after tomorrow\\b");
+
+// Macros for special days that relative to current time
+#define DATE_YESTERDAY \
+	QDate::currentDate().addDays(-1).toString(DATE_FORMAT)
+#define DATE_TODAY \
+	QDate::currentDate().toString(DATE_FORMAT)
+#define DATE_TOMORROW \
+	QDate::currentDate().addDays(1).toString(DATE_FORMAT)
+#define DATE_AFTER_TOMORROW \
+	QDate::currentDate().addDays(2).toString(DATE_FORMAT)
+
+// Names of days
+const char* const DAY_TODAY = "today";
+const char* const DAY_TOMORROW = "tomorrow";
+const char* const DAY_MONDAY = "monday";
+const char* const DAY_TUESDAY = "tuesday";
+const char* const DAY_WEDNESDAY = "wednesday";
+const char* const DAY_THURSDAY = "thursday";
+const char* const DAY_FRIDAY = "friday";
+const char* const DAY_SATURDAY = "saturday";
+const char* const DAY_SUNDAY = "sunday";
+
+// List of names of days
+const QStringList DAY_NAMES = QStringList() << DAY_MONDAY << DAY_TUESDAY
+	<< DAY_WEDNESDAY << DAY_THURSDAY << DAY_FRIDAY << DAY_SATURDAY
+	<< DAY_SUNDAY;
+
+// List of named times names
+const QList<QRegExp> TIME_NAMES_REGEX = QList<QRegExp>() 
+	<< QRegExp("\\bdawn\\b") << QRegExp("\\bmorning\\b")
+	<< QRegExp("\\bnoon\\b") << QRegExp("\\bafternoon\\b")
+	<< QRegExp("\\bevening\\b") << QRegExp("\\bnight\\b")
+	<< QRegExp("\\bmidnight\\b");
+
+// List of named times
+const QStringList TIME_NAMED = QStringList()
+	<< QTime(6,0).toString(TIME_FORMAT)
+	<< QTime(10,0).toString(TIME_FORMAT)
+	<< QTime(12,0).toString(TIME_FORMAT)
+	<< QTime(18,0).toString(TIME_FORMAT)
+	<< QTime(20,0).toString(TIME_FORMAT)
+	<< QTime(22,0).toString(TIME_FORMAT)
+	<< QTime(23,59).toString(TIME_FORMAT);
+
+// List of substitution regexes
+const char* const EQUIV_AT_REPLACE = " @";
+const QList<QRegExp> EQUIV_AT_REGEX = QList<QRegExp>()
+	<< QRegExp("(?:\\s)by\\b") << QRegExp("(?:\\s)at\\b")
+	<< QRegExp("(?:\\s)from\\b") << QRegExp("(?:\\s)on\\b");
+const QList<QRegExp> EQUIV_ADD_REGEX = QList<QRegExp>()
+	<< QRegExp("^do\\b") << QRegExp("^create\\b") << QRegExp("^a\\b");
+const QList<QRegExp> EQUIV_EDIT_REGEX = QList<QRegExp>()
+	<< QRegExp("^change\\b") << QRegExp("^update\\b")
+	<< QRegExp("^modify\\b") << QRegExp("^e\\b");
+const QList<QRegExp> EQUIV_REMOVE_REGEX = QList<QRegExp>()
+	<< QRegExp("^rm\\b") << QRegExp("^delete\\b");
+const QList<QRegExp> EQUIV_SHOW_REGEX = QList<QRegExp>()
+	<< QRegExp("^ls\\b") << QRegExp("^search\\b") << QRegExp("^find\\b")
+	<< QRegExp("^list\\b") << QRegExp("^display\\b");
+const QList<QRegExp> EQUIV_HIDE_REGEX = QList<QRegExp>();
+const QList<QRegExp> EQUIV_DONE_REGEX = QList<QRegExp>()
+	<< QRegExp("^d\\b");
+const QList<QRegExp> EQUIV_UNDONE_REGEX = QList<QRegExp>()
+	<< QRegExp("^nd\\b") << QRegExp("^not done\\b");
+const QList<QRegExp> EQUIV_UNDO_REGEX = QList<QRegExp>()
+	<< QRegExp("^u\\b");
+const QList<QRegExp> EQUIV_REDO_REGEX = QList<QRegExp>()
+	<< QRegExp("^r\\b");
+const QList<QRegExp> EQUIV_CLEAR_REGEX = QList<QRegExp>();
+const QList<QRegExp> EQUIV_HELP_REGEX = QList<QRegExp>()
+	<< QRegExp("^tutorial\\b") << QRegExp("^guide\\b")
+	<< QRegExp("^instructions\\b");
+const QList<QRegExp> EQUIV_ABOUT_REGEX = QList<QRegExp>();
+const QList<QRegExp> EQUIV_NEXT_REGEX = QList<QRegExp>()
+	<< QRegExp("^next free time\\b");
+const QList<QRegExp> EQUIV_SETTINGS_REGEX = QList<QRegExp>()
+	<< QRegExp("^options\\b");
+const QList<QRegExp> EQUIV_EXIT_REGEX = QList<QRegExp>()
+	<< QRegExp("^quit\\b") << QRegExp("^q\\b");
+const QRegExp EQUIV_TO_REGEX = QRegExp("\\bto\\b");
+
+const QList< QList<QRegExp> > EQUIV_COMMAND_REGEX = 
+	QList< QList<QRegExp> >() << EQUIV_ADD_REGEX << EQUIV_EDIT_REGEX
+	<< EQUIV_REMOVE_REGEX << EQUIV_SHOW_REGEX << EQUIV_HIDE_REGEX
+	<< EQUIV_DONE_REGEX << EQUIV_UNDONE_REGEX << EQUIV_UNDO_REGEX
+	<< EQUIV_REDO_REGEX << EQUIV_CLEAR_REGEX << EQUIV_HELP_REGEX
+	<< EQUIV_ABOUT_REGEX << EQUIV_NEXT_REGEX << EQUIV_SETTINGS_REGEX
+	<< EQUIV_EXIT_REGEX;
+
+// Special tag for format display
+#define PSEUDO_TAG_BEGIN(tag) \
+	"{"+QString(tag)+"}"
+#define PSEUDO_TAG_END(tag) \
+	"{/"+QString(tag)+"}"
+
+const char* const TRAY_ICON_PATH = ":/Images/images/Traysuke.png";
+const char* const TRAY_MENU_QUIT = "&Quit";
+const char* const TRAY_MENU_INPUT = "Show &Command Box";
+const char* const TRAY_MENU_TASK = "Show Task &Window";
+const char* const TRAY_MENU_SETTINGS = "&Settings";
+const char* const TRAY_MENU_TUTORIAL = "&Tutorial";
+const char* const TRAY_MENU_ABOUT = "&About Tasuke";
+
+const char* const STARTUP_LNK_PATH = "Startup/Tasuke.lnk";
+
+const int UNDO_LIMIT = 10;
+
+#endif
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\NotificationManager.cpp
+	 */
+
+#include <QDateTime>
+#include "NotificationManager.h"
+#include "Tasuke.h"
+#include "Constants.h"
+#include "Exceptions.h"
+#include "Storage.h"
+
+// Constructor for NotificationManager is private, and is only called in 
+// instance().
+NotificationManager::NotificationManager() {
+	connect(&timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
+
+}
+
+// Destructor for NotificationManager.
+NotificationManager::~NotificationManager() {
+
+}
+
+// Retrieves the sole instance of NotificationManager singleton.
+NotificationManager& NotificationManager::instance() {
+	static NotificationManager *instance = 0;
+
+	if (instance == 0) {
+		instance = new NotificationManager();
+		return *instance;
+	} else {
+		return *instance;
+	}
+}
+
+// Schedules the next notification from the next upcoming Task in Storage.
+void NotificationManager::init(void* storage) {
+	assert(storage != nullptr);
+
+	try {
+		Task next = static_cast<IStorage*>(storage)->getNextUpcomingTask();	
+		scheduleNotification(next);
+	} catch (ExceptionNoMoreTasks &exception) {
+		// there's no upcoming task
+		// we don't have to do anything
+	}
+}
+
+// Schedules a notification for the Task that it is given.
+// The notification will trigger ten minutes before the time is due.
+void NotificationManager::scheduleNotification(Task task) {
+	nextTask = task;
+	if (timer.isActive()) {
+		timer.stop();
+	}
+
+	quint64 nextFire = task.getBegin().toMSecsSinceEpoch()
+		- QDateTime::currentDateTime().toMSecsSinceEpoch();
+	nextFire -= (10 * MSECS_IN_SECOND * SECONDS_IN_MINUTE);
+	
+	if (nextFire < 0) {
+		return;
+	}
+
+	timer.setInterval(nextFire);
+	timer.setSingleShot(true);
+}
+
+// Activates when the timer runs out.
+void NotificationManager::handleTimeout() {
+	Tasuke::instance().showMessage("Next task: "
+		+ nextTask.getDescription() + " begins in 10 minutes.");
+	init(&Tasuke::instance().getStorage());
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\NotificationManager.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\NotificationManager.h
+	 */
+
+#ifndef NOTIFICATIONMANAGER_H
+#define NOTIFICATIONMANAGER_H
+
+#include <QTimer>
+#include "Task.h"
+
+// Class for the notification timer.
+class NotificationManager : public QObject {
+	Q_OBJECT
+private:
+	QTimer timer;
+	Task nextTask;
+
+	NotificationManager();
+	NotificationManager(const NotificationManager& old);
+	const NotificationManager& operator=(const NotificationManager& old);
+	~NotificationManager();
+
+public:
+	static NotificationManager &instance();
+	void init(void* storage);
+	void scheduleNotification(Task task);
+	
+public slots:
+	void handleTimeout();
+};
+
+#endif
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\NotificationManager.h
+
+
+
+
+
+	/**
 	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Storage.cpp
 	 */
+
+#define NOMINMAX
+
+#include <glog/logging.h>
+#include <QSettings>
+#include <QStandardPaths>
+#include <QDir>
+#include "Constants.h"
+#include "Exceptions.h"
+#include "Storage.h"
+#include "Tasuke.h"
 
 IStorage::IStorage() {
 
@@ -14,12 +640,13 @@ IStorage::~IStorage() {
 
 }
 
+// Adds a task to the list of tasks in memory.
 Task IStorage::addTask(Task& task) {
 	QMutexLocker lock(&mutex);
 
 	QSharedPointer<Task> taskPtr = QSharedPointer<Task>(new Task(task));
 
-	LOG(INFO) << "Adding task " << task.getDescription().toStdString();
+	LOG(INFO) << MSG_STORAGE_ADDING_TASK << task.getDescription().toStdString();
 
 	tasks.push_back(taskPtr);
 	renumber();
@@ -27,12 +654,16 @@ Task IStorage::addTask(Task& task) {
 	return *taskPtr;
 }
 
+// Edits a task in memory.
+// In general, this is done by replacing the task with ID id with
+// a new task object.
 Task IStorage::editTask(int id, Task& task) {
 	QMutexLocker lock(&mutex);
 
 	QSharedPointer<Task> taskPtr = QSharedPointer<Task>(new Task(task));
 
-	LOG(INFO) << "Replacing task " << task.getDescription().toStdString();
+	LOG(INFO) << MSG_STORAGE_REPLACING_TASK 
+		<< task.getDescription().toStdString();
 
 	tasks.replace(id, taskPtr);
 	renumber();
@@ -40,28 +671,46 @@ Task IStorage::editTask(int id, Task& task) {
 	return *taskPtr;
 }
 
+// Retrieves a task with ID id from the list of tasks in memory.
 Task IStorage::getTask(int id) {
 	QMutexLocker lock(&mutex);
 	return *tasks[id];
 }
 
+// Removes a task with ID id from the list of tasks in memory.
 void IStorage::removeTask(int id) {
 	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Removing task at position " << id;
+	LOG(INFO) << MSG_STORAGE_REMOVING_TASK << id;
 
 	tasks.removeAt(id);
 	renumber();
 }
 
+// Removes a task from the back of the list of tasks in memory.
 void IStorage::popTask() {
 	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Popping task from back";
+	LOG(INFO) << MSG_STORAGE_POP_TASK;
 
 	tasks.pop_back();
 	renumber();
 }
 
-// Read-only
+// Returns the task that is at the front of the list of tasks in
+// memorry. This task is guaranteed not to be 'overdue'.
+// This method throws ExceptionNoMoreTasks if there are no more tasks 
+// in memory that are not overdue.
+Task IStorage::getNextUpcomingTask() {
+	LOG(INFO) << MSG_STORAGE_RETRIEVE_NEXT_TASK;
+
+	foreach (QSharedPointer<Task> task, tasks) {
+		if (task->getBegin() > QDateTime::currentDateTime()) {
+			return *task;
+		}
+	}
+	throw ExceptionNoMoreTasks();
+}
+
+// Read-only. Retrieves the entire list of tasks in memory.
 QList<Task> IStorage::getTasks(bool hideDone) const {
 	QList<Task> results;
 
@@ -78,13 +727,18 @@ QList<Task> IStorage::getTasks(bool hideDone) const {
 	return results;
 }
 
+// Returns the total number of tasks in memory.
 int IStorage::totalTasks() {
 	QMutexLocker lock(&mutex);
 	return tasks.size();
 }
 
+// Searches for tasks. Takes in a function as an argument and searches for
+// tasks with a criteria that is determined by the function. It is the caller's
+// responsibility for the function to be valid and correct, as this method 
+// makes no assumptions about the criteria.
 QList<Task> IStorage::search(std::function<bool(Task)> predicate) const {
-	LOG(INFO) << "Searching for tasks";
+	LOG(INFO) << MSG_STORAGE_SEARCH;
 	QList<Task> results;
 
 	foreach(QSharedPointer<Task> task, tasks) {
@@ -99,9 +753,10 @@ QList<Task> IStorage::search(std::function<bool(Task)> predicate) const {
 // Searches all descriptions of all tasks in memory for specified keyword(s).
 // Returns a list of all tasks that contain the keyword in its description.
 // Searches by any part of the description. Case insensitive is the default.
-QList<Task> IStorage::searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity) {
+QList<Task> IStorage::searchByDescription(QString keyword, 
+										  Qt::CaseSensitivity caseSensitivity) {
 	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Searching by description keyword: " << keyword.toStdString();
+	LOG(INFO) << MSG_STORAGE_SEARCH_BY_DESCRIPTION << keyword.toStdString();
 	QList<Task> results;
 
 	for (int i=0; i<tasks.size(); i++) {
@@ -116,10 +771,11 @@ QList<Task> IStorage::searchByDescription(QString keyword, Qt::CaseSensitivity c
 // Searches all tags in all tasks in memory for specified tag.
 // Returns a list of all tasks that contain that tag.
 // Will also return partial results (if tag contains the searched keyword)
-// Case sensitivity optional, but insensitive is the default.
-QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity) {
+// Case insensitive is the default.
+QList<Task> IStorage::searchByTag(QString keyword, 
+								  Qt::CaseSensitivity caseSensitivity) {
 	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Searching by tag: " << keyword.toStdString();
+	LOG(INFO) << MSG_STORAGE_SEARCH_BY_TAG << keyword.toStdString();
 	QList<Task> results;
 
 	for (int i=0; i<tasks.size(); i++) {
@@ -136,56 +792,40 @@ QList<Task> IStorage::searchByTag(QString keyword, Qt::CaseSensitivity caseSensi
 	return results;
 }
 
-// Searches all tasks for those that ends by (end date is no later than)
-// specified date-time.
-QList<Task> IStorage::searchByEndDate(QDateTime byThisDate) {
-	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Searching by end date/time.";
-	QList<Task> results;
+// Retrieves the next available free time.
+// Starts by assuming that the current time is free.
+// Then search through all tasks for ongoing events and take the ongoing 
+// event with the latest end time as the next available free time.
+// Then since tasks are sorted in order of earliest end time to latest end 
+// time, overlapping tasks will be merged into one unit.
+QString IStorage::nextFreeTime() {
+	LOG(INFO) << MSG_STORAGE_NEXT_FREE_TIME;
+	QDateTime nextAvailable = QDateTime::currentDateTime();
 
-	for (int i=0; i<tasks.size(); i++) {
-		if (tasks[i]->getEnd() <= byThisDate) {
-			results.push_back(*tasks[i]);
+	foreach (const QSharedPointer<Task>& task, tasks) {
+		if (task->isOverdue()) {
+			continue;
+		}
+		if (!task->isEvent()) {
+			continue;
+		}
+		if (task->getBegin() <= nextAvailable) {
+			nextAvailable = task->getEnd();
+		} else {
+			break;
 		}
 	}
 
-	return results;
-}
+	long delta = nextAvailable.toMSecsSinceEpoch()
+		- QDateTime::currentDateTime().toMSecsSinceEpoch();
 
-// Searches all tasks for those that begins from (start date is no earlier than)
-// specified date-time.
-QList<Task> IStorage::searchByBeginDate(QDateTime fromThisDate) {
-	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Searching by begin date/time.";
-	QList<Task> results;
-
-	for (int i=0; i<tasks.size(); i++) {
-		if (tasks[i]->getBegin() >= fromThisDate) {
-			results.push_back(*tasks[i]);
-		}
+	if (abs(delta) <= MSECS_IN_SECOND * SECONDS_IN_MINUTE) {
+		return MSG_STORAGE_FREE_NOW;
 	}
 
-	return results;
-}
-
-// Searches all tasks that exist within a specified date-time interval.
-// For a task to qualify, its start date must be no earlier than fromThisDate, and
-// its end date must be no later than byThisDate.
-QList<Task> IStorage::searchByDateTimeInterval(QDateTime fromThisDate, QDateTime byThisDate) {
-	QMutexLocker lock(&mutex);
-	LOG(INFO) << "Searching by date/time interval.";
-	QList<Task> results;
-
-	for (int i=0; i<tasks.size(); i++) {
-		bool fromStart = tasks[i]->getBegin() >= fromThisDate;
-		bool byEnd = tasks[i]->getEnd() <= byThisDate;
-
-		if (fromStart && byEnd) {
-			results.push_back(*tasks[i]);
-		}
-	}
-
-	return results;
+	QString result = Task::getTimeDifference(nextAvailable);
+	result.prepend(MSG_STORAGE_FREE_IN);
+	return result;
 }
 
 // Returns true if every task in memory is done.
@@ -200,58 +840,72 @@ bool IStorage::isAllDone() {
 	return _isAllDone;
 }
 
+// Sorts the list of tasks in memory by its end date-time.
+// Tasks that end earlier are sorted to the front of the list.
 void IStorage::sortByEndDate() {
-	LOG(INFO) << "Sorting by end date.";
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	LOG(INFO) << MSG_STORAGE_SORT_BY_END_DATE;
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->getEnd() < t2->getEnd();
 	});
 }
 
-void IStorage::sortByBeginDate() {
-	LOG(INFO) << "Sorting by begin date.";
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
-		return t1->getBegin() < t2->getBegin();
-	});
-}
-
+// Sorts the list of tasks in memory by its description alphabetically.
 void IStorage::sortByDescription() {
-	LOG(INFO) << "Sorting by description.";
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	LOG(INFO) << MSG_STORAGE_SORT_BY_DESCRIPTION;
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->getDescription().toLower() < t2->getDescription().toLower();
 	});
 }
 
+// Sorts the list of tasks in memory by whether or not it is ongoing.
+// Ongoing tasks are sorted to the front of the list.
 void IStorage::sortByOngoing() {
-	LOG(INFO) << "Sorting by ongoing status.";
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	LOG(INFO) << MSG_STORAGE_SORT_BY_ONGOING_STATUS;
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->isOngoing() > t2->isOngoing();
 	});
 }
 
+// Sorts the list of tasks in memory by whether or not it is due on
+// the current day. Tasks that are due on the current day are sorted the front.
 void IStorage::sortByIsDueToday() {
-	LOG(INFO) << "Sorting by due today.";
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	LOG(INFO) << MSG_STORAGE_SORT_BY_DUE_TODAY;
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->isDueToday() > t2->isDueToday();
 	});
 }
 
+// Sorts the list of tasks in memory by whether or not it is overdue.
+// Tasks that are overdue are sorted to the front of the list.
 void IStorage::sortByOverdue() {
-	LOG(INFO) << "Sorting by overdue status.";
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	LOG(INFO) << MSG_STORAGE_SORT_BY_OVERDUE;
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->isOverdue() > t2->isOverdue();
 	});
 }
 
+// Sorts the list of tasks in memory by whether or not it is done.
+// Tasks that are done are sorted to the back of the list.
 void IStorage::sortByDone() {
-	LOG(INFO) << "Sorting by done status.";
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	LOG(INFO) << MSG_STORAGE_SORT_BY_DONE_STATUS;
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		return t1->isDone() < t2->isDone();
 	});
 }
 
+// Sorts the list of tasks in memory by whether or not is has a valid
+// end date-time. Tasks with no valid end date-time are sorted to the back
+// of the list.
 void IStorage::sortByHasEndDate() {
-	LOG(INFO) << "Sorting by presence of end date.";
-	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, const QSharedPointer<Task>& t2) {
+	LOG(INFO) << MSG_STORAGE_SORT_BY_HAS_END_DATE;
+	qStableSort(tasks.begin(), tasks.end(), [](const QSharedPointer<Task>& t1, 
+		const QSharedPointer<Task>& t2) {
 		if (t1->getEnd().isValid() == t2->getEnd().isValid()) {
 			return false;
 		}
@@ -290,7 +944,7 @@ void IStorage::renumber() {
 
 // Removes all tasks that are done from memory.
 void IStorage::clearAllDone() {
-	LOG(INFO) << "Clearing all tasks marked as done.";
+	LOG(INFO) << MSG_STORAGE_CLEAR_ALL_DONE_TASKS;
 	foreach (const QSharedPointer<Task>& task, tasks) {
 		if (task->isDone()) {
 			tasks.removeOne(task);
@@ -301,7 +955,7 @@ void IStorage::clearAllDone() {
 
 // Removes all tasks from memory regardless of status.
 void IStorage::clearAllTasks() {
-	LOG(INFO) << "Clearing all tasks with great justice.";
+	LOG(INFO) << MSG_STORAGE_CLEAR_ALL_TASKS;
 	tasks.clear();
 	renumber();
 }
@@ -309,9 +963,10 @@ void IStorage::clearAllTasks() {
 // The default constructor for Storage automatically sets the path of the
 // .ini save file to be %APPDATA%/Tasuke.
 Storage::Storage() {
-	LOG(INFO) << "Storage instance created...";
+	LOG(INFO) << MSG_STORAGE_INSTANCE_CREATED;
 
-	QDir dir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
+	QDir dir = QDir(QStandardPaths::writableLocation(
+		QStandardPaths::DataLocation));
 
 	path = dir.absoluteFilePath("tasks.ini");
 
@@ -322,7 +977,7 @@ Storage::Storage() {
 // This constructor for Storage takes in a filepath as an argument.
 // Storage will read from and write to the .ini file at that path.
 Storage::Storage(QString _path) {
-	LOG(INFO) << "Storage instance with custom path created...";
+	LOG(INFO) << MSG_STORAGE_INSTANCE_CREATED_NONDEFAULT;
 
 	path = _path;
 
@@ -331,9 +986,10 @@ Storage::Storage(QString _path) {
 }
 
 // This function loads the contents of the text file and serializes it into
-// the memory. If there is no such file, this function does nothing.
+// the memory. It does so via QSettings.
+// If there is no such file, this function does nothing.
 void Storage::loadFile() {
-	LOG(INFO) << "Loading file...";
+	LOG(INFO) << MSG_STORAGE_LOAD_FILE_START;
 
 	QSettings settings(path, QSettings::IniFormat);
 
@@ -345,11 +1001,13 @@ void Storage::loadFile() {
 		task->setDescription(settings.value("Description").toString());
 		uint beginTime = settings.value("BeginTimeUnix", 0).toUInt();
 		if (beginTime != 0) {
-			task->setBegin(QDateTime::fromTime_t(settings.value("BeginTimeUnix").toInt()));
+			task->setBegin(QDateTime::fromTime_t(
+				settings.value("BeginTimeUnix").toInt()));
 		}
 		uint endTime = settings.value("EndTimeUnix", 0).toUInt();
 		if (endTime != 0) {
-			task->setEnd(QDateTime::fromTime_t(settings.value("EndTimeUnix").toInt()));
+			task->setEnd(QDateTime::fromTime_t(
+				settings.value("EndTimeUnix").toInt()));
 		}
 
 		task->setDone(settings.value("Done").toBool());
@@ -367,14 +1025,16 @@ void Storage::loadFile() {
 	settings.endArray();
 
 	renumber();
+	NotificationManager::instance().init(this);
 
-	LOG(INFO) << "File loaded.";
+	LOG(INFO) << MSG_STORAGE_LOAD_FILE_END;
 }
 
 // This function deserializes the data from memory and writes it to the text
-// file. If the file cannot be written, an ExceptionNotOpen is thrown.
+// file. It does so via QSettings. If the file cannot be written, an 
+// ExceptionNotOpen is thrown.
 void Storage::saveFile() {
-	LOG(INFO) << "Saving file...";
+	LOG(INFO) << MSG_STORAGE_SAVE_FILE_START;
 
 	QSettings settings(path, QSettings::IniFormat);
 
@@ -412,9 +1072,10 @@ void Storage::saveFile() {
 	settings.endArray();
 	settings.sync();
 
-	LOG(INFO) << "File saved.";
-}
+	NotificationManager::instance().init(this);
 
+	LOG(INFO) << MSG_STORAGE_SAVE_FILE_END;
+}
 	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Storage.cpp
 
 
@@ -425,11 +1086,20 @@ void Storage::saveFile() {
 	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Storage.h
 	 */
 
+#ifndef STORAGE_H
+#define STORAGE_H
+
+#include <functional>
+#include <QString>
+#include <QTimer>
+#include <QList>
+#include "Task.h"
+#include "NotificationManager.h"
+
 // Interface class for Storage.
 class IStorage {
 protected:
-	//QList<Task> tasks;
-	QList<QSharedPointer<Task>> tasks;
+	QList< QSharedPointer<Task> > tasks;
 	QMutex mutex;
 
 public:
@@ -441,20 +1111,21 @@ public:
 	Task getTask(int id);
 	void removeTask(int id);
 	void popTask();
+	Task getNextUpcomingTask();
 	QList<Task> getTasks(bool hideDone = true) const;
 	int totalTasks();
 
 	QList<Task> search(std::function<bool(Task)> predicate) const;
-	QList<Task> searchByDescription(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
-	QList<Task> searchByTag(QString keyword, Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
-	QList<Task> searchByEndDate(QDateTime byThisDate);
-	QList<Task> searchByBeginDate(QDateTime fromThisDate);
-	QList<Task> searchByDateTimeInterval(QDateTime fromThisDate, QDateTime byThisDate);
+	QList<Task> searchByDescription(QString keyword, 
+		Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+	QList<Task> searchByTag(QString keyword, 
+		Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
+
+	QString nextFreeTime();
 
 	bool isAllDone();
 
 	void sortByEndDate();
-	void sortByBeginDate();
 	void sortByDescription();
 	void sortByOngoing();
 	void sortByIsDueToday();
@@ -480,8 +1151,8 @@ private:
 public:
 	Storage();
 	Storage(QString path);
-	void loadFile();
-	void saveFile();
+	void loadFile() override;
+	void saveFile() override;
 };
 
 #endif
@@ -496,11 +1167,18 @@ public:
 	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Task.cpp
 	 */
 
+#include <QDataStream>
+#include <cassert>
+#include "Constants.h"
+#include "Exceptions.h"
+#include "Task.h"
+
 Task::Task() {
 	id = -1;
 	done = false;
 }
 
+// Constructor of a task that takes in a description.
 Task::Task(QString _description) {
 	id = -1;
 	done = false;
@@ -511,59 +1189,76 @@ Task::~Task() {
 
 }
 
+// Sets the description of a task.
 void Task::setDescription(QString _description) {
 	description = _description;
 }
 
+// Retrieves the description of a task.
+// All tasks must have a description.
 QString Task::getDescription() const {
+	assert(description != nullptr);
 	return description;
 }
 
-// Adds a single _gtag QString to the list of tags that
-// this task has. This method will throw an ExceptionTooManyTags
-// if the incoming tag causes the number of tags to exceed
-// MAXIMUM_TAGS.
+// Adds a single _tag QString to the list of tags that this task has. This 
+// method will throw an ExceptionTooManyTags if the incoming tag causes the 
+// number of tags to exceed MAXIMUM_TAGS.
 void Task::addTag(QString _tag) {
+	assert(!_tag.isEmpty());
+
 	if (tags.size() >= MAXIMUM_TAGS) {
-		throw ExceptionTooManyTags();
+		throw ExceptionBadCommand("This task has too many tags", "tag");
 	}
-
-	tags.push_back(_tag);
+	
+	if (!tags.contains(_tag)) {
+		tags.insert(_tag);
+	}
 }
 
-void Task::removeTag(QString _tag) {
-	tags.removeOne(_tag);
+// Searches through the set of tags for a task and removes the tag _tag.
+bool Task::removeTag(QString _tag) {
+	return tags.remove(_tag);
 }
 
+// Gets all tags of a task in the form of a QList.
 QList<QString> Task::getTags() const {
+	return tags.toList();
+}
+
+// Gets all tags of a task in the form of a QSet.
+QSet<QString> Task::getTagsSet() const {
 	return tags;
 }
 
 // Sets the begin date and time for this task.
-// It is the responsibility of the caller of this method
-// to pass in a QDateTime object that is complete and valid,
-// as this method makes no assumptions about the date and time.
+// It is the responsibility of the caller of this method to pass in a QDateTime 
+// object that is complete, as this method makes no assumptions about the date 
+// and time.
 void Task::setBegin(QDateTime _begin) {
+	//assert(_begin.isValid());
 	begin = _begin;
 }
 
 // Changes only the date portion of the begin QDateTime field.
-// If the resulting begin QDateTime object is invalid because of
-// missing time field, this method will attempt to validate
-// by appending the time as 0000 hours.
+// If the resulting begin QDateTime object is invalid because of missing time 
+// field, this method will attempt to validate by appending the time as 0000 
+// hours.
 void Task::setBeginDate(QDate _beginDate) {
+	assert(_beginDate.isValid());
 	begin.setDate(_beginDate);
 
 	if (!begin.isValid() || !begin.time().isValid()) {
-		begin.setTime(QTime(0, 0, 0));
+		begin.setTime(BEGINNING_OF_DAY);
 	}
 }
 
 // Changes only the time portion of the begin QDateTime field.
-// If the resulting begin QDateTime object is invalid because of
-// missing date field, this method will attempt to validate
-// by prepending the date as the current day.
+// If the resulting begin QDateTime object is invalid because of missing date 
+// field, this method will attempt to validate by prepending the date as the 
+// current day.
 void Task::setBeginTime(QTime _beginTime) {
+	assert(_beginTime.isValid());
 	begin.setTime(_beginTime);
 
 	if (!begin.isValid() || !begin.date().isValid()) {
@@ -571,34 +1266,36 @@ void Task::setBeginTime(QTime _beginTime) {
 	}
 }
 
+// Retrives the begin date-time of a task.
 QDateTime Task::getBegin() const {
 	return begin;
 }
 
 // Sets the end date and time for this task.
-// It is the responsibility of the caller of this method
-// to pass in a QDateTime object that is complete and valid,
-// as this method makes no assumptions about the date and time.
+// It is the responsibility of the caller of this method to pass in a QDateTime
+// object that is complete, as this method makes no assumptions about the date 
+// and time.
 void Task::setEnd(QDateTime _end) {
+	//assert(_end.isValid());
 	end = _end;
 }
 
 // Changes only the date portion of the end QDateTime field.
-// If the resulting end QDateTime object is invalid because of
-// missing time field, this method will attempt to validate
-// by appending the time as 2359 hours.
+// If the resulting end QDateTime object is invalid because of missing time 
+// field, this method will attempt to validate by appending the time as 2359 
+// hours.
 void Task::setEndDate(QDate _endDate) {
 	end.setDate(_endDate);
 
 	if (!end.isValid() || !end.time().isValid()) {
-		end.setTime(QTime(23, 59, 59));
+		end.setTime(END_OF_DAY);
 	}
 }
 
 // Changes only the time portion of the end QDateTime field.
-// If the resulting end QDateTime object is invalid because of
-// missing date field, this method will attempt to validate
-// by prepending the date as the current day.
+// If the resulting end QDateTime object is invalid because of missing date 
+// field, this method will attempt to validate by prepending the date as the 
+// current day.
 void Task::setEndTime(QTime _endTime) {
 	end.setTime(_endTime);
 
@@ -607,18 +1304,45 @@ void Task::setEndTime(QTime _endTime) {
 	}
 }
 
+// Retrives the end date-time of a task.
 QDateTime Task::getEnd() const {
 	return end;
 }
 
-// Returns the QString representation of a countdown from now to the end of a task.
-// This method also returns a countup from the end of an overdue task to now.
-// This method does NOT guarantee accuracy of dates. This method assumes that
-// there are 12 identical months in a year, and there are exactly 4 weeks every month,
-// and each month has exactly 30 days.
 QString Task::getTimeDifferenceString() const {
 	qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
 	qint64 end = getEnd().toMSecsSinceEpoch();
+	qint64 delta = end - now;
+	bool isNegative = delta < 0;
+
+	// Return immediately if task age is less than one minute.
+	if (abs(delta) <= MSECS_IN_SECOND * SECONDS_IN_MINUTE) {
+		if (isNegative) {
+			return "This task expired moments ago.";
+		} else {
+			return "This task will expire in less than one minute.";
+		}
+	}
+
+	QString result = getTimeDifference(getEnd());
+
+	if (isNegative) {
+		result.append(" ago.");
+	} else {
+		result.append(" from now.");
+	}
+
+	return result;
+}
+
+// Returns the QString representation of a countdown from now to the end of a 
+// task. This method also returns a countup from the end of an overdue task to
+// now. This method does NOT guarantee accuracy of dates. This method assumes
+// that there are 12 identical months in a year, and there are exactly 4 weeks 
+// every month, and each month has exactly 30 days.
+QString Task::getTimeDifference(QDateTime endDateTime) {
+	qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+	qint64 end = endDateTime.toMSecsSinceEpoch();
 	qint64 delta = end - now;
 	bool isNegative = delta < 0;
 
@@ -628,8 +1352,6 @@ QString Task::getTimeDifferenceString() const {
 	}
 
 	delta /= MSECS_IN_SECOND;					// Get rid of milliseconds.
-
-	int seconds = delta % SECONDS_IN_MINUTE;	// Obtain number of seconds.
 	delta /= SECONDS_IN_MINUTE;					// Get rid of seconds.
 
 	int minutes = delta % MINUTES_IN_HOUR;		// Obtain number of minutes.
@@ -652,52 +1374,47 @@ QString Task::getTimeDifferenceString() const {
 	QString result = "";
 	if (years > 0) {
 		if (years == 1) {
-			result.append("1 year");
+			result.append("1 year, ");
 		} else { // Plural
-			QString yr = QString("%1 years").arg(years);
+			QString yr = QString("%1 years, ").arg(years);
 			result.append(yr);
 		}
-		result.append(", ");
 	}
 
 	if (months > 0) {
 		if (months == 1) {
-			result.append("1 month");
+			result.append("1 month, ");
 		} else { // Plural
-			QString mth = QString("%1 months").arg(months);
+			QString mth = QString("%1 months, ").arg(months);
 			result.append(mth);
 		}
-		result.append(", ");
 	}
 
 	if (weeks > 0) {
 		if (weeks == 1) {
-			result.append("1 week");
+			result.append("1 week, ");
 		} else { // Plural
-			QString wks = QString("%1 weeks").arg(weeks);
+			QString wks = QString("%1 weeks, ").arg(weeks);
 			result.append(wks);
 		}
-		result.append(", ");
 	}
 
 	if (days > 0) {
 		if (days == 1) {
-			result.append("1 day");
+			result.append("1 day, ");
 		} else { //  Plural
-			QString dys = QString("%1 days").arg(days);
+			QString dys = QString("%1 days, ").arg(days);
 			result.append(dys);
 		}
-		result.append(", ");
 	}
 
 	if (hours > 0) {
 		if (hours == 1) {
-			result.append("1 hour");
+			result.append("1 hour, ");
 		} else { // Plural
-			QString hrs = QString("%1 hours").arg(hours);
+			QString hrs = QString("%1 hours, ").arg(hours);
 			result.append(hrs);
 		}
-		result.append(", ");
 	}
 
 	if (minutes > 0) {
@@ -709,13 +1426,6 @@ QString Task::getTimeDifferenceString() const {
 		}
 	}
 
-	// Finally, add closing statement.
-	if (isNegative) {
-		result.append(" ago.");
-	} else {
-		result.append(" from now.");
-	}
-
 	return result;
 }
 
@@ -724,29 +1434,34 @@ void Task::setDone(bool _done) {
 	done = _done;
 }
 
+// Marks the status of a task as 'done' by setting the 'done' field to TRUE.
 void Task::markDone() {
 	done = true;
 }
 
+// Marks the status of a tsask as 'undone' by setting the 'done'
+// field to FALSE.
 void Task::markUndone() {
 	done = false;
 }
 
+// Queries the 'done' status of a task.
 bool Task::isDone() const {
 	return done;
 }
 
+// Sets the ID of a task.
 void Task::setId(int _id) {
 	id = _id;
 }
 
+// Retrieves the ID of a task.
 int Task::getId() const {
 	return id;
 }
 
-// Returns TRUE if task has neither a valid begin date/time, 
-// nor a valid end date/time.
-// Returns FALSE for all other cases.
+// Returns TRUE if task has neither a valid begin date/time, nor a valid end 
+// date/time. Returns FALSE for all other cases.
 bool Task::isFloating() const {
 	if (!begin.isValid() && !end.isValid()) {
 		return true;
@@ -755,10 +1470,8 @@ bool Task::isFloating() const {
 	}
 }
 
-// Returns FALSE if there is no end date/time for this task,
-// or it is not valid.
-// Returns FALSE if end date/time for this task is later
-// than current date/time.
+// Returns FALSE if there is no end date/time for this task, or it is not valid
+// Returns FALSE if end date/time for this task is later than current date/time
 // Returns TRUE if end date/time for this task is earlier
 // than current date/time.
 bool Task::isOverdue() const {
@@ -817,12 +1530,12 @@ bool Task::isDueOn(QDate _date) const {
 
 // Returns FALSE if this task has no valid end date.
 // Returns FALSE if this task is already overdue.
-// Returns FALSE if this task has a due date that is not the current day, 2359hrs.
-// Returns TRUE if this task is already overdue but the due date is the current day.
-// Returns TRUE if this task has a due date that is the current day, 2359hrs.
+// Returns FALSE if this task has a due date that is not within the current day.
+// Returns TRUE if this task is already overdue but the due date is the current
+// day. Returns TRUE if this task has a due date that is within the current day.
 bool Task::isDueToday() const {
-	QDateTime todayStart(QDateTime::currentDateTime().date(), QTime(0, 0, 0));
-	QDateTime todayEnd(QDateTime::currentDateTime().date(), QTime(23, 59, 59));
+	QDateTime todayStart(QDateTime::currentDateTime().date(), BEGINNING_OF_DAY);
+	QDateTime todayEnd(QDateTime::currentDateTime().date(), END_OF_DAY);
 
 	if (!getEnd().isValid()) {
 		return false;
@@ -836,7 +1549,7 @@ bool Task::isDueToday() const {
 		}
 	}
 
-	if (getEnd() <= todayEnd) {
+	if (getEnd() >= todayStart && getEnd() <= todayEnd) {
 		return true;
 	} else {
 		return false;
@@ -845,25 +1558,24 @@ bool Task::isDueToday() const {
 
 // Returns FALSE if this task has no valid end date.
 // Returns FALSE if this task is already overdue.
-// Returns FALSE if this task has a due date that is not the next day, 2359hrs.
-// Returns TRUE if this task has a due date that is the next day, 2359hrs.
+// Returns FALSE if this task has a due date that is not within the next day
+// Returns TRUE if this task has a due date that is within the next day.
 bool Task::isDueTomorrow() const {
-	QDateTime tomorrowStart(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 0));
-	QDateTime tomorrowEnd(QDateTime::currentDateTime().date().addDays(1), QTime(23, 59, 59));
-
+	QDateTime tomorrowStart(QDateTime::currentDateTime().date().addDays(1), 
+		BEGINNING_OF_DAY);
+	QDateTime tomorrowEnd(QDateTime::currentDateTime().date().addDays(1), 
+		END_OF_DAY);
+	//tomorrowEnd.addDays(1);
+	
 	if (!getEnd().isValid()) {
 		return false;
 	}
 
 	if (isOverdue()) {
-		if (getEnd() >= tomorrowStart) {
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
-	if (getEnd() <= tomorrowEnd) {
+	if (getEnd() >= tomorrowStart && getEnd() <= tomorrowEnd) {
 		return true;
 	} else {
 		return false;
@@ -880,33 +1592,35 @@ bool Task::isEvent() const {
 	}
 }
 
-// Returns true if this task is equal to the other task; otherwise returns false.
+// Returns true if this task is equal to the other task; otherwise returns
+// false. The ID field is not considered because ID is unique for each object.
 bool Task::operator==(Task const& other) const {
-	bool isSameDescription = (description==other.getDescription());
-	bool isSameTags = (tags==other.getTags());
-	bool isSameBegin = (begin==other.getBegin());
-	bool isSameEnd = (end==other.getEnd());
-	bool isSameDone = (done==other.isDone());
+	bool sameDescription = (description==other.getDescription());
+	bool sameTags = (tags==other.getTagsSet());
+	bool sameBegin = (begin==other.getBegin());
+	bool sameEnd = (end==other.getEnd());
+	bool sameDone = (done==other.isDone());
 
-	return (isSameDescription && isSameTags && isSameBegin && isSameEnd && isSameDone);
+	return (sameDescription && sameTags && sameBegin && sameEnd && sameDone);
 }
 
-// Returns true if this task is different to the other task; otherwise returns false;
+// Returns true if this task is different to the other task; otherwise returns 
+// false. The ID field is not considered because ID is unique for each object.
 bool Task::operator!=(Task const& other) const {
-	bool isSameDescription = (description==other.getDescription());
-	bool isSameTags = (tags==other.getTags());
-	bool isSameBegin = (begin==other.getBegin());
-	bool isSameEnd = (end==other.getEnd());
-	bool isSameDone = (done==other.isDone());
+	bool sameDescription = (description==other.getDescription());
+	bool sameTags = (tags==other.getTagsSet());
+	bool sameBegin = (begin==other.getBegin());
+	bool sameEnd = (end==other.getEnd());
+	bool sameDone = (done==other.isDone());
 
-	return !(isSameDescription && isSameTags && isSameBegin && isSameEnd && isSameDone);
+	return !(sameDescription && sameTags && sameBegin && sameEnd && sameDone);
 }
 
 QDataStream& operator<<(QDataStream& out, const Task& task) {
 	out << task.description;
-	out << task.tags.size();
-	for (int i=0; i<task.tags.size(); i++) {
-		out << task.tags[i];
+	QSetIterator<QString> tags(task.tags);
+	while (tags.hasNext()) {
+		out << tags.next();
 	}
 	out << task.begin;
 	out << task.end;
@@ -922,7 +1636,7 @@ QDataStream& operator>>(QDataStream& in, Task& task) {
 	for (int i=0; i<numTags; i++) {
 		QString tag;
 		in >> tag;
-		task.tags.push_back(tag);
+		task.tags.insert(tag);
 	}
 	in >> task.begin;
 	in >> task.end;
@@ -940,10 +1654,18 @@ QDataStream& operator>>(QDataStream& in, Task& task) {
 	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Task.h
 	 */
 
+#ifndef TASK_H
+#define TASK_H
+
+#include <QList>
+#include <QSet>
+#include <QString>
+#include <QDateTime>
+
 class Task {
 private:
 	QString description;
-	QList<QString> tags;
+	QSet<QString> tags;
 
 	QDateTime begin;
 	QDateTime end;
@@ -960,8 +1682,9 @@ public:
 	QString getDescription() const;
 
 	void addTag(QString _tag);
-	void removeTag(QString _tag);
+	bool removeTag(QString _tag);
 	QList<QString> getTags() const;
+	QSet<QString> getTagsSet() const;
 
 	void setBegin(QDateTime _begin);
 	void setBeginDate(QDate _beginDate);
@@ -974,6 +1697,7 @@ public:
 	QDateTime getEnd() const;
 
 	QString getTimeDifferenceString() const;
+	static QString getTimeDifference(QDateTime endDateTime);
 
 	void setDone(bool _done);
 	void markDone();
@@ -1008,14 +1732,77 @@ Q_DECLARE_METATYPE(Task)
 
 
 	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\UnitTests\StorageStub.cpp
+	 */
+
+
+#include "stdafx.h"
+#include <glog/logging.h>
+#include "StorageStub.h"
+
+StorageStub::StorageStub() {
+	LOG(INFO) << MSG_STORAGESTUB_INSTANCE_CREATED;
+}
+
+StorageStub::~StorageStub() {
+	LOG(INFO) << MSG_STORAGESTUB_INSTANCE_DESTROYED;
+}
+
+void StorageStub::saveFile() {
+	LOG(INFO) << MSG_STORAGESTUB_SAVING_FILE;
+}
+
+void StorageStub::loadFile() {
+	LOG(INFO) << MSG_STORAGESTUB_LOADING_FILE;
+}
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\UnitTests\StorageStub.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\UnitTests\StorageStub.h
+	 */
+
+
+#ifndef STORAGESTUB_H
+#define STORAGESTUB_H
+
+#include "Storage.h"
+
+class StorageStub : public IStorage {
+public:
+	StorageStub();
+	~StorageStub();
+	void saveFile();
+	void loadFile();
+};
+
+#endif
+
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\UnitTests\StorageStub.h
+
+
+
+
+
+	/**
 	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\UnitTests\StorageTests.cpp
 	 */
 
+#include "stdafx.h"
+#include "CppUnitTest.h"
+
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace StorageTests {
 	QApplication *app;
 	StorageStub *storage;
 
+	// Simulate running the main() function
+	// Sets up the logging facility and the Qt event loop
 	TEST_MODULE_INITIALIZE(ModuleInitialize) {
 		int argc = 1;
 		char *argv[] = { "Tasuke.exe" };
@@ -1027,6 +1814,7 @@ namespace StorageTests {
 		storage = nullptr;
 	}
 
+	// Cleans up what we set up
 	TEST_MODULE_CLEANUP(ModuleCleanup) {
 		if (storage == nullptr) {
 			delete storage;
@@ -1040,6 +1828,7 @@ namespace StorageTests {
 
 	public:
 
+		// Create a new storage object before running any method
 		TEST_METHOD_INITIALIZE(init) {
 			storage = new StorageStub();
 			Tasuke::instance().setStorage(storage);
@@ -1054,10 +1843,10 @@ namespace StorageTests {
 
 		// Should throw an exception because exceed maximum tag count.
 		TEST_METHOD(TaskExceedMaximumTagCount) {
-			Assert::ExpectException<ExceptionTooManyTags>([] {
+			Assert::ExpectException<ExceptionBadCommand>([] {
 				Task task;
 				for (int i=0; i<MAXIMUM_TAGS+1; i++) {
-					task.addTag("tag" + i);
+					task.addTag("tag" + QString::number(i));
 				}
 			});
 		}
@@ -1066,7 +1855,7 @@ namespace StorageTests {
 		TEST_METHOD(TaskWithinMaximumTagCount) {
 			Task task;
 			for (int i=0; i<MAXIMUM_TAGS; i++) {
-				task.addTag("tag" + i);
+				task.addTag("tag" + QString::number(i));
 			}
 		}
 
@@ -1131,16 +1920,35 @@ namespace StorageTests {
 			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(23, 59, 58)));
 			Assert::IsTrue(dueToday.isDueToday());
 
-			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 0)));
+			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 2)));
 			Assert::IsTrue(dueToday.isDueToday());
 
 			Task dueTomorrow;
-			dueTomorrow.setEnd(QDateTime(QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 0)));
+			dueTomorrow.setEnd(QDateTime(
+				QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
 			Assert::IsFalse(dueTomorrow.isDueToday());
 
 			Task alreadyOverdue;
 			alreadyOverdue.setEnd(QDateTime(QDate(2010, 1, 1), QTime(1, 1, 1)));
 			Assert::IsFalse(alreadyOverdue.isDueToday());
+		}
+
+		TEST_METHOD(TaskIsDueTomorrow) {
+			Task dueToday;
+			dueToday.setEnd(QDateTime::currentDateTime());
+			Assert::IsFalse(dueToday.isDueTomorrow());
+			
+			dueToday.setEnd(QDateTime(QDateTime::currentDateTime().date(), QTime(0, 0, 2)));
+			Assert::IsFalse(dueToday.isDueTomorrow());
+
+			Task dueTomorrow;
+			dueTomorrow.setEnd(QDateTime(
+				QDateTime::currentDateTime().date().addDays(1), QTime(0, 0, 2)));
+			Assert::IsTrue(dueTomorrow.isDueTomorrow());
+			
+			Task alreadyOverdue;
+			alreadyOverdue.setEnd(QDateTime(QDate(2010, 1, 1), QTime(1, 1, 2)));
+			Assert::IsFalse(alreadyOverdue.isDueTomorrow());
 		}
 
 		TEST_METHOD(TaskIsAnEvent) {
@@ -1171,16 +1979,6 @@ namespace StorageTests {
 			task.setEndDate(QDate(2100, 12, 31));
 			Assert::IsFalse(task.isDueOn(QDate::currentDate()));
 		}
-		/*
-		TEST_METHOD(TaskReturnStringDateDifference) {
-			Task task;
-			QDateTime overdueLongAgo(QDate(1900, 1, 1), QTime(0, 0, 0));
-			QDateTime dueInFarFuture(QDate(2100, 1, 1), QTime(23, 59, 59));
-			QDateTime dueTomorrow(QDateTime::currentDateTime().addDays(1));
-			QDateTime overdueYesterday(QDateTime::currentDateTime().addDays(-1));
-
-			task.setEnd(overdueLongAgo);
-		}*/
 
 		/********** Tests for STORAGE class **********/
 		
@@ -1193,10 +1991,12 @@ namespace StorageTests {
 
 			Assert::AreEqual(storage->searchByDescription("description").size(), 4);
 			Assert::AreEqual(storage->searchByDescription("DESCRIPTION").size(), 4);
-			Assert::AreEqual(storage->searchByDescription("description", Qt::CaseSensitive).size(), 2);
-			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByDescription("description", 
+				Qt::CaseSensitive).size(), 2);
+			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN", 
+				Qt::CaseSensitive).size(), 1);
 			Assert::AreEqual(storage->searchByDescription("DeScRiPtIoN").size(), 4);
-			Assert::AreEqual(storage->searchByDescription("nonexistent description").size(), 0);
+			Assert::AreEqual(storage->searchByDescription("nonexistent").size(), 0);
 		}
 		
 		TEST_METHOD(StorageSearchByTag) {
@@ -1208,31 +2008,23 @@ namespace StorageTests {
 			Tasuke::instance().runCommand("add task5 #tag4 #tag4 #tag4");
 
 			// Case sensitive tests
-			Assert::AreEqual(storage->searchByTag("tagcase", Qt::CaseSensitive).size(), 1);
-			Assert::AreEqual(storage->searchByTag("TAGCASE", Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByTag("tagcase", 
+				Qt::CaseSensitive).size(), 1);
+			Assert::AreEqual(storage->searchByTag("TAGCASE", 
+				Qt::CaseSensitive).size(), 1);
 
-			Assert::AreEqual(storage->searchByTag("tag1", Qt::CaseSensitive).size(), 3);
-			Assert::AreEqual(storage->searchByTag("tag3", Qt::CaseSensitive).size(), 2);
+			Assert::AreEqual(storage->searchByTag("tag1", 
+				Qt::CaseSensitive).size(), 3);
+			Assert::AreEqual(storage->searchByTag("tag3", 
+				Qt::CaseSensitive).size(), 2);
 			Assert::AreEqual(storage->searchByTag("tag4").size(), 1);
 
 			// Case insensitive tests
 			Assert::AreEqual(storage->searchByTag("TAGCASE").size(), 2);
 			Assert::AreEqual(storage->searchByTag("tagcase").size(), 2);
 		}
-		/*
-		TEST_METHOD(StorageSearchByBeginDate) {
 		
-		}
-
-		TEST_METHOD(StorageSearchByEndDate) {
-		
-		}
-
-		TEST_METHOD(StorageSearchByTimeInterval) {
-
-		}*/
-		
-		TEST_METHOD(StorageSortByEndDescription) {
+		TEST_METHOD(StorageSortByDescription) {
 			QList<Task> correct;
 
 			Task task1("aaaa");
@@ -1256,32 +2048,32 @@ namespace StorageTests {
 
 			Assert::IsTrue(storage->getTasks() == correct);
 		}
-		/*
-		TEST_METHOD(StorageSortByDone) {
+
+		TEST_METHOD(StorageSortByEndDate) {
 			QList<Task> correct;
 
-			Task task4("task3");
-			task4.markDone();
-			correct.push_back(task4);
-			Task task3("task4");
-			task3.setDone(true);
-			correct.push_back(task3);
-			Task task1("task2");
-			task1.setDone(false);
-			Task task2("task1");
+			Task task1("task1"), task2("task2"), task3("task3"), task4("task4"), task5("task5");
+			task1.setEnd(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
+			task2.setEnd(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 1)));
+			task3.setEnd(QDateTime(QDate(2010, 1, 1), QTime(23, 59, 59)));
+			task4.setEnd(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
+			task5.setEnd(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 1)));
+
+			correct.push_back(task1);
 			correct.push_back(task2);
+			correct.push_back(task3);
+			correct.push_back(task4);
+			correct.push_back(task5);
 
-			Tasuke::instance().runCommand("add task4");
-			Tasuke::instance().runCommand("done 1");
-			Tasuke::instance().runCommand("add task3");
-			Tasuke::instance().runCommand("add task2");
-			Tasuke::instance().runCommand("done 1");
-			Tasuke::instance().runCommand("add task1");
-
-			storage->sortByDone();
+			storage->addTask(task5);
+			storage->addTask(task4);
+			storage->addTask(task3);
+			storage->addTask(task2);
+			storage->addTask(task1);
+			storage->sortByEndDate();
 
 			Assert::IsTrue(storage->getTasks() == correct);
-		}*/
+		}
 	};
 }
 	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\UnitTests\StorageTests.cpp

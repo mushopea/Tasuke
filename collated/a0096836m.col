@@ -7,117 +7,165 @@
 	 */
 
 
+#include <cassert>
+#include "Tasuke.h"
+#include "Constants.h"
+#include "Commands.h"
+#include "Interpreter.h"
+
+// Constructor for ICommand
 ICommand::ICommand() {
 	hasRun = false;
 }
 
+// Destructor for ICommand
 ICommand::~ICommand() {
 
 }
 
+// This ensures a command has only been run once unless undone
 void ICommand::run() {
 	assert(hasRun == false);
 	hasRun = true;
 }
 
+// This ensures a command can only be undone after being run
 void ICommand::undo() {
 	assert(hasRun == true);
 	hasRun = false;
 }
 
+// Constructor for AddCommand. Takes in a task object to add
 AddCommand::AddCommand(Task& _task) : task(_task) {
 
 }
 
+// Descrutor for AddCommand
 AddCommand::~AddCommand() {
 
 }
-	
+
+// Adds the task given in the constructor
 void AddCommand::run() {
+	ICommand::run();
+
 	task = Tasuke::instance().getStorage().addTask(task);
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
 	Tasuke::instance().highlightTask(task.getId());
-	Tasuke::instance().showMessage(QString("Added \"%1\"").arg(task.getDescription()));
 	Interpreter::setLast(task.getId()+1);
 }
+
+// Undos adding the task.
 void AddCommand::undo() {
+	ICommand::undo();
+
 	Tasuke::instance().getStorage().removeTask(task.getId());
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().showMessage(QString("Undone add \"%1\"").arg(task.getDescription()));
 }
 
+// Constructor for RemoveCommand. Takes in an id of a task to remove
 RemoveCommand::RemoveCommand(int _id) {
 	id = _id;
 	task = Tasuke::instance().getStorage().getTask(id);
 }
 
+// Destructor for RemoveCommand..
 RemoveCommand::~RemoveCommand() {
 
 }
-	
+
+// Removes the task with the id given in the constructor
 void RemoveCommand::run() {
+	ICommand::run();
+
 	Tasuke::instance().getStorage().removeTask(id);
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().showMessage(QString("Removed \"%1\"").arg(task.getDescription()));
-}
-void RemoveCommand::undo() {
-	Tasuke::instance().getStorage().addTask(task);
-	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().showMessage(QString("Undone remove \"%1\"").arg(task.getDescription()));
 }
 
+// Undoes removing the task
+void RemoveCommand::undo() {
+	ICommand::undo();
+
+	Tasuke::instance().getStorage().addTask(task);
+	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
+}
+
+// Constructor for EditCommand. Takes in an id of a task to replace with the 
+// task given.
 EditCommand::EditCommand(int _id, Task& _task) : id(_id), task(_task) {
 	
 }
+
+// Destructor for EditCommand
 EditCommand::~EditCommand() {
 
 }
 
+// Replaces the task with the id with the task given in the constructor
 void EditCommand::run() {
+	ICommand::run();
+
 	old = Tasuke::instance().getStorage().getTask(id);
 	task = Tasuke::instance().getStorage().editTask(id, task);
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
 	Tasuke::instance().highlightTask(task.getId());
-	Tasuke::instance().showMessage(QString("Edited \"%1\"").arg(task.getDescription()));
 	Interpreter::setLast(task.getId()+1);
 }
+
+// Undos the edit
 void EditCommand::undo() {
+	ICommand::undo();
+
 	Tasuke::instance().getStorage().editTask(task.getId(), old);
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
 	Tasuke::instance().highlightTask(old.getId());
-	Tasuke::instance().showMessage(QString("Undone edit \"%1\"").arg(task.getDescription()));
 	Interpreter::setLast(task.getId()+1);
 }
 
+// Constructor for ClearCommand
 ClearCommand::ClearCommand() {
 
 }
+
+// Desctructor for ClearCommand
 ClearCommand::~ClearCommand() {
 
 }
 
+// Clears all tasks in Storage
 void ClearCommand::run() {
+	ICommand::run();
+
 	old = QList<Task>(Tasuke::instance().getStorage().getTasks());
 	Tasuke::instance().getStorage().clearAllTasks();
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().showMessage(QString("Cleared all tasks"));
 }
+
+// Undos clearing all tasks
 void ClearCommand::undo() {
+	ICommand::undo();
+
 	for (int i=0; i<old.size(); i++) {
 		Tasuke::instance().getStorage().addTask(old[i]);
 	}
 	Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	Tasuke::instance().showMessage(QString("Undone clear all tasks"));
 }
 
+// Constructor for DoneCommand. Takes in an id of the task to mark and a bool
+// to mark as done or undone. Defaults to done
 DoneCommand::DoneCommand(int _id, bool _done) : id(_id), done(_done) {
 
 }
+
+// Desctuctor for DoneCommand.
 DoneCommand::~DoneCommand() {
 
 }
 	
+// Marks the task with the id given in the constructor as done/undone
 void DoneCommand::run() {
+	ICommand::run();
+
 	Task task = Tasuke::instance().getStorage().getTask(id);
 	task.setDone(done);
 	task = Tasuke::instance().getStorage().editTask(id, task);
@@ -127,9 +175,12 @@ void DoneCommand::run() {
 	if (!done) {
 		Tasuke::instance().highlightTask(task.getId());
 	}
-	Tasuke::instance().showMessage(QString("Marked \"%1\" as %2").arg(task.getDescription(), doneUndone));
 }
+
+// Undos marking the task as done/undone
 void DoneCommand::undo() {
+	ICommand::undo();
+
 	Task task = Tasuke::instance().getStorage().getTask(id);
 	task.setDone(!done);
 	task = Tasuke::instance().getStorage().editTask(id, task);
@@ -139,24 +190,32 @@ void DoneCommand::undo() {
 	if (!done) {
 		Tasuke::instance().highlightTask(task.getId());
 	}
-	Tasuke::instance().showMessage(QString("Undone mark \"%1\" as %2").arg(task.getDescription(), doneUndone));
 }
 
+// Constructor for CompositeCommand. Takes in a list of ICommands to run as a
+// single ICommand. The commands will be run in the order given.
 CompositeCommand::CompositeCommand(QList< QSharedPointer<ICommand> > _commands) : commands(_commands) {
 	
 }
 
+// Destructor for CompositeCommand.
 CompositeCommand::~CompositeCommand() {
 	
 }
 
+// Runs all the ICommands in the order given in the constructor.
 void CompositeCommand::run() {
+	ICommand::run();
+
 	foreach(QSharedPointer<ICommand> command, commands) {
 		command->run();
 	}
 }
 
+// Undos all the ICommands in the reverse order given in the constructor.
 void CompositeCommand::undo() {
+	ICommand::undo();
+
 	// must be in reverse order
 	for(int i=commands.size()-1; i>=0; i--) {
 		commands[i]->undo();
@@ -173,6 +232,11 @@ void CompositeCommand::undo() {
 	 */
 
 
+#ifndef COMMANDS_H
+#define COMMANDS_H
+
+#include "Task.h"
+
 // This is an interface for all user commands. The intended method to intialize
 // a ICommand instance is through the Interpreter.
 class ICommand {
@@ -186,6 +250,7 @@ public:
 	virtual void undo();
 };
 
+// This command adds a task to storage.
 class AddCommand : public ICommand {
 private:
 	Task task;
@@ -197,6 +262,7 @@ public:
 	void undo() override;
 };
 
+// This command removes a task from storage.
 class RemoveCommand : public ICommand {
 private:
 	int id;
@@ -209,6 +275,7 @@ public:
 	void undo() override;
 };
 
+// This command edits a task in storage.
 class EditCommand : public ICommand {
 private:
 	int id;
@@ -222,6 +289,7 @@ public:
 	void undo() override;
 };
 
+// This command clears a;; tasks in storage.
 class ClearCommand : public ICommand {
 private:
 	QList<Task> old;
@@ -233,6 +301,7 @@ public:
 	void undo() override;
 };
 
+// This command marks a task in storage as done/undone
 class DoneCommand : public ICommand {
 private:
 	int id;
@@ -245,6 +314,7 @@ public:
 	void undo() override;
 };
 
+// This command is made of other commands
 class CompositeCommand : public ICommand {
 private:
 	QList< QSharedPointer<ICommand> > commands;
@@ -265,37 +335,138 @@ public:
 
 
 	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+	 */
+
+
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#include <QStringList>
+#include <QList>
+#include <QTime>
+#include <QDate>
+#include "Task.h"
+
+// General app metadata
+const char* const TASUKE = "Tasuke";
+const char* const NAME_ORGANIZATION = TASUKE;
+const char* const NAME_APPLICATION = TASUKE;
+const char* const SHARED_MEMORY_KEY = TASUKE;
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+	 */
+
+
+// Log messages for Tasuke
+const char* const MSG_TASUKE_STARTING_UP = "Tasuke starting up!";
+const char* const MSG_TASUKE_ALREADY_RUNNING =  "Tasuke is already running! Open Tasuke using ctrl+space";
+const char* const MSG_TASUKE_CREATED = "Tasuke object created";
+const char* const MSG_TASUKE_DESTROYED = "Tasuke object destroyed";
+const char* const MSG_TASUKE_LOADING_DICTIONARY = "Loading dictionary";
+const char* const MSG_TASUKE_LOADING_FONTS = "Loading fonts";
+const char* const MSG_TASUKE_STORAGE_CHANGED = "Storage changed";
+const char* const MSG_TASUKE_COMMAND_STACK_PUSH =  "Pushing command to history stack";
+const char* const MSG_TASUKE_UNDO = "Undoing command";
+const char* const MSG_TASUKE_NO_UNDO ="Nothing to undo";
+const char* const MSG_TASUKE_REDO = "Redoing command";
+const char* const MSG_TASUKE_NO_REDO = "Nothing to redo";
+
+#define MSG_TASUKE_ERROR_PARSING(message) \
+	"Error parsing command" << QString(message).toStdString()
+#define MSG_TASUKE_SHOWING_MESSAGE(message) \
+	"Showing message: " << QString(message).toStdString()
+#define MSG_TASUKE_UPDATING_TASKWINDOW(tasks) \
+	"Updating task window with " << QString(tasks).toStdString() << " tasks"
+#define MSG_TASUKE_HIGHLIGHT_TASK(id) \
+	"Highlighting task with id  " << id
+
+// Log messages for Interpretter
+#define MSG_INTERPRETER_INTERPRETTING(command) \
+	"Interpretting " << command.toStdString()
+
+// Log messages for HotKeyManager
+const char* const MSG_HOTKEYMANAGER_CREATED = "HotKeyManager created";
+const char* const MSG_HOTKEYMANAGER_DESTROYED = "HotKeyManager destroyed";
+
+#define MSG_HOTKEYMANAGER_HOTKEY_PRESSED(key) \
+	"Hot key pressed with keycode " << QString::number((int)key).toStdString()
+
+
+// Log messages for SystemTrayWidget
+const char* const MSG_SYSTEMTRAYWIDGET_CREATED = "SystemTrayWidget created";
+const char* const MSG_SYSTEMTRAYWIDGET_DESTROYED = "SystemTrayWidget destroyed";
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Constants.h
+
+
+
+
+
+	/**
 	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Exceptions.cpp
 	 */
 
 
-const char* EXCEPTION_NULL_PTR = "attempt to dereference null pointer";
-const char* EXCEPTION_BAD_COMMAND = "bad command given";
-const char* EXCEPTION_NOT_IMPLEMENTED = "not implemented";
-const char* EXCEPTION_TOO_MANY_TAGS = "exceeded tag limit";
+#include <QString>
+#include "Constants.h"
+#include "Exceptions.h"
 
 // This method returns a user readable error for the ExceptionNullPtr
 // exception
-const char* ExceptionNullPtr::what() const throw()
-{
+const char* ExceptionNullPtr::what() const throw() {
 	return EXCEPTION_NULL_PTR;
+}
+
+// Constructor for ExceptionBadCommand. It takes in the error message as well as
+// the location in the command the error is referring to. If it is the whole
+// command the location should be empty string. The location defaults to empty
+// string
+ExceptionBadCommand::ExceptionBadCommand(QString _message, QString _part)
+	: message(_message), part(_part) {
+
 }
 
 // This method returns a user readable error for the ExceptionBadCommand
 // exception
-const char* ExceptionBadCommand::what() const throw()
-{
-	return EXCEPTION_BAD_COMMAND;
+const char* ExceptionBadCommand::what() const throw() {
+	return qstrdup(qPrintable(message));
 }
 
-const char* ExceptionNotImplemented::what() const throw()
-{
+// This methods returns the location 
+QString ExceptionBadCommand::where() const {
+	return part;
+}
+
+// This method returns a user readable error for the ExceptionNotImplemented
+// exception
+const char* ExceptionNotImplemented::what() const throw() {
 	return EXCEPTION_NOT_IMPLEMENTED;
 }
 
-const char* ExceptionTooManyTags::what() const throw()
-{
-	return EXCEPTION_TOO_MANY_TAGS;
+// This method returns a user readable error for the ExceptionNoMoreTasks
+// exception
+const char* ExceptionNoMoreTasks::what() const throw() {
+	return EXCEPTION_NO_MORE_TASKS;
+}
+
+// This method returns a user readable error for the ExceptionIconsetOutOfRange
+// exception
+const char* ExceptionIconsetOutOfRange::what() const throw() {
+	return EXCEPTION_ICONSET_OUT_OF_RANGE;
+}
+
+// This method returns a user readable error for the ExceptionThemeOutOfRange
+// exception
+const char* ExceptionThemeOutOfRange::what() const throw() {
+	return EXCEPTION_THEME_OUT_OF_RANGE;
 }
 	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Exceptions.cpp
 
@@ -308,27 +479,46 @@ const char* ExceptionTooManyTags::what() const throw()
 	 */
 
 
+#ifndef EXCEPTIONS_H
+#define EXCEPTIONS_H
+
+#include <exception>
+#include <QString>
+
 // This exception is thrown only during programming errors. If this happens,
 // then it indicates a bug in the code
-class ExceptionNullPtr : public std::exception
-{
+class ExceptionNullPtr : public std::exception {
 	virtual const char *what() const throw();
 };
 
 // This exception is thrown when an invalid command is input by the user
-class ExceptionBadCommand : public std::exception
-{
+class ExceptionBadCommand : public std::exception {
+private:
+	QString message;
+	QString part;
+public:
+	ExceptionBadCommand(QString _message, QString _part = "");
+	virtual const char *what() const throw();
+	QString where() const;
+};
+
+// This exception is only used in development for unimplemented features
+class ExceptionNotImplemented : public std::exception {
 	virtual const char *what() const throw();
 };
 
-class ExceptionNotImplemented : public std::exception
-{
+// This exception is thrown when there are no upcoming tasks.
+class ExceptionNoMoreTasks : public std::exception {
 	virtual const char *what() const throw();
 };
 
-// This exception is thrown when the user tries to add too many tags.
-class ExceptionTooManyTags : public std::exception
-{
+// This exception is thrown when iconset loaded from settings is out of range
+class ExceptionIconsetOutOfRange : public std::exception {
+	virtual const char *what() const throw();
+};
+
+// This exception is thrown when theme loaded from settings is out of range
+class ExceptionThemeOutOfRange : public std::exception {
 	virtual const char *what() const throw();
 };
 
@@ -345,21 +535,34 @@ class ExceptionTooManyTags : public std::exception
 	 */
 
 
+#include <glog/logging.h>
+#include "Constants.h"
+#include "Tasuke.h"
+#include "HotKeyManager.h"
+
+// Constructor for HotKeyManager. Takes in a parent object for
+// memory hierachy. Defaults to null.
 HotKeyManager::HotKeyManager(QObject *parent) : QObject(parent) {
+	LOG(INFO) << MSG_HOTKEYMANAGER_CREATED;
+
 	hotKeyThread = new HotKeyThread(this);
 	connect(hotKeyThread, SIGNAL(hotKeyPress(KeyCombination)), this, SLOT(handleHotKeyPress(KeyCombination)), Qt::QueuedConnection);
 	hotKeyThread->start();
 }
 
+// Destructor for HotKeyManager
 HotKeyManager::~HotKeyManager() {
+	LOG(INFO) << MSG_HOTKEYMANAGER_DESTROYED;
+
 	if (hotKeyThread != nullptr) {
 		hotKeyThread->stop();
 		delete hotKeyThread;
 	}
 }
 
+// Method activates when HotKeyThread signals the manager
 void HotKeyManager::handleHotKeyPress(KeyCombination key) {
-	LOG(INFO) << "Hot key pressed with keycode " << (int)key;
+	LOG(INFO) << MSG_HOTKEYMANAGER_HOTKEY_PRESSED(key);
 
 	if (key == KeyCombination::CTRL_SPACE) {
 		Tasuke::instance().toggleInputWindow();
@@ -380,6 +583,13 @@ void HotKeyManager::handleHotKeyPress(KeyCombination key) {
 	 */
 
 
+#ifndef HOTKEYMANAGER_H
+#define HOTKEYMANAGER_H
+
+#include <QObject>
+#include "HotKeyThread.h"
+
+// Manages the hotkey thread and signals Tasuke about user hotkeys.
 class HotKeyManager : public QObject {
 	Q_OBJECT
 
@@ -407,7 +617,9 @@ private:
 	 */
 
 
-const char * const METATYPE_KEYCOMIBNATION = "KeyCombination";
+#include <QSysInfo>
+#include "HotKeyThread.h"
+#include "Constants.h"
 
 #ifdef Q_OS_WIN
 
@@ -417,37 +629,49 @@ const char * const METATYPE_KEYCOMIBNATION = "KeyCombination";
 #define MAGIC_NUM 1128
 #define WM_END_THREAD (WM_USER+2)
 
+// Constructor for HotKeyThread. Takes in a parent object for memory hierachy.
+// Defaults to null if parent not given.
 HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
 	qRegisterMetaType<KeyCombination>(METATYPE_KEYCOMIBNATION);
 	pid = 0;
 }
 
+// Descrtuctor for HotKeyThread
 HotKeyThread::~HotKeyThread() {
 
 }
 
+// Stop running the thread
 void HotKeyThread::stop() {
 	if (pid != 0) {
 		::PostThreadMessage(pid, WM_END_THREAD, 0, 0);
 	}
 }
 
+// Run the thread. This thread is detached and blocks with a busy-wait loop
 void HotKeyThread::run() {
-	pid = ::GetCurrentThreadId();
+	pid = GetCurrentThreadId();
+
 	ATOM idCtrlSpace = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM));
 	ATOM idAltSpace = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+1));
 	ATOM idCtrlAltSpace = ::GlobalAddAtom(MAKEINTATOM(MAGIC_NUM+2));
-	::RegisterHotKey(NULL, idCtrlSpace, MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
-	::RegisterHotKey(NULL, idAltSpace, MOD_ALT | MOD_NOREPEAT, VK_SPACE);
-	::RegisterHotKey(NULL, idCtrlAltSpace, MOD_ALT | MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
 
+	RegisterHotKey(NULL, idCtrlSpace, MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
+	RegisterHotKey(NULL, idAltSpace, MOD_ALT | MOD_NOREPEAT, VK_SPACE);
+	RegisterHotKey(NULL, idCtrlAltSpace, MOD_ALT | MOD_CONTROL | MOD_NOREPEAT, VK_SPACE);
+
+	// busy-wait loop for hot key presses
 	MSG msg = {0};
-	while (::GetMessage(&msg, NULL, 0, 0)) {
+	while (GetMessage(&msg, NULL, 0, 0)) {
 		if (msg.message == WM_HOTKEY) {
+			// receive hotkey signal
+
+			// decode key
 			int keyCode = msg.lParam;
 			int key = keyCode >> 16;
 			int mod = keyCode & 0xFFFF;
 
+			// emit correct signals
 			if (mod == MOD_CONTROL && key == VK_SPACE) {
 				emit hotKeyPress(KeyCombination::CTRL_SPACE);
 			} else if (mod == MOD_ALT && key == VK_SPACE) {
@@ -456,67 +680,22 @@ void HotKeyThread::run() {
 				emit hotKeyPress(KeyCombination::CTRL_ALT_SPACE);
 			}
 		} else if (msg.message == WM_END_THREAD) {
+			// received signal to kill self 
 			break;
 		}
 	}
 
-	::UnregisterHotKey(NULL, idCtrlSpace);
-	::UnregisterHotKey(NULL, idAltSpace);
-	::UnregisterHotKey(NULL, idCtrlAltSpace);
-	::GlobalDeleteAtom(idCtrlSpace);
-	::GlobalDeleteAtom(idAltSpace);
-	::GlobalDeleteAtom(idCtrlAltSpace);
+	UnregisterHotKey(NULL, idCtrlSpace);
+	UnregisterHotKey(NULL, idAltSpace);
+	UnregisterHotKey(NULL, idCtrlAltSpace);
+
+	GlobalDeleteAtom(idCtrlSpace);
+	GlobalDeleteAtom(idAltSpace);
+	GlobalDeleteAtom(idCtrlAltSpace);
 }
 
 #endif
 
-#ifdef Q_OS_MAC
-
-#include "MacWindowActivator.h"
-#include "Tasuke.h"
-
-HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
-	qRegisterMetaType<KeyCombination>(METATYPE_KEYCOMIBNATION);
-
-}
-
-HotKeyThread::~HotKeyThread() {
-
-}
-
-void HotKeyThread::stop() {
-
-}
-
-void HotKeyThread::run() {
-    //handler
-    hotKeyFunction = NewEventHandlerUPP(hotKeyHandler);
-    EventTypeSpec eventType;
-    eventType.eventClass = kEventClassKeyboard;
-    eventType.eventKind = kEventHotKeyReleased;
-    InstallApplicationEventHandler(hotKeyFunction,1,&eventType,this,NULL);
-    //hotkey
-    UInt32 keyCode = kVK_Space;
-    EventHotKeyRef theRef = NULL;
-    EventHotKeyID keyID;
-    keyID.signature = 123; //arbitrary string
-    keyID.id = 1;
-    RegisterEventHotKey(keyCode, controlKey, keyID,GetApplicationEventTarget(), 0, &theRef);
-}
-
-OSStatus HotKeyThread::hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void *userData) {
-    WindowActivator::activate();
-    Tasuke::instance().getHotKeyManager().handleHotKeyPress(KeyCombination::CTRL_SPACE);
-    return noErr;
-}
-
-#endif
-
-#ifdef Q_OS_UNIX
-#ifndef Q_OS_MAC
-#error "your os is not supported"
-#endif
-#endif
 	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.cpp
 
 
@@ -528,17 +707,32 @@ OSStatus HotKeyThread::hotKeyHandler(EventHandlerCallRef nextHandler,EventRef th
 	 */
 
 
+#ifndef HOTKEYTHREAD_H
+#define HOTKEYTHREAD_H
+
+#include <QtGlobal>
+#include <QMetaType>
+#include <QThread>
+
+// Describes the keycombination pressed
 enum class KeyCombination {
 	CTRL_SPACE,
 	ALT_SPACE,
 	CTRL_ALT_SPACE
 };
 
+// Windows implementation using windows API
 #ifdef Q_OS_WIN
 
+// Do not define 'min()' and 'max()' macros breaking everything
+#define NOMINMAX
+// Do not define any windows API garbage in global scope
 #define WIN32_LEAN_AND_MEAN
+
 #include <Windows.h>
 
+// HotKeyThread detects user hotkey press.
+// Managed by HotKeyManager.
 class HotKeyThread : public QThread {
 	Q_OBJECT
 
@@ -557,31 +751,6 @@ private:
 	DWORD pid;
 };
 
-#else
-
-#include <Carbon/Carbon.h>
-
-class HotKeyThread : public QThread {
-	Q_OBJECT
-
-public:
-	HotKeyThread(QObject *parent);
-	~HotKeyThread();
-
-signals:
-	void hotKeyPress(KeyCombination);
-
-public slots:
-	void run();
-	void stop();
-	
-private:
-    EventHandlerUPP hotKeyFunction;
-    static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler, EventRef theEvent, void *userData);
-};
-
-#endif
-
 #endif
 
 	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.h
@@ -595,61 +764,87 @@ private:
 	 */
 
 
-int Interpreter::last = -1;
+#include <cassert>
+#include <glog/logging.h>
+#include <QApplication>
+#include <QString>
+#include <QStringList>
+#include <QMutexLocker>
+#include "Tasuke.h"
+#include "Commands.h"
+#include "Constants.h"
+#include "Exceptions.h"
+#include "Interpreter.h"
 
+// This private mutex and bool is only used by initFormats() for thread safety
+QMutex Interpreter::mutex;
 bool Interpreter::formatsAlreadyInit = false;
 
+// This private int stores the last task edited.
+int Interpreter::last = -1;
+
+// These private lists stores datetime formats generated by initFormats
 QStringList Interpreter::timeFormats;
 QStringList Interpreter::dateFormatsWithoutYear;
 QStringList Interpreter::dateFormats;
 QStringList Interpreter::dateTimeFormats;
 QStringList Interpreter::dateTimeFormatsWithoutYear;
 
+// These have am/pm in the format
 QStringList Interpreter::timeFormatsAp;
 QStringList Interpreter::dateTimeFormatsAp;
 QStringList Interpreter::dateTimeFormatsWithoutYearAp;
 
-QMutex Interpreter::mutex;
-
+// Setter for last id. This should is intended for commands to change
+// publicly
 void Interpreter::setLast(int _last) {
 	last = _last;
 }
 
+// Substitutes parts of command with understandable equivalents
+// and returns the new string. This should only be used by interpret()
 QString Interpreter::substitute(QString text) {
 	QString subbedText = text;
-	subbedText = subbedText.replace(" by ", " @ ");
-	subbedText = subbedText.replace(" at ", " @ ");
-	subbedText = subbedText.replace(" from ", " @ ");
-	subbedText = subbedText.replace(" on ", " @ ");
+	foreach(QRegExp regex, EQUIV_AT_REGEX) {
+		subbedText.replace(regex, EQUIV_AT_REPLACE);
+	}
 
-	subbedText = subbedText.replace(" \\by ", " by ");
-	subbedText = subbedText.replace(" \\at ", " at ");
-	subbedText = subbedText.replace(" \\from ", " from ");
-	subbedText = subbedText.replace(" \\on ", " on ");
-	subbedText = subbedText.replace(" \\to ", " to ");
-
-	subbedText = subbedText.replace(QRegExp("^do "), "add ");
-	subbedText = subbedText.replace(QRegExp("^create"), "add");
-	subbedText = subbedText.replace(QRegExp("^change"), "edit");
-	subbedText = subbedText.replace(QRegExp("^rm"), "remove");
-	subbedText = subbedText.replace(QRegExp("^delete"), "remove");
-	subbedText = subbedText.replace(QRegExp("^ls"), "show");
-	subbedText = subbedText.replace(QRegExp("^quit"), "exit");
-	subbedText = subbedText.replace(QRegExp("^search"), "show");
-	subbedText = subbedText.replace(QRegExp("^find"), "show");
+	for (int i=0; i<COMMANDS.size(); i++) {
+		foreach(QRegExp regex, EQUIV_COMMAND_REGEX[i]) {
+			subbedText.replace(regex, COMMANDS[i]);
+		}
+	}
 
 	return subbedText;
 }
 
-QString Interpreter::substituteForTimePeriod(QString text) {
+// Substitute parts of ranges with understandable equivalents
+// and returns the new string. This should only be used by methods
+// in interpreter that deal with ranges.
+QString Interpreter::substituteForRange(QString text) {
 	QString subbedText = text;
-	subbedText = subbedText.replace(" to ", " - ");
-	subbedText = subbedText.replace(" \\to ", " to ");
+	subbedText.replace(EQUIV_TO_REGEX, DELIMITER_DASH);
+	subbedText.remove(KEYWORD_BACKSLASH);
 
 	return subbedText;
 }
 
+// Substitute parts of descriptions with understandable equivalents
+// and returns the new string. This should only be used by methods
+// in interpreter that deal with descriptions
+QString Interpreter::substituteForDescription(QString text) {
+	QString subbedText = text;
+	subbedText.remove(KEYWORD_BACKSLASH);
+
+	return subbedText;
+}
+
+// Gets the date of the upcomming weekday. The input is an int, where
+// 1 = Monday, 7 = Sunday. The input must always be in range or else
+// a infinite loop occurs.
 QDate Interpreter::nextWeekday(int weekday) {
+	assert(weekday >= 1 && weekday <= 7);
+
 	QDate date = QDate::currentDate();
 	
 	while (date.dayOfWeek() != weekday) {
@@ -659,67 +854,56 @@ QDate Interpreter::nextWeekday(int weekday) {
 	return date;
 }
 
+// Substitute parts of dates with understandable equivalents and
+// returns the new string. This is used by interpretDate() to
+// undestand named dates and times
 QString Interpreter::substituteForDate(QString text) {
 	QString subbedText = text.toLower();
 
 	// strip commas
-	subbedText = subbedText.replace(QRegExp(",\\b"), "");
+	foreach(QRegExp regex, REMOVE_DATE_REGEX) {
+		subbedText.remove(regex);
+	}
 
-	// strip this, next and the
-	subbedText = subbedText.replace(QRegExp("\\bthis\\b"), "");
-	subbedText = subbedText.replace(QRegExp("\\bnext\\b"), "");
-	subbedText = subbedText.replace(QRegExp("\\bnthe\\b"), "");
-
-	// expand out abbrev
-	subbedText = subbedText.replace(QRegExp("\\b2day\\b"), "today");
-	subbedText = subbedText.replace(QRegExp("\\btmr\\b"), "tomorrow");
-	subbedText = subbedText.replace(QRegExp("\\btml\\b"), "tomorrow");
-	subbedText = subbedText.replace(QRegExp("\\bmon\\b"), "monday");
-	subbedText = subbedText.replace(QRegExp("\\btue\\b"), "tuesday");
-	subbedText = subbedText.replace(QRegExp("\\btues\\b"), "tuesday");
-	subbedText = subbedText.replace(QRegExp("\\bwed\\b"), "wednesday");
-	subbedText = subbedText.replace(QRegExp("\\bthu\\b"), "thursday");
-	subbedText = subbedText.replace(QRegExp("\\bthur\\b"), "thursday");
-	subbedText = subbedText.replace(QRegExp("\\bthurs\\b"), "thursday");
-	subbedText = subbedText.replace(QRegExp("\\bfri\\b"), "friday");
-	subbedText = subbedText.replace(QRegExp("\\bsat\\b"), "saturday");
-	subbedText = subbedText.replace(QRegExp("\\bsun\\b"), "sunday");
+	// expand out abbreviations
+	subbedText.replace(DAY_2DAY_REGEX, DAY_TODAY);
+	subbedText.replace(DAY_TMR_REGEX, DAY_TOMORROW);
+	subbedText.replace(DAY_TML_REGEX, DAY_TOMORROW);
+	subbedText.replace(DAY_MON_REGEX, DAY_MONDAY);
+	subbedText.replace(DAY_TUE_REGEX, DAY_TUESDAY);
+	subbedText.replace(DAY_TUES_REGEX, DAY_TUESDAY);
+	subbedText.replace(DAY_WED_REGEX, DAY_WEDNESDAY);
+	subbedText.replace(DAY_THU_REGEX, DAY_THURSDAY);
+	subbedText.replace(DAY_THUR_REGEX, DAY_THURSDAY);
+	subbedText.replace(DAY_THURS_REGEX, DAY_THURSDAY);
+	subbedText.replace(DAY_FRI_REGEX, DAY_FRIDAY);
+	subbedText.replace(DAY_SAT_REGEX, DAY_SATURDAY);
+	subbedText.replace(DAY_SUN_REGEX, DAY_SUNDAY);
 
 	// today, tomorrow etc.
-	subbedText = subbedText.replace(QRegExp("\\byesterday\\b"), QDate::currentDate().addDays(-1).toString("dd/MM/yyyy"));
-	subbedText = subbedText.replace(QRegExp("\\btoday\\b"), QDate::currentDate().toString("dd/MM/yyyy"));
-	subbedText = subbedText.replace(QRegExp("\\btomorrow\\b"), QDate::currentDate().addDays(1).toString("dd/MM/yyyy"));
-	subbedText = subbedText.replace(QRegExp("\\bday after tomorrow\\b"), QDate::currentDate().addDays(2).toString("dd/MM/yyyy"));
+	subbedText.replace(DAY_YESTERDAY_REGEX, DATE_YESTERDAY);
+	subbedText.replace(DAY_TODAY_REGEX, DATE_TODAY);
+	subbedText.replace(DAY_TOMORROW_REGEX, DATE_TOMORROW);
+	subbedText.replace(DAY_AFTER_TOMORROW_REGEX, DATE_AFTER_TOMORROW);
 
 	// weekdays
-	if (subbedText.contains("monday")) {
-		subbedText = subbedText.replace("monday", nextWeekday(1).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("tuesday")) {
-		subbedText = subbedText.replace("tuesday", nextWeekday(2).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("wednesday")) {
-		subbedText = subbedText.replace("wednesday", nextWeekday(3).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("thursday")) {
-		subbedText = subbedText.replace("thursday", nextWeekday(4).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("friday")) {
-		subbedText = subbedText.replace("friday", nextWeekday(5).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("saturday")) {
-		subbedText = subbedText.replace("saturday", nextWeekday(6).toString("dd/MM/yyyy"));
-	} else if (subbedText.contains("sunday")) {
-		subbedText = subbedText.replace("sunday", nextWeekday(7).toString("dd/MM/yyyy"));
+	for (int i=0; i<DAY_NAMES.size(); i++) {
+		subbedText.replace(DAY_NAMES[i],
+			nextWeekday(i+1).toString(DATE_FORMAT));
 	}
 
 	// time of days
-	subbedText = subbedText.replace(QRegExp("\\bdawn\\b"), QTime(6,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bmorning\\b"), QTime(10,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bnoon\\b"), QTime(12,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bafternoon\\b"), QTime(18,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bevening\\b"), QTime(20,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bnight\\b"), QTime(22,0).toString("hh:mm ap"));
-	subbedText = subbedText.replace(QRegExp("\\bmidnight\\b"), QTime(23,59).toString("hh:mm ap"));
+	for (int i=0; i<TIME_NAMED.size(); i++) {
+		subbedText.replace(TIME_NAMES_REGEX[i], TIME_NAMED[i]);
+	}
 
 	return subbedText;
 }
 
+// Decompose a command so that it is easy to parse
+// throws ExceptionBadCommand if unable to parse the string
+// It returns a QHash that has keys for delimited parts of the
+// command
 QHash<QString, QString> Interpreter::decompose(QString text) {
 	QStringList tokens = text.split(" ");
 	QString current = "";
@@ -727,34 +911,52 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 	QHash<QString, QString> retVal;
 
 	for (int i=0; i<tokens.size(); i++) {
-		if (tokens[i].size() > 0 && (tokens[i][0] == '@' || tokens[i][0] == '#' || tokens[i] == "-@" || tokens[i].startsWith("-#"))) {
+		if (tokens[i].size() > 0 && (tokens[i][0] == CHAR_DELIMITER_AT
+			|| tokens[i][0] == CHAR_DELIMITER_HASH
+			|| tokens[i] == DELIMITER_DASH_AT
+			|| tokens[i].startsWith(DELIMITER_DASH_HASH))) {
 			current = tokens[i];
+			expectNewDelimiter = false;
 
-			if (tokens[i][0] == '@') {
+			if (tokens[i][0] == CHAR_DELIMITER_AT) {
+				// reach @ delimieter
 				current = tokens[i][0];
 				tokens[i].remove(0,1);
 
 				if (retVal.contains(current) == true) {
-					throw ExceptionBadCommand();
+					throw ExceptionBadCommand(ERROR_MULTIPLE_DATES, WHERE_DATE);
 				}
-			} else if (tokens[i][0] == '#') {
+			} else if (tokens[i][0] == CHAR_DELIMITER_HASH) {
+				// reach # delimiter
 				tokens[i].remove(0,1);
 				expectNewDelimiter = true;
-			} else if (tokens[i] == "-@") {
+
+				if (tokens[i].isEmpty()) {
+					throw ExceptionBadCommand(ERROR_TAG_NO_NAME, WHERE_TAG);
+				}
+			} else if (tokens[i] == DELIMITER_DASH_AT) {
+				// reach -@ delimiter
 				tokens[i].remove(0,2);
 				expectNewDelimiter = true;
-			} else if (tokens[i].startsWith("-#")) {
+			} else if (tokens[i].startsWith(DELIMITER_DASH_HASH)) {
+				// reach -# delimiter
 				tokens[i].remove(0,2);
 				expectNewDelimiter = true;
+
+				if (tokens[i].isEmpty()) {
+					throw ExceptionBadCommand(ERROR_TAG_REMOVE_NO_NAME,
+						WHERE_TAG);
+				}
 			}
 		} else {
+			// didn't expect this token here
 			if (expectNewDelimiter) {
-				throw ExceptionBadCommand();
+				throw ExceptionBadCommand(ERROR_DONT_KNOW(tokens[i]), 
+					WHERE_DESCRIPTION);
 			}
 		}
 
-		expectNewDelimiter = false;
-
+		// add token to correct key
 		QString newVal =  tokens[i];
 		QString temp = retVal[current];
 		if (temp.isEmpty() == false) {
@@ -766,6 +968,9 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 	return retVal;
 }
 
+// Removes anything before the text in the text. This is a helper
+// function used by many methods in interpreter to strip the command
+// keyword from the command
 QString Interpreter::removeBefore(QString text, QString before) {
 	QString retVal = text;
 	int pos = retVal.indexOf(before);
@@ -777,75 +982,68 @@ QString Interpreter::removeBefore(QString text, QString before) {
 	return retVal;
 }
 
+// Trys to guess the type of the command.
+// If the type is cannot be determined return COMMAND_NIL.
+// Defaults to perform substitutions but can be disabled
+// Returns the type of the command in the form of a string
+// The result here affects how the command is interpreted
+// and the feedback given in tooltip widget
 QString Interpreter::getType(QString commandString, bool doSub) {
 	if (doSub) {
 		commandString = substitute(commandString);
 	}
-
-	QStringList delimiters;
-	QStringList typeKeywords;
-
-	delimiters << "@";
-	delimiters << "#";
-	delimiters << "-";
-
-	typeKeywords << "add";
-	typeKeywords << "edit";
-	typeKeywords << "remove";
-	typeKeywords << "show";
-	typeKeywords << "hide";
-	typeKeywords << "done";
-	typeKeywords << "undone";
-	typeKeywords << "undo";
-	typeKeywords << "redo";
-	typeKeywords << "clear";
-	typeKeywords << "help";
-	typeKeywords << "about";
-	typeKeywords << "settings";
-	typeKeywords << "exit";
 	
 	QString temp = commandString.trimmed();
-	
-	for (int i=0; i<delimiters.size(); i++) {
-		temp = temp.split(delimiters[i])[0];
+
+	foreach(QString delimiter, DELIMITERS) {
+		temp = temp.split(delimiter)[0];
 	}
+
 	QStringList tokens = temp.split(' ');
-	for (int i=0; i<tokens.size(); i++) {
-		for (int j=0; j<typeKeywords.size(); j++) {
-			if (tokens[i] == typeKeywords[j]) {
-				return typeKeywords[j];
+	foreach(QString token, tokens) {
+		foreach(QString keyword, COMMANDS) {
+			if (token == keyword) {
+				return keyword;
 			}
 		}
 	}
 
-	return "";
+	return COMMAND_NIL;
 }
 
-// This static helper function returns an instance of a ICommand that represents
-// the user's command. The caller must clean up using delete.
+// This static helper function returns an instance of a ICommand that
+// represents the user's command. The caller must clean up using delete. Takes
+// in the user input and a boolean dry. If dry is true, nothing is actually 
+// done. defaults to false. throws ExceptionBadCommand if unable to parse
+// Parsing commands that utilize dates may take some time at the start because
+// the interpreter must wait for the thread generating date formats
+// to finish before running.
 ICommand* Interpreter::interpret(QString commandString, bool dry) {
-	LOG(INFO) << "Interpretting " << commandString.toStdString();
+	LOG(INFO) << MSG_INTERPRETER_INTERPRETTING(commandString);
 
 	commandString = substitute(commandString);
 
 	QString commandType = getType(commandString, false);
 
-	if (commandType == "add") {
+	// these commands need to be parsed if valid
+	if (commandType == COMMAND_NIL) {
+		throw ExceptionBadCommand(ERROR_DONT_UNDERSTAND);
+	} else if (commandType == COMMAND_ADD) {
 		return createAddCommand(commandString);
-	} else if (commandType == "remove") {
+	} else if (commandType == COMMAND_REMOVE) {
 		return createRemoveCommand(commandString);
-	} else if (commandType == "edit") {
+	} else if (commandType == COMMAND_EDIT) {
 		return createEditCommand(commandString);
-	} else if (commandType == "done") {
+	} else if (commandType == COMMAND_DONE) {
 		return createDoneCommand(commandString);
-	} else if (commandType == "undone") {
+	} else if (commandType == COMMAND_UNDONE) {
 		return createUndoneCommand(commandString);
-	} else if (commandType == "clear") {
+	} else if (commandType == COMMAND_CLEAR) {
 		return createClearCommand(commandString);
-	}
-
-	if (commandType == "") {
-		throw ExceptionBadCommand();
+	} else if (commandType == COMMAND_UNDO) {
+		doUndo(commandString, dry);
+	} else if (commandType == COMMAND_REDO) {
+		doRedo(commandString, dry);
 	}
 	
 	// if this was a dry run, don't actually do anything
@@ -853,46 +1051,56 @@ ICommand* Interpreter::interpret(QString commandString, bool dry) {
 		return nullptr;
 	}
 
-	if (commandType == "show") {
+	// these commands are always valid
+	if (commandType == COMMAND_SHOW) {
 		doShow(commandString);
-	} else if (commandType == "hide") {
+	} else if (commandType == COMMAND_HIDE) {
 		doHide();
-	} else if (commandType == "undo") {
-		doUndo(commandString);
-	} else if (commandType == "redo") {
-		doRedo(commandString);
-	} else if (commandType == "help") {
+	} else if (commandType == COMMAND_HELP) {
 		doHelp();
-	} else if (commandType == "settings") {
+	} else if (commandType == COMMAND_SETTINGS) {
 		doSettings();
-	} else if (commandType == "about") {
+	} else if (commandType == COMMAND_NEXT) {
+		doNextFreeTime();
+	} else if (commandType == COMMAND_ABOUT) {
 		doAbout();
-	} else if (commandType == "exit") {
+	} else if (commandType == COMMAND_EXIT) {
 		doExit();
 	}
 
+	// don't need to return a command object
 	return nullptr;
 }
 
+// Creates an add command. Takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
+// Should only be used by interpret()
 ICommand* Interpreter::createAddCommand(QString commandString) {
-	commandString = removeBefore(commandString, "add");
+	commandString = removeBefore(commandString, COMMAND_ADD);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_ADD_EMPTY, WHERE_DESCRIPTION);
 	}
 
 	QHash<QString, QString> parts = decompose(commandString);
 	Task task;
 
-	task.setDescription(parts[""]);
+	QString description = parts[""];
+	description = substituteForDescription(description);
+
+	if (description.isEmpty()) {
+		throw ExceptionBadCommand(ERROR_NO_DESCRIPTION, WHERE_DESCRIPTION);
+	}
+
+	task.setDescription(description);
 
 	foreach(const QString &key, parts.keys()) {
 		QString value = parts[key].trimmed();
 
-		if (key.startsWith('#')) {
+		if (key.startsWith(DELIMITER_HASH)) {
 			task.addTag(value);
-		} else if (key == "@") {
+		} else if (key == DELIMITER_AT) {
 			TIME_PERIOD period = parseTimePeriod(value);
 			task.setBegin(period.begin);
 			task.setEnd(period.end);
@@ -902,12 +1110,15 @@ ICommand* Interpreter::createAddCommand(QString commandString) {
 	return new AddCommand(task);
 }
 
+// Creates an remove command. Takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
+// Should only be used by interpret()
 ICommand* Interpreter::createRemoveCommand(QString commandString) {
-	commandString = removeBefore(commandString, "remove");
+	commandString = removeBefore(commandString, COMMAND_REMOVE);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_REMOVE_NO_ID, WHERE_ID);
 	}
 
 	QList<int> ids = parseIdList(commandString);
@@ -916,19 +1127,23 @@ ICommand* Interpreter::createRemoveCommand(QString commandString) {
 	qSort(ids.begin(), ids.end(), qGreater<int>());
 
 	foreach(int id, ids) {
-		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new RemoveCommand(id-1));
+		QSharedPointer<ICommand> command = 
+			QSharedPointer<ICommand>(new RemoveCommand(id-1));
 		commands.push_back(command);
 	}
 
 	return new CompositeCommand(commands);
 }
 
+// Creates an edit command. Takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
+// Should only be used by interpret()
 ICommand* Interpreter::createEditCommand(QString commandString) {
-	commandString = removeBefore(commandString, "edit");
+	commandString = removeBefore(commandString, COMMAND_EDIT);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_EDIT_NO_ID, WHERE_ID);
 	}
 
 	QString idString = commandString.split(' ')[0];
@@ -937,7 +1152,7 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 	commandString = commandString.section(' ', 1);
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_EDIT_EMPTY, WHERE_DESCRIPTION);
 	}
 
 	QHash<QString, QString> parts = decompose(commandString);
@@ -947,16 +1162,17 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 		QString value = parts[key].trimmed();
 
 		if (key == "") {
+			value = substituteForDescription(value);
 			task.setDescription(value);
-		} else if (key.startsWith('#')) {
+		} else if (key.startsWith(DELIMITER_HASH)) {
 			task.addTag(value);
-		} else if (key == "@") {
+		} else if (key == DELIMITER_AT) {
 			TIME_PERIOD period = parseTimePeriod(value);
 			task.setBegin(period.begin);
 			task.setEnd(period.end);
-		} else if (key.startsWith("-#")) {
+		} else if (key.startsWith(DELIMITER_DASH_HASH)) {
 			task.removeTag(value);
-		} else if (key.startsWith("-@")) {
+		} else if (key.startsWith(DELIMITER_DASH_AT)) {
 			task.setBegin(QDateTime());
 			task.setEnd(QDateTime());
 		}
@@ -965,16 +1181,22 @@ ICommand* Interpreter::createEditCommand(QString commandString) {
 	return new EditCommand(id-1, task);
 }
 
+// Creates a clear command. Takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
+// Should only be used by interpret()
 ICommand* Interpreter::createClearCommand(QString commandString) {
 	return new ClearCommand();
 }
 
+// Creates a done command. Takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
+// Should only be used by interpret()
 ICommand* Interpreter::createDoneCommand(QString commandString) {
-	commandString = removeBefore(commandString, "done");
+	commandString = removeBefore(commandString, COMMAND_DONE);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_DONE_NO_ID, WHERE_ID);
 	}
 
 	QList<int> ids = parseIdList(commandString);
@@ -983,19 +1205,23 @@ ICommand* Interpreter::createDoneCommand(QString commandString) {
 	qSort(ids.begin(), ids.end(), qGreater<int>());
 
 	foreach(int id, ids) {
-		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new DoneCommand(id-1));
+		QSharedPointer<ICommand> command = 
+			QSharedPointer<ICommand>(new DoneCommand(id-1));
 		commands.push_back(command);
 	}
 
 	return new CompositeCommand(commands);
 }
 
+// Creates an undone command. Takes in a string from user input
+// throws ExceptionBadCommand if unable to parse
+// Should only be used by interpret()
 ICommand* Interpreter::createUndoneCommand(QString commandString) {
-	commandString = removeBefore(commandString, "undone");
+	commandString = removeBefore(commandString, COMMAND_UNDONE);
 	commandString = commandString.trimmed();
 
 	if (commandString.isEmpty()) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_UNDONE_NO_ID, WHERE_ID);
 	}
 
 	QList<int> ids = parseIdList(commandString);
@@ -1004,122 +1230,172 @@ ICommand* Interpreter::createUndoneCommand(QString commandString) {
 	qSort(ids.begin(), ids.end());
 
 	foreach(int id, ids) {
-		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new DoneCommand(id-1, false));
+		QSharedPointer<ICommand> command = 
+			QSharedPointer<ICommand>(new DoneCommand(id-1, false));
 		commands.push_back(command);
 	}
 
 	return new CompositeCommand(commands);
 }
 
+// Does the show action. takes in a string from user input.
+// This method doesn't throw because any string input is valid.
+// Should only be used by interpret()
 void Interpreter::doShow(QString commandString) {
-	commandString = removeBefore(commandString, "show");
+	commandString = removeBefore(commandString, COMMAND_SHOW);
 	commandString = commandString.trimmed();
 
-	if (commandString == "done") {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDone();
-		});
-		Tasuke::instance().updateTaskWindow(results, "done");
-	} else if (commandString == "undone") {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDone();
-		});
-		Tasuke::instance().updateTaskWindow(results, "undone");
-	} else if (commandString == "ongoing") {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isOngoing();
-		});
-		Tasuke::instance().updateTaskWindow(results, "ongoing");
-	} else if (commandString == "overdue") {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isOverdue();
-		});
-		Tasuke::instance().updateTaskWindow(results, "overdue");
-	} else if (commandString == "today") {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDueToday();
-		});
-		Tasuke::instance().updateTaskWindow(results, "due today");
-	} else if (commandString == "tomorrow") {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDueTomorrow();
-		});
-		Tasuke::instance().updateTaskWindow(results, "due tomorrow");
-	} else  if (commandString == "" || commandString == "all" || commandString == "everything") {
-		Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	} else if (commandString.startsWith("#") && !commandString.contains(" ")) {
+	if (commandString == KEYWORD_DONE) {
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_DONE);
+		Tasuke::instance().updateTaskWindow(results, TITLE_DONE);
+	} else if (commandString == KEYWORD_UNDONE) {
+		QList<Task> results =
+			Tasuke::instance().getStorage().search(PREDICATE_UNDONE);
+		Tasuke::instance().updateTaskWindow(results, TITLE_UNDONE);
+	} else if (commandString == KEYWORD_ONGOING) {
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_ONGOING);
+		Tasuke::instance().updateTaskWindow(results, TITLE_ONGOING);
+	} else if (commandString == KEYWORD_OVERDUE) {
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_OVERDUE);
+		Tasuke::instance().updateTaskWindow(results, TITLE_OVERDUE);
+	} else if (commandString == KEYWORD_TODAY) {
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_TODAY);
+		Tasuke::instance().updateTaskWindow(results, TITLE_TODAY);
+	} else if (commandString == KEYWORD_TOMORROW) {
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_TOMORROW);
+		Tasuke::instance().updateTaskWindow(results, TITLE_TOMORROW);
+	} else  if (commandString == KEYWORD_NIL || commandString == KEYWORD_ALL
+		|| commandString == KEYWORD_EVERYTHING) {
+		QList<Task> tasks =Tasuke::instance().getStorage().getTasks();
+		Tasuke::instance().updateTaskWindow(tasks);
+	} else if (commandString.startsWith(DELIMITER_HASH) 
+		&& !commandString.contains(" ")) {
 		QString tag = commandString.remove(0,1);
 		QList<Task> results = Tasuke::instance().getStorage().searchByTag(tag);
-		Tasuke::instance().updateTaskWindow(results, "#" + tag);
+		Tasuke::instance().updateTaskWindow(results, DELIMITER_HASH + tag);
 	} else {
-		QList<Task> results = Tasuke::instance().getStorage().searchByDescription(commandString);
-		Tasuke::instance().updateTaskWindow(results, "\"" + commandString + "\"");
+		commandString = substituteForDescription(commandString);
+		QList<Task> results = 
+			Tasuke::instance().getStorage().searchByDescription(commandString);
+		Tasuke::instance().updateTaskWindow(results, "\""+commandString+"\"");
 	}
 
 	Tasuke::instance().showTaskWindow();
 }
+
+// Does the about action.
+// Should only be used by interpret()
 void Interpreter::doAbout() {
 	Tasuke::instance().showAboutWindow();
 }
+
+// Does the hide action.
+// Should only be used by interpret()
 void Interpreter::doHide() {
 	Tasuke::instance().hideTaskWindow();
 }
-void Interpreter::doUndo(QString commandString) {
-	commandString = removeBefore(commandString, "undo");
+
+// Does the undo action. Takes in a string from user input.
+// if dry is true, nothing is done. defaults to false
+// throws ExceptionBadCommand if unable to parse
+// Should only be used by interpret()
+void Interpreter::doUndo(QString commandString, bool dry) {
+	commandString = removeBefore(commandString, COMMAND_UNDO);
 	commandString = commandString.trimmed();
 
 	int times = 1;
 
-	if (commandString == "max") {
+	if (commandString == KEYWORD_MAX) {
 		times = Tasuke::instance().undoSize();
 	} else if (!commandString.isEmpty()) {
 		bool ok = false;
 		times = commandString.toInt(&ok);
 
 		if (ok == false) {
-			throw ExceptionBadCommand();
+			throw ExceptionBadCommand(ERROR_NOT_A_NUMBER(commandString), 
+				WHERE_TIMES);
 		}
+	}
+
+	if (dry) {
+		return;
 	}
 
 	for (int i=0; i<times; i++) {
 		Tasuke::instance().undoCommand();
 	}
 }
-void Interpreter::doRedo(QString commandString) {
-	commandString = removeBefore(commandString, "redo");
+
+// Does the redo command. Takes in a string from user input.
+// if dry is true, nothing is done. defaults to false
+// throws ExceptionBadCommand if unable to parse
+void Interpreter::doRedo(QString commandString, bool dry) {
+	commandString = removeBefore(commandString, COMMAND_REDO);
 	commandString = commandString.trimmed();
 
 	int times = 1;
 
-	if (commandString == "max") {
+	if (commandString == KEYWORD_MAX) {
 		times = Tasuke::instance().redoSize();
 	} else if (!commandString.isEmpty()) {
 		bool ok = false;
 		times = commandString.toInt(&ok);
 
 		if (ok == false) {
-			throw ExceptionBadCommand();
+			throw ExceptionBadCommand(ERROR_NOT_A_NUMBER(commandString), 
+				WHERE_TIMES);
 		}
+	}
+
+	if (dry) {
+		return;
 	}
 
 	for (int i=0; i<times; i++) {
 		Tasuke::instance().redoCommand();
 	}
 }
+
+// Does the next free time action.
+// Should only be used by interpret()
+void Interpreter::doNextFreeTime() {
+	QString timeString = Tasuke::instance().getStorage().nextFreeTime();
+	Tasuke::instance().showMessage(timeString);
+}
+
+// Does the settings action.
+// Should only be used by interpret()
 void Interpreter::doSettings() {
 	Tasuke::instance().showSettingsWindow();
 }
+
+// Does the help action.
+// Should only be used by interpret()
 void Interpreter::doHelp() {
 	Tasuke::instance().showTutorial();
 }
+
+// Does the exit action.
+// Should only be used by interpret()
 void Interpreter::doExit() {
 	QApplication::quit();
 }
 
+// Try to parse the id from a string input
+// Returns an int id if parsed successfully
+// throws ExceptionBadCommand if unable to parse
 int Interpreter::parseId(QString idString) {
 	idString = idString.trimmed();
 
-	if (idString == "last") {
+	if (idString == KEYWORD_LAST) {
+		if (last < 0) {
+			throw ExceptionBadCommand(ERROR_NO_LAST, WHERE_ID);
+		}
 		return last;
 	}
 
@@ -1127,24 +1403,28 @@ int Interpreter::parseId(QString idString) {
 	int id = idString.toInt(&ok);
 
 	if (ok == false) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_NO_ID, WHERE_ID);
 	}
 
 	int numTasks = Tasuke::instance().getStorage().totalTasks();
 
 	if (id < 1 || id > numTasks) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_ID_OUT_OF_RANGE(id, numTasks), 
+			WHERE_ID);
 	}
 
 	return id;
 }
 
+// Try to parse an id list from a string input
+// Returns a list of int if parsed succesfully
+// throws ExceptionBadCommand if unable to parse
 QList<int> Interpreter::parseIdList(QString idListString) {
 	idListString = idListString.trimmed();
 	
 	QList<int> results;
 	
-	if (idListString == "all") {
+	if (idListString == KEYWORD_ALL) {
 		int lastId = Tasuke::instance().getStorage().totalTasks();
 		for (int i=1; i<=lastId; i++) {
 			results.push_back(i);
@@ -1152,7 +1432,7 @@ QList<int> Interpreter::parseIdList(QString idListString) {
 		return results;
 	}
 
-	QStringList idListParts = idListString.split(",");
+	QStringList idListParts = idListString.split(DELIMITER_COMMA);
 	foreach(QString idListPart, idListParts) {
 		results.append(parseIdRange(idListPart));
 	}
@@ -1160,27 +1440,27 @@ QList<int> Interpreter::parseIdList(QString idListString) {
 	return results;
 }
 
+// Try to parse an id range from a string input
+// Returns a list of int if parsed succesfully
+// throws ExceptionBadCommand if unable to parse
 QList<int> Interpreter::parseIdRange(QString idRangeString) {
+	idRangeString = substituteForRange(idRangeString);
 	idRangeString = idRangeString.trimmed();
-
+	
 	QList<int> results;
 	QList<Task> special;
-	if (idRangeString == "done") {
-		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDone();
-		});
-	} else if (idRangeString == "overdue") {
-		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isOverdue();
-		});
-	} else if (idRangeString == "today") {
-		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDueToday();
-		});
-	} else if (idRangeString == "undone") {
-		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return !task.isDone();
-		});
+	if (idRangeString == KEYWORD_DONE) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_DONE);
+	} else if (idRangeString == KEYWORD_UNDONE) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_UNDONE);
+	} else if (idRangeString == KEYWORD_ONGOING) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_ONGOING);
+	} else if (idRangeString == KEYWORD_OVERDUE) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_OVERDUE);
+	} else if (idRangeString == KEYWORD_TODAY) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_TODAY);
+	} else if (idRangeString == KEYWORD_TOMORROW) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_TOMORROW);
 	}
 
 	// if this is a sepcial range
@@ -1192,7 +1472,7 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 		return results;
 	}
 
-	QStringList idRangeParts = idRangeString.split("-");
+	QStringList idRangeParts = idRangeString.split(DELIMITER_DASH);
 
 	if (idRangeParts.size() == 1) {
 		results.push_back(parseId(idRangeParts[0]));
@@ -1201,27 +1481,34 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 		int end = parseId(idRangeParts[1]);
 
 		if (end < begin) {
-			throw ExceptionBadCommand();
+			throw ExceptionBadCommand(ERROR_ID_INVALID_RANGE(begin, end), 
+				WHERE_ID);
 		}
 
 		for (int i=begin; i<=end; i++) {
 			results.push_back(i);
 		}
 	} else {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_ID_NO_A_RANGE(idRangeString), 
+			WHERE_ID);
 	}
 
 	return results;
 }
 
-Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) {
-	timePeriodString = substituteForTimePeriod(timePeriodString);
+// Try to parse the time period from a string input
+// Returns a TIME_PERIOD struct with begin and end if parsed succesfully
+// throws ExceptionBadCommand if unable to parse
+Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(
+	QString timePeriodString) {
+	timePeriodString = substituteForRange(timePeriodString);
 
-	QStringList timePeriodParts = timePeriodString.split("-");
+	QStringList timePeriodParts = timePeriodString.split(DELIMITER_DASH);
 	TIME_PERIOD timePeriod;
 
 	if (timePeriodParts.size() > 2) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_DATE_NO_A_RANGE(timePeriodString), 
+			WHERE_DATE);
 	}
 
 	if (timePeriodParts.size() == 1) {
@@ -1231,29 +1518,34 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) 
 		timePeriod.end = parseDate(timePeriodParts[1]);
 
 		if (!timePeriod.begin.isValid()) {
-			throw ExceptionBadCommand();
+			throw ExceptionBadCommand(ERROR_DATE_BEGIN, WHERE_BEGIN);
 		}
 	}
 
 	if (!timePeriod.end.isValid()) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_DATE_END, WHERE_END);
 	}
 
 	if (timePeriod.begin.isValid() && timePeriod.end < timePeriod.begin) {
-		throw ExceptionBadCommand();
+		throw ExceptionBadCommand(ERROR_DATE_INVALID_PERIOD(timePeriod), 
+			WHERE_DATE);
 	}
 
 	return timePeriod;
 }
 
+// Try to parse the date from a string input
+// Returns a date time if parsed successfully
+// throws ExceptionBadCommand if unable to parse
 QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 	dateString = substituteForDate(dateString);
 	dateString = dateString.trimmed();
+	dateString = dateString.toLower();
 
 	QDate currentDate = QDate::currentDate();
-	QTime timePart = QTime(23,59);
+	QTime timePart = TIME_BEFORE_MIDNIGHT;
 	if (!isEnd) {
-		timePart = QTime(0,0);
+		timePart = TIME_MIDNIGHT;
 	}
 
 	if (!formatsAlreadyInit) {
@@ -1262,7 +1554,7 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 
 	QDateTime retVal;
 
-	if (dateString.contains("am") || dateString.contains("pm") || dateString.contains("AM") || dateString.contains("PM")) {
+	if (dateString.contains(TIME_AM) || dateString.contains(TIME_PM)) {
 		// if the datetime contains am/pm means we can cut our search space
 
 		// these formats need the date added
@@ -1280,7 +1572,8 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 			retVal = QDateTime::fromString(dateString, dateTimeFormat);
 			if (retVal.isValid()) {
 				QDate date = retVal.date();
-				retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+				retVal.setDate(QDate(currentDate.year(), date.month(), 
+					date.day()));
 				return retVal;
 			}
 		}
@@ -1318,7 +1611,8 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		retVal = QDateTime::fromString(dateString, dateFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+			retVal.setDate(QDate(currentDate.year(), date.month(), 
+				date.day()));
 			retVal.setTime(timePart);
 			return retVal;
 		}
@@ -1329,7 +1623,8 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		retVal = QDateTime::fromString(dateString, dateTimeFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+			retVal.setDate(QDate(currentDate.year(), date.month(), 
+				date.day()));
 			return retVal;
 		}
 	}
@@ -1339,9 +1634,9 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		retVal = QDateTime::fromString(dateString, dateFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			if (date.year() < 2000) {
+			if (date.year() < YEARS_MILIENIUM) {
 				// add a century
-				date = date.addYears(100);
+				date = date.addYears(YEARS_CENTURY);
 				retVal.setDate(date);
 			}
 			retVal.setTime(timePart);
@@ -1354,9 +1649,9 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		retVal = QDateTime::fromString(dateString, dateTimeFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			if (date.year() < 2000) {
+			if (date.year() < YEARS_MILIENIUM) {
 				// add a century
-				date = date.addYears(100);
+				date = date.addYears(YEARS_CENTURY);
 				retVal.setDate(date);
 			}
 			return retVal;
@@ -1366,6 +1661,10 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 	return retVal;
 }
 
+// generate all date formats
+// WARNING: this method blocks for very long time.
+// run this method on another thread at start up
+// this method is threadsafe
 void Interpreter::initFormats() {
 	QMutexLocker locker(&mutex);
 
@@ -1382,6 +1681,8 @@ void Interpreter::initFormats() {
 	formatsAlreadyInit = true;
 }
 
+// generate formats for time only
+// do not call this directly. use initFormats() to run
 void Interpreter::generateTimeFormats() {
 	assert(formatsAlreadyInit == false);
 
@@ -1393,7 +1694,7 @@ void Interpreter::generateTimeFormats() {
 	
 	hourFormats << "h" << "hh";
 	minuteFomats << "mm";
-	amPmFormats << "ap" << "AP";
+	amPmFormats << "ap";
 	separators << " " << ":" << ".";
 	optionalSpaces << " " << "";
 
@@ -1425,6 +1726,9 @@ void Interpreter::generateTimeFormats() {
 		}
 	}
 }
+
+// generates date formats without any year
+// do not call this directly. use initFormats() to run
 void Interpreter::generateDateFormatsWithoutYear() {
 	assert(formatsAlreadyInit == false);
 
@@ -1450,11 +1754,15 @@ void Interpreter::generateDateFormatsWithoutYear() {
 	foreach(QString dayFormat, dayFormats) {
 		foreach(QString monthFormat, monthFormats) {
 			foreach(QString dateSeparator, dateSeparators) {
-				dateFormatsWithoutYear << (dayFormat + dateSeparator + monthFormat);
+				dateFormatsWithoutYear << (dayFormat + dateSeparator + 
+					monthFormat);
 			}
 		}
 	}
 }
+
+// generates date formats with the years
+// do not call this directly. use initFormats() to run
 void Interpreter::generateDateFormats() {
 	assert(formatsAlreadyInit == false);
 
@@ -1480,29 +1788,38 @@ void Interpreter::generateDateFormats() {
 		foreach(QString monthFormat, monthFormats) {
 			foreach(QString yearFormat, yearFormats) {
 				foreach(QString dateSeparator, dateSeparators) {
-					dateFormats << (dayFormat + dateSeparator + monthFormat + dateSeparator + yearFormat);
+					dateFormats << (dayFormat + dateSeparator + monthFormat
+						+ dateSeparator + yearFormat);
 				}
 			}
 		}
 	}
 }
 
+// generates date + time formats without any year
+// do not call this directly. use initFormats() to run
 void Interpreter::generateDateTimeFormatsWithoutYear() {
 	assert(formatsAlreadyInit == false);
 
 	foreach(QString dateFormatWithoutYear, dateFormatsWithoutYear) {
 		foreach(QString timeFormat, timeFormats) {
-			dateTimeFormatsWithoutYear << (dateFormatWithoutYear + " " + timeFormat);
-			dateTimeFormatsWithoutYear << (timeFormat + " " + dateFormatWithoutYear);
+			dateTimeFormatsWithoutYear 
+				<< (dateFormatWithoutYear + " " + timeFormat);
+			dateTimeFormatsWithoutYear 
+				<< (timeFormat + " " + dateFormatWithoutYear);
 		}
 
 		foreach(QString timeFormatAp, timeFormatsAp) {
-			dateTimeFormatsWithoutYearAp << (dateFormatWithoutYear + " " + timeFormatAp);
-			dateTimeFormatsWithoutYearAp << (timeFormatAp + " " + dateFormatWithoutYear);
+			dateTimeFormatsWithoutYearAp 
+				<< (dateFormatWithoutYear + " " + timeFormatAp);
+			dateTimeFormatsWithoutYearAp 
+				<< (timeFormatAp + " " + dateFormatWithoutYear);
 		}
 	}
 }
 
+// generates date + time formats with the year
+// do not call this directly. use initFormats() to run
 void Interpreter::generateDateTimeFormats() {
 	assert(formatsAlreadyInit == false);
 
@@ -1528,6 +1845,12 @@ void Interpreter::generateDateTimeFormats() {
 	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Interpreter.h
 	 */
 
+
+#ifndef INTERPRETER_H
+#define INTERPRETER_H
+
+#include <QMutex>
+#include "Commands.h"
 
 // This class acts as an interpreter. It either returns an ICommand object
 // or a nullptr. If it returns an ICommand object the caller must manage
@@ -1555,8 +1878,9 @@ private:
 	static QMutex mutex;
 	
 	static QString substitute(QString text);
-	static QString substituteForTimePeriod(QString text);
+	static QString substituteForRange(QString text);
 	static QString substituteForDate(QString text);
+	static QString substituteForDescription(QString text);
 
 	static QHash<QString, QString> decompose(QString text);
 	static QString removeBefore(QString text, QString before);
@@ -1582,9 +1906,10 @@ private:
 	static void doShow(QString commandString);
 	static void doAbout();
 	static void doHide();
-	static void doUndo(QString commandString);
-	static void doRedo(QString commandString);
+	static void doUndo(QString commandString, bool dry = false);
+	static void doRedo(QString commandString, bool dry = false);
 	static void doHelp();
+	static void doNextFreeTime();
 	static void doSettings();
 	static void doExit();
 
@@ -1608,44 +1933,52 @@ public:
 	 */
 
 
-const char* const TASUKE = "Tasuke";
-const char* const NAME_ORGANIZATION = TASUKE;
-const char* const NAME_APPLICATION = TASUKE;
-const char* const SHARED_MEMORY_KEY = TASUKE;
+#include <glog/logging.h>
+#include <QApplication>
+#include <QMessageBox>
+#include <QSharedMemory>
+#include "Tasuke.h"
+#include "Constants.h"
 
-const char* const MSG_STARTING_UP = "Tasuke starting up!";
-const char* const MSG_ALREADY_RUNNING =  "Tasuke is already running! Open Tasuke using ctrl+space";
-
-void exitIfAlreadyRunning() {
-	QSharedMemory sharedMemory;
+// Exits the program if another instance of Tasuke is already running
+// Run this right at the start so you can fail fast
+void exitIfAlreadyRunning(QSharedMemory& sharedMemory) {
 	sharedMemory.setKey(SHARED_MEMORY_KEY);
 	sharedMemory.attach();
 
 	if (!sharedMemory.create(1)) {
-		QMessageBox::information(nullptr, NAME_APPLICATION, MSG_ALREADY_RUNNING);
+		QMessageBox::information(nullptr, NAME_APPLICATION,
+			MSG_TASUKE_ALREADY_RUNNING);
 		exit(EXIT_FAILURE);
 	}
 }
 
+// Sets up the glog logger. Run this right at the start so you can
+// log as early as possible
 void initLogging(int argc, char *argv[]) {
 	Q_UNUSED(argc);
 
 	google::InitGoogleLogging(argv[0]);
-	LOG(INFO) << MSG_STARTING_UP;
+	LOG(INFO) << MSG_TASUKE_STARTING_UP;
 }
 
+// Sets the globals for name and organization in Qt. These constants
+// are used in Qt for save files and etc.
 void setOrganizationAndApplicationName() {
 	QCoreApplication::setOrganizationName(NAME_ORGANIZATION);
 	QCoreApplication::setApplicationName(NAME_APPLICATION);
 }
 
+// The entry point for the program.
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
-
-	exitIfAlreadyRunning();
+	QSharedMemory sharedMemory;
+	
+	exitIfAlreadyRunning(sharedMemory);
 	initLogging(argc, argv);
 	setOrganizationAndApplicationName();;
 
+	// Create tasuke for the first and only time
 	Tasuke::instance();
 
 	return app.exec();
@@ -1662,88 +1995,124 @@ int main(int argc, char *argv[]) {
 	 */
 
 
+#include <glog/logging.h>
+#include <QMenu>
+#include <QAction>
+#include <QApplication>
+#include "Tasuke.h"
+#include "SystemTrayWidget.h"
+
+// Constructor for SystemTrayWidget. Takes in parent object for memory hierachy
+// Parent defaults to null
 SystemTrayWidget::SystemTrayWidget(QWidget *parent ) : QWidget(parent) {
-	LOG(INFO) << "SystemTrayWidget object created";
+	LOG(INFO) << MSG_SYSTEMTRAYWIDGET_CREATED;
 
-	//context menu actions
-	QAction* quitAction = new QAction("&Quit", this);
-	QAction* showInputWindowAction = new QAction("Show &Command Box", this);
-	QAction* showTaskWindowAction = new QAction("Show &Task Window", this);
-	QAction* showSettingsWindowAction = new QAction("&Settings", this);
-	QAction* showTutorialWidgetAction = new QAction("&Tutorial", this);
-	QAction* showAboutWindowAction = new QAction("&About Tasuke", this);
+	installTrayIcon();
 
-	//tray stuff
-	QMenu* trayIconMenu = new QMenu(this);
-	trayIcon = new QSystemTrayIcon(this);
-	trayIcon->setContextMenu(trayIconMenu);
-	trayIcon->setIcon(QIcon(":/Images/images/Traysuke.png"));
-	trayIcon->show();
-
-	//add actions
-	trayIconMenu->addAction(quitAction);
-	trayIconMenu->addAction(showTaskWindowAction);
-	trayIconMenu->addAction(showInputWindowAction);
-	trayIconMenu->addAction(showSettingsWindowAction);
-	trayIconMenu->addAction(showTutorialWidgetAction);
-	trayIconMenu->addAction(showAboutWindowAction);
-
-	//connect context menu actions
-	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-	connect(showTaskWindowAction, SIGNAL(triggered()), this, SLOT(handleShowTaskWindow()));
-	connect(showInputWindowAction, SIGNAL(triggered()), this, SLOT(handleShowInputWindow()));
-	connect(showTutorialWidgetAction, SIGNAL(triggered()),  this, SLOT(handleShowTutorialWidget()));
-	connect(showSettingsWindowAction, SIGNAL(triggered()),  this, SLOT(handleShowSettingsWindow()));
-	connect(showAboutWindowAction, SIGNAL(triggered()),  this, SLOT(handleShowAboutWindow()));
-
-	//when tray icon is clicked..
-	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(handleIconActivated(QSystemTrayIcon::ActivationReason)));
-
-	//when quiting
+	// clean up when quiting
 	connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(handleAboutToQuit()));
 }
 
+// Destructor for SystemTrayWidget. Automatically removes icon from system tray
 SystemTrayWidget::~SystemTrayWidget() {
-	LOG(INFO) << "SystemTrayWidget object destroyed";
+	LOG(INFO) << MSG_SYSTEMTRAYWIDGET_DESTROYED;
 
 	trayIcon->hide();
 	delete trayIcon;
 	trayIcon = nullptr;
 }
 
+// Displays a message using the tray icon bubble
 void SystemTrayWidget::showMessage(QString message) {
-	trayIcon->showMessage("Tasuke", message);
+	trayIcon->showMessage(TASUKE, message);
 }
 
+// Activated when user clicks on corresponding menu item
 void SystemTrayWidget::handleShowTaskWindow() {
 	Tasuke::instance().showTaskWindow();
 }
 
+// Activated when user clicks on corresponding menu item
 void SystemTrayWidget::handleShowInputWindow() {
 	Tasuke::instance().showInputWindow();
 }
 
+// Activated when user clicks on corresponding menu item
 void SystemTrayWidget::handleShowTutorialWidget() {
 	Tasuke::instance().showTutorial();
 }
 
+// Activated when user clicks on corresponding menu item
 void SystemTrayWidget::handleShowSettingsWindow() {
 	Tasuke::instance().showSettingsWindow();
 }
 
+// Activated when user clicks on corresponding menu item
 void SystemTrayWidget::handleShowAboutWindow() {
 	Tasuke::instance().showAboutWindow();
 }
 
-void SystemTrayWidget::handleIconActivated(QSystemTrayIcon::ActivationReason reason) {
-	if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
+// Activated when user clicks on the icon
+void SystemTrayWidget::handleIconActivated(
+	QSystemTrayIcon::ActivationReason reason) {
+	if (reason == QSystemTrayIcon::Trigger
+		|| reason == QSystemTrayIcon::DoubleClick) {
 		Tasuke::instance().showTaskWindow();
 		Tasuke::instance().showInputWindow();	
 	}
 }
 
+// Activated when the app is about to quit
 void SystemTrayWidget::handleAboutToQuit() {
 	trayIcon->hide();
+}
+
+// Creates and install a tray icon + menu
+void SystemTrayWidget::installTrayIcon() {
+	// context menu actions
+	// NOTE: the new do not need to managed because they are automatically
+	// deleted by Qt's memory hierachy when the parent (passed to the constructor)
+	// are deleted
+	QAction* quitAction = new QAction(TRAY_MENU_QUIT, this);
+	QAction* showInputWindowAction = new QAction(TRAY_MENU_INPUT, this);
+	QAction* showTaskWindowAction = new QAction(TRAY_MENU_TASK, this);
+	QAction* showSettingsWindowAction = new QAction(TRAY_MENU_SETTINGS, this);
+	QAction* showTutorialWidgetAction = new QAction(TRAY_MENU_TUTORIAL, this);
+	QAction* showAboutWindowAction = new QAction(TRAY_MENU_ABOUT, this);
+
+	// create menu for tray icon
+	QMenu* trayIconMenu = new QMenu(this);
+	trayIcon = new QSystemTrayIcon(this);
+	trayIcon->setContextMenu(trayIconMenu);
+	trayIcon->setIcon(QIcon(TRAY_ICON_PATH));
+	trayIcon->show();
+
+	// add created actions
+	trayIconMenu->addAction(showTaskWindowAction);
+	trayIconMenu->addAction(showInputWindowAction);
+	trayIconMenu->addSeparator();
+	trayIconMenu->addAction(showSettingsWindowAction);
+	trayIconMenu->addAction(showTutorialWidgetAction);
+	trayIconMenu->addAction(showAboutWindowAction);
+	trayIconMenu->addSeparator();
+	trayIconMenu->addAction(quitAction);
+	
+	// connect actions
+	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+	connect(showTaskWindowAction, SIGNAL(triggered()),
+		this, SLOT(handleShowTaskWindow()));
+	connect(showInputWindowAction, SIGNAL(triggered()),
+		this, SLOT(handleShowInputWindow()));
+	connect(showTutorialWidgetAction, SIGNAL(triggered()),
+		this, SLOT(handleShowTutorialWidget()));
+	connect(showSettingsWindowAction, SIGNAL(triggered()), 
+		this, SLOT(handleShowSettingsWindow()));
+	connect(showAboutWindowAction, SIGNAL(triggered()), 
+		this, SLOT(handleShowAboutWindow()));
+
+	// connect tray icon clicked
+	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+		this, SLOT(handleIconActivated(QSystemTrayIcon::ActivationReason)));
 }
 	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\SystemTrayWidget.cpp
 
@@ -1756,6 +2125,14 @@ void SystemTrayWidget::handleAboutToQuit() {
 	 */
 
 
+#ifndef SYSTEMTRAYWIDGET_H
+#define SYSTEMTRAYWIDGET_H
+
+#include <QWidget>
+#include <QSystemTrayIcon>
+
+// Widget for tray icon in the system tray. It is used to display info and for
+// user menu
 class SystemTrayWidget : public QWidget {
 	Q_OBJECT
 
@@ -1776,6 +2153,8 @@ private slots:
 
 private:
 	QSystemTrayIcon* trayIcon;
+
+	void installTrayIcon();
 };
 
 #endif // SYSTEMTRAYWIDGET_H
@@ -1791,61 +2170,26 @@ private:
 	 */
 
 
-const char* const MSG_TASUKE_CREATED = "Tasuke object created";
-const char* const MSG_TASUKE_DESTROYED = "Tasuke object destroyed";
-const char* const MSG_LOADING_DICTIONARY = "Loading dictionary";
-const char* const MSG_LOADING_FONTS = "Loading fonts";
-const char* const MSG_STORAGE_CHANGED = "Storage changed";
-const char* const MSG_COMMAND_STACK_PUSH =  "Pushing command to history stack";
-const char* const MSG_ERROR_PARSING = "Error parsing command";
-const char* const MSG_UNDO = "Undoing command";
-const char* const MSG_NO_UNDO ="Nothing to undo";
-const char* const MSG_REDO = "Redoing command";
-const char* const MSG_NO_REDO = "Nothing to redo";
+#include <thread>
+#include <glog/logging.h>
+#include <QMessageBox>
+#include <QFontDatabase>
+#include <QStandardPaths>
+#include <QDir>
+#include "Constants.h"
+#include "Exceptions.h"
+#include "Interpreter.h"
+#include "Commands.h"
+#include "Tasuke.h"
 
-#define MSG_SHOWING_MESSAGE(message) \
-	"Showing message: " << message
-#define MSG_UPDATING_TASKWINDOW(tasks) \
-	"Updating task window with " << tasks << " tasks"
-#define MSG_HIGHLIGHT_TASK(id) \
-	"Highlighting task with id  " << id
-
-const char* const SPELL_GB_DICFILE = "en_GB.dic";
-const char* const SPELL_GB_AFFFILE = "en_GB.aff";
-const char* const SPELL_US_DICFILE = "en_US.dic";
-
-const char* const MAC_RESOURCE_PATH = "/../Resources/";
-
-const char* const METATYPE_TRY_RESULT = "TRY_RESULT";
-
-const QStringList SPELL_NONWORD_COMMANDS = QStringList() << "rm" << "ls"
-	<< "nd";
-const QStringList SPELL_MONTH_NAMES = QStringList() << "january" << "february"
-	<< "march" << "april" << "may" << "june" << "july" << "august"
-	<< "september" << "october" << "november" << "december";
-const QStringList SPELL_MONTH_NAMES_SHORT = QStringList() << "jan" << "feb"
-	<< "mar" << "apr" << "jun" << "jul" << "aug" << "sep" << "sept" << "oct"
-	<< "nov" << "dec";
-const QStringList SPELL_DAY_NAMES = QStringList() << "monday" << "tuesday"
-	<< "wednesday" << "thursday" << "friday" << "saturday" << "sunday";
-const QStringList SPELL_DAY_NAMES_SHORT = QStringList() << "mon" << "tue" << "tues"
-	<< "wed" << "thu" << "thur" << "fri" << "sat" << "sun";
-const QList<QStringList> SPELL_INCLUDE_LISTS = QList<QStringList>()
-	<< SPELL_NONWORD_COMMANDS << SPELL_MONTH_NAMES << SPELL_MONTH_NAMES_SHORT
-	<< SPELL_DAY_NAMES << SPELL_DAY_NAMES_SHORT;
-
-const QStringList FONT_LIST = QStringList() << ":/Fonts/fonts/Quicksand_Book.otf"
-	<< ":/Fonts/fonts/Quicksand_Book_Oblique.otf"
-	<< ":/Fonts/fonts/Quicksand_Light.otf"
-	<< ":/Fonts/fonts/Quicksand_Light_Oblique.otf"
-	<< ":/Fonts/fonts/Quicksand_Bold.otf"
-	<< ":/Fonts/fonts/Quicksand_Bold_Oblique.otf"
-	<< ":/Fonts/fonts/PrintClearly.otf"
-	<< ":/Fonts/fonts/PrintBold.otf";
-
+// This private static boolean is used a flag for gui mode
+// It is only accessible from within Tasuke and can only be
+// modified publicly using the setGuiMode() setter.
 bool Tasuke::guiMode = true;
 
-// Constructor for the Tasuke singleton.
+// Constructor for the Tasuke singleton. This should only run once. If this
+// is run multiple times, bad things will happen. Thus, the constructor is
+// private so that only Tasuke can initialize itself.
 Tasuke::Tasuke() : QObject(nullptr) {
 	LOG(INFO) << MSG_TASUKE_CREATED;
 	
@@ -1861,23 +2205,28 @@ Tasuke::Tasuke() : QObject(nullptr) {
 	systemTrayWidget = nullptr;
 	hotKeyManager = nullptr;
 
+	// generate interpreter formats on another thread so the user
+	// can use Tasuke as early as possible without waiting for
+	// generation to finish
 	std::thread dateFormatGeneratorThread([]() {
 		Interpreter::initFormats();
 	});
-
 	dateFormatGeneratorThread.detach();
 
-	if (guiMode) {
-		initialize();
-	}
-
+	// set up the on the fly input evaluation system
 	qRegisterMetaType<TRY_RESULT>(METATYPE_TRY_RESULT);
-	connect(this, SIGNAL(tryFinish(TRY_RESULT)), this, SLOT(handleTryFinish(TRY_RESULT)));
-
+	connect(this, SIGNAL(tryFinish(TRY_RESULT)), 
+		this, SLOT(handleTryFinish(TRY_RESULT)));
 	connect(&inputTimer, SIGNAL(timeout()), this, SLOT(handleInputTimeout()));
+	
+	// only run the initGui method after Tasuke has been constructor
+	if (guiMode) {
+		QTimer::singleShot(0, this, SLOT(initGui()));
+	}
 }
 
-// Destructor for the Tasuke singleton.
+// Destructor for the Tasuke singleton. This should only run when the 
+// program exits.
 Tasuke::~Tasuke() {
 	LOG(INFO) << MSG_TASUKE_DESTROYED;
 
@@ -1914,35 +2263,37 @@ Tasuke::~Tasuke() {
 	}
 }
 
+// Loads the dictionary used by hunspell
+// If the dictionaries cannot be found at the path, then spell checking 
+// is disabled for the program. Should only be called by Tasuke constructor.
 void Tasuke::loadDictionary() {
-	LOG(INFO) << MSG_LOADING_DICTIONARY;
+	LOG(INFO) << MSG_TASUKE_LOADING_DICTIONARY;
 
 	spellCheckEnabled = true;
 
-	if (!QFile(SPELL_GB_AFFFILE).exists() || !QFile(SPELL_GB_DICFILE).exists()) {
+	// check if the files exist before attempting to load them
+	if (!QFile(SPELL_GB_AFFFILE).exists() 
+		|| !QFile(SPELL_GB_DICFILE).exists()) {
 		spellCheckEnabled = false;
 		return;
 	}
 
-
-#ifndef Q_OS_MAC
+	// create a hunspell object
 	spellObj = new Hunspell(SPELL_GB_AFFFILE, SPELL_GB_DICFILE);
 	spellObj->add_dic(SPELL_US_DICFILE);
-#else
-	QString path = QCoreApplication::applicationDirPath();
-	spellObj = new Hunspell((path + MAC_RESOURCE_PATH + SPELL_GB_AFFFILE).toUtf8().constData(), (path + MAC_RESOURCE_PATH + SPELL_GB_DICFILE).toUtf8().constData());
-	spellObj->add_dic((path + MAC_RESOURCE_PATH + SPELL_US_DICFILE).toUtf8().constData());
-#endif
 
+	// adds additional words and non-words to dictionary
 	foreach(QStringList list, SPELL_INCLUDE_LISTS) {
 		foreach(QString word, list) {
-			spellObj->add(word.toLatin1());
+			spellObj->add(word.toUtf8().data());
 		}
 	}
 }
 
+// Loads all fonts embedded in resources. Should only be called by Tasuke 
+// constructor.
 void Tasuke::loadFonts(){
-	LOG(INFO) << MSG_LOADING_FONTS;
+	LOG(INFO) << MSG_TASUKE_LOADING_FONTS;
 
 	QFontDatabase fontDatabase; 
 	foreach(QString font, FONT_LIST) {
@@ -1950,7 +2301,10 @@ void Tasuke::loadFonts(){
 	}
 }
 
-void Tasuke::initialize(){
+// Initialize the GUI if required. Should only be called after Tasuke is
+// fully constructed. If Tasuke is not fully constructed, an assertion
+// will trigger stopping a mutual dependency error.
+void Tasuke::initGui(){
 	loadFonts();
 	
 	taskWindow = new TaskWindow();
@@ -1963,61 +2317,99 @@ void Tasuke::initialize(){
 	updateTaskWindow(storage->getTasks());
 	showTaskWindow();
 
-	connect(inputWindow, SIGNAL(inputChanged(QString)), this, SLOT(handleInputChanged(QString)));
+	connect(inputWindow, SIGNAL(inputChanged(QString)), 
+		this, SLOT(handleInputChanged(QString)));
+	connect(settingsWindow, SIGNAL(themeChanged()), 
+		inputWindow, SLOT(handleReloadTheme()));
+	connect(settingsWindow, SIGNAL(featuresChanged()), 
+		inputWindow, SLOT(handleReloadFeatures()));
+	connect(settingsWindow, SIGNAL(iconsChanged()), 
+		inputWindow, SIGNAL(reloadIcons()));
+	connect(settingsWindow, SIGNAL(fontChanged()), 
+		taskWindow, SLOT(displayTaskList()));
+	connect(settingsWindow, SIGNAL(themeChanged()), 
+		taskWindow, SLOT(handleReloadTheme()));
+	connect(settingsWindow, SIGNAL(themeChanged()), 
+		taskWindow, SIGNAL(themeChanged()));
 }
 
+// Enables/disables gui mode. This method should only be set before
+// Tasuke is initialized. If gui mode is disabled no UI will be init
 void Tasuke::setGuiMode(bool mode) {
 	guiMode = mode;
 }
 
-// Static method that returns the sole instance of Tasuke.
+// Static method that returns the sole instance of Tasuke. This is the
+// only method that can create a new Tasuke instance
 Tasuke& Tasuke::instance() {
 	static Tasuke *instance = 0;
+	static bool alreadyCreated = false;
 
 	if(instance == 0) {
-		// Allocates memory *before* constructor, so Tasuke::instance() will work within a constructor-called method
-		instance = (Tasuke *) ::operator new (sizeof(Tasuke));
-		// Actually runs the constructor now
-		new (instance) Tasuke;
-		//instance = new Tasuke();
+		assert(alreadyCreated == false);
+		alreadyCreated = true;
+
+		instance = new Tasuke();
 		return *instance;
 	} else {
 		return *instance;
 	}
 }
 
+// Changes the storage instance used by tasuke with something else.
+// This is intended for storage stubbing but can also be used for other
+// use such as changing save file name
 void Tasuke::setStorage(IStorage* _storage) {
-	LOG(INFO) << MSG_STORAGE_CHANGED;
+	assert(_storage != nullptr);;
+	LOG(INFO) << MSG_TASUKE_STORAGE_CHANGED;
 
 	storage = _storage;
 }
 
+// Getter for inputwindow. Should only be used when gui mode is enabled.
 InputWindow& Tasuke::getInputWindow(){
+	assert(inputWindow != nullptr);
+
 	return *inputWindow;
 }
 
+// Getter for aboutWindow. Should only be used when gui mode is enabled.
 AboutWindow& Tasuke::getAboutWindow(){
+	assert(aboutWindow != nullptr);
+	
 	return *aboutWindow;
 }
 
+// Getter for settingsWindow. Should only be used when gui mode is enabled.
 SettingsWindow& Tasuke::getSettingsWindow(){
+	assert(settingsWindow != nullptr);
+
 	return *settingsWindow;
 }
 
+// Getter for taskWindow. Should only be used when gui mode is enabled.
 TaskWindow& Tasuke::getTaskWindow(){
+	assert(taskWindow != nullptr);
+
 	return *taskWindow;
 }
 
+// Getter for hotKeyManager. Should only be used when gui mode is enabled.
 HotKeyManager& Tasuke::getHotKeyManager() {
+	assert(hotKeyManager != nullptr);
+
     return *hotKeyManager;
 }
 
-
-// This function exposes the Storage instance for editing.
+// This function exposes the Storage instance for editing storage
 IStorage& Tasuke::getStorage() {
+	assert(storage != nullptr);
+
 	return *storage;
 }
 
+// Shows the input window. If gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::showInputWindow() {
 	if (!guiMode) {
 		return;
@@ -2025,6 +2417,8 @@ void Tasuke::showInputWindow() {
 	inputWindow->showAndCenter();
 }
 
+// Shows the task window. If gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::showTaskWindow() {
 	if (!guiMode) {
 		return;
@@ -2032,6 +2426,8 @@ void Tasuke::showTaskWindow() {
 	taskWindow->showAndMoveToSide();
 }
  
+// Shows the about window. If gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::showAboutWindow(){
 	if (!guiMode) {
 		return;
@@ -2039,6 +2435,8 @@ void Tasuke::showAboutWindow(){
 	aboutWindow->showAndCenter();
 }
 
+// Hides the input window. If gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::hideInputWindow() {
 	if (!guiMode) {
 		return;
@@ -2046,6 +2444,8 @@ void Tasuke::hideInputWindow() {
 	inputWindow->hide();
 }
 
+// Hide the task window. If gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::hideTaskWindow() {
 	if (!guiMode) {
 		return;
@@ -2053,6 +2453,8 @@ void Tasuke::hideTaskWindow() {
 	taskWindow->hide();
 }
 
+// Toggles the input window. If gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::toggleInputWindow() {
 	if (!guiMode) {
 		return;
@@ -2065,6 +2467,8 @@ void Tasuke::toggleInputWindow() {
 	}
 }
 
+// Toggles the task window. If gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::toggleTaskWindow() {
 	if (!guiMode) {
 		return;
@@ -2077,6 +2481,8 @@ void Tasuke::toggleTaskWindow() {
 	}
 }
 
+// Toggles the input and task window. if gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::toggleBothWindows() {
 	if (!guiMode) {
 		return;
@@ -2092,6 +2498,8 @@ void Tasuke::toggleBothWindows() {
 	}
 }
 
+// Shows the tutorial. If gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::showTutorial() {
 	if (!guiMode) {
 		return;
@@ -2104,6 +2512,8 @@ void Tasuke::showTutorial() {
 	taskWindow->showTutorialWidget();
 }
 
+// Shows the settings window. If gui is disabled does nothing.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::showSettingsWindow() {
 	if (!guiMode) {
 		return;
@@ -2112,36 +2522,48 @@ void Tasuke::showSettingsWindow() {
 	settingsWindow->showAndCenter();
 }
 
+// Shows the messaage in the system tray through the system tray widget.
+// This method acts as a facade interface for other classes to use.
 void Tasuke::showMessage(QString message) {
-	LOG(INFO) << MSG_SHOWING_MESSAGE(message.toStdString());
+	LOG(INFO) << MSG_TASUKE_SHOWING_MESSAGE(message);
 
 	if (!guiMode) {
 		return;
 	}
 
-	//systemTrayWidget->showMessage(message);
+	systemTrayWidget->showMessage(message);
 }
 
+// Updates task windows with the latest task and tile.
+// If not title is given, defaults to no title
 void Tasuke::updateTaskWindow(QList<Task> tasks, QString title) {
 	if (!guiMode) {
 		return;
 	}
 
-	LOG(INFO) << MSG_UPDATING_TASKWINDOW(QString::number(tasks.size()).toStdString());
+	LOG(INFO) << MSG_TASUKE_UPDATING_TASKWINDOW(QString::number(tasks.size()));
 
 	taskWindow->showTasks(tasks, title);
 }
 
+// Highlight the task with the given id in the task window.
+// The id must be a valid id in the storage
+// This method acts as a facade interface for other classes to use.
 void Tasuke::highlightTask(int id) {
 	if (!guiMode) {
 		return;
 	}
 
-	LOG(INFO) << MSG_HIGHLIGHT_TASK(id);
+	LOG(INFO) << MSG_TASUKE_HIGHLIGHT_TASK(id);
 
 	taskWindow->highlightTask(id);
 }
 
+// Check if word is correctly spelt or ignored by spell checked.
+// Returns true if accepted, or false is incorrectly spelt.
+// If spell checking is disabled because of missing dictionaries, this
+// method will always return true.
+// This method acts as a facade interface for other classes to use.
 bool Tasuke::spellCheck(QString word) {
 	if (!spellCheckEnabled) {
 		return true;
@@ -2150,6 +2572,8 @@ bool Tasuke::spellCheck(QString word) {
 	if (word.size() == 0) {
 		return true;
 	} else if (!word[0].isLetter()) {
+		return true;
+	} else if (word[0].isUpper()) {
 		return true;
 	}
 
@@ -2160,174 +2584,321 @@ bool Tasuke::spellCheck(QString word) {
 	return false;
 }
 
-// This function runs a command in a string
+// Sets Tasuke to run on startup by copying a link to Tasuke to
+// the user's startup directory. Returns true on success and 
+// false on failure. This method is only supported on Windows
+// so will always fail when run on other OSes
+bool Tasuke::setRunOnStartup(bool yes) {
+#ifdef Q_OS_WIN
+	QDir dir = QDir(QStandardPaths::writableLocation(
+		QStandardPaths::ApplicationsLocation));
+	QString lnkPath = dir.absoluteFilePath(STARTUP_LNK_PATH);
+
+	if (yes) {
+		QString exePath = QCoreApplication::applicationFilePath();
+		return QFile::link(exePath, lnkPath);
+	} else {
+		return QFile::remove(lnkPath);
+	}
+#else
+	return false;
+#endif
+}
+
+// Formats the message displayed in tooltip feedback in rich text
+// This is only used by Tasuke to format the message shown in the
+// tooltip widget
+QString Tasuke::formatTooltipMessage(QString commandString, 
+									 QString errorString, 
+									 QString errorWhere) {
+	QString commandType = Interpreter::getType(commandString);
+
+	// default display
+	QString formatPart = FORMAT_ALL;
+	QString descriptionPart = DESCRIPTION_ALL;
+
+	// change based on detected command type
+	if (commandType == COMMAND_ADD) {
+		if (commandString.contains(ADD_PREIOD_REGEX)) {
+			// period tasks
+			formatPart = FORMAT_ADD_PERIOD;
+			descriptionPart = DESCRIPTION_ADD_PERIOD;
+		} else if (commandString.contains(ADD_DEADLINE_REGEX)) {
+			// deadline tasks
+			formatPart = FORMAT_ADD_DEADLINE;
+			descriptionPart = DESCRIPTION_ADD_DEADLINE;
+		} else {
+			// simple tasks
+			formatPart = FORMAT_ADD;
+			descriptionPart = DESCRIPTION_ADD;
+		}
+	} else if (commandType == COMMAND_REMOVE) {
+		formatPart = FORMAT_REMOVE;
+		descriptionPart = DESCRIPTION_REMOVE;
+	} else if (commandType == COMMAND_EDIT) {
+		formatPart = FORMAT_EDIT;
+		descriptionPart = DESCRIPTION_EDIT;
+	} else if (commandType == COMMAND_DONE) {
+		formatPart = FORMAT_DONE;
+		descriptionPart = DESCRIPTION_DONE;
+	} else if (commandType == COMMAND_UNDONE) {
+		formatPart = FORMAT_UNDONE;
+		descriptionPart = DESCRIPTION_UNDONE;
+	} else if (commandType == COMMAND_SHOW) {
+		formatPart = FORMAT_SHOW;
+		descriptionPart = DESCRIPTION_SHOW;
+	} else if (commandType == COMMAND_HIDE) {
+		formatPart = FORMAT_HIDE;
+		descriptionPart = DESCRIPTION_HIDE;
+	} else if (commandType == COMMAND_UNDO) {
+		formatPart = FORMAT_UNDO;
+		descriptionPart = DESCRIPTION_UNDO;
+	} else if (commandType == COMMAND_REDO) {
+		formatPart = FORMAT_REDO;
+		descriptionPart = DESCRIPTION_REDO;
+	} else if (commandType == COMMAND_CLEAR) {
+		formatPart = FORMAT_CLEAR;
+		descriptionPart = DESCRIPTION_CLEAR;
+	} else if (commandType == COMMAND_HELP) {
+		formatPart = FORMAT_HELP;
+		descriptionPart = DESCRIPTION_HELP;
+	}  else if (commandType == COMMAND_NEXT) {
+		formatPart = FORMAT_NEXT;
+		descriptionPart = DESCRIPTION_NEXT;
+	} else if (commandType == COMMAND_SETTINGS) {
+		formatPart = FORMAT_SETTINGS;
+		descriptionPart = DESCRIPTION_SETTINGS;
+	} else if (commandType == COMMAND_ABOUT) {
+		formatPart = FORMAT_ABOUT;
+		descriptionPart = DESCRIPTION_ABOUT;
+	} else if (commandType == COMMAND_EXIT) {
+		formatPart = FORMAT_EXIT;
+		descriptionPart = DESCRIPTION_EXIT;
+	}
+
+	// highlights the parts marked by pseudo tags
+	if (!errorWhere.isEmpty()) {
+		formatPart.replace(PSEUDO_TAG_BEGIN(errorWhere), HTML_ERROR_BEGIN);
+		formatPart.replace(PSEUDO_TAG_END(errorWhere), HTML_ERROR_END);
+	}
+
+	// removes the pseudo tags used
+	QRegExp braceRegex = BRACE_REGEX;
+	braceRegex.setMinimal(true);
+	formatPart = formatPart.remove(braceRegex);
+
+	// replace description with error message if available
+	if (!errorString.isEmpty()) {
+		descriptionPart = errorString;
+	}
+
+	// formats the message using HTML
+	QString message = QString(HTML_FORMAT_BEGIN + formatPart + HTML_FORMAT_END
+		+ HTML_DESCRIPTION_BEGIN + descriptionPart + HTML_DESCRIPTION_END);
+
+	// returns the message in rich text
+	return message;
+}
+
+// This function runs a command in a string. The method should be run
+// with the user input from InputWindow. Feedback and errors are
+// taken care of by this method.
 void Tasuke::runCommand(QString commandString) {
+	// if the validator is scheduled to run, stop it
 	if (inputTimer.isActive()) {
 		inputTimer.stop();
 	}
 
 	try {
-		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(Interpreter::interpret(commandString));
+		// interpret the command
+		QSharedPointer<ICommand> command = 
+			QSharedPointer<ICommand>(Interpreter::interpret(commandString));
 
+		// if gui enabled update ui
 		if (guiMode) {
 			inputWindow->hideTooltip();
 			inputWindow->closeAndClear();
 		}
 
+		// if there is not command object end here
 		if (command == nullptr) {
 			return;
 		}
+
+		// actually run the object
 		command->run();
 
-		LOG(INFO) << MSG_COMMAND_STACK_PUSH;
+		// put object into command history
+		LOG(INFO) << MSG_TASUKE_COMMAND_STACK_PUSH;
 		commandUndoHistory.push_back(command);
 		commandRedoHistory.clear();
+		limitUndoRedo();
 
+		// save the file after changes
 		storage->saveFile();
 	} catch (ExceptionBadCommand& exception) {
-		LOG(INFO) << MSG_ERROR_PARSING;
-		
-		showMessage(MSG_ERROR_PARSING);
+		// something went wrong, find out what and where
+		QString errorString = exception.what();
+		QString errorWhere = exception.where();
+		LOG(INFO) << MSG_TASUKE_ERROR_PARSING(errorString);
 
+		// if gui enabled, display the error in tooltip and shake the input box
 		if (guiMode) {
-			inputWindow->showTooltipMessage(InputStatus::FAILURE);
+			QString message = 
+				formatTooltipMessage(commandString, errorString, errorWhere);
+			inputWindow->showTooltipMessage(InputStatus::FAILURE), message;
 			inputWindow->doErrorAnimation();
 		}
 	}
 }
 
+// Slot that activates when user is typing in the command. It activates a
+// timer that delays the evaluation thread so that GUI doesn't lag while
+// typing
 void Tasuke::handleInputChanged(QString commandString) {
+	input = commandString;
+	
+	// box is empty, hide it
 	if (commandString.isEmpty()) {
 		inputWindow->hideTooltip();
 		return;
 	}
 
-	input = commandString;
-	QString commandType = Interpreter::getType(commandString);
-
-	QString message = "...";
-
-	// TODO!!
-	// TODO!! make this cleaner
-	// TODO!!
-
-	if (commandType == "add") {
-		if (commandString.contains(QRegExp("\\bfrom\\b"))) { // period tasks
-			message = "add <my task> from <start> to <end> #tag";
-		} else if (commandString.contains(QRegExp("\\b(by|at|on)\\b"))) { // deadline tasks
-			message = "add <my task> by/on/at <end> #tag";
-		} else { // simple tasks
-			message = "add <my task> #tag";
-		}
-	} else if (commandType == "remove") {
-		message = "remove <task no> | remove <task no>, <task no>, ... | remove <task no> - <task no>";
-	} else if (commandType == "edit") {
-		message = "edit <task no> <thing to change> <-thing to remove>";
-	} else if (commandType == "done") {
-		message = "done <task no> | done <task no>, <task no>, ... | done <task no> - <task no>";
-	} else if (commandType == "undone") {
-		message = "undone <task no> | undone <task no>, <task no>, ... | undone <task no> - <task no>";
-	} else if (commandType == "show") {
-		message = "show <keyword> | done | undone | overdue | ongoing | today | tomorrow";
-	} else if (commandType == "hide") {
-		message = "Hide the task window.";		
-	} else if (commandType == "undo") {
-		message = "Undo your last action. (CTRL+Z)";		
-	} else if (commandType == "redo") {
-		message = "Redo your last action (CTRL+Y)";		
-	} else if (commandType == "clear") {
-		message = "Clear all tasks";
-	} else if (commandType == "help") {
-		message = "View the tutorial";
-	} else if (commandType == "settings") {
-		message = "Access the settings";
-	} else if (commandType == "about") {
-		message = "See Tasuke's info";
-	} else if (commandType == "exit") {
-		message = "Exit the application";
-	}
-
+	// display the message in tooltip
+	QString message = formatTooltipMessage(commandString);
 	inputWindow->showTooltipMessage(InputStatus::NORMAL, message);
 
+	// if an evaluation is scheduled, unschedule it
 	if (inputTimer.isActive()) {
 		inputTimer.stop();
 	}
 
+	// schedule an evaluation
 	inputTimer.setInterval(500);
 	inputTimer.setSingleShot(true);
 	inputTimer.start();
 }
 
+// Slot that activates when an evaluation is scheduled and triggered. If the
+// an evaluation is already underway, another evaluation is rescheduled
 void Tasuke::handleInputTimeout() {
 	if (!mutex.tryLock()) {
 		// try thread is still running! reschedule the timer
 		inputTimer.setInterval(500);
 		inputTimer.setSingleShot(true);
 		inputTimer.start();
-
 		return;
 	}
 
+	// box is empty, hide it
+	if (input.isEmpty()) {
+		inputWindow->hideTooltip();
+		mutex.unlock();
+		return;
+	}
+
+	// spawn another thread to evaluate command
 	std::thread tryThread([&]() {
 		try {
+			// dry run interpret
 			ICommand* command = Interpreter::interpret(input, true);
+
+			// clean up if required
 			if (command != nullptr) {
 				delete command;
 			}
 		
+			// capture results
 			TRY_RESULT result;
 			result.status = InputStatus::SUCCESS;
 			emit tryFinish(result);
 		} catch (ExceptionBadCommand& exception) {
+			// something went wrong, find out what and where
+			QString errorString = exception.what();
+			QString errorWhere = exception.where();
+
+			// capture the errors
 			TRY_RESULT result;
 			result.status = InputStatus::NORMAL;
+			result.message = 
+				formatTooltipMessage(input, errorString, errorWhere);
 			emit tryFinish(result);
 		}
 	});
+
+	// let this thread run on its own
 	tryThread.detach();
 }
 
+// Slot that activates when an evaluation has finished. The result is 
+// passed from the signal emitted in the evaluation thread
 void Tasuke::handleTryFinish(TRY_RESULT result) {
-	if (inputWindow->isVisible()) {
+	if (inputWindow->isVisible() && !input.isEmpty()) {
 		inputWindow->showTooltipMessage(result.status, result.message);
 	}
+	assert(mutex.tryLock() == false);
 	mutex.unlock();
 }
 
+// Undos the last command
+// If there was no last command, nothing happens
+// This should be primarily called from interpreter
 void Tasuke::undoCommand() {
 	if (commandUndoHistory.size() == 0) {
-		showMessage(MSG_NO_UNDO);
+		showMessage(MSG_TASUKE_NO_UNDO);
 		return;
 	}
 
-	LOG(INFO) << MSG_UNDO;
+	LOG(INFO) << MSG_TASUKE_UNDO;
 	QSharedPointer<ICommand> command = commandUndoHistory.back();
 	commandUndoHistory.pop_back();
 	command->undo();
 	commandRedoHistory.push_back(command);
 	storage->saveFile();
+
+	limitUndoRedo();
 }
 
+// redos the last command
+// if there was no command to redo, nothing happens
+// This should be primarily called from interpreter
 void Tasuke::redoCommand() {
 	if (commandRedoHistory.size() == 0) {
-		showMessage(MSG_NO_REDO);
+		showMessage(MSG_TASUKE_NO_REDO);
 		return;
 	}
 
-	LOG(INFO) << MSG_REDO;
+	LOG(INFO) << MSG_TASUKE_REDO;
 	QSharedPointer<ICommand> command = commandRedoHistory.back();
 	commandRedoHistory.pop_back();
 	command->run();
 	commandUndoHistory.push_back(command);
 	storage->saveFile();
+
+	limitUndoRedo();
 }
 
+// Returns the size of the undo history for other classes to determine
+// if there are commands that can be undone. Primarily used by "undo max"
 int Tasuke::undoSize() const {
 	return commandUndoHistory.size();
 }
 
+// Returns the size of the redo history for other classes to determine
+// if there are commands that can be redone. Primarily used by "redo max"
 int Tasuke::redoSize() const {
 	return commandRedoHistory.size();
+}
+
+// Limits the undo/redo stack to prevent overflowing. Should be Run after 
+// undos, redos and commands.
+void Tasuke::limitUndoRedo() {
+	while (commandUndoHistory.size() > UNDO_LIMIT) {
+		commandUndoHistory.pop_front();	
+	}
+	while (commandRedoHistory.size() > UNDO_LIMIT) {
+		commandRedoHistory.pop_front();	
+	}
 }
 	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Tasuke.cpp
 
@@ -2339,6 +2910,24 @@ int Tasuke::redoSize() const {
 	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\Tasuke.h
 	 */
 
+
+#ifndef TASUKE_H
+#define TASUKE_H
+
+#include <future>
+#include <thread>
+#include <hunspell/hunspell.hxx>
+#include <QObject>
+#include <QTimer>
+#include <QSharedPointer>
+#include "Commands.h"
+#include "Storage.h"
+#include "InputWindow.h"
+#include "TaskWindow.h"
+#include "AboutWindow.h"
+#include "SettingsWindow.h"
+#include "SystemTrayWidget.h"
+#include "HotKeyManager.h"
 
 // This class handles the control flow of the entire program. This class is a
 // singleton; it cannot be created anywhere else because its constructor and
@@ -2376,17 +2965,19 @@ public:
 	void updateTaskWindow(QList<Task> tasks, QString title = "");
 	void highlightTask(int id);
 	bool spellCheck(QString word);
+	bool setRunOnStartup(bool yes);
+	QString formatTooltipMessage(QString commandString, 
+		QString errorString = "", QString errorWhere = "");
 
 	void runCommand(QString commandString);
-	void tryCommand(QString commandString);
 	void undoCommand();
 	void redoCommand();
 	int undoSize() const;
 	int redoSize() const;
+	void limitUndoRedo();
 
 	void loadDictionary();
 	void loadFonts();
-	void initialize();
 
 	static void setGuiMode(bool mode);
 	static Tasuke &instance();
@@ -2395,6 +2986,7 @@ signals:
 	void tryFinish(TRY_RESULT result);
 
 private slots:
+	void initGui();
 	void handleInputChanged(QString text);
 	void handleInputTimeout();
 	void handleTryFinish(TRY_RESULT result);
@@ -2435,12 +3027,17 @@ private:
 	 */
 
 
+#include "stdafx.h"
+#include "CppUnitTest.h"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace InterpreterTests {
 	QApplication *app;
 	StorageStub *storage;
 
+	// Simulate running the main() function
+	// Sets up the logging facility and the Qt event loop
 	TEST_MODULE_INITIALIZE(ModuleInitialize) {
 		int argc = 1;
 		char *argv[] = { "Tasuke.exe" };
@@ -2452,6 +3049,7 @@ namespace InterpreterTests {
 		storage = nullptr;
 	}
 
+	// Cleans up what we set up
 	TEST_MODULE_CLEANUP(ModuleCleanup) {
 		if (storage == nullptr) {
 			delete storage;
@@ -2465,22 +3063,26 @@ namespace InterpreterTests {
 
 	public:
 
+		// Create a new storage object before running any method
 		TEST_METHOD_INITIALIZE(init) {
 			storage = new StorageStub();
 			Tasuke::instance().setStorage(storage);
 		}
-
+		
+		// Cleans up after running any method
 		TEST_METHOD_CLEANUP(deinit) {
 			delete storage;
 			storage = nullptr;
 		}
 		
+		// Try interpretting an add command  (acceptable command parition)
 		TEST_METHOD(InterpretAdd) {
 			ICommand* command = Interpreter::interpret("add something @ 1pm - 3pm #tag");
 			Assert::IsTrue(typeid(*command) == typeid(AddCommand));
 			delete command;
 		}
 
+		// Try interpretting a remove command (acceptable command parition)
 		TEST_METHOD(InterpretRemove) {
 			Tasuke::instance().runCommand("add do homework");
 			ICommand* command = Interpreter::interpret("remove 1");
@@ -2488,6 +3090,7 @@ namespace InterpreterTests {
 			delete command;
 		}
 
+		// Try interpretting a remove command below the lower bound partitionn
 		TEST_METHOD(InterpretRemoveLowerBound) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -2500,6 +3103,7 @@ namespace InterpreterTests {
 			Assert::AreEqual(storage->totalTasks(), 3);
 		}
 
+		// Try interpretting a remove command above the upper bound partition
 		TEST_METHOD(InterpretRemovedUpperBound) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -2512,6 +3116,7 @@ namespace InterpreterTests {
 			Assert::AreEqual(storage->totalTasks(), 3);
 		}
 
+		// Try interpretting an edit (acceptable command parition)
 		TEST_METHOD(InterpretEdit) {
 			Tasuke::instance().runCommand("add do homework");
 			ICommand* command = Interpreter::interpret("edit 1 homework @ 2pm - 5pm #engineering");
@@ -2519,6 +3124,7 @@ namespace InterpreterTests {
 			delete command;
 		}
 
+		// Try interpretting an edit below the lower bound partitionn
 		TEST_METHOD(InterpretEditLowerBound) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -2530,6 +3136,7 @@ namespace InterpreterTests {
 			Tasuke::instance().runCommand("edit 0 fly kite");
 		}
 
+		// Try interpretting an edit above the upper bound partitionn
 		TEST_METHOD(InterpretEditUpperBound) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -2541,6 +3148,7 @@ namespace InterpreterTests {
 			Tasuke::instance().runCommand("edit 4 fly kite");
 		}
 
+		// Try interpretting a done (acceptable command partition)
 		TEST_METHOD(InterpretDone) {
 			Tasuke::instance().runCommand("add do homework");
 			ICommand* command = Interpreter::interpret("done 1");
@@ -2548,6 +3156,7 @@ namespace InterpreterTests {
 			delete command;
 		}
 
+		// Try interpretting a done below the lower bound partitionn
 		TEST_METHOD(InterpretDoneLowerBound) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -2559,6 +3168,7 @@ namespace InterpreterTests {
 			Tasuke::instance().runCommand("done 0");
 		}
 
+		// Try interpretting a done above the upper bound partitionn
 		TEST_METHOD(InterpretDoneUpperBound) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -2570,6 +3180,7 @@ namespace InterpreterTests {
 			Tasuke::instance().runCommand("done 4");
 		}
 
+		// Try interpretting an undone (acceptable command partition)
 		TEST_METHOD(InterpretUndone) {
 			Tasuke::instance().runCommand("add do homework");
 			ICommand* command = Interpreter::interpret("undone 1");
@@ -2577,6 +3188,7 @@ namespace InterpreterTests {
 			delete command;
 		}
 
+		// Try interpretting an undone below the lower bound partition
 		TEST_METHOD(InterpretUndoneLowerBound) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -2588,6 +3200,7 @@ namespace InterpreterTests {
 			Tasuke::instance().runCommand("undone 0");
 		}
 
+		// Try interpretting an undone above the upper bound partitionn
 		TEST_METHOD(InterpretUndoneUpperBound) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -2599,6 +3212,7 @@ namespace InterpreterTests {
 			Tasuke::instance().runCommand("undone 4");
 		}
 
+		// Try interpretting all commands with nullptr return
 		TEST_METHOD(InterpretNullReturn) {
 			ICommand* command = Interpreter::interpret("show");
 			Assert::IsTrue(command == nullptr);
@@ -2622,10 +3236,17 @@ namespace InterpreterTests {
 	 */
 
 
+#include "stdafx.h"
+#include "CppUnitTest.h"
+
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
 namespace UnitTest {
 	QApplication *app;
 	StorageStub *storage;
 
+	// Simulate running the main() function
+	// Sets up the logging facility and the Qt event loop
 	TEST_MODULE_INITIALIZE(ModuleInitialize) {
 		int argc = 1;
 		char *argv[] = { "Tasuke.exe" };
@@ -2637,6 +3258,7 @@ namespace UnitTest {
 		storage = nullptr;
 	}
 
+	// Cleans up what we set up// Cleans up what we set up
 	TEST_MODULE_CLEANUP(ModuleCleanup) {
 		if (storage == nullptr) {
 			delete storage;
@@ -2650,16 +3272,19 @@ namespace UnitTest {
 
 	public:
 
+		// Create a new storage object before running any method
 		TEST_METHOD_INITIALIZE(init) {
 			storage = new StorageStub();
 			Tasuke::instance().setStorage(storage);
 		}
 
+		// Cleans up after running any method
 		TEST_METHOD_CLEANUP(deinit) {
 			delete storage;
 			storage = nullptr;
 		}
 		
+		// Intergration testing Tasuke<->Storage for bad commands
 		TEST_METHOD(TasukeBadInput) {
 			Assert::ExpectException<ExceptionBadCommand>([] {
 				ICommand* command = Interpreter::interpret("bad command blah blah");
@@ -2669,6 +3294,7 @@ namespace UnitTest {
 			Assert::AreEqual(storage->totalTasks(), 0);
 		}
 
+		// System testing for add commands 
 		TEST_METHOD(TasukeAddingTasks) {
 			Tasuke::instance().runCommand("add do homework");
 			Assert::AreEqual(storage->totalTasks(), 1);
@@ -2680,6 +3306,7 @@ namespace UnitTest {
 			Assert::AreEqual(task.getTags().size(), 0);
 		}
 
+		// System testing for remove commands 
 		TEST_METHOD(TasukeRemovingTasks) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");
@@ -2688,6 +3315,7 @@ namespace UnitTest {
 			Assert::AreEqual(storage->totalTasks(), 2);
 		}
 
+		// System testing for editing commands 
 		TEST_METHOD(TasukeEditingTasks) {
 			Tasuke::instance().runCommand("add do homework");
 			Tasuke::instance().runCommand("add buy eggs");

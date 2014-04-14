@@ -1,0 +1,112 @@
+//@author: a0096836m-unused
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.cpp
+	 */
+
+#ifdef Q_OS_MAC
+
+#include "MacWindowActivator.h"
+#include "Tasuke.h"
+
+const int MAGIC_NUM = 147; // randomly chosen
+const int KEY_ID = 1;
+
+HotKeyThread::HotKeyThread(QObject *parent) : QThread(parent) {
+	qRegisterMetaType<KeyCombination>(METATYPE_KEYCOMIBNATION);
+
+}
+
+HotKeyThread::~HotKeyThread() {
+
+}
+
+void HotKeyThread::stop() {
+
+}
+
+void HotKeyThread::run() {
+    //handler
+    hotKeyFunction = NewEventHandlerUPP(hotKeyHandler);
+    EventTypeSpec eventType;
+    eventType.eventClass = kEventClassKeyboard;
+    eventType.eventKind = kEventHotKeyReleased;
+    InstallApplicationEventHandler(hotKeyFunction,1,&eventType,this,NULL);
+    //hotkey
+    UInt32 keyCode = kVK_Space;
+    EventHotKeyRef theRef = NULL;
+    EventHotKeyID keyID;
+    keyID.signature = MAGIC_NUM;
+    keyID.id = KEY_ID;
+    RegisterEventHotKey(keyCode, controlKey, keyID,GetApplicationEventTarget(), 0, &theRef);
+}
+
+OSStatus HotKeyThread::hotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void *userData) {
+    WindowActivator::activate();
+    Tasuke::instance().getHotKeyManager().handleHotKeyPress(KeyCombination::CTRL_SPACE);
+    return noErr;
+}
+
+#endif
+
+// give error on unsupported os
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+#error "Your os is not supported"
+#endif
+
+#endif
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.cpp
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.h
+	 */
+
+// Mac implementation using Carbon API
+#ifdef Q_OS_MAC
+
+#include <Carbon/Carbon.h>
+
+// HotKeyThread detects user hotkey press.
+// Managed by HotKeyManager.
+class HotKeyThread : public QThread {
+	Q_OBJECT
+
+public:
+	HotKeyThread(QObject *parent);
+	~HotKeyThread();
+
+signals:
+	void hotKeyPress(KeyCombination);
+
+public slots:
+	void run();
+	void stop();
+	
+private:
+    EventHandlerUPP hotKeyFunction;
+    static OSStatus hotKeyHandler(EventHandlerCallRef nextHandler, EventRef theEvent, void *userData);
+};
+
+#endif
+
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+#error "Your os is not supported"
+#endif
+#endif
+
+#endif
+
+	// End of segment: C:\Users\Fuzzie\Documents\Visual Studio 2012\Projects\Tasuke\Tasuke\HotKeyThread.h
+
+
+
+
+
