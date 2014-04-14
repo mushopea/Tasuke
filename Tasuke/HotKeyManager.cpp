@@ -27,7 +27,7 @@ HotKeyManager::~HotKeyManager() {
 
 // Method activates when HotKeyThread signals the manager
 void HotKeyManager::handleHotKeyPress(KeyCombination key) {
-	LOG(INFO) << MSG_HOTKEY_PRESSED(key);
+	LOG(INFO) << MSG_HOTKEYMANAGER_HOTKEY_PRESSED(key);
 
 	if (key == KeyCombination::CTRL_SPACE) {
 		Tasuke::instance().toggleInputWindow();
