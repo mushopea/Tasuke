@@ -176,22 +176,25 @@ QList<Task> IStorage::searchByTag(QString keyword,
 // event with the latest end time as the next available free time.
 // Then since tasks are sorted in order of earliest end time to latest end 
 // time, overlapping tasks will be merged into one unit.
-QDateTime IStorage::nextFreeTime() {
+QString IStorage::nextFreeTime() {
 	LOG(INFO) << MSG_STORAGE_NEXT_FREE_TIME;
-	QDateTime nextAvailableTime = QDateTime::currentDateTime();
+	QDateTime nextAvailable = QDateTime::currentDateTime();
 
 	foreach (const QSharedPointer<Task>& task, tasks) {
 		if (task->isOverdue()) {
 			continue;
 		}
 
-		if (task->getBegin() <= nextAvailableTime) {
-			nextAvailableTime = task->getEnd();
+		if (task->getBegin() <= nextAvailable) {
+			nextAvailable = task->getEnd();
 		} else {
 			break;
 		}
 	}
-	return nextAvailableTime;
+
+	QString result = Task::getTimeDifference(nextAvailable);
+	result.prepend("You will be free in ");
+	return result;
 }
 
 // Returns true if every task in memory is done.

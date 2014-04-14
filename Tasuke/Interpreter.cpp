@@ -564,8 +564,7 @@ void Interpreter::doRedo(QString commandString, bool dry) {
 }
 
 void Interpreter::doNextFreeTime() {
-	QDateTime time = Tasuke::instance().getStorage().nextFreeTime();
-	QString timeString = time.toString();
+	QString timeString = Tasuke::instance().getStorage().nextFreeTime();
 	Tasuke::instance().showMessage(timeString);
 }
 

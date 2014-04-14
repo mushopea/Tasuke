@@ -42,6 +42,7 @@ public:
 	QDateTime getEnd() const;
 
 	QString getTimeDifferenceString() const;
+	static QString getTimeDifference(QDateTime endDateTime);
 
 	void setDone(bool _done);
 	void markDone();
