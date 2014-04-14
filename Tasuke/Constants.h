@@ -165,6 +165,8 @@ const char* const MSG_STORAGE_LOAD_FILE_START = "Loading file...";
 const char* const MSG_STORAGE_LOAD_FILE_END = "File loaded.";
 const char* const MSG_STORAGE_SAVE_FILE_START = "Saving file...";
 const char* const MSG_STORAGE_SAVE_FILE_END = "File saved.";
+const char* const MSG_STORAGE_FREE_NOW = "You have no ongoing events at the moment.";
+const char* const MSG_STORAGE_FREE_IN = "You will be free in ";
 
 const char* const MSG_STORAGESTUB_INSTANCE_CREATED = 
 	"StorageStub created destroyed";

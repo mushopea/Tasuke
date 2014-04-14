@@ -194,8 +194,15 @@ QString IStorage::nextFreeTime() {
 		}
 	}
 
+	long delta = nextAvailable.toMSecsSinceEpoch()
+		- QDateTime::currentDateTime().toMSecsSinceEpoch();
+
+	if (abs(delta) <= MSECS_IN_SECOND * SECONDS_IN_MINUTE) {
+		return MSG_STORAGE_FREE_NOW;
+	}
+
 	QString result = Task::getTimeDifference(nextAvailable);
-	result.prepend("You will be free in ");
+	result.prepend(MSG_STORAGE_FREE_IN);
 	return result;
 }
 
