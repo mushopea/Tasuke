@@ -40,7 +40,7 @@ Tasuke::Tasuke() : QObject(nullptr) {
 	qRegisterMetaType<TRY_RESULT>(METATYPE_TRY_RESULT);
 	connect(this, SIGNAL(tryFinish(TRY_RESULT)), this, SLOT(handleTryFinish(TRY_RESULT)));
 	connect(&inputTimer, SIGNAL(timeout()), this, SLOT(handleInputTimeout()));
-	setRunOnStartup(true);
+	
 	if (guiMode) {
 		QTimer::singleShot(0, this, SLOT(initGui()));
 	}
