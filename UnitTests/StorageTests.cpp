@@ -12,7 +12,7 @@ namespace StorageTests {
 	// Sets up the logging facility and the Qt event loop
 	TEST_MODULE_INITIALIZE(ModuleInitialize) {
 		int argc = 1;
-		const char *argv[] = { TASUKE };
+		char *argv[] = { "Tasuke.exe" };
 		FLAGS_logtostderr = true;
 		google::InitGoogleLogging(argv[0]);
 		app = new QApplication(argc, argv);
@@ -251,14 +251,27 @@ namespace StorageTests {
 		TEST_METHOD(StorageSortByEndDate) {
 			QList<Task> correct;
 
-			Task task1, task2, task3, task4, task5;
+			Task task1("task1"), task2("task2"), task3("task3"), task4("task4"), task5("task5");
 			task1.setEnd(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
 			task2.setEnd(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 1)));
 			task3.setEnd(QDateTime(QDate(2010, 1, 1), QTime(23, 59, 59)));
 			task4.setEnd(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
 			task5.setEnd(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 1)));
 
+			correct.push_back(task1);
+			correct.push_back(task2);
+			correct.push_back(task3);
+			correct.push_back(task4);
+			correct.push_back(task5);
 
+			storage->addTask(task5);
+			storage->addTask(task4);
+			storage->addTask(task3);
+			storage->addTask(task2);
+			storage->addTask(task1);
+			storage->sortByEndDate();
+
+			Assert::IsTrue(storage->getTasks() == correct);
 		}
 	};
 }

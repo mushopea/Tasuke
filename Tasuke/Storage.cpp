@@ -1,3 +1,4 @@
+//@author A0096863M
 #define NOMINMAX
 
 #include <glog/logging.h>
@@ -9,7 +10,6 @@
 #include "Storage.h"
 #include "Tasuke.h"
 
-//@author A0096863M
 IStorage::IStorage() {
 
 }

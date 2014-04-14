@@ -126,7 +126,7 @@ const char* const MSG_HOTKEYMANAGER_DESTROYED = "HotKeyManager destroyed";
 const char* const MSG_SYSTEMTRAYWIDGET_CREATED = "SystemTrayWidget created";
 const char* const MSG_SYSTEMTRAYWIDGET_DESTROYED = "SystemTrayWidget destroyed";
 
-
+//@author A0096863M
 // Log messages for Storage class
 const char* const MSG_STORAGE_ADDING_TASK = "Adding task ";
 const char* const MSG_STORAGE_REPLACING_TASK = "Replacing task ";
@@ -153,6 +153,7 @@ const char* const MSG_STORAGE_LOAD_FILE_START = "Loading file...";
 const char* const MSG_STORAGE_LOAD_FILE_END = "File loaded.";
 const char* const MSG_STORAGE_SAVE_FILE_START = "Saving file...";
 const char* const MSG_STORAGE_SAVE_FILE_END = "File saved.";
+
 
 // Filenames of dictionary files
 const char* const _SPELL_GB_DICFILE = "en_GB.dic";

@@ -1,3 +1,4 @@
+//@author A0096863M
 #ifndef TASK_H
 #define TASK_H
 
@@ -6,7 +7,6 @@
 #include <QString>
 #include <QDateTime>
 
-//@author A0096863M
 class Task {
 private:
 	QString description;

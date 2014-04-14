@@ -13,7 +13,7 @@ namespace InterpreterTests {
 	// Sets up the logging facility and the Qt event loop
 	TEST_MODULE_INITIALIZE(ModuleInitialize) {
 		int argc = 1;
-		const char *argv[] = { TASUKE };
+		char *argv[] = { "Tasuke.exe" };
 		FLAGS_logtostderr = true;
 		google::InitGoogleLogging(argv[0]);
 		app = new QApplication(argc, argv);

@@ -1,10 +1,10 @@
+//@author A0096863M
 #include <QDataStream>
 #include <cassert>
 #include "Constants.h"
 #include "Exceptions.h"
 #include "Task.h"
 
-//@author A0096863M
 Task::Task() {
 	id = -1;
 	done = false;
