@@ -14,7 +14,8 @@ const char* ExceptionNullPtr::what() const throw() {
 // the location in the command the error is referring to. If it is the whole
 // command the location should be empty string. The location defaults to empty
 // string
-ExceptionBadCommand::ExceptionBadCommand(QString _message, QString _part) : message(_message), part(_part) {
+ExceptionBadCommand::ExceptionBadCommand(QString _message, QString _part)
+	: message(_message), part(_part) {
 
 }
 

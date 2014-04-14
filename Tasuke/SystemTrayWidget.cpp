@@ -18,7 +18,7 @@ SystemTrayWidget::SystemTrayWidget(QWidget *parent ) : QWidget(parent) {
 	connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(handleAboutToQuit()));
 }
 
-// Destructor for SystemTrayWidget. Automatically removes icon from system tray.
+// Destructor for SystemTrayWidget. Automatically removes icon from system tray
 SystemTrayWidget::~SystemTrayWidget() {
 	LOG(INFO) << MSG_SYSTEMTRAYWIDGET_DESTROYED;
 
@@ -58,8 +58,10 @@ void SystemTrayWidget::handleShowAboutWindow() {
 }
 
 // Activated when user clicks on the icon
-void SystemTrayWidget::handleIconActivated(QSystemTrayIcon::ActivationReason reason) {
-	if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
+void SystemTrayWidget::handleIconActivated(
+	QSystemTrayIcon::ActivationReason reason) {
+	if (reason == QSystemTrayIcon::Trigger
+		|| reason == QSystemTrayIcon::DoubleClick) {
 		Tasuke::instance().showTaskWindow();
 		Tasuke::instance().showInputWindow();	
 	}
