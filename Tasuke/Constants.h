@@ -514,8 +514,8 @@ const QList<QRegExp> EQUIV_EXIT_REGEX = QList<QRegExp>()
 	<< QRegExp("^quit\\b") << QRegExp("^q\\b");
 const QRegExp EQUIV_TO_REGEX = QRegExp("\\bto\\b");
 
-const QList< const QList<QRegExp> > EQUIV_COMMAND_REGEX = 
-	QList< const QList<QRegExp> >() << EQUIV_ADD_REGEX << EQUIV_EDIT_REGEX
+const QList< QList<QRegExp> > EQUIV_COMMAND_REGEX = 
+	QList< QList<QRegExp> >() << EQUIV_ADD_REGEX << EQUIV_EDIT_REGEX
 	<< EQUIV_REMOVE_REGEX << EQUIV_SHOW_REGEX << EQUIV_HIDE_REGEX
 	<< EQUIV_DONE_REGEX << EQUIV_UNDONE_REGEX << EQUIV_UNDO_REGEX
 	<< EQUIV_REDO_REGEX << EQUIV_CLEAR_REGEX << EQUIV_HELP_REGEX

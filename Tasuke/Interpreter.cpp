@@ -40,7 +40,9 @@ QString Interpreter::substitute(QString text) {
 	}
 
 	for (int i=0; i<COMMANDS.size(); i++) {
-		subbedText.replace(EQUIV_COMMAND_REGEX[i], COMMANDS[i]);
+		foreach(QRegExp regex, EQUIV_COMMAND_REGEX[i]) {
+			subbedText.replace(regex, COMMANDS[i]);
+		}
 	}
 
 	return subbedText;
