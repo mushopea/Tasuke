@@ -34,7 +34,7 @@ public:
 	QList<Task> searchByTag(QString keyword, 
 		Qt::CaseSensitivity caseSensitivity = Qt::CaseInsensitive);
 
-	QDateTime nextFreeTime();
+	QString nextFreeTime();
 
 	bool isAllDone();
 

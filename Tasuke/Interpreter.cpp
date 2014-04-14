@@ -600,8 +600,7 @@ void Interpreter::doRedo(QString commandString, bool dry) {
 // Does the next free time action.
 // Should only be used by interpret()
 void Interpreter::doNextFreeTime() {
-	QDateTime time = Tasuke::instance().getStorage().nextFreeTime();
-	QString timeString = time.toString();
+	QString timeString = Tasuke::instance().getStorage().nextFreeTime();
 	Tasuke::instance().showMessage(timeString);
 }
 

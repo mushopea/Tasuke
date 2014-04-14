@@ -141,29 +141,46 @@ QDateTime Task::getEnd() const {
 	return end;
 }
 
-// Returns the QString representation of a countdown from now to the end of a 
-// task. This method also returns a countup from the end of an overdue task to
-// now. This method does NOT guarantee accuracy of dates. This method assumes
-// that there are 12 identical months in a year, and there are exactly 4 weeks 
-// every month, and each month has exactly 30 days.
 QString Task::getTimeDifferenceString() const {
 	qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
 	qint64 end = getEnd().toMSecsSinceEpoch();
 	qint64 delta = end - now;
 	bool isNegative = delta < 0;
 
-	// If date is in the past, set it to positive.
-	if (isNegative) {
-		delta *= -1;
-	}
-
 	// Return immediately if task age is less than one minute.
-	if (delta <= MSECS_IN_SECOND * SECONDS_IN_MINUTE) {
+	if (abs(delta) <= MSECS_IN_SECOND * SECONDS_IN_MINUTE) {
 		if (isNegative) {
 			return "This task expired moments ago.";
 		} else {
 			return "This task will expire in less than one minute.";
 		}
+	}
+
+	QString result = getTimeDifference(getEnd());
+
+	if (isNegative) {
+		result.append(" ago.");
+	} else {
+		result.append(" from now.");
+	}
+
+	return result;
+}
+
+// Returns the QString representation of a countdown from now to the end of a 
+// task. This method also returns a countup from the end of an overdue task to
+// now. This method does NOT guarantee accuracy of dates. This method assumes
+// that there are 12 identical months in a year, and there are exactly 4 weeks 
+// every month, and each month has exactly 30 days.
+QString Task::getTimeDifference(QDateTime endDateTime) {
+	qint64 now = QDateTime::currentDateTime().toMSecsSinceEpoch();
+	qint64 end = endDateTime.toMSecsSinceEpoch();
+	qint64 delta = end - now;
+	bool isNegative = delta < 0;
+
+	// If date is in the past, set it to positive.
+	if (isNegative) {
+		delta *= -1;
 	}
 
 	delta /= MSECS_IN_SECOND;					// Get rid of milliseconds.
@@ -239,13 +256,6 @@ QString Task::getTimeDifferenceString() const {
 			QString min = QString("%1 minutes").arg(minutes);
 			result.append(min);
 		}
-	}
-
-	// Finally, add closing statement.
-	if (isNegative) {
-		result.append(" ago.");
-	} else {
-		result.append(" from now.");
 	}
 
 	return result;
