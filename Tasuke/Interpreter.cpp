@@ -51,8 +51,32 @@ QString Interpreter::substitute(QString text) {
 		subbedText.replace(regex, COMMAND_REMOVE);
 	}
 
+	foreach(QRegExp regex, EQUIV_DONE_REGEX) {
+		subbedText.replace(regex, COMMAND_DONE);
+	}
+
+	foreach(QRegExp regex, EQUIV_UNDONE_REGEX) {
+		subbedText.replace(regex, COMMAND_UNDONE);
+	}
+
+	foreach(QRegExp regex, EQUIV_UNDO_REGEX) {
+		subbedText.replace(regex, COMMAND_UNDO);
+	}
+
+	foreach(QRegExp regex, EQUIV_REDO_REGEX) {
+		subbedText.replace(regex, COMMAND_REDO);
+	}
+
 	foreach(QRegExp regex, EQUIV_SHOW_REGEX) {
 		subbedText.replace(regex, COMMAND_SHOW);
+	}
+
+	foreach(QRegExp regex, EQUIV_HELP_REGEX) {
+		subbedText.replace(regex, COMMAND_HELP);
+	}
+
+	foreach(QRegExp regex, EQUIV_SETTINGS_REGEX) {
+		subbedText.replace(regex, COMMAND_SETTINGS);
 	}
 
 	foreach(QRegExp regex, EQUIV_EXIT_REGEX) {
