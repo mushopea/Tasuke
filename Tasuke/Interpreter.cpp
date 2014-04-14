@@ -164,13 +164,15 @@ QHash<QString, QString> Interpreter::decompose(QString text) {
 				expectNewDelimiter = true;
 
 				if (tokens[i].isEmpty()) {
-					throw ExceptionBadCommand(ERROR_TAG_REMOVE_NO_NAME, WHERE_TAG);
+					throw ExceptionBadCommand(ERROR_TAG_REMOVE_NO_NAME,
+						WHERE_TAG);
 				}
 			}
 		} else {
 			// didn't expect this token here
 			if (expectNewDelimiter) {
-				throw ExceptionBadCommand(ERROR_DONT_KNOW(tokens[i]), WHERE_DESCRIPTION);
+				throw ExceptionBadCommand(ERROR_DONT_KNOW(tokens[i]), 
+					WHERE_DESCRIPTION);
 			}
 		}
 
@@ -224,10 +226,10 @@ QString Interpreter::getType(QString commandString, bool doSub) {
 	return COMMAND_NIL;
 }
 
-// This static helper function returns an instance of a ICommand that represents
-// the user's command. The caller must clean up using delete. Takes in the
-// user input and a boolean dry. If dry is true, nothing is actually done.
-// defaults to false.
+// This static helper function returns an instance of a ICommand that
+// represents the user's command. The caller must clean up using delete. Takes
+// in the user input and a boolean dry. If dry is true, nothing is actually 
+// done. defaults to false.
 // throws ExceptionBadCommand if unable to parse
 ICommand* Interpreter::interpret(QString commandString, bool dry) {
 	LOG(INFO) << MSG_INTERPRETER_INTERPRETTING(commandString);
@@ -334,7 +336,8 @@ ICommand* Interpreter::createRemoveCommand(QString commandString) {
 	qSort(ids.begin(), ids.end(), qGreater<int>());
 
 	foreach(int id, ids) {
-		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new RemoveCommand(id-1));
+		QSharedPointer<ICommand> command = 
+			QSharedPointer<ICommand>(new RemoveCommand(id-1));
 		commands.push_back(command);
 	}
 
@@ -408,7 +411,8 @@ ICommand* Interpreter::createDoneCommand(QString commandString) {
 	qSort(ids.begin(), ids.end(), qGreater<int>());
 
 	foreach(int id, ids) {
-		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new DoneCommand(id-1));
+		QSharedPointer<ICommand> command = 
+			QSharedPointer<ICommand>(new DoneCommand(id-1));
 		commands.push_back(command);
 	}
 
@@ -431,7 +435,8 @@ ICommand* Interpreter::createUndoneCommand(QString commandString) {
 	qSort(ids.begin(), ids.end());
 
 	foreach(int id, ids) {
-		QSharedPointer<ICommand> command = QSharedPointer<ICommand>(new DoneCommand(id-1, false));
+		QSharedPointer<ICommand> command = 
+			QSharedPointer<ICommand>(new DoneCommand(id-1, false));
 		commands.push_back(command);
 	}
 
@@ -444,46 +449,43 @@ void Interpreter::doShow(QString commandString) {
 	commandString = commandString.trimmed();
 
 	if (commandString == KEYWORD_DONE) {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDone();
-		});
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_DONE);
 		Tasuke::instance().updateTaskWindow(results, TITLE_DONE);
 	} else if (commandString == KEYWORD_UNDONE) {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return !task.isDone();
-		});
+		QList<Task> results =
+			Tasuke::instance().getStorage().search(PREDICATE_UNDONE);
 		Tasuke::instance().updateTaskWindow(results, TITLE_UNDONE);
 	} else if (commandString == KEYWORD_ONGOING) {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isOngoing();
-		});
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_ONGOING);
 		Tasuke::instance().updateTaskWindow(results, TITLE_ONGOING);
 	} else if (commandString == KEYWORD_OVERDUE) {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isOverdue();
-		});
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_OVERDUE);
 		Tasuke::instance().updateTaskWindow(results, TITLE_OVERDUE);
 	} else if (commandString == KEYWORD_TODAY) {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDueToday();
-		});
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_TODAY);
 		Tasuke::instance().updateTaskWindow(results, TITLE_TODAY);
 	} else if (commandString == KEYWORD_TOMORROW) {
-		QList<Task> results = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDueTomorrow();
-		});
+		QList<Task> results = 
+			Tasuke::instance().getStorage().search(PREDICATE_TOMORROW);
 		Tasuke::instance().updateTaskWindow(results, TITLE_TOMORROW);
 	} else  if (commandString == KEYWORD_NIL || commandString == KEYWORD_ALL
 		|| commandString == KEYWORD_EVERYTHING) {
-		Tasuke::instance().updateTaskWindow(Tasuke::instance().getStorage().getTasks());
-	} else if (commandString.startsWith(DELIMITER_HASH) && !commandString.contains(" ")) {
+		QList<Task> tasks =Tasuke::instance().getStorage().getTasks();
+		Tasuke::instance().updateTaskWindow(tasks);
+	} else if (commandString.startsWith(DELIMITER_HASH) 
+		&& !commandString.contains(" ")) {
 		QString tag = commandString.remove(0,1);
 		QList<Task> results = Tasuke::instance().getStorage().searchByTag(tag);
 		Tasuke::instance().updateTaskWindow(results, DELIMITER_HASH + tag);
 	} else {
 		commandString = substituteForDescription(commandString);
-		QList<Task> results = Tasuke::instance().getStorage().searchByDescription(commandString);
-		Tasuke::instance().updateTaskWindow(results, "\"" + commandString + "\"");
+		QList<Task> results = 
+			Tasuke::instance().getStorage().searchByDescription(commandString);
+		Tasuke::instance().updateTaskWindow(results, "\""+commandString+"\"");
 	}
 
 	Tasuke::instance().showTaskWindow();
@@ -515,7 +517,8 @@ void Interpreter::doUndo(QString commandString, bool dry) {
 		times = commandString.toInt(&ok);
 
 		if (ok == false) {
-			throw ExceptionBadCommand(ERROR_NOT_A_NUMBER(commandString), WHERE_TIMES);
+			throw ExceptionBadCommand(ERROR_NOT_A_NUMBER(commandString), 
+				WHERE_TIMES);
 		}
 	}
 
@@ -544,7 +547,8 @@ void Interpreter::doRedo(QString commandString, bool dry) {
 		times = commandString.toInt(&ok);
 
 		if (ok == false) {
-			throw ExceptionBadCommand(ERROR_NOT_A_NUMBER(commandString), WHERE_TIMES);
+			throw ExceptionBadCommand(ERROR_NOT_A_NUMBER(commandString), 
+				WHERE_TIMES);
 		}
 	}
 
@@ -594,7 +598,8 @@ int Interpreter::parseId(QString idString) {
 	int numTasks = Tasuke::instance().getStorage().totalTasks();
 
 	if (id < 1 || id > numTasks) {
-		throw ExceptionBadCommand(ERROR_ID_OUT_OF_RANGE(id, numTasks), WHERE_ID);
+		throw ExceptionBadCommand(ERROR_ID_OUT_OF_RANGE(id, numTasks), 
+			WHERE_ID);
 	}
 
 	return id;
@@ -632,21 +637,17 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 	QList<int> results;
 	QList<Task> special;
 	if (idRangeString == KEYWORD_DONE) {
-		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDone();
-		});
-	} else if (idRangeString == KEYWORD_OVERDUE) {
-		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isOverdue();
-		});
-	} else if (idRangeString == KEYWORD_TODAY) {
-		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return task.isDueToday();
-		});
+		special = Tasuke::instance().getStorage().search(PREDICATE_DONE);
 	} else if (idRangeString == KEYWORD_UNDONE) {
-		special = Tasuke::instance().getStorage().search([](Task task) -> bool {
-			return !task.isDone();
-		});
+		special = Tasuke::instance().getStorage().search(PREDICATE_UNDONE);
+	} else if (idRangeString == KEYWORD_ONGOING) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_ONGOING);
+	} else if (idRangeString == KEYWORD_OVERDUE) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_OVERDUE);
+	} else if (idRangeString == KEYWORD_TODAY) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_TODAY);
+	} else if (idRangeString == KEYWORD_TOMORROW) {
+		special = Tasuke::instance().getStorage().search(PREDICATE_TOMORROW);
 	}
 
 	// if this is a sepcial range
@@ -667,14 +668,16 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 		int end = parseId(idRangeParts[1]);
 
 		if (end < begin) {
-			throw ExceptionBadCommand(ERROR_ID_INVALID_RANGE(begin, end), WHERE_ID);
+			throw ExceptionBadCommand(ERROR_ID_INVALID_RANGE(begin, end), 
+				WHERE_ID);
 		}
 
 		for (int i=begin; i<=end; i++) {
 			results.push_back(i);
 		}
 	} else {
-		throw ExceptionBadCommand(ERROR_ID_NO_A_RANGE(idRangeString), WHERE_ID);
+		throw ExceptionBadCommand(ERROR_ID_NO_A_RANGE(idRangeString), 
+			WHERE_ID);
 	}
 
 	return results;
@@ -682,14 +685,16 @@ QList<int> Interpreter::parseIdRange(QString idRangeString) {
 
 // try to parse the time period from a string input
 // throws ExceptionBadCommand if unable to parse
-Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) {
+Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(
+	QString timePeriodString) {
 	timePeriodString = substituteForRange(timePeriodString);
 
 	QStringList timePeriodParts = timePeriodString.split(DELIMITER_DASH);
 	TIME_PERIOD timePeriod;
 
 	if (timePeriodParts.size() > 2) {
-		throw ExceptionBadCommand(ERROR_DATE_NO_A_RANGE(timePeriodString), WHERE_DATE);
+		throw ExceptionBadCommand(ERROR_DATE_NO_A_RANGE(timePeriodString), 
+			WHERE_DATE);
 	}
 
 	if (timePeriodParts.size() == 1) {
@@ -708,7 +713,8 @@ Interpreter::TIME_PERIOD Interpreter::parseTimePeriod(QString timePeriodString) 
 	}
 
 	if (timePeriod.begin.isValid() && timePeriod.end < timePeriod.begin) {
-		throw ExceptionBadCommand(ERROR_DATE_INVALID_PERIOD(timePeriod), WHERE_DATE);
+		throw ExceptionBadCommand(ERROR_DATE_INVALID_PERIOD(timePeriod), 
+			WHERE_DATE);
 	}
 
 	return timePeriod;
@@ -751,7 +757,8 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 			retVal = QDateTime::fromString(dateString, dateTimeFormat);
 			if (retVal.isValid()) {
 				QDate date = retVal.date();
-				retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+				retVal.setDate(QDate(currentDate.year(), date.month(), 
+					date.day()));
 				return retVal;
 			}
 		}
@@ -789,7 +796,8 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		retVal = QDateTime::fromString(dateString, dateFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+			retVal.setDate(QDate(currentDate.year(), date.month(), 
+				date.day()));
 			retVal.setTime(timePart);
 			return retVal;
 		}
@@ -800,7 +808,8 @@ QDateTime Interpreter::parseDate(QString dateString, bool isEnd) {
 		retVal = QDateTime::fromString(dateString, dateTimeFormat);
 		if (retVal.isValid()) {
 			QDate date = retVal.date();
-			retVal.setDate(QDate(currentDate.year(), date.month(), date.day()));
+			retVal.setDate(QDate(currentDate.year(), date.month(), 
+				date.day()));
 			return retVal;
 		}
 	}
@@ -930,7 +939,8 @@ void Interpreter::generateDateFormatsWithoutYear() {
 	foreach(QString dayFormat, dayFormats) {
 		foreach(QString monthFormat, monthFormats) {
 			foreach(QString dateSeparator, dateSeparators) {
-				dateFormatsWithoutYear << (dayFormat + dateSeparator + monthFormat);
+				dateFormatsWithoutYear << (dayFormat + dateSeparator + 
+					monthFormat);
 			}
 		}
 	}
@@ -963,7 +973,8 @@ void Interpreter::generateDateFormats() {
 		foreach(QString monthFormat, monthFormats) {
 			foreach(QString yearFormat, yearFormats) {
 				foreach(QString dateSeparator, dateSeparators) {
-					dateFormats << (dayFormat + dateSeparator + monthFormat + dateSeparator + yearFormat);
+					dateFormats << (dayFormat + dateSeparator + monthFormat
+						+ dateSeparator + yearFormat);
 				}
 			}
 		}
@@ -977,13 +988,17 @@ void Interpreter::generateDateTimeFormatsWithoutYear() {
 
 	foreach(QString dateFormatWithoutYear, dateFormatsWithoutYear) {
 		foreach(QString timeFormat, timeFormats) {
-			dateTimeFormatsWithoutYear << (dateFormatWithoutYear + " " + timeFormat);
-			dateTimeFormatsWithoutYear << (timeFormat + " " + dateFormatWithoutYear);
+			dateTimeFormatsWithoutYear 
+				<< (dateFormatWithoutYear + " " + timeFormat);
+			dateTimeFormatsWithoutYear 
+				<< (timeFormat + " " + dateFormatWithoutYear);
 		}
 
 		foreach(QString timeFormatAp, timeFormatsAp) {
-			dateTimeFormatsWithoutYearAp << (dateFormatWithoutYear + " " + timeFormatAp);
-			dateTimeFormatsWithoutYearAp << (timeFormatAp + " " + dateFormatWithoutYear);
+			dateTimeFormatsWithoutYearAp 
+				<< (dateFormatWithoutYear + " " + timeFormatAp);
+			dateTimeFormatsWithoutYearAp 
+				<< (timeFormatAp + " " + dateFormatWithoutYear);
 		}
 	}
 }
