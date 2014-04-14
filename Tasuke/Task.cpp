@@ -69,7 +69,7 @@ QSet<QString> Task::getTagsSet() const {
 // to pass in a QDateTime object that is complete,
 // as this method makes no assumptions about the date and time.
 void Task::setBegin(QDateTime _begin) {
-	assert(_begin.isValid());
+	//assert(_begin.isValid());
 	begin = _begin;
 }
 
@@ -109,7 +109,7 @@ QDateTime Task::getBegin() const {
 // to pass in a QDateTime object that is complete,
 // as this method makes no assumptions about the date and time.
 void Task::setEnd(QDateTime _end) {
-	assert(_end.isValid());
+	//assert(_end.isValid());
 	end = _end;
 }
 
@@ -192,52 +192,47 @@ QString Task::getTimeDifferenceString() const {
 	QString result = "";
 	if (years > 0) {
 		if (years == 1) {
-			result.append("1 year");
+			result.append("1 year, ");
 		} else { // Plural
-			QString yr = QString("%1 years").arg(years);
+			QString yr = QString("%1 years, ").arg(years);
 			result.append(yr);
 		}
-		result.append(", ");
 	}
 
 	if (months > 0) {
 		if (months == 1) {
-			result.append("1 month");
+			result.append("1 month, ");
 		} else { // Plural
-			QString mth = QString("%1 months").arg(months);
+			QString mth = QString("%1 months, ").arg(months);
 			result.append(mth);
 		}
-		result.append(", ");
 	}
 
 	if (weeks > 0) {
 		if (weeks == 1) {
-			result.append("1 week");
+			result.append("1 week, ");
 		} else { // Plural
-			QString wks = QString("%1 weeks").arg(weeks);
+			QString wks = QString("%1 weeks, ").arg(weeks);
 			result.append(wks);
 		}
-		result.append(", ");
 	}
 
 	if (days > 0) {
 		if (days == 1) {
-			result.append("1 day");
+			result.append("1 day, ");
 		} else { //  Plural
-			QString dys = QString("%1 days").arg(days);
+			QString dys = QString("%1 days, ").arg(days);
 			result.append(dys);
 		}
-		result.append(", ");
 	}
 
 	if (hours > 0) {
 		if (hours == 1) {
-			result.append("1 hour");
+			result.append("1 hour, ");
 		} else { // Plural
-			QString hrs = QString("%1 hours").arg(hours);
+			QString hrs = QString("%1 hours, ").arg(hours);
 			result.append(hrs);
 		}
-		result.append(", ");
 	}
 
 	if (minutes > 0) {
