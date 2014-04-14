@@ -55,7 +55,8 @@ public:
 	void highlightTask(int id);
 	bool spellCheck(QString word);
 	bool setRunOnStartup(bool yes);
-	QString formatTooltipMessage(QString commandString, QString errorString = "", QString errorWhere = "");
+	QString formatTooltipMessage(QString commandString, 
+		QString errorString = "", QString errorWhere = "");
 
 	void runCommand(QString commandString);
 	void undoCommand();
