@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #ifndef INPUTWINDOW_H
 #define INPUTWINDOW_H
 
@@ -13,8 +15,6 @@
 #include "TooltipWidget.h"
 #include "Constants.h"
 #include "ui_InputWindow.h"
-
-//@author A0100189m
 
 // The input window is also the command box. 
 // The input window handles text input, keyword highlighting and displaying of command tooltip guide.

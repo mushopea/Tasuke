@@ -1,10 +1,10 @@
+//@author A0100189M-reused
 // This class is not written by any member of the team.
 // Code credits to: http://developer.nokia.com/community/wiki/Code_Example_for_SlidingStackedWidget_class_in_Qt
 
 #ifndef SLIDINGSTACKEDWIDGET_H
 #define SLIDINGSTACKEDWIDGET_H
  
-// #include <QtGui>
 #include <QStackedWidget>
 #include <QWidget>
 #include <QDebug>

@@ -1,4 +1,4 @@
-//@author A0100189m-reused
+//@author A0100189M-reused
 
 // Code credits to: http://developer.nokia.com/community/wiki/ Code_Example_for_SlidingStackedWidget_class_in_Qt
 

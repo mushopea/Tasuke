@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #ifndef TASKENTRY_H
 #define TASKENTRY_H
 
@@ -7,8 +9,6 @@
 #include <QToolTip>
 #include "ui_TaskEntry.h"
 #include "Task.h"
-
-//@author A0100189m
 
 // Each TaskEntry object represents a Task with different ID, description, dates and tags.
 // They are entered into the listWidget in TaskWindow.

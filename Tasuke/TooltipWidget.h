@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #ifndef TOOLTIPWIDGET_H
 #define TOOLTIPWIDGET_H
 
@@ -10,8 +12,6 @@
 #include <glog/logging.h>
 #include "Constants.h"
 #include "ui_TooltipWidget.h"
-
-//@author A0100189m
 
 // The tooltip guide displays when user is inputting a command. It aims to guide the user on formats.
 // It can be called by logic when it wants to send feedback.

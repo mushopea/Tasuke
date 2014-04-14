@@ -1,8 +1,8 @@
+//@author A0100189M
+
 #pragma once
 #include <QSyntaxHighlighter>
 #include <QRegularExpression>
-
-//@author A0100189m
 
 // This class is a subclass of QSyntaxHighlighter.
 // It handles color highlighting of input window's text's commands keywords and spellcheck.

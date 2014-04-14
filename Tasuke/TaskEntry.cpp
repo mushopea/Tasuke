@@ -1,9 +1,9 @@
+//@author A0100189M
+
 #include <QSettings>
 #include "Tasuke.h"
 #include "Constants.h"
 #include "TaskEntry.h"
-
-//@author A0100189m
 
 TaskEntry::TaskEntry(const Task& t, QWidget* parent) : QWidget(parent), task(t)  {
 	initUI();

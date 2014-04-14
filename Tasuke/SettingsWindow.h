@@ -1,3 +1,5 @@
+//@author A0100189M
+
 #ifndef SETTINGSWINDOW_H
 #define SETTINGSWINDOW_H
 
@@ -7,8 +9,6 @@
 #include <QDesktopWidget>
 #include "Constants.h"
 #include "ui_SettingsWindow.h"
-
-//@author A0100189m
 
 // The settings window handles changing of settings inside the settings window.
 // Users can enable/disable features, change icon set, change font and change the theme.

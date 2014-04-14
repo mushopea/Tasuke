@@ -1,10 +1,10 @@
+//@author A0100189M
+
 #include <QSettings>
 #include "Tasuke.h"
 #include "Exceptions.h"
 #include "ThemeStylesheets.h"
 #include "SubheadingEntry.h"
-
-//@author A0100189m
 
 SubheadingEntry::SubheadingEntry(const QString& content, QWidget *parent): QWidget(parent), connectedToSettings(false) {
 	initUI();
