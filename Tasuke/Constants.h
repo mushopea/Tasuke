@@ -550,7 +550,8 @@ const QList<QRegExp> EQUIV_HELP_REGEX = QList<QRegExp>()
 	<< QRegExp("^tutorial\\b") << QRegExp("^guide\\b")
 	<< QRegExp("^instructions\\b");
 const QList<QRegExp> EQUIV_ABOUT_REGEX = QList<QRegExp>();
-const QList<QRegExp> EQUIV_NEXT_REGEX = QList<QRegExp>();
+const QList<QRegExp> EQUIV_NEXT_REGEX = QList<QRegExp>()
+	<< QRegExp("^next free time\\b");
 const QList<QRegExp> EQUIV_SETTINGS_REGEX = QList<QRegExp>()
 	<< QRegExp("^options\\b");
 const QList<QRegExp> EQUIV_EXIT_REGEX = QList<QRegExp>()
