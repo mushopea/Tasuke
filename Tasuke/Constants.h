@@ -390,7 +390,7 @@ const char* const ERROR_MULTIPLE_DATES =
 const char* const ERROR_TAG_NO_NAME = "Please give a name for your tag.";
 const char* const ERROR_TAG_REMOVE_NO_NAME =
 	"You need to tell me what tag you want to remove";
-const char* const ERROR_DONT_UNDERSTAND = "I don't undesrtand this command.";
+const char* const ERROR_DONT_UNDERSTAND = "I don't understand this command.";
 const char* const ERROR_ADD_EMPTY = "You need to tell me what to add.";
 const char* const ERROR_NO_DESCRIPTION = 
 	"You need to give a description to your task.";

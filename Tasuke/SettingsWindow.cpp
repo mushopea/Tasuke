@@ -117,7 +117,7 @@ void SettingsWindow::initThemeArray() {
 	themeSelectButtons[(char)Theme::PINK] = ui.selectPink;
 	themeSelectButtons[(char)Theme::PIKACHU] = ui.selectPika;
 	themeSelectButtons[(char)Theme::BLUE] = ui.selectBlue;
-	themeSelectButtons[(char)Theme::DOGE] = ui.selectDefault;
+	themeSelectButtons[(char)Theme::DOGE] = ui.selectDoge;
 }
 
 // ============================================================
@@ -252,7 +252,7 @@ void SettingsWindow::editIcons() {
 void SettingsWindow::editTheme() {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Tasuke", "Tasuke");
 	Theme oldTheme = (Theme)settings.value("Theme", (char)Theme::DEFAULT).toInt();
-	for (int i=0; i< (char)Theme::THEME_LAST_ITEM - 1; ++i) {
+	for (int i=0; i< (char)Theme::THEME_LAST_ITEM; ++i) {
 		if (themeSelectButtons[i]->isChecked()) {
 			settings.setValue("Theme", i);
 			if (oldTheme != (Theme)i) {

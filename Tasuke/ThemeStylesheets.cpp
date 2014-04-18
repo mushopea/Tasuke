@@ -120,7 +120,7 @@ QStringList ThemeStylesheets::TASKENTRY_NORMAL_STYLES = QStringList()
 	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,222,235,200);}" // theme 4: pink
 	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,249,202,113);}" // theme 5: pika
 	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,255,255,113);}"  // theme 6: blue
-	<< "QLabel#background{border-radius: 12px; background-color: rgb(255,255,0);}"; // theme 7: doge
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,255,0,155);}"; // theme 7: doge
 
 
 QStringList ThemeStylesheets::TASKENTRY_SELECT_STYLES = QStringList() 
@@ -130,7 +130,7 @@ QStringList ThemeStylesheets::TASKENTRY_SELECT_STYLES = QStringList()
 	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,190,204,200);}" // theme 4: pink
 	<< "QLabel#background{border-radius: 12px; background-color: rgba(220,187,135,201);}" // theme 5: pika
 	<< "QLabel#background{border-radius: 12px; background-color: rgba(169,200,229,130);}"  // theme 6: blue
-	<< "QLabel#background{border-radius: 12px; background-color: rgb(255,0,222);}"; // theme 7: doge
+	<< "QLabel#background{border-radius: 12px; background-color: rgba(255,0,222,155);}"; // theme 7: doge
 
 QStringList ThemeStylesheets::INPUTWINDOW_STYLES = QStringList() 
 	<< "QLabel#bg{border-radius: 8px; background-color: white;}" // theme 1: default

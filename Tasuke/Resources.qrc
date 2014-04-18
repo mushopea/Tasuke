@@ -85,6 +85,7 @@
 		<file>images/thumbnails/4.png</file>
 		<file>images/thumbnails/5.png</file>
 		<file>images/thumbnails/6.png</file>
+		<file>images/thumbnails/7.jpeg</file>
 		
     </qresource>
     <qresource prefix="/Fonts">
