@@ -1,0 +1,1 @@
+The Google Code site for CS2103 project, called Tasuke. Tasuke is a task manager written in QT. It features an elegant user interface with a powerful natural-language-like processing.
